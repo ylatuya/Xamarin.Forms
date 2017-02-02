@@ -76,6 +76,10 @@ namespace Xamarin.Forms
 		{
 		}
 
+		void IFontElement.OnFontChanged(Font oldValue, Font newValue)
+		{
+		}
+		
 		public IList<string> Items { get; } = new LockableObservableListWrapper();
 
 		public IList ItemsSource
