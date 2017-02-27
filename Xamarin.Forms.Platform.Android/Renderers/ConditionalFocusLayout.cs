@@ -44,7 +44,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal EditText GetEditText(IVisualElementRenderer renderer)
 		{
-			var viewGroup = renderer.View as ViewGroup;
+			var viewGroup = renderer?.View as ViewGroup;
 			return viewGroup?.GetChildAt(0) as EditText;
 		}
 	}
