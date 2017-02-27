@@ -10,7 +10,10 @@ namespace Xamarin.Forms.Platform.Android
 
 		VisualElementTracker Tracker { get; }
 
+		[Obsolete("Use View instead")]
 		ViewGroup ViewGroup { get; }
+
+		AView View { get; }
 
 		event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 

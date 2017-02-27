@@ -7,6 +7,7 @@ using Android.Views;
 using Android.Widget;
 using Xamarin.Forms.Internals;
 using AScrollView = Android.Widget.ScrollView;
+using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android
 {
@@ -90,10 +91,9 @@ namespace Xamarin.Forms.Platform.Android
 				Tracker.UpdateLayout();
 		}
 
-		public ViewGroup ViewGroup
-		{
-			get { return this; }
-		}
+		public ViewGroup ViewGroup => this;
+
+		AView IVisualElementRenderer.View => this;
 
 		public override void Draw(Canvas canvas)
 		{

@@ -142,10 +142,8 @@ namespace Xamarin.Forms.Platform.Android
 				Tracker.UpdateLayout();
 		}
 
-		public ViewGroup ViewGroup
-		{
-			get { return this; }
-		}
+		public ViewGroup ViewGroup => this;
+		AView IVisualElementRenderer.View => this;
 
 		protected override void Dispose(bool disposing)
 		{

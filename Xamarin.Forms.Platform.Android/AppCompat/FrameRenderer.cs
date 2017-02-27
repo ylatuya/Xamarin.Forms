@@ -159,6 +159,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		ViewGroup IVisualElementRenderer.ViewGroup => this;
 
+		AView IVisualElementRenderer.View => this;
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing && !_disposed)

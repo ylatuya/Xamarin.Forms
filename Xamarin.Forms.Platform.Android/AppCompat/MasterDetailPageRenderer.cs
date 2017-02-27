@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Android.Support.V4.Widget;
 using Android.Views;
 using Android.Support.V4.App;
+using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android.AppCompat
 {
@@ -177,6 +178,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		}
 
 		ViewGroup IVisualElementRenderer.ViewGroup => this;
+
+		AView IVisualElementRenderer.View => this;
 
 		protected override void Dispose(bool disposing)
 		{
