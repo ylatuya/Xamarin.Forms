@@ -4,7 +4,7 @@ using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android
 {
-	public abstract class PlatformEffect : PlatformEffect<View, AView>
+	public abstract class PlatformEffect : PlatformEffect<AView, AView>
 	{
 	}
 }
