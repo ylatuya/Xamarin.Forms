@@ -40,6 +40,13 @@ namespace Xamarin.Forms.Platform.Android
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
+		event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+		event EventHandler<PropertyChangedEventArgs> IVisualElementRenderer.ElementPropertyChanged
+		{
+			add { ElementPropertyChanged += value; }
+			remove { ElementPropertyChanged -= value; }
+		}
+
 		public SizeRequest GetDesiredSize(int widthConstraint, int heightConstraint)
 		{
 			Measure(widthConstraint, heightConstraint);
@@ -239,6 +246,8 @@ namespace Xamarin.Forms.Platform.Android
 
 		void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			ElementPropertyChanged?.Invoke(this, e);
+
 			if (e.PropertyName == "Content")
 				LoadContent();
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)

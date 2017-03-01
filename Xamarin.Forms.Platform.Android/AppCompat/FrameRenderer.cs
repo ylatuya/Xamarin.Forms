@@ -123,6 +123,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		VisualElement IVisualElementRenderer.Element => Element;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
 		SizeRequest IVisualElementRenderer.GetDesiredSize(int widthConstraint, int heightConstraint)
 		{
@@ -262,6 +263,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 		void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			ElementPropertyChanged?.Invoke(this, e);
+
 			if (e.PropertyName == Frame.HasShadowProperty.PropertyName)
 				UpdateShadow();
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
