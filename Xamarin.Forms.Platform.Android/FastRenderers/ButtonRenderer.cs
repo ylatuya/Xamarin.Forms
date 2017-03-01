@@ -18,7 +18,7 @@ using Object = Java.Lang.Object;
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
 	public class ButtonRenderer : AppCompatButton, IVisualElementRenderer, AView.IOnAttachStateChangeListener,
-		AView.IOnFocusChangeListener, IEffectControlProvider
+		AView.IOnFocusChangeListener, IEffectControlProvider, AView.IOnClickListener, AView.IOnTouchListener
 	{
 		string _defaultContentDescription;
 		bool? _defaultFocusable;
@@ -424,8 +424,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		void Initialize()
 		{
 			SoundEffectsEnabled = false;
-			SetOnClickListener(ButtonClickListener.Instance.Value);
-			SetOnTouchListener(ButtonTouchListener.Instance.Value);
+			SetOnClickListener(this);
+			SetOnTouchListener(this);
 			AddOnAttachStateChangeListener(this);
 			OnFocusChangeListener = this;
 
@@ -589,45 +589,25 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			_textColorSwitcher?.UpdateTextColor(this, Button.TextColor);
 		}
 
-		// TODO hartez 2017/03/01 13:56:46 Just implement these directly on the class, no point in pushing this to another object	
-		class ButtonClickListener : Object, IOnClickListener
+		public void OnClick(AView v)
 		{
-			#region Statics
-
-			public static readonly Lazy<ButtonClickListener> Instance =
-				new Lazy<ButtonClickListener>(() => new ButtonClickListener());
-
-			#endregion
-
-			public void OnClick(AView v)
-			{
-				var renderer = v.Tag as ButtonRenderer;
-				((IButtonController)renderer?.Element)?.SendClicked();
-			}
+			((IButtonController)Button)?.SendClicked();
 		}
 
-		class ButtonTouchListener : Object, IOnTouchListener
+		public bool OnTouch(AView v, MotionEvent e)
 		{
-			public static readonly Lazy<ButtonTouchListener> Instance =
-				new Lazy<ButtonTouchListener>(() => new ButtonTouchListener());
-
-			public bool OnTouch(AView v, AMotionEvent e)
+			var buttonController = Element as IButtonController;
+			switch (e.Action)
 			{
-				var renderer = v.Tag as ButtonRenderer;
-				if (renderer != null)
-				{
-					var buttonController = renderer.Element as IButtonController;
-					if (e.Action == AMotionEventActions.Down)
-					{
-						buttonController?.SendPressed();
-					}
-					else if (e.Action == AMotionEventActions.Up)
-					{
-						buttonController?.SendReleased();
-					}
-				}
-				return false;
+				case AMotionEventActions.Down:
+					buttonController?.SendPressed();
+					break;
+				case AMotionEventActions.Up:
+					buttonController?.SendReleased();
+					break;
 			}
+			
+			return false;
 		}
 	}
 }
