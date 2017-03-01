@@ -9,7 +9,7 @@ using Android.Views;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
 
-namespace Xamarin.Forms.Platform.Android.AppCompat
+namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
 	public class FrameRenderer : CardView, IVisualElementRenderer, AView.IOnClickListener, AView.IOnTouchListener
 	{

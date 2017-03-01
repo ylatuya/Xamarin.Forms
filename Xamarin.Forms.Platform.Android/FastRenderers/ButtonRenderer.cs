@@ -15,9 +15,9 @@ using AMotionEventActions = Android.Views.MotionEventActions;
 using static System.String;
 using Object = Java.Lang.Object;
 
-namespace Xamarin.Forms.Platform.Android.AppCompat
+namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class FastButtonRenderer : AppCompatButton, IVisualElementRenderer, AView.IOnAttachStateChangeListener,
+	public class ButtonRenderer : AppCompatButton, IVisualElementRenderer, AView.IOnAttachStateChangeListener,
 		AView.IOnFocusChangeListener, IEffectControlProvider
 	{
 		string _defaultContentDescription;
@@ -31,8 +31,9 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		TextColorSwitcher _textColorSwitcher;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
-		public FastButtonRenderer() : base(Forms.Context)
+		public ButtonRenderer() : base(Forms.Context)
 		{
 			System.Diagnostics.Debug.WriteLine("Fast Button!");
 			Initialize();
@@ -203,6 +204,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				UpdateAll();
 				UpdateBackgroundColor();
 			}
+
+			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
 		}
 
 		protected void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -260,6 +263,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			{
 				SetFocusable();
 			}
+
+			ElementPropertyChanged?.Invoke(this, e);
 		}
 
 		protected override void OnLayout(bool changed, int l, int t, int r, int b)
@@ -596,7 +601,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 			public void OnClick(AView v)
 			{
-				var renderer = v.Tag as FastButtonRenderer;
+				var renderer = v.Tag as ButtonRenderer;
 				((IButtonController)renderer?.Element)?.SendClicked();
 			}
 		}
@@ -608,7 +613,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 			public bool OnTouch(AView v, AMotionEvent e)
 			{
-				var renderer = v.Tag as FastButtonRenderer;
+				var renderer = v.Tag as ButtonRenderer;
 				if (renderer != null)
 				{
 					var buttonController = renderer.Element as IButtonController;
