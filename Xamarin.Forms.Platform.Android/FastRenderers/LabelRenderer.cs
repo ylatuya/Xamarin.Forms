@@ -6,12 +6,11 @@ using Android.Text;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Xamarin.Forms.Platform.Android.FastRenderers;
 using AView = Android.Views.View;
 
-namespace Xamarin.Forms.Platform.Android
+namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class FastLabelRenderer : TextView, IVisualElementRenderer
+	public class LabelRenderer : TextView, IVisualElementRenderer
 	{
 		int? _defaultLabelFor;
 		bool _disposed;
@@ -28,7 +27,7 @@ namespace Xamarin.Forms.Platform.Android
 		VisualElementRenderer _visualElementRenderer;
 		bool _wasFormatted;
 
-		public FastLabelRenderer() : base(Forms.Context)
+		public LabelRenderer() : base(Forms.Context)
 		{
 			_labelTextColorDefault = TextColors;
 		}
