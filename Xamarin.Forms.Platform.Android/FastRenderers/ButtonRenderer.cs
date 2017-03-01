@@ -194,10 +194,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected virtual void OnElementChanged(ElementChangedEventArgs<Button> e)
 		{
-			if (e.OldElement != null)
-			{
-			}
-
 			if (e.NewElement != null)
 			{
 				SetLabeledBy();
