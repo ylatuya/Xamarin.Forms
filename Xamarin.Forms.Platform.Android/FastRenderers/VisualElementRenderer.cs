@@ -64,11 +64,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			GC.SuppressFinalize(this);
 		}
 
-		void IDisposable.Dispose()
-		{
-			throw new NotImplementedException();
-		}
-
 		void AView.IOnClickListener.OnClick(AView v)
 		{
 			_tapGestureHandler.OnSingleClick();
