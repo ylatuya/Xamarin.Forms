@@ -1,17 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
-using Android.Graphics;
 using AImageView = Android.Widget.ImageView;
 using AView = Android.Views.View;
-using static System.String;
 using Android.Views;
-using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class ImageRenderer : AImageView, IVisualElementRenderer
+	public class ImageRenderer : AImageView, IVisualElementRenderer, IImageRendererController
 	{
 		bool _disposed;
 		Image _element;
@@ -47,7 +42,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			if (_element != null)
 				_element.PropertyChanged -= OnElementPropertyChanged;
-
 		}
 
 		public override void Invalidate()
@@ -63,7 +57,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected virtual void OnElementChanged(ElementChangedEventArgs<Image> e)
 		{
-			UpdateBitmap(e.OldElement);
+			this.UpdateBitmap(e.NewElement, e.OldElement);
 			UpdateAspect();
 
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
@@ -120,7 +114,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			_accessibilityThing.SetContentDescription();
 			_accessibilityThing.SetAutomationId();
-
 		}
 
 		void IVisualElementRenderer.SetLabelFor(int? id)
@@ -141,6 +134,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		ViewGroup IVisualElementRenderer.ViewGroup => null;
 
+		void IImageRendererController.SkipInvalidate() => _skipInvalidate = true;
+
 		protected AImageView Control => this;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
@@ -152,71 +147,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-
 			if (e.PropertyName == Image.SourceProperty.PropertyName)
-				UpdateBitmap();
+				this.UpdateBitmap(_element);
 			else if (e.PropertyName == Image.AspectProperty.PropertyName)
 				UpdateAspect();
 
 			ElementPropertyChanged?.Invoke(this, e);
-		}
-
-		async void UpdateBitmap(Image previous = null)
-		{
-			if (Device.IsInvokeRequired)
-				throw new InvalidOperationException("Image Bitmap must not be updated from background thread");
-
-			if (previous != null && Equals(previous.Source, _element.Source))
-				return;
-
-			((IImageController)_element).SetIsLoading(true);
-
-			SkipInvalidate();
-
-			Control.SetImageResource(global::Android.Resource.Color.Transparent);
-
-			ImageSource source = _element.Source;
-			Bitmap bitmap = null;
-			IImageSourceHandler handler;
-
-			if (source != null && (handler = Registrar.Registered.GetHandler<IImageSourceHandler>(source.GetType())) != null)
-			{
-				try
-				{
-					bitmap = await handler.LoadImageAsync(source, Context);
-				}
-				catch (TaskCanceledException)
-				{
-				}
-				catch (IOException ex)
-				{
-					Log.Warning("Xamarin.Forms.Platform.Android.ImageRenderer", "Error updating bitmap: {0}", ex);
-				}
-			}
-
-			if (_element == null || !Equals(_element.Source, source))
-			{
-				bitmap?.Dispose();
-				return;
-			}
-
-			if (!_disposed)
-			{
-				if (bitmap == null && source is FileImageSource)
-					SetImageResource(ResourceManager.GetDrawableByName(((FileImageSource)source).File));
-				else
-					SetImageBitmap(bitmap);
-
-				bitmap?.Dispose();
-
-				((IImageController)_element).SetIsLoading(false);
-				((IVisualElementController)_element).NativeSizeChanged();
-			}
-		}
-
-		void SkipInvalidate()
-		{
-			_skipInvalidate = true;
 		}
 
 		void UpdateAspect()
