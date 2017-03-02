@@ -12,11 +12,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
 	public class VisualElementRenderer : Object, AView.IOnClickListener, AView.IOnTouchListener, IEffectControlProvider
 	{
-		Lazy<GestureDetector> _gestureDetector;
-		PanGestureHandler _panGestureHandler;
-		PinchGestureHandler _pinchGestureHandler;
-		Lazy<ScaleGestureDetector> _scaleDetector;
-		TapGestureHandler _tapGestureHandler;
+		readonly Lazy<GestureDetector> _gestureDetector;
+		readonly PanGestureHandler _panGestureHandler;
+		readonly PinchGestureHandler _pinchGestureHandler;
+		readonly Lazy<ScaleGestureDetector> _scaleDetector;
+		readonly TapGestureHandler _tapGestureHandler;
 
 		bool _clickable;
 		NotifyCollectionChangedEventHandler _collectionChangeHandler;

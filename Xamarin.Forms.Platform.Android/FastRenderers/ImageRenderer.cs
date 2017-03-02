@@ -19,7 +19,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		int? _defaultLabelFor;
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
-
+		AccessibilityThing _accessibilityThing;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -107,14 +107,19 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				_visualElementRenderer = new VisualElementRenderer(this);
 			}
 
+			if (_accessibilityThing == null)
+			{
+				_accessibilityThing = new AccessibilityThing(this);
+			}
+
 			Performance.Stop();
 
 			OnElementChanged(new ElementChangedEventArgs<Image>(oldElement, _element));
 
 			_element?.SendViewInitialized(Control);
 
-			_visualElementRenderer.SetContentDescription();
-			_visualElementRenderer.SetAutomationId();
+			_accessibilityThing.SetContentDescription();
+			_accessibilityThing.SetAutomationId();
 
 		}
 

@@ -110,12 +110,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			// Todo hartez InputTransparent comes from FormsViewGroup, do we need it here?
 			//InputTransparent = Element.InputTransparent;
 
-			OnElementChanged(new ElementChangedEventArgs<Button>(oldElement as Button, Button));
-
 			if (Tracker == null)
 			{
 				SetTracker(new VisualElementTracker(this));
 			}
+
+			OnElementChanged(new ElementChangedEventArgs<Button>(oldElement as Button, Button));
 
 			SendVisualElementInitialized(element, this);
 
