@@ -36,6 +36,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			System.Diagnostics.Debug.WriteLine("Fast Button!");
 			_accessibilityThing = new AccessibilityThing(this);
+			
 			Initialize();
 		}
 
@@ -358,6 +359,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		void Initialize()
 		{
+			// Fixes issues with AppCompatButton elevation (z-index) 
+			StateListAnimator = null;
+
 			SoundEffectsEnabled = false;
 			SetOnClickListener(this);
 			SetOnTouchListener(this);
