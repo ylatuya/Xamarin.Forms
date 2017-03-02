@@ -12,8 +12,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
 	public class VisualElementRenderer : Object, AView.IOnClickListener, AView.IOnTouchListener, IEffectControlProvider
 	{
-		const string GetFromElement = "GetValueFromElement";
-
 		Lazy<GestureDetector> _gestureDetector;
 		PanGestureHandler _panGestureHandler;
 		PinchGestureHandler _pinchGestureHandler;
@@ -22,9 +20,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		bool _clickable;
 		NotifyCollectionChangedEventHandler _collectionChangeHandler;
-		string _defaultContentDescription;
-		bool? _defaultFocusable;
-		string _defaultHint;
+		
 		bool _disposed;
 		InnerGestureListener _gestureListener;
 		IVisualElementRenderer _renderer;
@@ -48,10 +44,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				new Lazy<ScaleGestureDetector>(
 					() => new ScaleGestureDetector(Control.Context, new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted, _pinchGestureHandler.OnPinchEnded), Control.Handler));
 
+			OnElementChanged(this, new VisualElementChangedEventArgs(null, Element));
 		}
 
 		VisualElement Element => _renderer?.Element;
-
+		
 		View View => _renderer?.Element as View;
 
 		AView Control => _renderer?.View;
@@ -87,79 +84,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				OnRegisterEffect(platformEffect);
 		}
 
-		public void SetAutomationId(string id = GetFromElement)
-		{
-			if (Element == null || Control == null)
-				return;
-
-			var value = id;
-			if (value == GetFromElement)
-				value = Element.AutomationId;
-
-			if (!string.IsNullOrEmpty(value))
-				Control.ContentDescription = value;
-		}
-
-		public void SetContentDescription(string contentDescription = GetFromElement)
-		{
-			if (Element == null || Control == null)
-				return;
-
-			if (SetHint())
-				return;
-
-			if (_defaultContentDescription == null)
-				_defaultContentDescription = Control.ContentDescription;
-
-			var value = contentDescription;
-			if (value == GetFromElement)
-				value = string.Join(" ", (string)Element.GetValue(Accessibility.NameProperty), (string)Element.GetValue(Accessibility.HintProperty));
-
-			if (!string.IsNullOrWhiteSpace(value))
-				Control.ContentDescription = value;
-			else
-				Control.ContentDescription = _defaultContentDescription;
-		}
-
-		public void SetFocusable(bool? value = null)
-		{
-			if (Element == null || Control == null)
-				return;
-
-			if (!_defaultFocusable.HasValue)
-				_defaultFocusable = Control.Focusable;
-
-			Control.Focusable = (bool)(value ?? (bool?)Element.GetValue(Accessibility.IsInAccessibleTreeProperty) ?? _defaultFocusable);
-		}
-
-		public bool SetHint(string hint = GetFromElement)
-		{
-			if (Element == null || Control == null)
-				return false;
-
-			var textView = Control as global::Android.Widget.TextView;
-			if (textView == null)
-				return false;
-
-			// Let the specified Title/Placeholder take precedence, but don't set the ContentDescription (won't work anyway)
-			if (((Element as Picker)?.Title ?? (Element as Entry)?.Placeholder) != null)
-				return true;
-
-			if (_defaultHint == null)
-				_defaultHint = textView.Hint;
-
-			var value = hint;
-			if (value == GetFromElement)
-				value = string.Join(". ", (string)Element.GetValue(Accessibility.NameProperty), (string)Element.GetValue(Accessibility.HintProperty));
-
-			if (!string.IsNullOrWhiteSpace(value))
-				textView.Hint = value;
-			else
-				textView.Hint = _defaultHint;
-
-			return true;
-		}
-
 		public void UpdateBackgroundColor(Color? color = null)
 		{
 			if (Element == null || Control == null)
@@ -184,21 +108,26 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			_disposed = true;
 
-			if (_gestureListener != null)
+			if (disposing)
 			{
-				_gestureListener.Dispose();
-				_gestureListener = null;
-			}
-
-			if (_renderer != null)
-			{
-				if (_renderer.Element != null)
+				if (_gestureListener != null)
 				{
-					UnsubscribeGestureRecognizers(Element);
-
+					_gestureListener.Dispose();
+					_gestureListener = null;
 				}
-				_renderer = null;
+
+				if (_renderer != null)
+				{
+					if (_renderer.Element != null)
+					{
+						UnsubscribeGestureRecognizers(Element);
+						// TODO Do we need to unsub the property changed stuff?
+					}
+					_renderer = null;
+				}
 			}
+
+			base.Dispose(disposing);
 		}
 
 		void HandleGestureRecognizerCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
@@ -233,12 +162,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateBackgroundColor();
 			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
 				UpdateInputTransparent();
-			else if (e.PropertyName == Accessibility.HintProperty.PropertyName)
-				SetContentDescription();
-			else if (e.PropertyName == Accessibility.NameProperty.PropertyName)
-				SetContentDescription();
-			else if (e.PropertyName == Accessibility.IsInAccessibleTreeProperty.PropertyName)
-				SetFocusable();
 		}
 
 		void SubscribeGestureRecognizers(VisualElement element)

@@ -20,8 +20,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 	public class ButtonRenderer : AppCompatButton, IVisualElementRenderer, AView.IOnAttachStateChangeListener,
 		AView.IOnFocusChangeListener, IEffectControlProvider, AView.IOnClickListener, AView.IOnTouchListener
 	{
-		string _defaultContentDescription;
-		bool? _defaultFocusable;
 		float _defaultFontSize;
 		string _defaultHint;
 		int? _defaultLabelFor;
@@ -29,6 +27,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		int _imageHeight = -1;
 		bool _isDisposed;
 		TextColorSwitcher _textColorSwitcher;
+		readonly AccessibilityThing _accessibilityThing;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
@@ -36,6 +35,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		public ButtonRenderer() : base(Forms.Context)
 		{
 			System.Diagnostics.Debug.WriteLine("Fast Button!");
+			_accessibilityThing = new AccessibilityThing(this);
 			Initialize();
 		}
 
@@ -121,14 +121,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
 
-			if (!IsNullOrEmpty(element.AutomationId))
-			{
-				SetAutomationId(element.AutomationId);
-			}
-
-			SetContentDescription();
-			SetFocusable();
-
+			_accessibilityThing.SetAutomationId();
+			
 			Performance.Stop();
 		}
 
@@ -247,18 +241,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			// TODO hartez 2017/03/01 15:06:25 InputTransparent again, do we need to worry about this on a button?	
 			//else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
 			//	InputTransparent = Element.InputTransparent;
-			else if (e.PropertyName == Accessibility.HintProperty.PropertyName)
-			{
-				SetContentDescription();
-			}
-			else if (e.PropertyName == Accessibility.NameProperty.PropertyName)
-			{
-				SetContentDescription();
-			}
-			else if (e.PropertyName == Accessibility.IsInAccessibleTreeProperty.PropertyName)
-			{
-				SetFocusable();
-			}
 
 			ElementPropertyChanged?.Invoke(this, e);
 		}
@@ -286,49 +268,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			effect.Container = this;
 			effect.Control = this;
-		}
-
-		protected void SetAutomationId(string id)
-		{
-			ContentDescription = id;
-		}
-
-		protected void SetContentDescription()
-		{
-			if (Element == null)
-			{
-				return;
-			}
-
-			if (SetHint())
-			{
-				return;
-			}
-
-			if (_defaultContentDescription == null)
-			{
-				_defaultContentDescription = ContentDescription;
-			}
-
-			string elemValue = Join(" ", (string)Element.GetValue(Accessibility.NameProperty),
-				(string)Element.GetValue(Accessibility.HintProperty));
-
-			ContentDescription = !IsNullOrWhiteSpace(elemValue) ? elemValue : _defaultContentDescription;
-		}
-
-		protected void SetFocusable()
-		{
-			if (Element == null)
-			{
-				return;
-			}
-
-			if (!_defaultFocusable.HasValue)
-			{
-				_defaultFocusable = Focusable;
-			}
-
-			Focusable = (bool)((bool?)Element.GetValue(Accessibility.IsInAccessibleTreeProperty) ?? _defaultFocusable);
 		}
 
 		protected bool SetHint()
