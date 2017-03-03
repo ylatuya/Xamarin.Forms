@@ -25,12 +25,14 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
-		Accessibilitizer _accessibilitizer;
+		readonly Accessibilitizer _accessibilitizer;
 		bool _wasFormatted;
 
 		public LabelRenderer() : base(Forms.Context)
 		{
 			_labelTextColorDefault = TextColors;
+			_visualElementRenderer = new VisualElementRenderer(this);
+			_accessibilitizer = new Accessibilitizer(this);
 		}
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
@@ -129,7 +131,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && !_disposed)
+			if (_disposed)
+				return;
+
+			_disposed = true;
+
+			if (disposing)
 			{
 				_disposed = true;
 
@@ -150,6 +157,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					_visualElementRenderer.Dispose();
 					_visualElementRenderer = null;
 				}
+
+				_accessibilitizer?.Dispose();
 
 				if (Element != null)
 				{
@@ -173,8 +182,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			{
 				if (_visualElementTracker == null)
 				{
-					_visualElementRenderer = new VisualElementRenderer(this);
-					_accessibilitizer = new Accessibilitizer(this);
 					_visualElementTracker = new VisualElementTracker(this);
 					_visualElementPackager = new VisualElementPackager(this);
 					_visualElementPackager.Load();

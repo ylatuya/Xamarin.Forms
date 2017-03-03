@@ -43,8 +43,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			_scaleDetector =
 				new Lazy<ScaleGestureDetector>(
 					() => new ScaleGestureDetector(Control.Context, new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted, _pinchGestureHandler.OnPinchEnded), Control.Handler));
-
-			OnElementChanged(this, new VisualElementChangedEventArgs(null, Element));
 		}
 
 		VisualElement Element => _renderer?.Element;
