@@ -15,6 +15,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
 		Accessibilitizer _accessibilitizer;
+		GestureManager _gestureManager;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -39,6 +40,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				_visualElementRenderer.Dispose();
 				_visualElementRenderer = null;
 			}
+
+			_accessibilitizer?.Dispose();
+			_gestureManager?.Dispose();
 
 			if (_element != null)
 				_element.PropertyChanged -= OnElementPropertyChanged;
@@ -104,6 +108,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			if (_accessibilitizer == null)
 			{
 				_accessibilitizer = new Accessibilitizer(this);
+			}
+
+			if (_gestureManager == null)
+			{
+				_gestureManager = new GestureManager(this);
 			}
 
 			Performance.Stop();

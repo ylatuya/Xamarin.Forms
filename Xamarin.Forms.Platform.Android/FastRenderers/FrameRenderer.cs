@@ -1,9 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using Android.Content;
-using Android.Support.V4.View;
 using Android.Support.V7.Widget;
 using Android.Views;
 using AColor = Android.Graphics.Color;
@@ -11,46 +8,22 @@ using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class FrameRenderer : CardView, IVisualElementRenderer, AView.IOnClickListener, AView.IOnTouchListener
+	public class FrameRenderer : CardView, IVisualElementRenderer
 	{
-		readonly Lazy<GestureDetector> _gestureDetector;
-		readonly PanGestureHandler _panGestureHandler;
-		readonly PinchGestureHandler _pinchGestureHandler;
-		readonly Lazy<ScaleGestureDetector> _scaleDetector;
-		readonly TapGestureHandler _tapGestureHandler;
-		readonly MotionEventHelper _motionEventHelper = new MotionEventHelper();
-
 		float _defaultElevation = -1f;
 		float _defaultCornerRadius = -1f;
 		int? _defaultLabelFor;
-
-		bool _clickable;
 		bool _disposed;
 		Frame _element;
-		InnerGestureListener _gestureListener;
 		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
-		NotifyCollectionChangedEventHandler _collectionChangeHandler;
+		readonly GestureManager _gestureManager;
 
 		bool _inputTransparent;
-		bool _isEnabled;
 
 		public FrameRenderer() : base(Forms.Context)
 		{
-			_tapGestureHandler = new TapGestureHandler(() => Element);
-			_panGestureHandler = new PanGestureHandler(() => Element, Context.FromPixels);
-			_pinchGestureHandler = new PinchGestureHandler(() => Element);
-
-			_gestureDetector =
-				new Lazy<GestureDetector>(
-					() =>
-					new GestureDetector(
-						_gestureListener =
-						new InnerGestureListener(_tapGestureHandler.OnTap, _tapGestureHandler.TapGestureRecognizers, _panGestureHandler.OnPan, _panGestureHandler.OnPanStarted, _panGestureHandler.OnPanComplete)));
-
-			_scaleDetector =
-				new Lazy<ScaleGestureDetector>(
-					() => new ScaleGestureDetector(Context, new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted, _pinchGestureHandler.OnPinchEnded), Handler));
+			_gestureManager = new GestureManager(this);
 		}
 
 		protected CardView Control => this;
@@ -68,56 +41,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 				OnElementChanged(new ElementChangedEventArgs<Frame>(oldElement, _element));
 
-				if (_element != null)
-					_element.SendViewInitialized(Control);
+				_element?.SendViewInitialized(Control);
 			}
-		}
-
-		public override bool OnTouchEvent(MotionEvent e)
-		{
-			if (_inputTransparent)
-			{
-				return false;
-			}
-
-			if (Element.GestureRecognizers.Count == 0)
-			{
-				return _motionEventHelper.HandleMotionEvent(Parent);
-			}
-
-			return base.OnTouchEvent(e);
-		}
-
-		void IOnClickListener.OnClick(AView v)
-		{
-			_tapGestureHandler.OnSingleClick();
-		}
-
-		bool IOnTouchListener.OnTouch(AView v, MotionEvent e)
-		{
-			if (!_isEnabled)
-				return true;
-
-			if (_inputTransparent)
-				return false;
-
-			var handled = false;
-			if (_pinchGestureHandler.IsPinchSupported)
-			{
-				if (!_scaleDetector.IsValueCreated)
-					ScaleGestureDetectorCompat.SetQuickScaleEnabled(_scaleDetector.Value, true);
-				handled = _scaleDetector.Value.OnTouchEvent(e);
-			}
-			
-			if (_gestureDetector.IsValueCreated && _gestureDetector.Value.Handle == IntPtr.Zero)
-			{
-				// This gesture detector has already been disposed, probably because it's on a cell which is going away
-				return handled;
-			}
-
-			// It's very important that the gesture detection happen first here
-			// if we check handled first, we might short-circuit and never check for tap/pan
-			return _gestureDetector.Value.OnTouchEvent(e) || handled; 
 		}
 
 		VisualElement IVisualElementRenderer.Element => Element;
@@ -164,15 +89,14 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && !_disposed)
-			{
-				_disposed = true;
+			if (_disposed)
+				return;
 
-				if (_gestureListener != null)
-				{
-					_gestureListener.Dispose();
-					_gestureListener = null;
-				}
+			_disposed = true;
+
+			if (disposing)
+			{
+				_gestureManager?.Dispose();
 
 				if (_visualElementTracker != null)
 				{
@@ -196,7 +120,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				if (Element != null)
 				{
 					Element.PropertyChanged -= OnElementPropertyChanged;
-					UnsubscribeGestureRecognizers(Element);
 				}
 				
 			}
@@ -211,18 +134,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			if (e.OldElement != null)
 			{
 				e.OldElement.PropertyChanged -= OnElementPropertyChanged;
-				UnsubscribeGestureRecognizers(e.OldElement);
 			}
 
 			if (e.NewElement != null)
 			{
 				if (_visualElementTracker == null)
 				{
-					SetOnClickListener(this);
-					SetOnTouchListener(this);
-
-					UpdateGestureRecognizers(true);
-
 					_visualElementTracker = new VisualElementTracker(this);
 					_visualElementPackager = new VisualElementPackager(this);
 					_visualElementPackager.Load();
@@ -233,11 +150,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateBackgroundColor();
 				UpdateCornerRadius();
 				UpdateInputTransparent();
-				UpdateIsEnabled();
-				SubscribeGestureRecognizers(e.NewElement);
 			}
-
-			_motionEventHelper.UpdateElement(e.NewElement);
 		}
 
 		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
@@ -251,14 +164,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				var visualElement = children[i] as VisualElement;
 				if (visualElement == null)
 					continue;
-				IVisualElementRenderer renderer = Android.Platform.GetRenderer(visualElement);
+				IVisualElementRenderer renderer = Platform.GetRenderer(visualElement);
 				renderer?.UpdateLayout();
 			}
-		}
-
-		void HandleGestureRecognizerCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
-		{
-			UpdateGestureRecognizers();
 		}
 
 		void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -273,13 +181,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateCornerRadius();
 			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
 				UpdateInputTransparent();
-			else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-				UpdateIsEnabled();
-		}
-
-		void UpdateIsEnabled()
-		{
-			_isEnabled = Element.IsEnabled;
 		}
 
 		void UpdateInputTransparent()
@@ -287,61 +188,10 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			_inputTransparent = Element.InputTransparent;
 		}
 
-		void SubscribeGestureRecognizers(VisualElement element)
-		{
-			var view = element as View;
-			if (view == null)
-				return;
-
-			if (_collectionChangeHandler == null)
-				_collectionChangeHandler = HandleGestureRecognizerCollectionChanged;
-
-			var observableCollection = (ObservableCollection<IGestureRecognizer>)view.GestureRecognizers;
-			if (observableCollection != null)
-			{
-				observableCollection.CollectionChanged += _collectionChangeHandler;
-			}
-		}
-
-		void UnsubscribeGestureRecognizers(VisualElement element)
-		{
-			var view = element as View;
-			if (view == null || _collectionChangeHandler == null)
-				return;
-
-			var observableCollection = (ObservableCollection<IGestureRecognizer>)view.GestureRecognizers;
-			if (observableCollection != null)
-			{
-				observableCollection.CollectionChanged -= _collectionChangeHandler;
-			}
-		}
-
 		void UpdateBackgroundColor()
 		{
 			Color bgColor = Element.BackgroundColor;
 			SetCardBackgroundColor(bgColor.IsDefault ? AColor.White : bgColor.ToAndroid());
-		}
-
-		void UpdateClickable(bool force = false)
-		{
-			var view = Element as View;
-			if (view == null)
-				return;
-
-			bool newValue = view.ShouldBeMadeClickable();
-		    if (force || _clickable != newValue)
-		    {
-		        Clickable = newValue;
-		        _clickable = newValue;
-		    }
-		}
-
-		void UpdateGestureRecognizers(bool forceClick = false)
-		{
-			if (Element == null)
-				return;
-
-			UpdateClickable(forceClick);
 		}
 
 		void UpdateShadow()

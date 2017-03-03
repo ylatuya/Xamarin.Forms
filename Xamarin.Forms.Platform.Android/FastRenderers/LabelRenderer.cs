@@ -27,11 +27,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		VisualElementRenderer _visualElementRenderer;
 		readonly Accessibilitizer _accessibilitizer;
 		bool _wasFormatted;
+		GestureManager _gestureManager;
 
 		public LabelRenderer() : base(Forms.Context)
 		{
 			_labelTextColorDefault = TextColors;
 			_visualElementRenderer = new VisualElementRenderer(this);
+			_gestureManager = new GestureManager(this);
 			_accessibilitizer = new Accessibilitizer(this);
 		}
 
@@ -158,6 +160,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					_visualElementRenderer = null;
 				}
 
+				_gestureManager?.Dispose();
 				_accessibilitizer?.Dispose();
 
 				if (Element != null)
