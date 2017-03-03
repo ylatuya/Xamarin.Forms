@@ -4,7 +4,7 @@ using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class AccessibilityThing : IDisposable // TODO Thnk of better name
+	internal class Accessibilitizer : IDisposable // TODO Think of better name
 	{
 		const string GetFromElement = "GetValueFromElement";
 		string _defaultContentDescription;
@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		IVisualElementRenderer _renderer;
 
-		public AccessibilityThing(IVisualElementRenderer renderer)
+		public Accessibilitizer(IVisualElementRenderer renderer)
 		{
 			_renderer = renderer;
 			_renderer.ElementPropertyChanged += OnElementPropertyChanged;
@@ -31,7 +31,25 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			GC.SuppressFinalize(this);
 		}
 
-		public void SetAutomationId(string id = GetFromElement)
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_disposed)
+			{
+				return;
+			}
+
+			_disposed = true;
+
+			if (_renderer != null)
+			{
+				_renderer.ElementChanged -= OnElementChanged;
+				_renderer.ElementPropertyChanged -= OnElementPropertyChanged;
+
+				_renderer = null;
+			}
+		}
+
+		void SetAutomationId(string id = GetFromElement)
 		{
 			if (Element == null || Control == null)
 			{
@@ -50,7 +68,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 		}
 
-		public void SetContentDescription(string contentDescription = GetFromElement)
+		void SetContentDescription(string contentDescription = GetFromElement)
 		{
 			if (Element == null || Control == null)
 			{
@@ -84,7 +102,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 		}
 
-		public void SetFocusable(bool? value = null)
+		void SetFocusable(bool? value = null)
 		{
 			if (Element == null || Control == null)
 			{
@@ -100,7 +118,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				(bool)(value ?? (bool?)Element.GetValue(Accessibility.IsInAccessibleTreeProperty) ?? _defaultFocusable);
 		}
 
-		public bool SetHint(string hint = GetFromElement)
+		bool SetHint(string hint = GetFromElement)
 		{
 			if (Element == null || Control == null)
 			{
@@ -143,22 +161,21 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			return true;
 		}
 
-		protected virtual void Dispose(bool disposing)
+		void SetLabeledBy()
 		{
-			if (_disposed)
-			{
+			if (Element == null || Control == null)
 				return;
-			}
 
-			_disposed = true;
+			var elemValue = (VisualElement)Element.GetValue(Accessibility.LabeledByProperty);
 
-			if (_renderer != null)
+			if (elemValue != null)
 			{
-				if (_renderer.Element != null)
-				{
-					// TODO Should we unsub propertychanged here?
-				}
-				_renderer = null;
+				var id = Control.Id;
+				if (id == -1)
+					id = Control.Id = FormsAppCompatActivity.GetUniqueId();
+
+				var renderer = elemValue?.GetRenderer();
+				renderer?.SetLabelFor(id);
 			}
 		}
 
@@ -173,6 +190,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			{
 				e.NewElement.PropertyChanged += OnElementPropertyChanged;
 			}
+
+			SetHint();
+			SetAutomationId();
+			SetContentDescription();
+			SetFocusable();
+			SetLabeledBy();
 		}
 
 		void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -188,6 +211,10 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			else if (e.PropertyName == Accessibility.IsInAccessibleTreeProperty.PropertyName)
 			{
 				SetFocusable();
+			}
+			else if (e.PropertyName == Accessibility.LabeledByProperty.PropertyName)
+			{
+				SetLabeledBy();
 			}
 		}
 	}

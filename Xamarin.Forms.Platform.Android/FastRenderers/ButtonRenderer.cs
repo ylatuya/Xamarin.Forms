@@ -27,7 +27,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		int _imageHeight = -1;
 		bool _isDisposed;
 		TextColorSwitcher _textColorSwitcher;
-		readonly AccessibilityThing _accessibilityThing;
+		readonly Accessibilitizer _accessibilitizer;
+		VisualElementTracker _tracker;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
@@ -35,7 +36,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		public ButtonRenderer() : base(Forms.Context)
 		{
 			System.Diagnostics.Debug.WriteLine("Fast Button!");
-			_accessibilityThing = new AccessibilityThing(this);
+			_accessibilitizer = new Accessibilitizer(this);
 			
 			Initialize();
 		}
@@ -111,8 +112,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			// Todo hartez InputTransparent comes from FormsViewGroup, do we need it here?
 			//InputTransparent = Element.InputTransparent;
 
-			if (Tracker == null)
+			if (_tracker == null)
 			{
+				// Can't set up the tracker in the constructor because it access the Element (for now)
 				SetTracker(new VisualElementTracker(this));
 			}
 
@@ -121,8 +123,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			SendVisualElementInitialized(element, this);
 
 			EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
-
-			_accessibilityThing.SetAutomationId();
 			
 			Performance.Stop();
 		}
@@ -137,12 +137,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			LabelFor = (int)(id ?? _defaultLabelFor);
 		}
 
-		public VisualElementTracker Tracker { get; private set; }
+		VisualElementTracker IVisualElementRenderer.Tracker => _tracker;
 
 		void IVisualElementRenderer.UpdateLayout()
 		{
 			Performance.Start();
-			Tracker?.UpdateLayout();
+			_tracker?.UpdateLayout();
 			Performance.Stop();
 		}
 
@@ -164,14 +164,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				SetOnClickListener(null);
 				SetOnTouchListener(null);
 				RemoveOnAttachStateChangeListener(this);
-				Tag = null;
-				_textColorSwitcher = null;
 
-				if (Tracker != null)
-				{
-					Tracker.Dispose();
-					Tracker = null;
-				}
+				_accessibilitizer?.Dispose();
+				_tracker?.Dispose();
 
 				if (Element != null)
 				{
@@ -191,7 +186,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			if (e.NewElement != null)
 			{
-				SetLabeledBy();
 				UpdateAll();
 				UpdateBackgroundColor();
 			}
@@ -225,17 +219,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			{
 				UpdateText();
 			}
-
-			if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+			else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
 			{
 				UpdateIsEnabled();
 			}
-			else if (e.PropertyName == Accessibility.LabeledByProperty.PropertyName)
-			{
-				SetLabeledBy();
-			}
-
-			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
+			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 			{
 				UpdateBackgroundColor();
 			}
@@ -293,7 +281,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		protected void SetTracker(VisualElementTracker tracker)
 		{
-			Tracker = tracker;
+			_tracker = tracker;
 		}
 
 		protected void UpdateBackgroundColor()
@@ -373,25 +361,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			_textColorSwitcher = new TextColorSwitcher(TextColors);
 				// TODO hartez 2017/03/01 10:04:24 Possibly this shouldn't be initialized until a text color update is made	
-		}
-
-		void SetLabeledBy()
-		{
-			var elemValue = (VisualElement)Element?.GetValue(Accessibility.LabeledByProperty);
-
-			if (elemValue == null)
-			{
-				return;
-			}
-
-			int id = Id;
-			if (id == -1)
-			{
-				id = Id = FormsAppCompatActivity.GetUniqueId();
-			}
-
-			IVisualElementRenderer renderer = elemValue.GetRenderer();
-			renderer?.SetLabelFor(id);
 		}
 
 		void UpdateAll()

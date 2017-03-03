@@ -20,7 +20,8 @@
     <RestorePackages>true</RestorePackages>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <AndroidTlsProvider></AndroidTlsProvider>
+    <AndroidTlsProvider>
+    </AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -101,7 +102,7 @@
     </Compile>
     <Compile Include="AndroidApplicationLifecycleState.cs" />
     <Compile Include="AndroidTitleBarVisibility.cs" />
-    <Compile Include="FastRenderers\AccessibilityThing.cs" />
+    <Compile Include="FastRenderers\Accessibilitizer.cs" />
     <Compile Include="FastRenderers\ButtonRenderer.cs" />
     <Compile Include="AppCompat\FormsViewPager.cs" />
     <Compile Include="AppCompat\FragmentContainer.cs" />

@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		int? _defaultLabelFor;
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
-		AccessibilityThing _accessibilityThing;
+		Accessibilitizer _accessibilitizer;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -101,9 +101,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				_visualElementRenderer = new VisualElementRenderer(this);
 			}
 
-			if (_accessibilityThing == null)
+			if (_accessibilitizer == null)
 			{
-				_accessibilityThing = new AccessibilityThing(this);
+				_accessibilitizer = new Accessibilitizer(this);
 			}
 
 			Performance.Stop();
@@ -111,9 +111,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			OnElementChanged(new ElementChangedEventArgs<Image>(oldElement, _element));
 
 			_element?.SendViewInitialized(Control);
-
-			_accessibilityThing.SetContentDescription();
-			_accessibilityThing.SetAutomationId();
 		}
 
 		void IVisualElementRenderer.SetLabelFor(int? id)

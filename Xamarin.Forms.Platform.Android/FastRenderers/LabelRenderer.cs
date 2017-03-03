@@ -25,7 +25,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
-		AccessibilityThing _accessibilityThing;
+		Accessibilitizer _accessibilitizer;
 		bool _wasFormatted;
 
 		public LabelRenderer() : base(Forms.Context)
@@ -111,7 +111,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				throw new ArgumentException("Element must be of type Label");
 
 			Element = label;
-			_accessibilityThing.SetAutomationId();
 		}
 
 		void IVisualElementRenderer.SetLabelFor(int? id)
@@ -175,7 +174,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				if (_visualElementTracker == null)
 				{
 					_visualElementRenderer = new VisualElementRenderer(this);
-					_accessibilityThing = new AccessibilityThing(this);
+					_accessibilitizer = new Accessibilitizer(this);
 					_visualElementTracker = new VisualElementTracker(this);
 					_visualElementPackager = new VisualElementPackager(this);
 					_visualElementPackager.Load();
