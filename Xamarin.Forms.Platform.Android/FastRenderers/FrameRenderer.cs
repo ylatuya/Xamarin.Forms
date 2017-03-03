@@ -8,7 +8,7 @@ using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class FrameRenderer : CardView, IVisualElementRenderer
+	public class FrameRenderer : CardView, IVisualElementRenderer, IEffectControlProvider
 	{
 		float _defaultElevation = -1f;
 		float _defaultCornerRadius = -1f;
@@ -18,12 +18,17 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
 		readonly GestureManager _gestureManager;
+		readonly EffectControlProvider _effectControlProvider;
+
+		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
 
 		bool _inputTransparent;
 
 		public FrameRenderer() : base(Forms.Context)
 		{
 			_gestureManager = new GestureManager(this);
+			_effectControlProvider = new EffectControlProvider(this);
 		}
 
 		protected CardView Control => this;
@@ -46,9 +51,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		}
 
 		VisualElement IVisualElementRenderer.Element => Element;
-
-		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
-		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+		ViewGroup IVisualElementRenderer.ViewGroup => this;
+		AView IVisualElementRenderer.View => this;
 
 		SizeRequest IVisualElementRenderer.GetDesiredSize(int widthConstraint, int heightConstraint)
 		{
@@ -83,9 +87,10 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			tracker?.UpdateLayout();
 		}
 
-		ViewGroup IVisualElementRenderer.ViewGroup => this;
-
-		AView IVisualElementRenderer.View => this;
+		void IEffectControlProvider.RegisterEffect(Effect effect)
+		{
+			_effectControlProvider.RegisterEffect(effect);
+		}
 
 		protected override void Dispose(bool disposing)
 		{

@@ -149,14 +149,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					(string)Element.GetValue(Accessibility.HintProperty));
 			}
 
-			if (!string.IsNullOrWhiteSpace(value))
-			{
-				textView.Hint = value;
-			}
-			else
-			{
-				textView.Hint = _defaultHint;
-			}
+			textView.Hint = !string.IsNullOrWhiteSpace(value) ? value : _defaultHint;
 
 			return true;
 		}

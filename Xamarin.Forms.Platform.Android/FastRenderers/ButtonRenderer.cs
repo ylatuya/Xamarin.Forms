@@ -21,13 +21,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		AView.IOnFocusChangeListener, IEffectControlProvider, AView.IOnClickListener, AView.IOnTouchListener
 	{
 		float _defaultFontSize;
-		string _defaultHint;
 		int? _defaultLabelFor;
 		Typeface _defaultTypeface;
 		int _imageHeight = -1;
 		bool _isDisposed;
 		TextColorSwitcher _textColorSwitcher;
 		readonly Accessibilitizer _accessibilitizer;
+		readonly EffectControlProvider _effectControlProvider;
 		VisualElementTracker _tracker;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
@@ -37,20 +37,42 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			System.Diagnostics.Debug.WriteLine("Fast Button!");
 			_accessibilitizer = new Accessibilitizer(this);
-			
+			_effectControlProvider = new EffectControlProvider(this);
+
 			Initialize();
 		}
 
 		public VisualElement Element => Button;
+		AView IVisualElementRenderer.View => this;
+		ViewGroup IVisualElementRenderer.ViewGroup => null;
+		VisualElementTracker IVisualElementRenderer.Tracker => _tracker;
+
 		Button Button { get; set; }
+
+		public void OnClick(AView v)
+		{
+			((IButtonController)Button)?.SendClicked();
+		}
+
+		public bool OnTouch(AView v, MotionEvent e)
+		{
+			var buttonController = Element as IButtonController;
+			switch (e.Action)
+			{
+				case AMotionEventActions.Down:
+					buttonController?.SendPressed();
+					break;
+				case AMotionEventActions.Up:
+					buttonController?.SendReleased();
+					break;
+			}
+
+			return false;
+		}
 
 		void IEffectControlProvider.RegisterEffect(Effect effect)
 		{
-			var platformEffect = effect as PlatformEffect;
-			if (platformEffect != null)
-			{
-				OnRegisterEffect(platformEffect);
-			}
+			_effectControlProvider.RegisterEffect(effect);
 		}
 
 		void IOnAttachStateChangeListener.OnViewAttachedToWindow(AView attachedView)
@@ -137,18 +159,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			LabelFor = (int)(id ?? _defaultLabelFor);
 		}
 
-		VisualElementTracker IVisualElementRenderer.Tracker => _tracker;
-
 		void IVisualElementRenderer.UpdateLayout()
 		{
 			Performance.Start();
 			_tracker?.UpdateLayout();
 			Performance.Stop();
 		}
-
-		AView IVisualElementRenderer.View => this;
-
-		ViewGroup IVisualElementRenderer.ViewGroup => null;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -251,32 +267,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 
 			base.OnLayout(changed, l, t, r, b);
-		}
-
-		protected virtual void OnRegisterEffect(PlatformEffect effect)
-		{
-			effect.Container = this;
-			effect.Control = this;
-		}
-
-		protected bool SetHint()
-		{
-			if (Element == null)
-			{
-				return false;
-			}
-
-			if (_defaultHint == null)
-			{
-				_defaultHint = Hint;
-			}
-
-			string elemValue = Join(". ", (string)Element.GetValue(Accessibility.NameProperty),
-				(string)Element.GetValue(Accessibility.HintProperty));
-
-			Hint = !IsNullOrWhiteSpace(elemValue) ? elemValue : _defaultHint;
-
-			return true;
 		}
 
 		protected void SetTracker(VisualElementTracker tracker)
@@ -495,27 +485,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			}
 
 			_textColorSwitcher?.UpdateTextColor(this, Button.TextColor);
-		}
-
-		public void OnClick(AView v)
-		{
-			((IButtonController)Button)?.SendClicked();
-		}
-
-		public bool OnTouch(AView v, MotionEvent e)
-		{
-			var buttonController = Element as IButtonController;
-			switch (e.Action)
-			{
-				case AMotionEventActions.Down:
-					buttonController?.SendPressed();
-					break;
-				case AMotionEventActions.Up:
-					buttonController?.SendReleased();
-					break;
-			}
-			
-			return false;
 		}
 	}
 }

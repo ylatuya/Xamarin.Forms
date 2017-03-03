@@ -106,6 +106,7 @@
     <Compile Include="FastRenderers\ButtonRenderer.cs" />
     <Compile Include="AppCompat\FormsViewPager.cs" />
     <Compile Include="AppCompat\FragmentContainer.cs" />
+    <Compile Include="FastRenderers\EffectControlProvider.cs" />
     <Compile Include="FastRenderers\FrameRenderer.cs" />
     <Compile Include="AppCompat\IManageFragments.cs" />
     <Compile Include="AppCompat\MasterDetailContainer.cs" />

@@ -1,38 +1,37 @@
+using System;
 using System.ComponentModel;
 using AView = Android.Views.View;
 using Object = Java.Lang.Object;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class VisualElementRenderer : Object, IEffectControlProvider
+	// TODO hartez 2017/03/03 14:11:17 It's weird that this class is called VisualElementRenderer but it doesn't implement that interface. The name should probably be different.
+	public class VisualElementRenderer : IDisposable, IEffectControlProvider
 	{
 		bool _disposed;
 		
 		IVisualElementRenderer _renderer;
+		readonly GestureManager _gestureManager;
+		readonly Accessibilitizer _accessibilitizer;
+		readonly EffectControlProvider _effectControlProvider;
 
 		public VisualElementRenderer(IVisualElementRenderer renderer)
 		{
 			_renderer = renderer;
 			_renderer.ElementPropertyChanged += OnElementPropertyChanged;
 			_renderer.ElementChanged += OnElementChanged;
+			_gestureManager = new GestureManager(_renderer);
+			_accessibilitizer = new Accessibilitizer(_renderer);
+			_effectControlProvider = new EffectControlProvider(_renderer?.View);
 		}
 
 		VisualElement Element => _renderer?.Element;
 		
 		AView Control => _renderer?.View;
 
-		public void OnRegisterEffect(PlatformEffect effect)
-		{
-			effect.Control = Control;
-			//TODO: is this crazy?
-			effect.Container = Control;
-		}
-
 		void IEffectControlProvider.RegisterEffect(Effect effect)
 		{
-			var platformEffect = effect as PlatformEffect;
-			if (platformEffect != null)
-				OnRegisterEffect(platformEffect);
+			_effectControlProvider.RegisterEffect(effect);
 		}
 
 		public void UpdateBackgroundColor(Color? color = null)
@@ -52,7 +51,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			//InputTransparent = Element.InputTransparent;
 		}
 
-		protected override void Dispose(bool disposing)
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected void Dispose(bool disposing)
 		{
 			if (_disposed)
 				return;
@@ -61,6 +66,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			if (disposing)
 			{
+				_gestureManager?.Dispose();
+				_accessibilitizer?.Dispose();
+
 				if (_renderer != null)
 				{
 					_renderer.ElementChanged -= OnElementChanged;
@@ -68,8 +76,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					_renderer = null;
 				}
 			}
-
-			base.Dispose(disposing);
 		}
 
 		void OnElementChanged(object sender, VisualElementChangedEventArgs e)

@@ -15,7 +15,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		int? _defaultLabelFor;
 		bool _disposed;
 		Label _element;
-		ColorStateList _labelTextColorDefault;
+		readonly ColorStateList _labelTextColorDefault;
 		int _lastConstraintHeight;
 		int _lastConstraintWidth;
 		SizeRequest? _lastSizeRequest;
@@ -25,16 +25,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
-		readonly Accessibilitizer _accessibilitizer;
+		
 		bool _wasFormatted;
-		GestureManager _gestureManager;
 
 		public LabelRenderer() : base(Forms.Context)
 		{
 			_labelTextColorDefault = TextColors;
 			_visualElementRenderer = new VisualElementRenderer(this);
-			_gestureManager = new GestureManager(this);
-			_accessibilitizer = new Accessibilitizer(this);
 		}
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
@@ -159,9 +156,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					_visualElementRenderer.Dispose();
 					_visualElementRenderer = null;
 				}
-
-				_gestureManager?.Dispose();
-				_accessibilitizer?.Dispose();
 
 				if (Element != null)
 				{
