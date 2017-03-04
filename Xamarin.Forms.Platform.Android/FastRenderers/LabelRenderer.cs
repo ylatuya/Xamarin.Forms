@@ -22,7 +22,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		float _lastTextSize = -1f;
 		Typeface _lastTypeface;
 		Color _lastUpdateColor = Color.Default;
-		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
 		VisualElementRenderer _visualElementRenderer;
 		
@@ -145,12 +144,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 					_visualElementTracker = null;
 				}
 
-				if (_visualElementPackager != null)
-				{
-					_visualElementPackager.Dispose();
-					_visualElementPackager = null;
-				}
-
 				if (_visualElementRenderer != null)
 				{
 					_visualElementRenderer.Dispose();
@@ -180,8 +173,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				if (_visualElementTracker == null)
 				{
 					_visualElementTracker = new VisualElementTracker(this);
-					_visualElementPackager = new VisualElementPackager(this);
-					_visualElementPackager.Load();
 				}
 
 				e.NewElement.PropertyChanged += OnElementPropertyChanged;

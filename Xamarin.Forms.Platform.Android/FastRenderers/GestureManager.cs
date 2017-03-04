@@ -50,6 +50,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 						new ScaleGestureDetector(Control.Context,
 							new InnerScaleListener(_pinchGestureHandler.OnPinch, _pinchGestureHandler.OnPinchStarted,
 								_pinchGestureHandler.OnPinchEnded), Control.Handler));
+
+			Control.SetOnClickListener(this);
+			Control.SetOnTouchListener(this);
 		}
 
 		void OnElementChanged(object sender, VisualElementChangedEventArgs e)
@@ -61,8 +64,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			if (e.NewElement != null)
 			{
-				Control.SetOnClickListener(this);
-				Control.SetOnTouchListener(this);
 				UpdateGestureRecognizers(true);
 				SubscribeGestureRecognizers(e.NewElement);
 			}
