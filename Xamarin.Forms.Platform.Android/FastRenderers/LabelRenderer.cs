@@ -5,12 +5,11 @@ using Android.Graphics;
 using Android.Text;
 using Android.Util;
 using Android.Views;
-using Android.Widget;
 using AView = Android.Views.View;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	public class LabelRenderer : TextView, IVisualElementRenderer
+	public class LabelRenderer : FormsTextView, IVisualElementRenderer
 	{
 		int? _defaultLabelFor;
 		bool _disposed;
@@ -44,8 +43,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		ViewGroup IVisualElementRenderer.ViewGroup => null;
 
-		protected TextView Control => this;
-
 		protected Label Element
 		{
 			get { return _element; }
@@ -60,7 +57,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				OnElementChanged(new ElementChangedEventArgs<Label>(oldElement, _element));
 
 				if (_element != null)
-					_element.SendViewInitialized(Control);
+					_element.SendViewInitialized(this);
 			}
 		}
 
@@ -177,7 +174,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 				e.NewElement.PropertyChanged += OnElementPropertyChanged;
 
-				(Control as FormsTextView)?.SkipNextInvalidate();
+				SkipNextInvalidate();
 				UpdateText();
 				if (e.OldElement?.LineBreakMode != e.NewElement.LineBreakMode)
 					UpdateLineBreakMode();
