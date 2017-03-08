@@ -31,6 +31,8 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		VisualElementTracker _visualElementTracker;
 		NotifyCollectionChangedEventHandler _collectionChangeHandler;
 
+		bool _inputTransparent;
+
 		public FrameRenderer() : base(Forms.Context)
 		{
 			_tapGestureHandler = new TapGestureHandler(() => Element);
@@ -69,6 +71,16 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			}
 		}
 
+		public override bool OnTouchEvent(MotionEvent e)
+		{
+			if (_inputTransparent)
+			{
+				return false;
+			}
+
+			return base.OnTouchEvent(e);
+		}
+
 		void IOnClickListener.OnClick(AView v)
 		{
 			_tapGestureHandler.OnSingleClick();
@@ -83,7 +95,6 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 					ScaleGestureDetectorCompat.SetQuickScaleEnabled(_scaleDetector.Value, true);
 				handled = _scaleDetector.Value.OnTouchEvent(e);
 			}
-
 			if (_gestureDetector.IsValueCreated && _gestureDetector.Value.Handle == IntPtr.Zero)
 			{
 				// This gesture detector has already been disposed, probably because it's on a cell which is going away
@@ -202,6 +213,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				UpdateShadow();
 				UpdateBackgroundColor();
 				UpdateCornerRadius();
+				UpdateInputTransparent();
 				SubscribeGestureRecognizers(e.NewElement);
 			}
 		}
@@ -235,6 +247,13 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				UpdateBackgroundColor();
 			else if (e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
 				UpdateCornerRadius();
+			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
+				UpdateInputTransparent();
+		}
+
+		void UpdateInputTransparent()
+		{
+			_inputTransparent = Element.InputTransparent;
 		}
 
 		void SubscribeGestureRecognizers(VisualElement element)
