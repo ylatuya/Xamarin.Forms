@@ -131,23 +131,23 @@ namespace Xamarin.Forms.Controls
 					{
 						var target = _DataSource[i];
 
-						Device.OnPlatform(
-							iOS: () =>
-							{
-								if (typeof(T) == typeof(MyViewCell))
-									target.Text = "I am an exceptionally long string that should cause the label to wrap, thus increasing the size of the cell such that the entirety of the string is readable by human eyes. Hurrah.";
-								else if (strategy == ListViewCachingStrategy.RetainElement)
-									target.Text = "Look, I'm taller!";
-								else
-									target.Text = $"I'm only taller in {ListViewCachingStrategy.RetainElement} mode. :(";
-							},
-							Default: () =>
-							{
-								if (typeof(T) == typeof(MyViewCell))
-									target.Text = "I am an exceptionally long string that should cause the label to wrap, thus increasing the size of the cell such that the entirety of the string is readable by human eyes. Hurrah.";
-								else
-									target.Text = "Look, I'm taller!";
-							});
+						if (Device.RuntimePlatform == Device.iOS)
+						{
+							if (typeof(T) == typeof(MyViewCell))
+								target.Text = "I am an exceptionally long string that should cause the label to wrap, thus increasing the size of the cell such that the entirety of the string is readable by human eyes. Hurrah.";
+							else if (strategy == ListViewCachingStrategy.RetainElement)
+								target.Text = "Look, I'm taller!";
+							else
+								target.Text = $"I'm only taller in {ListViewCachingStrategy.RetainElement} mode. :(";
+						}
+						else
+						{
+							if (typeof(T) == typeof(MyViewCell))
+								target.Text = "I am an exceptionally long string that should cause the label to wrap, thus increasing the size of the cell such that the entirety of the string is readable by human eyes. Hurrah.";
+							else
+								target.Text = "Look, I'm taller!";
+						}
+
 						await Task.Delay(1000);
 					}
 				};
