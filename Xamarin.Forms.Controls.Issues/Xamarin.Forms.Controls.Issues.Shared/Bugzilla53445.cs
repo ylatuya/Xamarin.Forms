@@ -63,7 +63,7 @@ namespace Xamarin.Forms.Controls.Issues
 			stackLayout.Children.Add(stackLayoutButton);
 			stackLayoutButton.Clicked += (sender, args) => status.Text = "Fail";
 
-			var toggleButton = new Button { Text = $"Toggle IsEnabled (currently {grid.IsEnabled})" };
+			var toggleButton = new Button { AutomationId = "toggle", Text = $"Toggle IsEnabled (currently {grid.IsEnabled})" };
 			toggleButton.Clicked += (sender, args) =>
 			{
 				grid.IsEnabled = !grid.IsEnabled;
@@ -81,5 +81,29 @@ namespace Xamarin.Forms.Controls.Issues
 
 			Content = layout;
 		}
+
+
+#if UITEST
+		[Test]
+		public void Test()
+		{
+			RunningApp.WaitForElement(q => q.Marked("Success"));
+
+			// Disable the layouts
+			RunningApp.Tap(q => q.Marked("toggle"));
+
+			// Tap the grid button; the event should not fire and the label should not change
+			RunningApp.Tap(q => q.Marked("gridbutton"));
+			RunningApp.WaitForElement(q => q.Marked("Success"));
+
+			// Tap the contentview button; the event should not fire and the label should not change
+			RunningApp.Tap(q => q.Marked("contentviewbutton"));
+			RunningApp.WaitForElement(q => q.Marked("Success"));
+
+			// Tap the stacklayout button; the event should not fire and the label should not change
+			RunningApp.Tap(q => q.Marked("stacklayoutbutton"));
+			RunningApp.WaitForElement(q => q.Marked("Success"));
+		}
+#endif
 	}
 }
