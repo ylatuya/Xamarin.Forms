@@ -10,7 +10,7 @@ using NUnit.Framework;
 namespace Xamarin.Forms.Controls.Issues
 {
 #if UITEST
-	[Category(UITestCategories.InputTransparent)]
+	[Category(UITestCategories.IsEnabled)]
 #endif
 
 	[Preserve(AllMembers = true)]
@@ -106,16 +106,18 @@ namespace Xamarin.Forms.Controls.Issues
 					stackLayout
 				}
 			};
-			AddTapGesture(result, parent, true);
 
 			Content = parent;
 		}
 
-		void AddTapGesture(Label result, View view, bool isParent = false)
+		void AddTapGesture(Label result, View view)
 		{
 			var tapGestureRecognizer = new TapGestureRecognizer
 			{
-				Command = new Command(() => { result.Text = !isParent ? "Child" : "Parent"; })
+				Command = new Command(() =>
+				{
+					result.Text = "Child";
+				})
 			};
 			view.GestureRecognizers.Add(tapGestureRecognizer);
 		}
