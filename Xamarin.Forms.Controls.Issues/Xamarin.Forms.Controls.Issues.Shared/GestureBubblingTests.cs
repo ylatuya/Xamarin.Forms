@@ -28,6 +28,10 @@ namespace Xamarin.Forms.Controls.Issues
 		[Test, TestCaseSource(nameof(TestCases))]
 		public void VerifyTapBubbling(string menuItem, bool frameShouldRegisterTap)
 		{
+			// TODO hartez 2017/03/22 18:08:35 results are the same without basing in on the inputtransparent tests	
+			// The stepper failure is because of the broken renderer, just account for the position in the test and it will work
+			// Then fix Frame. Also, the instruction labels are wrong; adjust them based on the value of frameShouldRegisterTap
+
 			var results = RunningApp.WaitForElement(q => q.Marked(menuItem));
 
 			if (results.Length > 1)
@@ -50,15 +54,17 @@ namespace Xamarin.Forms.Controls.Issues
 
 			// Tap the control
 			var y = target.CenterY;
+			var x = target.CenterX;
 
 			// In theory we want to tap the center of the control. But Stepper lays out differently than the other controls,
-			// (it doesn't center vertically within its layout), so we need to adjust for it until someone fixes it
+			// so we need to adjust for it until someone fixes it
 			if (menuItem == "Stepper")
 			{
-				y = target.Y;
+				y = target.Y + 5;
+				x = target.X + 5;
 			}
 
-			RunningApp.TapCoordinates(target.CenterX, y);
+			RunningApp.TapCoordinates(x, y);
 
 			if (menuItem == nameof(DatePicker) || menuItem == nameof(TimePicker))
 			{
