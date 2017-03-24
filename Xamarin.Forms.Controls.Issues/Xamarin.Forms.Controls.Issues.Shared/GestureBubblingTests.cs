@@ -28,10 +28,6 @@ namespace Xamarin.Forms.Controls.Issues
 		[Test, TestCaseSource(nameof(TestCases))]
 		public void VerifyTapBubbling(string menuItem, bool frameShouldRegisterTap)
 		{
-			// TODO hartez 2017/03/22 18:08:35 results are the same without basing in on the inputtransparent tests	
-			// The stepper failure is because of the broken renderer, just account for the position in the test and it will work
-			// Then fix Frame. Also, the instruction labels are wrong; adjust them based on the value of frameShouldRegisterTap
-
 			var results = RunningApp.WaitForElement(q => q.Marked(menuItem));
 
 			if (results.Length > 1)
@@ -93,15 +89,22 @@ namespace Xamarin.Forms.Controls.Issues
 
 		ContentPage CreateTestPage(View view)
 		{
-			var instructions = new Label
+			var instructions = new Label();
+
+			if (_controlsWhichShouldAllowTheTapToBubbleUp.Contains(view.GetType().Name))
 			{
-				Text = "Tap the frame below. The label with the text 'No taps yet' should change its text to 'Frame was tapped'."
-			};
+				instructions.Text =
+					"Tap the frame below. The label with the text 'No taps yet' should change its text to 'Frame was tapped'.";
+			}
+			else
+			{
+				instructions.Text =
+					"Tap the frame below. The label with the text 'No taps yet' should not change.";
+			}
 
 			var label = new Label { Text = "Start" };
 
-			var frame = new Frame();
-			frame.Content = new StackLayout { Children = { view } };
+			var frame = new Frame { Content = new StackLayout { Children = { view } } };
 
 			var rec = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
 			rec.Tapped += (s, e) => { label.Text = "Frame was tapped"; };
@@ -128,18 +131,18 @@ namespace Xamarin.Forms.Controls.Issues
 			return button;
 		}
 
+		// These controls should allow the tap gesture to bubble up to their container; everything else should absorb the gesture
+		readonly List<string> _controlsWhichShouldAllowTheTapToBubbleUp = new List<string> { nameof(Image), nameof(Label), nameof(BoxView), nameof(Frame) };
+
 		IEnumerable<object[]> TestCases
 		{
 			get
 			{
-				// These controls should allow the tap gesture to bubble up to their container; everything else should absorb the gesture
-				List<string> controlsWhichShouldAllowTheTapToBubbleUp = new List<string> { nameof(Image), nameof(Label), nameof(BoxView), nameof(Frame) };
-
 				return (BuildMenu().Content as Layout).InternalChildren.SelectMany(
 					element => (element as Layout).InternalChildren.Select(view => new object[]
 					{
 						(view as Button).Text,
-						controlsWhichShouldAllowTheTapToBubbleUp.Contains((view as Button).Text)
+						_controlsWhichShouldAllowTheTapToBubbleUp.Contains((view as Button).Text)
 					}));
 			}
 		}
