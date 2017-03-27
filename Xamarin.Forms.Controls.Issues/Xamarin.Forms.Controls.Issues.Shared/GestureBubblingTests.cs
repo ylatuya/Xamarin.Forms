@@ -132,18 +132,30 @@ namespace Xamarin.Forms.Controls.Issues
 		}
 
 		// These controls should allow the tap gesture to bubble up to their container; everything else should absorb the gesture
-		readonly List<string> _controlsWhichShouldAllowTheTapToBubbleUp = new List<string> { nameof(Image), nameof(Label), nameof(BoxView), nameof(Frame) };
+		readonly List<string> _controlsWhichShouldAllowTheTapToBubbleUp = new List<string>
+		{
+			nameof(Image),
+			nameof(Label),
+			nameof(BoxView),
+			nameof(Frame)
+		};
 
 		IEnumerable<object[]> TestCases
 		{
 			get
 			{
-				return (BuildMenu().Content as Layout).InternalChildren.SelectMany(
-					element => (element as Layout).InternalChildren.Select(view => new object[]
+				var layout = BuildMenu().Content as Layout;
+				var result =
+					from Layout element in layout.InternalChildren
+					from Button button in element.InternalChildren
+					let text = button.Text
+					select new object[]
 					{
-						(view as Button).Text,
-						_controlsWhichShouldAllowTheTapToBubbleUp.Contains((view as Button).Text)
-					}));
+						text,
+						_controlsWhichShouldAllowTheTapToBubbleUp.Contains(text)
+					};
+
+				return result;
 			}
 		}
 
