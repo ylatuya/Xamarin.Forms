@@ -309,7 +309,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 							}
 							catch (Exception ex)
 							{
-								Log.Warning("Xamarin.Forms.Platform.Android.ButtonRenderer",
+								Internals.Log.Warning("Xamarin.Forms.Platform.Android.ButtonRenderer",
 									"Could not retrieve button background resource: {0}", ex);
 								SupportBackgroundTintList = new ColorStateList(ColorExtensions.States,
 									new[] { (int)0xffd7d6d6, 0x7fd7d6d6 });

@@ -85,7 +85,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			Image oldElement = _element;
 			_element = image;
 
-			Performance.Start();
+			Internals.Performance.Start();
 
 			if (oldElement != null)
 				oldElement.PropertyChanged -= OnElementPropertyChanged;
@@ -100,7 +100,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				_visualElementRenderer = new VisualElementRenderer(this);
 			}
 
-			Performance.Stop();
+			Internals.Performance.Stop();
 
 			OnElementChanged(new ElementChangedEventArgs<Image>(oldElement, _element));
 

@@ -19,8 +19,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				return;
 			}
 
-			platformEffect.Control = _control;
-			platformEffect.Container = _control;
+			platformEffect.SetControl(_control);
+			platformEffect.SetContainer(_control);
 		}
 	}
 }

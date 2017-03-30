@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.Android
 			Bitmap bitmap = null;
 			IImageSourceHandler handler;
 
-			if (source != null && (handler = Registrar.Registered.GetHandler<IImageSourceHandler>(source.GetType())) != null)
+			if (source != null && (handler = Internals.Registrar.Registered.GetHandler<IImageSourceHandler>(source.GetType())) != null)
 			{
 				try
 				{
@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Platform.Android
 				}
 				catch (IOException ex)
 				{
-					Log.Warning("Xamarin.Forms.Platform.Android.ImageRenderer", "Error updating bitmap: {0}", ex);
+					Internals.Log.Warning("Xamarin.Forms.Platform.Android.ImageRenderer", "Error updating bitmap: {0}", ex);
 				}
 			}
 
