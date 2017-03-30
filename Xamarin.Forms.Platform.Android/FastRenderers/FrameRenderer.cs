@@ -22,8 +22,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
-
+#pragma warning disable 414
 		bool _inputTransparent;
+#pragma warning restore 414
 
 		public FrameRenderer() : base(Forms.Context)
 		{
