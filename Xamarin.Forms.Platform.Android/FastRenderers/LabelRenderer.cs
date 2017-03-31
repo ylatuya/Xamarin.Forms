@@ -56,8 +56,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 				OnElementChanged(new ElementChangedEventArgs<Label>(oldElement, _element));
 
-				if (_element != null)
-					_element.SendViewInitialized(this);
+			    _element?.SendViewInitialized(this);
 			}
 		}
 
@@ -156,7 +155,15 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			base.Dispose(disposing);
 		}
 
-		protected virtual void OnElementChanged(ElementChangedEventArgs<Label> e)
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            bool handled;
+            var result = _visualElementRenderer.OnTouchEvent(e, Parent, out handled);
+
+            return handled ? result : base.OnTouchEvent(e);
+        }
+
+        protected virtual void OnElementChanged(ElementChangedEventArgs<Label> e)
 		{
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
 

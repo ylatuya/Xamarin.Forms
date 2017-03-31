@@ -62,7 +62,15 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
 		}
 
-		protected virtual Size MinimumSize()
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            bool handled;
+            var result = _visualElementRenderer.OnTouchEvent(e, Parent, out handled);
+
+            return handled ? result : base.OnTouchEvent(e);
+        }
+
+        protected virtual Size MinimumSize()
 		{
 			return new Size();
 		}
@@ -151,6 +159,5 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			ScaleType type = _element.Aspect.ToScaleType();
 			SetScaleType(type);
 		}
-
 	}
 }

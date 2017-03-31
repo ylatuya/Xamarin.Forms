@@ -3,28 +3,34 @@ using System.ComponentModel;
 using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
+using Xamarin.Forms.Platform.Android.FastRenderers;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
 
-namespace Xamarin.Forms.Platform.Android.FastRenderers
+// TODO hartez 2017/03/30 17:50:16 Maybe make an appcompat version of this that inherits from FastRenderer version so it's easy to obsolete later	
+
+	// Also, we need a conditional compilation directive on controlgallery which changes the exportrenderer stuff to use the legacy (non-fast) renderers
+	// so we can create a separate apk and separate UI test lane to verify that any changes/new tests are passing for legacy and fast renderers
+
+namespace Xamarin.Forms.Platform.Android.AppCompat
 {
 	public class FrameRenderer : CardView, IVisualElementRenderer, IEffectControlProvider
 	{
 		float _defaultElevation = -1f;
 		float _defaultCornerRadius = -1f;
 		int? _defaultLabelFor;
+
 		bool _disposed;
 		Frame _element;
+
 		VisualElementPackager _visualElementPackager;
 		VisualElementTracker _visualElementTracker;
+
 		readonly GestureManager _gestureManager;
 		readonly EffectControlProvider _effectControlProvider;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
-#pragma warning disable 414
-		bool _inputTransparent;
-#pragma warning restore 414
 
 		public FrameRenderer() : base(Forms.Context)
 		{
@@ -155,7 +161,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateShadow();
 				UpdateBackgroundColor();
 				UpdateCornerRadius();
-				UpdateInputTransparent();
 			}
 		}
 
@@ -170,9 +175,17 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				var visualElement = children[i] as VisualElement;
 				if (visualElement == null)
 					continue;
-				IVisualElementRenderer renderer = Platform.GetRenderer(visualElement);
+				IVisualElementRenderer renderer = Android.Platform.GetRenderer(visualElement);
 				renderer?.UpdateLayout();
 			}
+		}
+
+		public override bool OnTouchEvent(MotionEvent e)
+		{
+			bool handled;
+			var result = _gestureManager.OnTouchEvent(e, Parent, out handled);
+
+			return handled ? result : base.OnTouchEvent(e);
 		}
 
 		void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -185,13 +198,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				UpdateBackgroundColor();
 			else if (e.PropertyName == Frame.CornerRadiusProperty.PropertyName)
 				UpdateCornerRadius();
-			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
-				UpdateInputTransparent();
-		}
-
-		void UpdateInputTransparent()
-		{
-			_inputTransparent = Element.InputTransparent;
 		}
 
 		void UpdateBackgroundColor()

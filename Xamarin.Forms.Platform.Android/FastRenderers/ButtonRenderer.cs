@@ -193,7 +193,17 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			base.Dispose(disposing);
 		}
 
-		protected virtual Size MinimumSize()
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            // TODO hartez 2017/03/31 15:32:56 Add local cached members for these two values, no point in doing a GetValue for every touch	
+                
+            if (!Element.IsEnabled || (Element.InputTransparent && Element.IsEnabled))
+                return false;
+
+            return base.OnTouchEvent(e);
+        }
+
+        protected virtual Size MinimumSize()
 		{
 			return new Size();
 		}
@@ -243,9 +253,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			{
 				UpdateBackgroundColor();
 			}
-			// TODO hartez 2017/03/01 15:06:25 InputTransparent again, do we need to worry about this on a button?	
-			//else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
-			//	InputTransparent = Element.InputTransparent;
 
 			ElementPropertyChanged?.Invoke(this, e);
 		}

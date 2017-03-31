@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using Android.Views;
 using AView = Android.Views.View;
 using Object = Java.Lang.Object;
 
@@ -42,16 +43,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			Control.SetBackgroundColor((color ?? Element.BackgroundColor).ToAndroid());
 		}
 
-		public void UpdateInputTransparent(bool? inputTransparent = null)
-		{
-			if (Element == null || Control == null)
-				return;
+	    public bool OnTouchEvent(MotionEvent e, IViewParent parent, out bool handled)
+	    {
+	        return _gestureManager.OnTouchEvent(e, parent, out handled);
+	    }
 
-			//TODO: InputTransparent is on FormsViewGroup
-			//InputTransparent = Element.InputTransparent;
-		}
-
-		public void Dispose()
+	    public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -96,8 +93,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
-			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
-				UpdateInputTransparent();
 		}
 	}
 }

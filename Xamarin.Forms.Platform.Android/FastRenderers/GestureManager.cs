@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using Android.Support.V4.View;
 using Android.Views;
 using Object = Java.Lang.Object;
@@ -15,10 +16,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		readonly PinchGestureHandler _pinchGestureHandler;
 		readonly Lazy<ScaleGestureDetector> _scaleDetector;
 		readonly TapGestureHandler _tapGestureHandler;
-		InnerGestureListener _gestureListener;
+        readonly MotionEventHelper _motionEventHelper = new MotionEventHelper();
+        InnerGestureListener _gestureListener;
 
 		bool _clickable;
 		bool _disposed;
+		bool _inputTransparent;
+	    bool _isEnabled;
 
 		NotifyCollectionChangedEventHandler _collectionChangeHandler;
 
@@ -55,19 +59,51 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			Control.SetOnTouchListener(this);
 		}
 
+		public bool OnTouchEvent(MotionEvent e, IViewParent parent, out bool handled)
+		{
+			if (_inputTransparent)
+			{
+				handled = true;
+				return false;
+			}
+
+			if (View.GestureRecognizers.Count == 0)
+			{
+				handled = true;
+				return _motionEventHelper.HandleMotionEvent(parent);
+			}
+
+			handled = false;
+			return false;
+		}
+
 		void OnElementChanged(object sender, VisualElementChangedEventArgs e)
 		{
 			if (e.OldElement != null)
 			{
 				UnsubscribeGestureRecognizers(e.OldElement);
+				e.OldElement.PropertyChanged -= OnElementPropertyChanged;
 			}
 
 			if (e.NewElement != null)
 			{
 				UpdateGestureRecognizers(true);
 				SubscribeGestureRecognizers(e.NewElement);
+                _motionEventHelper.UpdateElement(e.NewElement);
+                e.NewElement.PropertyChanged += OnElementPropertyChanged;
 			}
+
+			UpdateInputTransparent();
+            UpdateIsEnabled();
 		}
+
+		void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
+				UpdateInputTransparent();
+            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+                UpdateIsEnabled();
+        }
 
 		protected override void Dispose(bool disposing)
 		{
@@ -80,6 +116,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			if (disposing)
 			{
+				if (Element != null)
+				{
+					Element.PropertyChanged -= OnElementPropertyChanged;
+				}
+
 				Control.SetOnClickListener(null);
 				Control.SetOnTouchListener(null);
 
@@ -107,15 +148,28 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		bool global::Android.Views.View.IOnTouchListener.OnTouch(global::Android.Views.View v, MotionEvent e)
 		{
-			var handled = false;
+            if (!_isEnabled)
+                return true;
+
+            if (_inputTransparent)
+                return false;
+
+            var handled = false;
 			if (_pinchGestureHandler.IsPinchSupported)
 			{
 				if (!_scaleDetector.IsValueCreated)
-				{
 					ScaleGestureDetectorCompat.SetQuickScaleEnabled(_scaleDetector.Value, true);
-				}
 				handled = _scaleDetector.Value.OnTouchEvent(e);
 			}
+
+			if (_gestureDetector.IsValueCreated && _gestureDetector.Value.Handle == IntPtr.Zero)
+			{
+				// This gesture detector has already been disposed, probably because it's on a cell which is going away
+				return handled;
+			}
+
+			// It's very important that the gesture detection happen first here
+			// if we check handled first, we might short-circuit and never check for tap/pan
 			return _gestureDetector.Value.OnTouchEvent(e) || handled;
 		}
 
@@ -185,5 +239,25 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			UpdateClickable(forceClick);
 		}
-	}
+
+		void UpdateInputTransparent()
+		{
+			if (Element == null)
+			{
+				return;
+			}
+
+			_inputTransparent = Element.InputTransparent;
+		}
+
+        void UpdateIsEnabled()
+        {
+            if (Element == null)
+            {
+                return;
+            }
+
+            _isEnabled = Element.IsEnabled;
+        }
+    }
 }
