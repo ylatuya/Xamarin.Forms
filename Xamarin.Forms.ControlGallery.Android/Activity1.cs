@@ -1,7 +1,20 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.IO.IsolatedStorage;
+using Android.App;
+using Android.Content.PM;
+using Android.OS;
+using Android.Widget;
+using Java.Interop;
+using Xamarin.Forms;
 using Xamarin.Forms.ControlGallery.Android;
-using Xamarin.Forms.Maps.Android;
+using Xamarin.Forms.Controls;
+using Xamarin.Forms.Controls.Issues;
 using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.Platform.Android.AppLinks;
+using Android.Content;
 
 [assembly: Dependency (typeof (CacheService))]
 [assembly: Dependency (typeof (TestCloudService))]
