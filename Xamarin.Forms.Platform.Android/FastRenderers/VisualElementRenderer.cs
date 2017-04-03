@@ -13,7 +13,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		
 		IVisualElementRenderer _renderer;
 		readonly GestureManager _gestureManager;
-		readonly Accessibilitizer _accessibilitizer;
+		readonly AccessibilityProvider _accessibilityProvider;
 		readonly EffectControlProvider _effectControlProvider;
 
 		public VisualElementRenderer(IVisualElementRenderer renderer)
@@ -22,7 +22,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			_renderer.ElementPropertyChanged += OnElementPropertyChanged;
 			_renderer.ElementChanged += OnElementChanged;
 			_gestureManager = new GestureManager(_renderer);
-			_accessibilitizer = new Accessibilitizer(_renderer);
+			_accessibilityProvider = new AccessibilityProvider(_renderer);
 			_effectControlProvider = new EffectControlProvider(_renderer?.View);
 		}
 
@@ -64,7 +64,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			if (disposing)
 			{
 				_gestureManager?.Dispose();
-				_accessibilitizer?.Dispose();
+				_accessibilityProvider?.Dispose();
 
 				if (_renderer != null)
 				{

@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 	{
 		readonly AView _control; 
 
-		public EffectControlProvider(global::Android.Views.View control)
+		public EffectControlProvider(AView control)
 		{
 			_control = control;
 		}

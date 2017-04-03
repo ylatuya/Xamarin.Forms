@@ -4,7 +4,7 @@ using Android.Widget;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
-	internal class Accessibilitizer : IDisposable // TODO Think of better name
+	internal class AccessibilityProvider : IDisposable 
 	{
 		const string GetFromElement = "GetValueFromElement";
 		string _defaultContentDescription;
@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		IVisualElementRenderer _renderer;
 
-		public Accessibilitizer(IVisualElementRenderer renderer)
+		public AccessibilityProvider(IVisualElementRenderer renderer)
 		{
 			_renderer = renderer;
 			_renderer.ElementPropertyChanged += OnElementPropertyChanged;

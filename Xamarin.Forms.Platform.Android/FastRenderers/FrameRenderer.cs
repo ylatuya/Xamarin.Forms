@@ -7,12 +7,7 @@ using Xamarin.Forms.Platform.Android.FastRenderers;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
 
-// TODO hartez 2017/03/30 17:50:16 Maybe make an appcompat version of this that inherits from FastRenderer version so it's easy to obsolete later	
-
-	// Also, we need a conditional compilation directive on controlgallery which changes the exportrenderer stuff to use the legacy (non-fast) renderers
-	// so we can create a separate apk and separate UI test lane to verify that any changes/new tests are passing for legacy and fast renderers
-
-namespace Xamarin.Forms.Platform.Android.AppCompat
+namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
 	public class FrameRenderer : CardView, IVisualElementRenderer, IEffectControlProvider
 	{

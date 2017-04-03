@@ -20,6 +20,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		public ImageRenderer()
 		{
+            System.Diagnostics.Debug.WriteLine(">>>>> Old Image Renderer");
 			AutoPackage = false;
 		}
 
@@ -70,5 +71,13 @@ namespace Xamarin.Forms.Platform.Android
 			AImageView.ScaleType type = Element.Aspect.ToScaleType();
 			Control.SetScaleType(type);
 		}
-	}
+
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            if (base.OnTouchEvent(e))
+                return true;
+
+            return _motionEventHelper.HandleMotionEvent(Parent);
+        }
+    }
 }

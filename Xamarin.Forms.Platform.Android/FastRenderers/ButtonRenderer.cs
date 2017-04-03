@@ -25,8 +25,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		Typeface _defaultTypeface;
 		int _imageHeight = -1;
 		bool _isDisposed;
-		TextColorSwitcher _textColorSwitcher;
-		readonly Accessibilitizer _accessibilitizer;
+	    bool _inputTransparent;
+	    readonly Lazy<TextColorSwitcher> _textColorSwitcher;
+        readonly AccessibilityProvider _accessibilityProvider;
 		readonly EffectControlProvider _effectControlProvider;
 		VisualElementTracker _tracker;
 
@@ -35,11 +36,11 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 		public ButtonRenderer() : base(Forms.Context)
 		{
-			System.Diagnostics.Debug.WriteLine("Fast Button!");
-			_accessibilitizer = new Accessibilitizer(this);
+            _accessibilityProvider = new AccessibilityProvider(this);
 			_effectControlProvider = new EffectControlProvider(this);
+            _textColorSwitcher = new Lazy<TextColorSwitcher>(() => new TextColorSwitcher(TextColors));
 
-			Initialize();
+            Initialize();
 		}
 
 		public VisualElement Element => Button;
@@ -131,9 +132,6 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
 			element.PropertyChanged += OnElementPropertyChanged;
 
-			// Todo hartez InputTransparent comes from FormsViewGroup, do we need it here?
-			//InputTransparent = Element.InputTransparent;
-
 			if (_tracker == null)
 			{
 				// Can't set up the tracker in the constructor because it access the Element (for now)
@@ -181,7 +179,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				SetOnTouchListener(null);
 				RemoveOnAttachStateChangeListener(this);
 
-				_accessibilitizer?.Dispose();
+				_accessibilityProvider?.Dispose();
 				_tracker?.Dispose();
 
 				if (Element != null)
@@ -195,9 +193,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 
         public override bool OnTouchEvent(MotionEvent e)
         {
-            // TODO hartez 2017/03/31 15:32:56 Add local cached members for these two values, no point in doing a GetValue for every touch	
-                
-            if (!Element.IsEnabled || (Element.InputTransparent && Element.IsEnabled))
+            if (!Enabled || (_inputTransparent && Enabled))
                 return false;
 
             return base.OnTouchEvent(e);
@@ -212,8 +208,13 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 			if (e.NewElement != null)
 			{
-				UpdateAll();
-				UpdateBackgroundColor();
+                UpdateFont();
+                UpdateText();
+                UpdateBitmap();
+                UpdateTextColor();
+                UpdateIsEnabled();
+			    UpdateInputTransparent();
+                UpdateBackgroundColor();
 			}
 
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
@@ -245,10 +246,10 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			{
 				UpdateText();
 			}
-			else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+			else if (e.PropertyName == VisualElement.InputTransparentProperty.PropertyName)
 			{
-				UpdateIsEnabled();
-			}
+				UpdateInputTransparent();
+            }
 			else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
 			{
 				UpdateBackgroundColor();
@@ -353,21 +354,8 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			AddOnAttachStateChangeListener(this);
 			OnFocusChangeListener = this;
 
-			Tag = this;
-				// TODO hartez The button used to be tagged with its renderer, probably for cell reuse or something? Does that still make sense? (probably yes)
-
-			_textColorSwitcher = new TextColorSwitcher(TextColors);
-				// TODO hartez 2017/03/01 10:04:24 Possibly this shouldn't be initialized until a text color update is made	
-		}
-
-		void UpdateAll()
-		{
-			UpdateFont();
-			UpdateText();
-			UpdateBitmap();
-			UpdateTextColor();
-			UpdateIsEnabled();
-		}
+			Tag = this; 
+        }
 
 		void UpdateBitmap()
 		{
@@ -467,7 +455,12 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			Enabled = Element.IsEnabled;
 		}
 
-		void UpdateText()
+	    void UpdateInputTransparent()
+	    {
+	        _inputTransparent = Element.InputTransparent;
+	    }
+
+	    void UpdateText()
 		{
 			if (Element == null)
 			{
@@ -491,7 +484,7 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 				return;
 			}
 
-			_textColorSwitcher?.UpdateTextColor(this, Button.TextColor);
+			_textColorSwitcher.Value.UpdateTextColor(this, Button.TextColor);
 		}
 	}
 }
