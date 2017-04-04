@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace Xamarin.Forms.Xaml
 {
-	internal static class TypeArgumentsParser
+	static class TypeArgumentsParser
 	{
 		public static IList<XmlType> ParseExpression(string expression, IXmlNamespaceResolver resolver, IXmlLineInfo lineInfo)
 		{
