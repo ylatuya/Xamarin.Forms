@@ -63,7 +63,7 @@ namespace Xamarin.Forms.Xaml.UnitTests
 				Assert.That(nestedGenericList, Is.Not.Null);
 				Assert.That(nestedGenericList, Is.TypeOf<List<KeyValuePair<string, string>>>());
 
-
+				Assert.That(nestedGenericList.Count, Is.EqualTo(1));
 			}
 
 			[TestCase (false)]
