@@ -16,13 +16,13 @@
 			<scg:Dictionary x:TypeArguments="sys:String, sys:String"  x:Key="dict"/>
 			<scgs:Queue x:TypeArguments="scg:KeyValuePair(sys:String,sys:String)" x:Key="queue"/>
 			<scg:List x:TypeArguments="x:String" x:Key="stringList"/>
-			<scg:List x:TypeArguments="csr:KeyValuePair(x:String,x:String)" x:Key="TestList" x:Name="TestListMember" >
-				<scgs:KeyValuePair x:TypeArguments="x:String,x:String" >
+			<scg:List x:TypeArguments="scg:KeyValuePair(x:String,x:String)" x:Key="TestList" x:Name="TestListMember" >
+				<scg:KeyValuePair x:TypeArguments="x:String,x:String" >
 					<x:Arguments>
 						<x:String>TheKey</x:String>
 						<x:String>TheValue</x:String>
 					</x:Arguments>
-				</scgs:KeyValuePair>
+				</scg:KeyValuePair>
 			</scg:List>
 		</ResourceDictionary>
 	</ContentPage.Resources>
