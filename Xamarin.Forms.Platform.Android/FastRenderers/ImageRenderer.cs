@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using AImageView = Android.Widget.ImageView;
 using AView = Android.Views.View;
 using Android.Views;
+using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.Android.FastRenderers
 {
@@ -54,9 +56,9 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 			base.Invalidate();
 		}
 
-		protected virtual void OnElementChanged(ElementChangedEventArgs<Image> e)
+		protected virtual async void OnElementChanged(ElementChangedEventArgs<Image> e)
 		{
-			this.UpdateBitmap(e.NewElement, e.OldElement);
+			await TryUpdateBitmap(e.OldElement);
 			UpdateAspect();
 
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
@@ -144,14 +146,39 @@ namespace Xamarin.Forms.Platform.Android.FastRenderers
 		{
 		}
 
-		protected void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+		protected virtual async void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == Image.SourceProperty.PropertyName)
-				this.UpdateBitmap(_element);
+				await TryUpdateBitmap();
 			else if (e.PropertyName == Image.AspectProperty.PropertyName)
 				UpdateAspect();
 
 			ElementPropertyChanged?.Invoke(this, e);
+		}
+
+		protected virtual async Task TryUpdateBitmap(Image previous = null)
+		{
+			// By default we'll just catch and log any exceptions thrown by UpdateBitmap so they don't bring down
+			// the application; a custom renderer can override this method and handle exceptions from
+			// UpdateBitmap differently if it wants to
+
+			try
+			{
+				await UpdateBitmap(previous);
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(nameof(ImageRenderer), "Error loading image: {0}", ex);
+			}
+			finally
+			{
+				((IImageController)_element).SetIsLoading(false);
+			}
+		}
+
+		protected async Task UpdateBitmap(Image previous = null)
+		{
+			await Control.UpdateBitmap(_element, previous);
 		}
 
 		void UpdateAspect()

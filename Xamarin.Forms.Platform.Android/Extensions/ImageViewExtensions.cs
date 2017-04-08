@@ -8,7 +8,8 @@ namespace Xamarin.Forms.Platform.Android
 {
 	internal static class ImageViewExtensions
 	{
-		public static async void UpdateBitmap(this AImageView imageView, Image newImage, Image previousImage = null)
+		// TODO hartez 2017/04/07 09:33:03 Review this again, not sure it's handling the transition from previousImage to 'null' newImage correctly
+		public static async Task UpdateBitmap(this AImageView imageView, Image newImage, Image previousImage = null)
 		{
 			if (Device.IsInvokeRequired)
 				throw new InvalidOperationException("Image Bitmap must not be updated from background thread");
@@ -16,13 +17,13 @@ namespace Xamarin.Forms.Platform.Android
 			if (previousImage != null && Equals(previousImage.Source, newImage.Source))
 				return;
 
-			((IImageController)newImage).SetIsLoading(true);
+			((IImageController)newImage)?.SetIsLoading(true);
 
-			(imageView as IImageRendererController).SkipInvalidate();
+			(imageView as IImageRendererController)?.SkipInvalidate();
 
 			imageView.SetImageResource(global::Android.Resource.Color.Transparent);
 
-			ImageSource source = newImage.Source;
+			ImageSource source = newImage?.Source;
 			Bitmap bitmap = null;
 			IImageSourceHandler handler;
 
@@ -34,10 +35,7 @@ namespace Xamarin.Forms.Platform.Android
 				}
 				catch (TaskCanceledException)
 				{
-				}
-				catch (IOException ex)
-				{
-					Internals.Log.Warning("Xamarin.Forms.Platform.Android.ImageRenderer", "Error updating bitmap: {0}", ex);
+					((IImageController)newImage).SetIsLoading(false);
 				}
 			}
 

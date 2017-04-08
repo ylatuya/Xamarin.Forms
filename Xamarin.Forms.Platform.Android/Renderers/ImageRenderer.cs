@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Android.Graphics;
 using Android.Views;
 using AImageView = Android.Widget.ImageView;
@@ -92,53 +93,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		protected async Task UpdateBitmap(Image previous = null)
 		{
-			if (Device.IsInvokeRequired)
-				throw new InvalidOperationException("Image Bitmap must not be updated from background thread");
-
-			if (previous != null && Equals(previous.Source, Element.Source))
-				return;
-
-			((IImageController)Element).SetIsLoading(true);
-
-			var formsImageView = Control as FormsImageView;
-			formsImageView?.SkipInvalidate();
-
-			Control.SetImageResource(global::Android.Resource.Color.Transparent);
-
-			ImageSource source = Element.Source;
-			Bitmap bitmap = null;
-			IImageSourceHandler handler;
-
-			if (source != null && (handler = Registrar.Registered.GetHandler<IImageSourceHandler>(source.GetType())) != null)
-			{
-				try
-				{
-					bitmap = await handler.LoadImageAsync(source, Context);
-				}
-				catch (TaskCanceledException)
-				{
-					((IImageController)Element).SetIsLoading(false);
-				}
-			}
-
-			if (Element == null || !Equals(Element.Source, source))
-			{
-				bitmap?.Dispose();
-				return;
-			}
-
-			if (!_isDisposed)
-			{
-				if (bitmap == null && source is FileImageSource)
-					Control.SetImageResource(ResourceManager.GetDrawableByName(((FileImageSource)source).File));
-				else
-					Control.SetImageBitmap(bitmap);
-
-				bitmap?.Dispose();
-
-				((IImageController)Element).SetIsLoading(false);
-				((IVisualElementController)Element).NativeSizeChanged();
-			}
+			await Control.UpdateBitmap(Element, previous);
 		}
 
         public override bool OnTouchEvent(MotionEvent e)
