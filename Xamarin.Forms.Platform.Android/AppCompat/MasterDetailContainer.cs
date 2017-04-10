@@ -1,3 +1,4 @@
+using System;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -112,7 +113,15 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 
 				_currentFragment = fragment;
 
-				new Handler(Looper.MainLooper).PostAtFrontOfQueue(() => FragmentManager.ExecutePendingTransactions());
+				new Handler(Looper.MainLooper).PostAtFrontOfQueue(() =>
+				{
+					if (Handle == IntPtr.Zero)
+					{
+						return;
+					}
+
+					FragmentManager.ExecutePendingTransactions();
+				});
 			}
 		}
 
