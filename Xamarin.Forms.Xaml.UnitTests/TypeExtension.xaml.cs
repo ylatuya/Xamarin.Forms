@@ -75,6 +75,16 @@ namespace Xamarin.Forms.Xaml.UnitTests
 				button = (Button)cell.View;
 				Assert.IsNotNull(button.Command);
 			}
+
+			[TestCase(false)]
+			[TestCase(true)]
+			//https://bugzilla.xamarin.com/show_bug.cgi?id=55027
+			public void TypeExtensionSupportsNamespace(bool useCompiledXaml)
+			{
+				var page=new TypeExtension(useCompiledXaml);
+				var button = page.button0;
+				Assert.That(button.CommandParameter, Is.EqualTo(typeof(TypeExtension)));
+			}
 		}
 	}
 }
