@@ -1,11 +1,6 @@
 ﻿using Gtk;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Tex
-    t;
-using System.Threading.Tasks;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {

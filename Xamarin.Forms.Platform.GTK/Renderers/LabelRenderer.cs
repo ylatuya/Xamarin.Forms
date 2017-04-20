@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Gtk;
+using Pango;
+using System;
 using System.ComponentModel;
-using Gtk;
+using System.Text;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using NativeLabel = Gtk.Label;
 
@@ -26,8 +28,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 UpdateText();
                 UpdateColor();
-                UpdateTextAlignment();
                 UpdateLineBreakMode();
+                UpdateTextAlignment();
             }
 
             base.OnElementChanged(e);
@@ -43,6 +45,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateText();
             else if (e.PropertyName == Label.TextProperty.PropertyName)
                 UpdateText();
+            else if (e.PropertyName == Label.FontAttributesProperty.PropertyName)
+                UpdateText();
             else if (e.PropertyName == Label.FormattedTextProperty.PropertyName)
                 UpdateText();
             else if (e.PropertyName == Label.HorizontalTextAlignmentProperty.PropertyName || e.PropertyName == Label.VerticalTextAlignmentProperty.PropertyName)
@@ -53,9 +57,27 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateText()
         {
-            var values = Element.GetValues(Label.FormattedTextProperty, Label.TextProperty, Label.TextColorProperty);
+            string markupText = string.Empty;
+            FormattedString formatted = Element.FormattedText;
 
-            Control.Text = (string)values[1] ?? string.Empty;
+            if (formatted != null)
+            {
+                markupText = GenerateMarkupText(formatted);
+            }
+            else
+            {
+                var span = new Span()
+                {
+                    FontAttributes = Element.FontAttributes,
+                    FontFamily = Element.FontFamily,
+                    FontSize = Element.FontSize,
+                    Text = Element.Text
+                };
+
+                markupText = GenerateMarkupText(span);
+            }
+
+            Control.Markup = markupText;
         }
 
         private void UpdateColor()
@@ -131,6 +153,52 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 default:
                     return 0.5f;
             }
+        }
+
+        private string GenerateMarkupText(FormattedString formatted)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            foreach (Span span in formatted.Spans)
+            {
+                builder.Append(GenerateMarkupText(span));
+            }
+
+            return builder.ToString();
+        }
+
+        private string GenerateMarkupText(Span span)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append("<span ");
+
+            FontDescription fontDescription = new FontDescription();
+            fontDescription.Size = (int)(span.FontSize * Pango.Scale.PangoScale);
+            fontDescription.Family = span.FontFamily;
+            fontDescription.Weight = span.FontAttributes == FontAttributes.Bold ? Weight.Bold : Weight.Normal;
+            fontDescription.Style = span.FontAttributes == FontAttributes.Italic ? Pango.Style.Italic : Pango.Style.Normal;
+
+            builder.AppendFormat(" font=\"{0}\"", fontDescription.ToString());
+
+            // BackgroundColor => 
+            if (!span.BackgroundColor.IsDefault)
+            {
+                builder.AppendFormat(" bgcolor=\"{0}\"", span.BackgroundColor.ToRgbaColor());
+            }
+
+            // ForegroundColor => 
+            if (!span.ForegroundColor.IsDefault)
+            {
+                builder.AppendFormat(" fgcolor=\"{0}\"", span.ForegroundColor.ToRgbaColor());
+            }
+
+            builder.Append(">"); // complete opening span tag
+            // Text
+            builder.Append(span.Text);
+            builder.Append("</span>");
+
+            return builder.ToString();
         }
     }
 }
