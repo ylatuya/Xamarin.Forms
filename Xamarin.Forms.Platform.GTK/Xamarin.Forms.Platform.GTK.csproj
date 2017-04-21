@@ -68,6 +68,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\CustomComboBox.cs" />
+    <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="ExportRendererAttribute.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="FormsWindow.cs" />
     <Compile Include="GtkDeviceInfo.cs" />
     <Compile Include="GtkPlatformServices.cs" />
+    <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PlatformRenderer.cs" />
@@ -85,11 +88,13 @@
     <Compile Include="RendererFactory.cs" />
     <Compile Include="Renderers\ButtonRenderer.cs" />
     <Compile Include="Renderers\EntryRenderer.cs" />
+    <Compile Include="Renderers\ImageRenderer.cs" />
     <Compile Include="Renderers\LabelRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="Renderers\PageRenderer.cs" />
     <Compile Include="Renderers\SliderRenderer.cs" />
     <Compile Include="Renderers\StepperRenderer.cs" />
+    <Compile Include="Renderers\TimePickerRenderer.cs" />
     <Compile Include="ResourcesProvider.cs" />
     <Compile Include="ViewRenderer.cs" />
     <Compile Include="VisualElementPackager.cs" />
