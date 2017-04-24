@@ -81,6 +81,14 @@ namespace Xamarin.Forms.Controls
 
             TimePicker timePicker = new TimePicker();
 
+            Picker picker = new Picker();
+            picker.ItemsSource = new List<string>
+            {
+                "Linux",
+                "MacOS",
+                "Windows"
+            };
+
             stack.Children.Add(label);
             stack.Children.Add(button);
             stack.Children.Add(entry);
@@ -88,6 +96,7 @@ namespace Xamarin.Forms.Controls
             stack.Children.Add(slider);
             stack.Children.Add(stepper);
             stack.Children.Add(timePicker);
+            stack.Children.Add(picker);
 
             return new ContentPage
             {
