@@ -10,9 +10,27 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             double widthConstraint,
             double heightConstraint)
         {
-            return new SizeRequest(
-                new Size(self.Allocation.Width, self.Allocation.Height), 
-                new Size());
+            var desiredSize = self.SizeRequest();
+
+            var widthFits = widthConstraint >= desiredSize.Width;
+            var heightFits = heightConstraint >= desiredSize.Height;
+
+            if (widthFits && heightFits) // Enough space with given constraints
+            {
+                return new SizeRequest(new Size(desiredSize.Width, desiredSize.Height));
+            }
+
+            if (!widthFits)
+            {
+                self.SetSizeRequest((int)widthConstraint, -1);
+
+                desiredSize = self.SizeRequest();
+                heightFits = heightConstraint >= desiredSize.Height;
+            }
+
+            var size = new Size(desiredSize.Width, heightFits ? desiredSize.Height : (int)heightConstraint);
+
+            return new SizeRequest(size);
         }
 
         public static void MoveTo(this Widget self, double x, double y)
@@ -23,11 +41,27 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                 var calcX = (int)Math.Round(x);
                 var calcY = (int)Math.Round(y);
 
-                container.Move(self, calcX, calcY);
+                var containerChild = container[self] as Fixed.FixedChild;
+
+                if (containerChild.X != calcX || containerChild.Y != calcY)
+                {
+                    container.Move(self, calcX, calcY);
+                }
             }
         }
 
-        public static void PrintTree(this Gtk.Widget widget)
+        public static void SetSize(this Widget self, double width, double height)
+        {
+            int calcWidth = (int)Math.Round(width);
+            int calcHeight = (int)Math.Round(height);
+
+            if (calcWidth != self.WidthRequest || calcHeight != self.HeightRequest)
+            {
+                self.SetSizeRequest(calcWidth, calcHeight);
+            }
+        }
+
+        public static void PrintTree(this Widget widget)
         {
             const char indent = '-';
             int level = CalculateDepthLevel(widget);
@@ -43,16 +77,15 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             Console.WriteLine(string.Format("{0} Size: {1}", new String('\t', level), widget.Allocation.Size));
             Console.WriteLine(string.Format("{0} Location: {1}", new String('\t', level), widget.Allocation.Location));
 
-            if (widget is Gtk.Container)
+            if (widget is Container)
             {
                 var container = widget as Container;
 
-                foreach (Gtk.Widget child in container.Children)
+                foreach (Widget child in container.Children)
                 {
                     PrintTree(child);
                 }
             }
-
         }
 
         private static int CalculateDepthLevel(Widget widget)

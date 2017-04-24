@@ -1,8 +1,6 @@
 ﻿using Gtk;
-using Pango;
 using System;
 using System.ComponentModel;
-using System.Text;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using NativeLabel = Gtk.Label;
 
@@ -10,11 +8,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class LabelRenderer : ViewRenderer<Label, NativeLabel>
     {
-        public override void UpdateLayout()
+        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
         {
-            base.UpdateLayout();
+            Control.SetSizeRequest(-1, -1); // force widget to calculate its desired size
 
-            Control.SetSizeRequest((int)Element.Bounds.Width, (int)Element.Bounds.Height);
+            return base.GetDesiredSize(widthConstraint, heightConstraint);
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Label> e)
@@ -62,7 +60,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (formatted != null)
             {
-                markupText = GenerateMarkupText(formatted);
+                Control.SetTextFromFormatted(formatted);
             }
             else
             {
@@ -74,10 +72,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Text = Element.Text
                 };
 
-                markupText = GenerateMarkupText(span);
+                Control.SetTextFromSpan(span);
             }
-
-            Control.Markup = markupText;
         }
 
         private void UpdateColor()
@@ -153,52 +149,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 default:
                     return 0.5f;
             }
-        }
-
-        private string GenerateMarkupText(FormattedString formatted)
-        {
-            StringBuilder builder = new StringBuilder();
-
-            foreach (Span span in formatted.Spans)
-            {
-                builder.Append(GenerateMarkupText(span));
-            }
-
-            return builder.ToString();
-        }
-
-        private string GenerateMarkupText(Span span)
-        {
-            StringBuilder builder = new StringBuilder();
-
-            builder.Append("<span ");
-
-            FontDescription fontDescription = new FontDescription();
-            fontDescription.Size = (int)(span.FontSize * Pango.Scale.PangoScale);
-            fontDescription.Family = span.FontFamily;
-            fontDescription.Weight = span.FontAttributes == FontAttributes.Bold ? Weight.Bold : Weight.Normal;
-            fontDescription.Style = span.FontAttributes == FontAttributes.Italic ? Pango.Style.Italic : Pango.Style.Normal;
-
-            builder.AppendFormat(" font=\"{0}\"", fontDescription.ToString());
-
-            // BackgroundColor => 
-            if (!span.BackgroundColor.IsDefault)
-            {
-                builder.AppendFormat(" bgcolor=\"{0}\"", span.BackgroundColor.ToRgbaColor());
-            }
-
-            // ForegroundColor => 
-            if (!span.ForegroundColor.IsDefault)
-            {
-                builder.AppendFormat(" fgcolor=\"{0}\"", span.ForegroundColor.ToRgbaColor());
-            }
-
-            builder.Append(">"); // complete opening span tag
-            // Text
-            builder.Append(span.Text);
-            builder.Append("</span>");
-
-            return builder.ToString();
         }
     }
 }

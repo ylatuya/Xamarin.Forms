@@ -16,7 +16,5 @@ namespace Xamarin.Forms.Platform.GTK
         SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint);
 
         void SetElementSize(Size size);
-
-        void UpdateLayout();
     }
 }

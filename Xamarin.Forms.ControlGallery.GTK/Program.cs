@@ -18,7 +18,6 @@ namespace Xamarin.Forms.ControlGallery.GTK
             window.LoadApplication(app);
 
             window.Show();
-            window.PrintTree();
 
             Gtk.Application.Run();
         }

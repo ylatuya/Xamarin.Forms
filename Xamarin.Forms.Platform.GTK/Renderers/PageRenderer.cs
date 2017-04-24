@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.ComponentModel;
-using Gtk;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 
@@ -47,22 +47,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             return Container.GetSizeRequest(widthConstraint, heightConstraint);
         }
 
-        public void UpdateLayout()
-        {
-            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
-            {
-                var child = ElementController.LogicalChildren[i] as VisualElement;
-
-                if (child == null)
-                    continue;
-
-                IVisualElementRenderer renderer = Platform.GetRenderer(child);
-
-                if (renderer != null)
-                    renderer.UpdateLayout();
-            }
-        }
-
         public override void Dispose()
         {
             base.Dispose();
@@ -80,14 +64,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBackgroundColor();
         }
 
-        protected override void OnSizeRequested(ref Requisition requisition)
-        {
-            base.OnSizeRequested(ref requisition);
-        }
-
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
+
+            SetElementSize(new Size(allocation.Width, allocation.Height));
         }
 
         protected virtual void Dispose(bool disposing)

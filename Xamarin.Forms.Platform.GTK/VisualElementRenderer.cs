@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Gdk;
+using Gtk;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 using Control = Gtk.Widget;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer 
+    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer
         where TElement : VisualElement
         where TNativeElement : Control
     {
@@ -71,11 +73,29 @@ namespace Xamarin.Forms.Platform.GTK
             Layout.LayoutChildIntoBoundingRegion(Element, new Rectangle(Element.X, Element.Y, size.Width, size.Height));
         }
 
-        public virtual void UpdateLayout()
+        protected override bool OnExposeEvent(EventExpose evnt)
         {
+            base.OnExposeEvent(evnt);
+
             Rectangle bounds = Element.Bounds;
             Container.MoveTo(bounds.X, bounds.Y);
-            Container.SetSizeRequest((int)Element.Bounds.Width, (int)Element.Bounds.Height);
+
+            var width = (int)bounds.Width;
+            var height = (int)bounds.Height;
+
+            Container.SetSize(width, height);
+
+            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+            {
+                var child = ElementController.LogicalChildren[i] as VisualElement;
+                if (child != null)
+                {
+                    var renderer = Platform.GetRenderer(child);
+                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                }
+            }
+
+            return true;
         }
 
         public virtual SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -83,19 +103,7 @@ namespace Xamarin.Forms.Platform.GTK
             if (Children.Length == 0)
                 return new SizeRequest();
 
-            var desiredSize = Control.SizeRequest();
-            var width =  desiredSize.Width;
-            var height = desiredSize.Height;
-
-            View view = Element as View;
-
-            if (width == 0) width = -1;
-
-            if (height == 0) height = -1;
-
-            return new SizeRequest(
-                new Size(width, height),
-                Size.Zero);
+            return Control.GetSizeRequest(widthConstraint, heightConstraint);
         }
 
         public sealed override void Dispose()
@@ -129,33 +137,26 @@ namespace Xamarin.Forms.Platform.GTK
         protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-            {
                 UpdateEnabled();
-            }
             else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-            {
                 UpdateBackgroundColor();
-            }
-            else if (e.PropertyName == VisualElement.WidthProperty.PropertyName ||
-                     e.PropertyName == VisualElement.HeightProperty.PropertyName)
-            {
-                Platform.InvalidateParentLayout(Element);
-            }
         }
 
         protected virtual void UpdateBackgroundColor()
         {
             Color backgroundColor = Element.BackgroundColor;
 
-            if (backgroundColor != Color.Default)
+            var control = Control as Control;
+            var parent = control?.Parent as Container;
+
+            if (parent != null)
             {
-                var control = Control as Control;
-                var parent = control?.Parent as Container;
+                if (backgroundColor != Color.Default)
+                {
+                    parent.ModifyBg(Gtk.StateType.Normal, backgroundColor.ToGtkColor());
+                }
 
-                if (parent == null) return;
-
-                parent.VisibleWindow = backgroundColor != Color.Transparent;
-                parent.ModifyBg(Gtk.StateType.Normal, backgroundColor.ToGtkColor());
+                parent.VisibleWindow = backgroundColor == Color.Transparent || backgroundColor == Color.Default;
             }
         }
 

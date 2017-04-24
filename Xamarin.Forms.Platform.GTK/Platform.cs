@@ -5,7 +5,7 @@ namespace Xamarin.Forms.Platform.GTK
 {
     public class Platform : BindableObject, IPlatform, IDisposable
     {
-        internal static readonly BindableProperty RendererProperty = 
+        internal static readonly BindableProperty RendererProperty =
             BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(Platform), default(IVisualElementRenderer),
             propertyChanged: (bindable, oldvalue, newvalue) =>
             {
@@ -78,24 +78,6 @@ namespace Xamarin.Forms.Platform.GTK
                 Renderer.Add(viewRenderer.Container);
 
                 _renderer.ShowAll();
-            }
-        }
-
-        internal static void InvalidateParentLayout<TElement>(TElement element) where TElement : VisualElement
-        {
-            if (element == null)
-            {
-                throw new ArgumentNullException(nameof(element));
-            }
-
-            var parent = element.Parent as Layout;
-
-            if (parent != null)
-            {
-                parent.ForceLayout();
-
-                var renderer = GetRenderer(parent);
-                renderer?.UpdateLayout();
             }
         }
 

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using Gtk;
-using GRectangle = Gdk.Rectangle;
 
 namespace Xamarin.Forms.Platform.GTK
 {
     public class FormsWindow : Window
     {
         private Application _application;
-        private GRectangle _lastAllocation;
 
-        public FormsWindow() 
+        public FormsWindow()
             : base(WindowType.Toplevel)
         {
             SetSizeRequest(800, 600);
@@ -28,24 +26,18 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateMainPage();
         }
 
-        protected override void OnSizeAllocated(GRectangle allocation)
-        {
-            base.OnSizeAllocated(allocation);
-
-            if (!_lastAllocation.Equals(allocation))
-            {
-                _lastAllocation = allocation;
-
-                var viewRenderer = Platform.GetRenderer(Application.Current.MainPage);
-                viewRenderer?.UpdateLayout();
-            }
-        }
-
         public sealed override void Dispose()
         {
             base.Dispose();
 
             Dispose(true);
+        }
+
+        protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
+        {
+            Child?.QueueDraw();
+
+            return base.OnConfigureEvent(evnt);
         }
 
         private void ApplicationOnPropertyChanged(object sender, PropertyChangedEventArgs args)
