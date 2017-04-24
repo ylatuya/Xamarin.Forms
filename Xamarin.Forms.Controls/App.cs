@@ -52,9 +52,55 @@ namespace Xamarin.Forms.Controls
             var stack = new StackLayout();
             stack.BackgroundColor = Color.White;
 
+            Label label = new Label { Text = "-", BackgroundColor = Color.White };
+            label.FontFamily = "Jokerman";
+
+            Button button = new Button { Text = "Click me!" };
+            button.BackgroundColor = Color.Red;
+            button.Clicked += (sender, args) =>
+            {
+                counter++;
+                label.Text = string.Format("Button clicked {0} times", counter);
+            };
+
+            Entry entry = new Entry();
+
+            var image = new Image();
+            image.Source = ImageSource.FromFile("coffee.png");
+            image.HeightRequest = 100;
+            image.WidthRequest = 100;
+
+            Slider slider = new Slider();
+            slider.Minimum = 0;
+            slider.Maximum = 100;
+            slider.Value = 50;
+
+            Stepper stepper = new Stepper();
+            stepper.Minimum = 0;
+            stepper.Maximum = 100;
+            stepper.Value = 33;
+
+            TimePicker timePicker = new TimePicker();
+
             DatePicker datePicker = new DatePicker();
 
+            Picker picker = new Picker();
+            picker.ItemsSource = new List<string>
+            {
+                "Linux",
+                "MacOS",
+                "Windows"
+            };
+
+            stack.Children.Add(label);
+            stack.Children.Add(button);
+            stack.Children.Add(entry);
+            stack.Children.Add(image);
+            stack.Children.Add(slider);
+            stack.Children.Add(stepper);
+            stack.Children.Add(timePicker);
             stack.Children.Add(datePicker);
+            stack.Children.Add(picker);
 
             return new ContentPage
             {

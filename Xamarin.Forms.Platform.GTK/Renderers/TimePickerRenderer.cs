@@ -6,8 +6,18 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class TimePickerRenderer : ViewRenderer<TimePicker, Controls.TimePicker>
     {
+        private bool _disposed;
+
         protected override void Dispose(bool disposing)
         {
+            if (disposing && !_disposed)
+            {
+                if (Control != null)
+                    Control.TimeChanged -= OnTimeChanged;
+
+                _disposed = true;
+            }
+
             base.Dispose(disposing);
         }
 
@@ -18,6 +28,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     var timePicker = new Controls.TimePicker();
+                    timePicker.TimeChanged += OnTimeChanged;
                     SetNativeControl(timePicker);
                 }
 
@@ -32,9 +43,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName == TimePicker.TimeProperty.PropertyName)
+            if (e.PropertyName == TimePicker.TimeProperty.PropertyName ||
+                e.PropertyName == TimePicker.FormatProperty.PropertyName)
                 UpdateTime();
-            if (e.PropertyName == TimePicker.TextColorProperty.PropertyName)
+            if (e.PropertyName == TimePicker.TextColorProperty.PropertyName ||
+                     e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
                 UpdateTextColor();
         }
 
@@ -52,7 +65,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateTextColor()
         {
             var textColor = Element.TextColor.ToGtkColor();
-            Control.Color = textColor;
+            Control.TextColor = textColor;
+        }
+
+        private void OnTimeChanged(object sender, EventArgs e)
+        {
+            var currentTime = (DateTime.Today + Control.CurrentTime);
+
+            ElementController?.SetValueFromRenderer(TimePicker.TimeProperty, currentTime);
         }
     }
 }

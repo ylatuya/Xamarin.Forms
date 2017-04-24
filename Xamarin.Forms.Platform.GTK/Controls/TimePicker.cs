@@ -241,7 +241,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             CurrentTime = new TimeSpan(DateTime.Now.Ticks);
 
-            Color = _comboBox.Entry.Style.Text(Gtk.StateType.Normal);
+            TextColor = _comboBox.Entry.Style.Text(Gtk.StateType.Normal);
 
             _comboBox.Entry.Changed += new EventHandler(OnTxtTimeChanged);
             _comboBox.PopupButton.Clicked += new EventHandler(OnBtnShowTimePickerClicked);
@@ -260,7 +260,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public Gdk.Color Color
+        public Gdk.Color TextColor
         {
             get
             {
@@ -300,7 +300,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         protected virtual void OnTxtTimeChanged(object sender, EventArgs e)
         {
-            _comboBox.Entry.ModifyText(Gtk.StateType.Normal, _color);
+            _comboBox.Entry.ModifyText(Gtk.StateType.Normal, TextColor);
 
             TimeChanged?.Invoke(this, e);
         }
