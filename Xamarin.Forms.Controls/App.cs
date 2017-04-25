@@ -92,6 +92,9 @@ namespace Xamarin.Forms.Controls
                 "Windows"
             };
 
+            ProgressBar progress = new ProgressBar();
+            progress.Progress = 0.75;
+
             stack.Children.Add(label);
             stack.Children.Add(button);
             stack.Children.Add(entry);
@@ -101,6 +104,7 @@ namespace Xamarin.Forms.Controls
             stack.Children.Add(timePicker);
             stack.Children.Add(datePicker);
             stack.Children.Add(picker);
+            stack.Children.Add(progress);
 
             return new ContentPage
             {

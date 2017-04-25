@@ -7,6 +7,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class ButtonRenderer : ViewRenderer<Button, ButtonRenderer.GtkButtonWrapper>
     {
+        private static Gdk.Color DefaultBackgroundColor = new Gdk.Color(0xee, 0xeb, 0xe7);
+        private static Gdk.Color DefaultForegroundColor = new Gdk.Color(0x00, 0x00, 0x00);
+
         protected override void Dispose(bool disposing)
         {
             if (Control != null)
@@ -19,8 +22,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
         {
-            base.OnElementChanged(e);
-
             if (e.NewElement != null)
             {
                 if (Control == null)
@@ -31,14 +32,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control.Clicked += OnButtonClicked;
                 }
 
-                if (Element.BackgroundColor != Color.Default)
-                    UpdateBackgroundColor();
-
-                if (Element.TextColor != Color.Default)
-                    UpdateTextColor();
-
+                UpdateBackgroundColor();
+                UpdateTextColor();
                 UpdateText();
+                UpdateBorder();
             }
+
+            base.OnElementChanged(e);
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -46,17 +46,31 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.OnElementPropertyChanged(sender, e);
 
             if (e.PropertyName == Button.TextProperty.PropertyName)
-            {
                 UpdateText();
-            }
+            else if (e.PropertyName == Button.FontProperty.PropertyName)
+                UpdateText();
             else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-            {
                 UpdateBackgroundColor();
-            }
             else if (e.PropertyName == Button.TextColorProperty.PropertyName)
-            {
                 UpdateTextColor();
+            else if (e.PropertyName == Button.BorderColorProperty.PropertyName)
+                UpdateBorder();
+            else if (e.PropertyName == Button.BorderWidthProperty.PropertyName)
+                UpdateBorder();
+        }
+
+        protected override void UpdateBackgroundColor()
+        {
+            if (Element.BackgroundColor.IsDefault)
+            {
+                Control.SetBackgroundColor(DefaultBackgroundColor);
             }
+            else if (Element.BackgroundColor != Color.Transparent)
+            {
+                Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
+            }
+
+            Container.VisibleWindow = Element.BackgroundColor != Color.Transparent;
         }
 
         private void OnButtonClicked(object sender, EventArgs e)
@@ -66,28 +80,54 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateText()
         {
-            Control.LabelWidget.Text = Element.Text ?? string.Empty;
-        }
+            var span = new Span()
+            {
+                FontAttributes = Element.FontAttributes,
+                FontFamily = Element.FontFamily,
+                FontSize = Element.FontSize,
+                Text = Element.Text
+            };
 
-        protected override void UpdateBackgroundColor()
-        {
-            var backgroundColor = Element.BackgroundColor != Color.Default ? Element.BackgroundColor : Color.Transparent;
-            Container.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
-            Control?.SetBackgroundColor(backgroundColor.ToGtkColor());
+            Control.LabelWidget.SetTextFromSpan(span);
         }
 
         private void UpdateTextColor()
         {
-            var textColor = Element.TextColor != Color.Default ? Element.TextColor : Color.Black;
-            Control?.SetForegroundColor(textColor.ToGtkColor());
+            if (Element.TextColor.IsDefaultOrTransparent())
+            {
+                Control.SetForegroundColor(DefaultForegroundColor);
+            }
+            else
+            {
+                Control.SetForegroundColor(Element.TextColor.ToGtkColor());
+            }
+        }
+
+        private void UpdateBorder()
+        {
+            var borderWidth = Element.BorderWidth >= 0
+                ? (uint)Element.BorderWidth
+                : 0;
+
+            Control.SetBorderWidth(borderWidth);
+
+            if (borderWidth == 0 || Element.BorderColor.IsDefaultOrTransparent())
+            {
+                if (!Element.BackgroundColor.IsDefault)
+                {
+                    Container.ModifyBg(StateType.Normal, Element.BackgroundColor.ToGtkColor());
+                }
+            }
+            else
+            {
+                Container.ModifyBg(StateType.Normal, Element.BorderColor.ToGtkColor());
+            }
         }
 
         public sealed class GtkButtonWrapper : Gtk.Button
         {
             private EventBox _labelContainer;
             private Gtk.Label _label;
-
-            public Gtk.Label LabelWidget => _label;
 
             public GtkButtonWrapper()
             {
@@ -99,6 +139,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Relief = ReliefStyle.None;
                 CanFocus = false;
             }
+
+            public Gtk.Label LabelWidget => _label;
 
             public void SetBackgroundColor(Gdk.Color color)
             {
@@ -112,10 +154,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             public void SetForegroundColor(Gdk.Color color)
             {
                 _label.ModifyFg(StateType.Normal, color);
-                _label.ModifyFg(StateType.Selected, color);
                 _label.ModifyFg(StateType.Prelight, color);
                 _label.ModifyFg(StateType.Active, color);
-                _label.ModifyFg(StateType.Insensitive, color);
+            }
+
+            public void SetBorderWidth(uint width)
+            {
+                _labelContainer.BorderWidth = width;
             }
 
             public override void Dispose()
