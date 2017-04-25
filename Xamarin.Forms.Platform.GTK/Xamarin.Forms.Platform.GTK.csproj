@@ -93,6 +93,7 @@
     <Compile Include="PlatformRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RendererFactory.cs" />
+    <Compile Include="Renderers\ActivityIndicatorRenderer.cs" />
     <Compile Include="Renderers\ButtonRenderer.cs" />
     <Compile Include="Renderers\DatePickerRenderer.cs" />
     <Compile Include="Renderers\EntryRenderer.cs" />

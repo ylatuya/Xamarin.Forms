@@ -146,18 +146,14 @@ namespace Xamarin.Forms.Platform.GTK
         {
             Color backgroundColor = Element.BackgroundColor;
 
-            var control = Control as Control;
-            var parent = control?.Parent as Container;
+            bool isDefault = backgroundColor.IsDefaultOrTransparent();
 
-            if (parent != null)
+            if (!isDefault)
             {
-                if (backgroundColor != Color.Default)
-                {
-                    parent.ModifyBg(Gtk.StateType.Normal, backgroundColor.ToGtkColor());
-                }
-
-                parent.VisibleWindow = backgroundColor == Color.Transparent || backgroundColor == Color.Default;
+                Container.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
             }
+
+            Container.VisibleWindow = !isDefault;
         }
 
         private void UpdateEnabled()

@@ -16,6 +16,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 
 [assembly: Dependency(typeof(ResourcesProvider))]
 
+[assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(Button), typeof(ButtonRenderer))]
 [assembly: ExportRenderer(typeof(DatePicker), typeof(DatePickerRenderer))]
 [assembly: ExportRenderer(typeof(Entry), typeof(EntryRenderer))]

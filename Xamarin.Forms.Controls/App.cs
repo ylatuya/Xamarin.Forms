@@ -52,6 +52,10 @@ namespace Xamarin.Forms.Controls
             var stack = new StackLayout();
             stack.BackgroundColor = Color.White;
 
+            ActivityIndicator activityIndicator = new ActivityIndicator();
+            activityIndicator.IsRunning = true;
+            activityIndicator.Color = Color.OrangeRed;
+
             Label label = new Label { Text = "-", BackgroundColor = Color.White };
             label.FontFamily = "Jokerman";
 
@@ -95,6 +99,7 @@ namespace Xamarin.Forms.Controls
             ProgressBar progress = new ProgressBar();
             progress.Progress = 0.75;
 
+            stack.Children.Add(activityIndicator);
             stack.Children.Add(label);
             stack.Children.Add(button);
             stack.Children.Add(entry);
