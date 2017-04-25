@@ -49,6 +49,8 @@ namespace Xamarin.Forms.Controls
         {
             int counter = 0;
 
+            ScrollView scrollView = new ScrollView();
+
             var stack = new StackLayout();
             stack.BackgroundColor = Color.White;
 
@@ -111,9 +113,18 @@ namespace Xamarin.Forms.Controls
             stack.Children.Add(picker);
             stack.Children.Add(progress);
 
+            stack.Children.Add(new Button { Text = "Button 1" });
+            stack.Children.Add(new Button { Text = "Button 2" });
+            stack.Children.Add(new Button { Text = "Button 3" });
+            stack.Children.Add(new Button { Text = "Button 4" });
+            stack.Children.Add(new Button { Text = "Button 5" });
+            stack.Children.Add(new Button { Text = "Button 6" });
+
+            scrollView.Content = stack;
+
             return new ContentPage
             {
-                Content = stack
+                Content = scrollView
             };
 
             /*
