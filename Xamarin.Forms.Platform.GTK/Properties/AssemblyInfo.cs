@@ -30,4 +30,5 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportRenderer(typeof(ScrollView), typeof(ScrollViewRenderer))]
 [assembly: ExportRenderer(typeof(Slider), typeof(SliderRenderer))]
 [assembly: ExportRenderer(typeof(Stepper), typeof(StepperRenderer))]
+[assembly: ExportRenderer(typeof(Switch), typeof(SwitchRenderer))]
 [assembly: ExportRenderer(typeof(TimePicker), typeof(TimePickerRenderer))]

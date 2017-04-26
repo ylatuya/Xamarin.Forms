@@ -101,6 +101,8 @@ namespace Xamarin.Forms.Controls
             ProgressBar progress = new ProgressBar();
             progress.Progress = 0.75;
 
+            Switch switchControl = new Switch();
+
             stack.Children.Add(activityIndicator);
             stack.Children.Add(label);
             stack.Children.Add(button);
@@ -112,13 +114,13 @@ namespace Xamarin.Forms.Controls
             stack.Children.Add(datePicker);
             stack.Children.Add(picker);
             stack.Children.Add(progress);
+            stack.Children.Add(switchControl);
 
             stack.Children.Add(new Button { Text = "Button 1" });
             stack.Children.Add(new Button { Text = "Button 2" });
             stack.Children.Add(new Button { Text = "Button 3" });
             stack.Children.Add(new Button { Text = "Button 4" });
             stack.Children.Add(new Button { Text = "Button 5" });
-            stack.Children.Add(new Button { Text = "Button 6" });
 
             scrollView.Content = stack;
 
