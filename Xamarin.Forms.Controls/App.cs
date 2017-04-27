@@ -63,6 +63,8 @@ namespace Xamarin.Forms.Controls
 
             Button button = new Button { Text = "Click me!" };
             button.BackgroundColor = Color.Red;
+            button.Image = "coffee.png";
+            button.ContentLayout = new Button.ButtonContentLayout(Button.ButtonContentLayout.ImagePosition.Right, 50);
             button.Clicked += (sender, args) =>
             {
                 counter++;

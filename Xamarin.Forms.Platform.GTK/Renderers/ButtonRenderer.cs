@@ -1,11 +1,13 @@
 ﻿using Gtk;
 using System;
 using System.ComponentModel;
+using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using static Xamarin.Forms.Button;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class ButtonRenderer : ViewRenderer<Button, ButtonRenderer.GtkButtonWrapper>
+    public class ButtonRenderer : ViewRenderer<Button, ImageButton>
     {
         private static Gdk.Color DefaultBackgroundColor = new Gdk.Color(0xee, 0xeb, 0xe7);
         private static Gdk.Color DefaultForegroundColor = new Gdk.Color(0x00, 0x00, 0x00);
@@ -26,7 +28,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    var btn = new GtkButtonWrapper();
+                    var btn = new ImageButton();
                     SetNativeControl(btn);
 
                     Control.Clicked += OnButtonClicked;
@@ -36,6 +38,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateTextColor();
                 UpdateText();
                 UpdateBorder();
+                UpdateContent();
             }
 
             base.OnElementChanged(e);
@@ -57,6 +60,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBorder();
             else if (e.PropertyName == Button.BorderWidthProperty.PropertyName)
                 UpdateBorder();
+            else if (e.PropertyName == Button.ImageProperty.PropertyName || e.PropertyName == Button.ContentLayoutProperty.PropertyName)
+                UpdateContent();
         }
 
         protected override void UpdateBackgroundColor()
@@ -124,51 +129,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        public sealed class GtkButtonWrapper : Gtk.Button
+        private void UpdateContent()
         {
-            private EventBox _labelContainer;
-            private Gtk.Label _label;
-
-            public GtkButtonWrapper()
+            if (!string.IsNullOrEmpty(Element.Image))
             {
-                _labelContainer = new EventBox();
-                _label = new Gtk.Label();
-                _labelContainer.Child = _label;
-
-                Add(_labelContainer);
-                Relief = ReliefStyle.None;
-                CanFocus = false;
+                var iconPixBuf = new Gdk.Pixbuf(Element.Image);
+                Control.ImageWidget.Pixbuf = iconPixBuf;
+                Control.ApplyContent(Element.ContentLayout);
+                Control.ImageWidget.Visible = true;
             }
-
-            public Gtk.Label LabelWidget => _label;
-
-            public void SetBackgroundColor(Gdk.Color color)
+            else
             {
-                _labelContainer.ModifyBg(StateType.Normal, color);
-                _labelContainer.ModifyBg(StateType.Selected, color);
-                _labelContainer.ModifyBg(StateType.Prelight, color);
-                _labelContainer.ModifyBg(StateType.Active, color);
-                _labelContainer.ModifyBg(StateType.Insensitive, color);
-            }
-
-            public void SetForegroundColor(Gdk.Color color)
-            {
-                _label.ModifyFg(StateType.Normal, color);
-                _label.ModifyFg(StateType.Prelight, color);
-                _label.ModifyFg(StateType.Active, color);
-            }
-
-            public void SetBorderWidth(uint width)
-            {
-                _labelContainer.BorderWidth = width;
-            }
-
-            public override void Dispose()
-            {
-                base.Dispose();
-
-                _labelContainer = null;
-                _label = null;
+                Control.ApplyContent(new ButtonContentLayout(ButtonContentLayout.ImagePosition.Right, 0));
+                Control.ImageWidget.Visible = false;
             }
         }
     }

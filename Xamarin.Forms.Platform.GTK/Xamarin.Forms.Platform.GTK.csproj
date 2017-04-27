@@ -75,6 +75,7 @@
     <Compile Include="Controls\ActivityIndicator.cs" />
     <Compile Include="Controls\CustomComboBox.cs" />
     <Compile Include="Controls\DatePicker.cs" />
+    <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
