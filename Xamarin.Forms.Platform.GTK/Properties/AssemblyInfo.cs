@@ -22,6 +22,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportCell(typeof(ImageCell), typeof(ImageCellRenderer))]
 
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
+[assembly: ExportRenderer(typeof(BoxView), typeof(BoxViewRenderer))]
 [assembly: ExportRenderer(typeof(Button), typeof(ButtonRenderer))]
 [assembly: ExportRenderer(typeof(DatePicker), typeof(DatePickerRenderer))]
 [assembly: ExportRenderer(typeof(Editor), typeof(EditorRenderer))]

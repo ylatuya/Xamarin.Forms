@@ -71,6 +71,12 @@ namespace Xamarin.Forms.Controls
                 label.Text = string.Format("Button clicked {0} times", counter);
             };
 
+            BoxView boxView = new BoxView();
+            boxView.Color = Color.Pink;
+            boxView.HeightRequest = 100;
+            boxView.WidthRequest = 300;
+            boxView.HorizontalOptions = LayoutOptions.Start;
+
             Entry entry = new Entry();
 
             var image = new Image();
@@ -129,6 +135,7 @@ namespace Xamarin.Forms.Controls
             stack.Children.Add(activityIndicator);
             stack.Children.Add(label);
             stack.Children.Add(button);
+            stack.Children.Add(boxView);
             stack.Children.Add(entry);
             stack.Children.Add(image);
             stack.Children.Add(slider);
