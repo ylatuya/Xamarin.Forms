@@ -1,6 +1,9 @@
 ﻿using Gtk;
+using Pango;
+using System;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -8,14 +11,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private bool _disposed;
 
-        IElementController ElementController => Element;
-
         IEntryController EntryController => Element;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Entry> e)
         {
-            base.OnElementChanged(e);
-
             if (Control == null)
             {
                 Gtk.Entry entry = new Gtk.Entry();
@@ -31,7 +30,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateText();
                 UpdateColor();
                 UpdateAlignment();
+                UpdateFont();
+                UpdateTextVisibility();
             }
+
+            base.OnElementChanged(e);
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -42,10 +45,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateColor();
             else if (e.PropertyName == Entry.HorizontalTextAlignmentProperty.PropertyName)
                 UpdateAlignment();
-            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-            {
-                UpdateColor();
-            }
+            else if (e.PropertyName == Entry.FontAttributesProperty.PropertyName)
+                UpdateFont();
+            else if (e.PropertyName == Entry.FontFamilyProperty.PropertyName)
+                UpdateFont();
+            else if (e.PropertyName == Entry.FontSizeProperty.PropertyName)
+                UpdateFont();
+            else if (e.PropertyName == Entry.IsPasswordProperty.PropertyName)
+                UpdateTextVisibility();
 
             base.OnElementPropertyChanged(sender, e);
         }
@@ -66,6 +73,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.Dispose(disposing);
         }
 
+        protected override void UpdateBackgroundColor()
+        {
+            Control.ModifyBase(StateType.Normal, Element.BackgroundColor.ToGtkColor());
+        }
+
         private void UpdateText()
         {
             if (Control.Text != Element.Text)
@@ -76,17 +88,27 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             var textColor = Element.TextColor;
 
-            Control.ModifyFg(StateType.Normal, textColor.ToGtkColor());
+            Control.ModifyText(StateType.Normal, textColor.ToGtkColor());
         }
 
         private void UpdateAlignment()
         {
-            var hAlignmentValue = GetAlignmentValue(Element.HorizontalTextAlignment);
-
-            Control.Alignment = hAlignmentValue;
+            Control.Alignment = Element.HorizontalTextAlignment.ToNativeValue();
         }
 
-        private void OnChanged(object sender, System.EventArgs e)
+        private void UpdateFont()
+        {
+            FontDescription fontDescription = FontDescriptionHelper.CreateFontDescription(
+                Element.FontSize, Element.FontFamily, Element.FontAttributes);
+            Control.ModifyFont(fontDescription);
+        }
+
+        private void UpdateTextVisibility()
+        {
+            Control.Visibility = !Element.IsPassword;
+        }
+
+        private void OnChanged(object sender, EventArgs e)
         {
             ElementController.SetValueFromRenderer(Entry.TextProperty, Control.Text);
         }
@@ -96,23 +118,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
         }
 
-        private void OnEditingDone(object sender, System.EventArgs e)
+        private void OnEditingDone(object sender, EventArgs e)
         {
             ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
             EntryController?.SendCompleted();
-        }
-
-        private static float GetAlignmentValue(TextAlignment alignment)
-        {
-            switch (alignment)
-            {
-                case TextAlignment.Start:
-                    return 0f;
-                case TextAlignment.End:
-                    return 1f;
-                default:
-                    return 0.5f;
-            }
         }
     }
 }

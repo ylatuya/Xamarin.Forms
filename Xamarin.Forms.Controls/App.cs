@@ -77,7 +77,14 @@ namespace Xamarin.Forms.Controls
             boxView.WidthRequest = 300;
             boxView.HorizontalOptions = LayoutOptions.Start;
 
-            Entry entry = new Entry();
+            var entry = new Entry();
+            entry.BackgroundColor = Color.LightSalmon;
+            entry.TextColor = Color.Green;
+            entry.Text = "Hello, I'm an entry";
+            entry.FontFamily = "Jokerman";
+            entry.FontSize = 32;
+            entry.FontAttributes = FontAttributes.Italic;
+            entry.HorizontalTextAlignment = TextAlignment.End;
 
             var image = new Image();
             image.Source = ImageSource.FromFile("coffee.png");

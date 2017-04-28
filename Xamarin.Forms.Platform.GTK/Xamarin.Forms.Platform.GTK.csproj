@@ -93,6 +93,7 @@
     <Compile Include="ExportCellAttribute.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="ExportRendererAttribute.cs" />
+    <Compile Include="Extensions\AlignmentExtensions.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Extensions\LabelExtensions.cs" />
     <Compile Include="Extensions\VisualElementExtensions.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="FormsWindow.cs" />
     <Compile Include="GtkDeviceInfo.cs" />
     <Compile Include="GtkPlatformServices.cs" />
+    <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="Platform.cs" />
