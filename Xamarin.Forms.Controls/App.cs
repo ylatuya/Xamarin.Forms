@@ -105,6 +105,27 @@ namespace Xamarin.Forms.Controls
 
             Switch switchControl = new Switch();
 
+            ListView listView = new ListView();
+            listView.BackgroundColor = Color.Violet;
+            listView.HeightRequest = 150;
+            listView.WidthRequest = 300;
+            
+            List<string> items = new List<string>();
+            for (int i = 0; i < 10; i++)
+            {
+                items.Add(i.ToString());
+            }
+
+            listView.ItemsSource = items;
+
+            listView.ItemTemplate = new DataTemplate(() =>
+            new ImageCell
+            {
+                Text = "Text",
+                Detail = "Detail",
+                ImageSource = ImageSource.FromFile("coffee.png")
+            });
+
             stack.Children.Add(activityIndicator);
             stack.Children.Add(label);
             stack.Children.Add(button);
@@ -117,12 +138,7 @@ namespace Xamarin.Forms.Controls
             stack.Children.Add(picker);
             stack.Children.Add(progress);
             stack.Children.Add(switchControl);
-
-            stack.Children.Add(new Button { Text = "Button 1" });
-            stack.Children.Add(new Button { Text = "Button 2" });
-            stack.Children.Add(new Button { Text = "Button 3" });
-            stack.Children.Add(new Button { Text = "Button 4" });
-            stack.Children.Add(new Button { Text = "Button 5" });
+            stack.Children.Add(listView);
 
             scrollView.Content = stack;
 

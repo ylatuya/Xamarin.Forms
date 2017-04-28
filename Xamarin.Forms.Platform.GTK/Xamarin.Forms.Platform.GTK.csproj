@@ -72,12 +72,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cells\CellRenderer.cs" />
+    <Compile Include="Cells\GtkImageCell.cs" />
+    <Compile Include="Cells\GtkTextCell.cs" />
+    <Compile Include="Cells\ImageCellRenderer.cs" />
+    <Compile Include="Cells\TextCellRenderer.cs" />
     <Compile Include="Controls\ActivityIndicator.cs" />
     <Compile Include="Controls\CustomComboBox.cs" />
     <Compile Include="Controls\DatePicker.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
+    <Compile Include="ExportCellAttribute.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="ExportRendererAttribute.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
@@ -102,6 +108,7 @@
     <Compile Include="Renderers\ImageRenderer.cs" />
     <Compile Include="Renderers\LabelRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
+    <Compile Include="Renderers\ListViewRenderer.cs" />
     <Compile Include="Renderers\PageRenderer.cs" />
     <Compile Include="Renderers\PickerRenderer.cs" />
     <Compile Include="Renderers\ProgressBarRenderer.cs" />

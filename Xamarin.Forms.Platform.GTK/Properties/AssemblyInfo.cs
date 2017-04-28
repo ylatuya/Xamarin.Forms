@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.GTK;
+using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
 // General Information about an assembly is controlled through the following 
@@ -16,6 +17,10 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 
 [assembly: Dependency(typeof(ResourcesProvider))]
 
+[assembly: ExportCell(typeof(Cell), typeof(CellRenderer))]
+[assembly: ExportCell(typeof(TextCell), typeof(TextCellRenderer))]
+[assembly: ExportCell(typeof(ImageCell), typeof(ImageCellRenderer))]
+
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(Button), typeof(ButtonRenderer))]
 [assembly: ExportRenderer(typeof(DatePicker), typeof(DatePickerRenderer))]
@@ -24,6 +29,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportRenderer(typeof(Image), typeof(ImageRenderer))]
 [assembly: ExportRenderer(typeof(Label), typeof(LabelRenderer))]
 [assembly: ExportRenderer(typeof(Layout), typeof(LayoutRenderer))]
+[assembly: ExportRenderer(typeof(ListView), typeof(ListViewRenderer))]
 [assembly: ExportRenderer(typeof(Page), typeof(PageRenderer))]
 [assembly: ExportRenderer(typeof(Picker), typeof(PickerRenderer))]
 [assembly: ExportRenderer(typeof(ProgressBar), typeof(ProgressBarRenderer))]

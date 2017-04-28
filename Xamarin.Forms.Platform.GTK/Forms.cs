@@ -29,8 +29,9 @@ namespace Xamarin.Forms
 
             Registrar.RegisterAll(new[]
             {
-                typeof(ExportRendererAttribute),
-                typeof(ExportImageSourceHandlerAttribute)
+                typeof(ExportCellAttribute),
+                typeof(ExportImageSourceHandlerAttribute),
+                typeof(ExportRendererAttribute)
             });
         }
     }
