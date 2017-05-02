@@ -1,16 +1,34 @@
 ﻿using Gtk;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using System;
+using Gdk;
+using Pango;
+using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class EditorRenderer : ViewRenderer<Editor, TextView>
     {
+        private const string TextColorTagName = "text-color";
+
         private bool _disposed;
 
+        protected IEditorController EditorController => Element as IEditorController;
+
+        protected override void UpdateBackgroundColor()
+        {
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                var color = Element.BackgroundColor.ToGtkColor();
+
+                Control.ModifyBg(StateType.Normal, color);
+                Control.ModifyBase(StateType.Normal, color);
+            }
+        }
+        
         protected override void OnElementChanged(ElementChangedEventArgs<Editor> e)
         {
-            base.OnElementChanged(e);
 
             if (Control == null)
             {
@@ -18,17 +36,26 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     AcceptsTab = true,
                     BorderWidth = 1,
-                    WrapMode = WrapMode.WordChar
+                    WrapMode = Gtk.WrapMode.WordChar
                 };
+
+                textView.Buffer.TagTable.Add(new TextTag(TextColorTagName));
+                textView.Buffer.Changed += TextViewBufferChanged;
+                textView.Focused += TextViewFocused;
+                textView.FocusOutEvent += TextViewFocusedOut;
 
                 SetNativeControl(textView);
             }
 
-            if (e.NewElement == null) return;
-            UpdateText();
-            UpdateFont();
-            UpdateTextColor();
-            UpdateEditable();
+            if (e.NewElement != null)
+            {
+                UpdateText();
+                UpdateFont();
+                UpdateTextColor();
+                UpdateEditable();
+            }
+
+            base.OnElementChanged(e);
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -54,6 +81,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (disposing && !_disposed)
             {
                 _disposed = true;
+
+                if (Control != null)
+                {
+                    Control.Buffer.Changed -= TextViewBufferChanged;
+                    Control.Focused -= TextViewFocused;
+                    Control.FocusOutEvent += TextViewFocusedOut;
+                }
             }
 
             base.Dispose(disposing);
@@ -62,7 +96,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateText()
         {
             if (Control.Buffer.Text != Element.Text)
+            {
                 Control.Buffer.Text = Element.Text ?? string.Empty;
+                UpdateTextColor();
+            }
         }
 
         private void UpdateEditable()
@@ -72,14 +109,40 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateFont()
         {
-            // TODO:
+            FontDescription fontDescription = FontDescriptionHelper.CreateFontDescription(
+                Element.FontSize, Element.FontFamily, Element.FontAttributes);
+            Control.ModifyFont(fontDescription);
         }
 
         private void UpdateTextColor()
         {
-            var textColor = Element.TextColor.ToGtkColor();
+            if (!Element.TextColor.IsDefaultOrTransparent())
+            {
+                var textColor = Element.TextColor.ToGtkColor();
 
-            Control.ModifyFg(StateType.Normal, textColor);
+                TextTag tag = Control.Buffer.TagTable.Lookup(TextColorTagName);
+                tag.ForegroundGdk = textColor;
+                Control.Buffer.ApplyTag(tag, Control.Buffer.StartIter, Control.Buffer.EndIter);
+            }
+        }
+
+        private void TextViewBufferChanged(object sender, EventArgs e)
+        {
+            if (Element.Text != Control.Buffer.Text)
+                ((IElementController)Element).SetValueFromRenderer(Editor.TextProperty, Control.Buffer.Text);
+
+            UpdateTextColor();
+        }
+
+        private void TextViewFocused(object o, FocusedArgs args)
+        {
+            ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
+        }
+
+        private void TextViewFocusedOut(object o, FocusOutEventArgs args)
+        {
+            ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
+            EditorController.SendCompleted();
         }
     }
 }
