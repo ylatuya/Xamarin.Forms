@@ -89,6 +89,7 @@
     <Compile Include="Controls\GLWidget.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\OpenGLView.cs" />
+    <Compile Include="Controls\TabbedPageHeader.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportCellAttribute.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="ExportRendererAttribute.cs" />
     <Compile Include="Extensions\AlignmentExtensions.cs" />
     <Compile Include="Extensions\ColorExtensions.cs" />
+    <Compile Include="Extensions\ImageExtensions.cs" />
     <Compile Include="Extensions\LabelExtensions.cs" />
     <Compile Include="Extensions\VisualElementExtensions.cs" />
     <Compile Include="Extensions\WidgetExtensions.cs" />
@@ -129,6 +131,7 @@
     <Compile Include="Renderers\SliderRenderer.cs" />
     <Compile Include="Renderers\StepperRenderer.cs" />
     <Compile Include="Renderers\SwitchRenderer.cs" />
+    <Compile Include="Renderers\TabbedPageRenderer.cs" />
     <Compile Include="Renderers\TimePickerRenderer.cs" />
     <Compile Include="ResourcesProvider.cs" />
     <Compile Include="ViewRenderer.cs" />
