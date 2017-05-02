@@ -58,9 +58,13 @@ namespace Xamarin.Forms.Controls
             activityIndicator.IsRunning = true;
             activityIndicator.Color = Color.OrangeRed;
 
+            Frame frame = new Frame();
+            frame.OutlineColor = Color.Gold;
+
             Label label = new Label { Text = "-", BackgroundColor = Color.White };
             label.FontFamily = "Jokerman";
-
+            frame.Content = label;
+            
             Button button = new Button { Text = "Click me!" };
             button.BackgroundColor = Color.Red;
             button.Image = "coffee.png";
@@ -140,7 +144,7 @@ namespace Xamarin.Forms.Controls
             });
 
             stack.Children.Add(activityIndicator);
-            stack.Children.Add(label);
+            stack.Children.Add(frame);
             stack.Children.Add(button);
             stack.Children.Add(boxView);
             stack.Children.Add(entry);
