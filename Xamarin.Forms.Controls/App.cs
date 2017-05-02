@@ -123,11 +123,42 @@ namespace Xamarin.Forms.Controls
 
             Switch switchControl = new Switch();
 
+            stack.Children.Add(activityIndicator);
+            stack.Children.Add(frame);
+            stack.Children.Add(button);
+            stack.Children.Add(boxView);
+            stack.Children.Add(entry);
+            stack.Children.Add(image);
+            stack.Children.Add(slider);
+            stack.Children.Add(stepper);
+            stack.Children.Add(timePicker);
+            stack.Children.Add(datePicker);
+            stack.Children.Add(picker);
+            stack.Children.Add(progress);
+            stack.Children.Add(switchControl);
+
+            scrollView.Content = stack;
+
+            var tabbedPage = new TabbedPage();
+            tabbedPage.BarBackgroundColor = Color.GreenYellow;
+            tabbedPage.BarTextColor = Color.HotPink;
+
+            var basicPage = new ContentPage
+            {
+                Title = "Basic",
+                Content = scrollView
+            };
+
+            tabbedPage.Children.Add(basicPage);
+
+            var advancedStack = new StackLayout();
+
             ListView listView = new ListView();
             listView.BackgroundColor = Color.Violet;
-            listView.HeightRequest = 150;
             listView.WidthRequest = 300;
-            
+
+            listView.Header = "Header";
+
             List<string> items = new List<string>();
             for (int i = 0; i < 10; i++)
             {
@@ -144,27 +175,22 @@ namespace Xamarin.Forms.Controls
                 ImageSource = ImageSource.FromFile("coffee.png")
             });
 
-            stack.Children.Add(activityIndicator);
-            stack.Children.Add(frame);
-            stack.Children.Add(button);
-            stack.Children.Add(boxView);
-            stack.Children.Add(entry);
-            stack.Children.Add(image);
-            stack.Children.Add(slider);
-            stack.Children.Add(stepper);
-            stack.Children.Add(timePicker);
-            stack.Children.Add(datePicker);
-            stack.Children.Add(picker);
-            stack.Children.Add(progress);
-            stack.Children.Add(switchControl);
-            stack.Children.Add(listView);
+            listView.Footer = "Footer";
 
-            scrollView.Content = stack;
+            advancedStack.Children.Add(listView);
 
-            return new ContentPage
+            var advancedPage = new ContentPage
             {
-                Content = scrollView
+                Title = "Advanced",
+                Icon = ImageSource.FromFile("coffee.png") as FileImageSource,
+                Content = advancedStack
             };
+
+            tabbedPage.Children.Add(advancedPage);
+
+            tabbedPage.SelectedItem = advancedPage;
+
+            return tabbedPage;
 
             /*
 			return new MasterDetailPage
