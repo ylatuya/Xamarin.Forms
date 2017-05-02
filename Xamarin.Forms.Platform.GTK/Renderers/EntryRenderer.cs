@@ -1,13 +1,13 @@
 ﻿using Gtk;
 using Pango;
-using System;
 using System.ComponentModel;
+using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class EntryRenderer : ViewRenderer<Entry, Gtk.Entry>
+    public class EntryRenderer : ViewRenderer<Entry, EntryWrapper>
     {
         private bool _disposed;
 
@@ -17,12 +17,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (Control == null)
             {
-                Gtk.Entry entry = new Gtk.Entry();
-                SetNativeControl(entry);
+                var wrapper = new EntryWrapper();
+                SetNativeControl(wrapper);
 
-                entry.Changed += OnChanged;
-                entry.Focused += OnFocused;
-                entry.EditingDone += OnEditingDone;
+                wrapper.Entry.Changed += OnChanged;
+                wrapper.Entry.Focused += OnFocused;
+                wrapper.Entry.EditingDone += OnEditingDone;
             }
 
             if (e.NewElement != null)
@@ -32,6 +32,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateAlignment();
                 UpdateFont();
                 UpdateTextVisibility();
+                UpdatePlaceholder();
             }
 
             base.OnElementChanged(e);
@@ -53,6 +54,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateFont();
             else if (e.PropertyName == Entry.IsPasswordProperty.PropertyName)
                 UpdateTextVisibility();
+            else if (e.PropertyName == Entry.PlaceholderProperty.PropertyName)
+                UpdatePlaceholder();
+            else if (e.PropertyName == Entry.PlaceholderColorProperty.PropertyName)
+                UpdatePlaceholder();
 
             base.OnElementPropertyChanged(sender, e);
         }
@@ -64,9 +69,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 _disposed = true;
                 if (Control != null)
                 {
-                    Control.Changed -= OnChanged;
-                    Control.Focused -= OnFocused;
-                    Control.EditingDone -= OnEditingDone;
+                    Control.Entry.Changed -= OnChanged;
+                    Control.Entry.Focused -= OnFocused;
+                    Control.Entry.EditingDone -= OnEditingDone;
                 }
             }
 
@@ -75,42 +80,51 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void UpdateBackgroundColor()
         {
-            Control.ModifyBase(StateType.Normal, Element.BackgroundColor.ToGtkColor());
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
+            }
         }
 
         private void UpdateText()
         {
-            if (Control.Text != Element.Text)
-                Control.Text = Element.Text ?? string.Empty;
+            if (Control.Entry.Text != Element.Text)
+                Control.Entry.Text = Element.Text ?? string.Empty;
         }
 
         private void UpdateColor()
         {
             var textColor = Element.TextColor;
 
-            Control.ModifyText(StateType.Normal, textColor.ToGtkColor());
+            Control.Entry.ModifyText(StateType.Normal, textColor.ToGtkColor());
         }
 
         private void UpdateAlignment()
         {
-            Control.Alignment = Element.HorizontalTextAlignment.ToNativeValue();
+            Control.SetAlignment(Element.HorizontalTextAlignment.ToNativeValue());
         }
 
         private void UpdateFont()
         {
             FontDescription fontDescription = FontDescriptionHelper.CreateFontDescription(
                 Element.FontSize, Element.FontFamily, Element.FontAttributes);
-            Control.ModifyFont(fontDescription);
+            Control.SetFont(fontDescription);
         }
 
         private void UpdateTextVisibility()
         {
-            Control.Visibility = !Element.IsPassword;
+            Control.Entry.Visibility = !Element.IsPassword;
         }
 
-        private void OnChanged(object sender, EventArgs e)
+        private void UpdatePlaceholder()
         {
-            ElementController.SetValueFromRenderer(Entry.TextProperty, Control.Text);
+            Control.SetPlaceholderText(Element.Placeholder);
+            Control.SetPlaceholderTextColor(Element.PlaceholderColor.ToGtkColor());
+        }
+
+        private void OnChanged(object sender, System.EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(Entry.TextProperty, Control.Entry.Text);
         }
 
         private void OnFocused(object o, FocusedArgs args)
@@ -118,7 +132,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
         }
 
-        private void OnEditingDone(object sender, EventArgs e)
+        private void OnEditingDone(object sender, System.EventArgs e)
         {
             ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
             EntryController?.SendCompleted();

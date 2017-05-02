@@ -85,6 +85,7 @@
     <Compile Include="Controls\BoxView.cs" />
     <Compile Include="Controls\CustomComboBox.cs" />
     <Compile Include="Controls\DatePicker.cs" />
+    <Compile Include="Controls\EntryWrapper.cs" />
     <Compile Include="Controls\GLWidget.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\OpenGLView.cs" />

@@ -84,6 +84,7 @@ namespace Xamarin.Forms.Controls
             var entry = new Entry();
             entry.BackgroundColor = Color.LightSalmon;
             entry.TextColor = Color.Green;
+            entry.Placeholder = "Placeholder";
             entry.Text = "Hello, I'm an entry";
             entry.FontFamily = "Jokerman";
             entry.FontSize = 32;
