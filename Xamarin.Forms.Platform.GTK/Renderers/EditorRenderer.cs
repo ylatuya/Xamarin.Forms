@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Control.ModifyBase(StateType.Normal, color);
             }
         }
-        
+
         protected override void OnElementChanged(ElementChangedEventArgs<Editor> e)
         {
 
