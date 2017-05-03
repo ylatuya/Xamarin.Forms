@@ -76,6 +76,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animations\BaseAnimation.cs" />
+    <Compile Include="Animations\FloatAnimation.cs" />
     <Compile Include="Cells\CellRenderer.cs" />
     <Compile Include="Cells\GtkImageCell.cs" />
     <Compile Include="Cells\GtkTextCell.cs" />
@@ -88,6 +90,7 @@
     <Compile Include="Controls\EntryWrapper.cs" />
     <Compile Include="Controls\GLWidget.cs" />
     <Compile Include="Controls\ImageButton.cs" />
+    <Compile Include="Controls\MasterDetailPage.cs" />
     <Compile Include="Controls\NavigationChildPage.cs" />
     <Compile Include="Controls\OpenGLView.cs" />
     <Compile Include="Controls\TabbedPageHeader.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="Renderers\LabelRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="Renderers\ListViewRenderer.cs" />
+    <Compile Include="Renderers\MasterDetailPageRenderer.cs" />
     <Compile Include="Renderers\NavigationPageRenderer.cs" />
     <Compile Include="Renderers\OpenGLViewRenderer.cs" />
     <Compile Include="Renderers\PageRenderer.cs" />
@@ -152,6 +156,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\hamburger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
