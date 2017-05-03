@@ -39,6 +39,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateText();
                 UpdateBorder();
                 UpdateContent();
+                UpdateSensitive();
             }
 
             base.OnElementChanged(e);
@@ -62,6 +63,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBorder();
             else if (e.PropertyName == Button.ImageProperty.PropertyName || e.PropertyName == Button.ContentLayoutProperty.PropertyName)
                 UpdateContent();
+            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+                UpdateSensitive();
         }
 
         protected override void UpdateBackgroundColor()
@@ -143,6 +146,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Control.ApplyContent(new ButtonContentLayout(ButtonContentLayout.ImagePosition.Right, 0));
                 Control.ImageWidget.Visible = false;
             }
+        }
+
+        private void UpdateSensitive()
+        {
+            Control.Sensitive = Element.IsEnabled;
         }
     }
 }
