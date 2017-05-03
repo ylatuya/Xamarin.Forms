@@ -47,6 +47,19 @@ namespace Xamarin.Forms.Controls
 
         public Page CreateDefaultMainPage()
         {
+            var master = new ContentPage();
+            master.BackgroundColor = Color.Blue;
+
+            var masterStack = new StackLayout();
+            masterStack.Children.Add(new Button { Text = "Home" });
+            masterStack.Children.Add(new Button { Text = "Layouts" });
+            masterStack.Children.Add(new Button { Text = "Controls" });
+            masterStack.Children.Add(new Button { Text = "Settings" });
+            masterStack.Children.Add(new Button { Text = "About" });
+
+            master.Title = "Master";
+            master.Content = masterStack;
+
             int counter = 0;
 
             ScrollView scrollView = new ScrollView();
@@ -190,7 +203,11 @@ namespace Xamarin.Forms.Controls
 
             tabbedPage.SelectedItem = advancedPage;
 
-            return tabbedPage;
+            var masterDetailPage = new MasterDetailPage();
+            masterDetailPage.Master = master;
+            masterDetailPage.Detail = tabbedPage;
+
+            return masterDetailPage;
 
             /*
 			return new MasterDetailPage
