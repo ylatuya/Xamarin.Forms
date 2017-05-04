@@ -1,6 +1,6 @@
-﻿using Gtk;
-using System;
+﻿using System;
 using System.Linq;
+using Gtk;
 using Xamarin.Forms.Platform.GTK.Animations;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
@@ -14,13 +14,22 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
     public class MasterDetailPage : VBox
     {
+        public const int DefaultWidth = 300;
+        public const int DefaultToolbarSize = 48;
+
         private MasterBehaviorType _masterBehaviorType;
+
         private bool _isPresented;
         private Widget _master;
         private Widget _detail;
-        private HBox _rootPanel;
-        private VBox _masterContent;
-        private VBox _masterContainer;
+        private Gdk.Color _toolbarForeground;
+        private Gdk.Color _toolbarBackground;
+        private HBox _hboxContainer;
+        private Fixed _masterContainer;
+        private int _masterPanelWidth = DefaultWidth;
+        private Gtk.Button _menuButton;
+        private HBox _masterToolbar;
+        private Gtk.Label _detailTitleLabel;
 
         private System.Action RefreshPresented;
 
@@ -89,6 +98,97 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public int MasterPanelWidth
+        {
+            get
+            {
+                return _masterPanelWidth;
+            }
+            set
+            {
+                _masterPanelWidth = value;
+                RefreshMasterSize();
+            }
+        }
+
+        public string DetailTitle
+        {
+            get
+            {
+                return _detailTitleLabel.Text;
+            }
+            set
+            {
+                _detailTitleLabel.Text = value;
+            }
+        }
+
+        public Gdk.Color ToolbarForeground
+        {
+            get
+            {
+                return _toolbarForeground;
+            }
+            set
+            {
+                _toolbarForeground = value;
+                _detailTitleLabel.ModifyFg(StateType.Normal, value);
+            }
+        }
+
+        public Gdk.Color ToolbarBackground
+        {
+            get
+            {
+                return _toolbarBackground;
+            }
+            set
+            {
+                _toolbarBackground = value;
+                _menuButton.ModifyBg(StateType.Normal, value);
+                _masterToolbar.ModifyBg(StateType.Normal, value);
+            }
+        }
+
+        public bool DetailTitleVisibility
+        {
+            get
+            {
+                return _detailTitleLabel.Visible;
+            }
+
+            set
+            {
+                _detailTitleLabel.Visible = value;
+            }
+        }
+
+        public bool MasterToolbarVisibility
+        {
+            get
+            {
+                return _masterToolbar.Visible;
+            }
+
+            set
+            {
+                _masterToolbar.Visible = value;
+            }
+        }
+
+        public bool ContentTogglePaneButtonVisibility
+        {
+            get
+            {
+                return _menuButton.Visible;
+            }
+
+            set
+            {
+                _menuButton.Visible = value;
+            }
+        }
+
         public MasterDetailPage()
         {
             RefreshBehavior();
@@ -100,37 +200,44 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             switch (_masterBehaviorType)
             {
                 case MasterBehaviorType.Popover:
-
                     RefreshPresented = RefreshPopoverPresented;
-
                     break;
                 case MasterBehaviorType.Default:
                 case MasterBehaviorType.Split:
                 default:
-                    _rootPanel = new HBox();
-                    _masterContent = new VBox();
-                    var masterHeader = new HBox();
-
-                    var menuButton = new Gtk.Button();
-                    menuButton.Name = "menuButton";
-                    menuButton.Label = null;
-                    menuButton.CanFocus = false;
+                    var root = new VBox();
+                    var header = new HBox();
+                    _menuButton = new Gtk.Button();
+                    _menuButton.WidthRequest = DefaultToolbarSize;
+                    _menuButton.HeightRequest = DefaultToolbarSize;
+                    _menuButton.Label = null;
+                    _menuButton.CanFocus = false;
+                    _menuButton.Relief = ReliefStyle.None;
                     var image = new Gtk.Image(new Gdk.Pixbuf("./Resources/hamburger.png"));
-                    menuButton.Image = image;
-                    menuButton.Clicked += OnMenuButtonClicked;
-
-                    masterHeader.PackStart(menuButton, false, false, 0);
-                    _masterContent.PackStart(masterHeader, false, false, 0);
-
-                    _masterContainer = new VBox();
-                    _masterContent.PackEnd(_masterContainer, true, true, 3);
-
-                    _rootPanel.PackStart(_masterContent, false, false, 0);
-
-                    Add(_rootPanel);
+                    _menuButton.Image = image;
+                    _menuButton.Clicked += OnMenuButtonClicked;
+                    header.PackStart(_menuButton, false, false, 0);
+                    _masterToolbar = new HBox();
+                    _masterToolbar.HeightRequest = DefaultToolbarSize;
+                    _detailTitleLabel = new Gtk.Label();
+                    _masterToolbar.PackStart(_detailTitleLabel, false, false, 25);
+                    header.PackEnd(_masterToolbar);
+                    root.PackStart(header, false, false, 0);
+                    _hboxContainer = new HBox();
+                    root.PackEnd(_hboxContainer);
+                    _masterContainer = new Fixed();
+                    _masterContainer.SizeAllocated += MasterContainer_SizeAllocated;
+                    _masterContainer.HasWindow = true;
+                    _hboxContainer.PackStart(_masterContainer, false, false, 0);
+                    Add(root);
                     RefreshPresented = RefreshSplitPresented;
                     break;
             }
+        }
+
+        private void MasterContainer_SizeAllocated(object o, SizeAllocatedArgs args)
+        {
+            RefreshMasterSize();
         }
 
         private void OnMenuButtonClicked(object sender, EventArgs e)
@@ -143,20 +250,40 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         }
 
+        private void RefreshMasterSize()
+        {
+            if (_master != null)
+            {
+                _master.WidthRequest = _masterPanelWidth;
+                _master.HeightRequest = _masterContainer.Allocation.Height;
+            }
+        }
+
         private async void RefreshSplitPresented()
         {
-            _masterContainer.Visible = _isPresented;
+            if (_isPresented)
+            {
+                _masterContainer.Visible = true;
+                _masterContainer.WidthRequest = _masterPanelWidth;
+            }
 
-            var from = (_isPresented) ? 0 : 200;
-            var to = (_isPresented) ? 200 : 0;
+            var from = (_isPresented) ? 0 : _masterPanelWidth;
+            var to = (_isPresented) ? _masterPanelWidth : 0;
 
             await new FloatAnimation(from, to, TimeSpan.FromSeconds(0.5), true, (f) =>
             {
                 Gtk.Application.Invoke(delegate
                 {
-                    _masterContent.WidthRequest = (int)f;
+                    _masterContainer.WidthRequest = (int)f;
+                    RefreshMasterSize();
                 });
             }).Run();
+
+            if (!_isPresented)
+            {
+                _masterContainer.Visible = false;
+                _masterContainer.WidthRequest = 0;
+            }
         }
 
         private void RefreshMaster()
@@ -175,13 +302,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_detail != null)
             {
-                _rootPanel.Remove(newDetail);
+                _hboxContainer.Remove(newDetail);
             }
 
             _detail = newDetail;
 
-            _rootPanel.PackEnd(_detail, true, true, 0);
+            _hboxContainer.PackEnd(_detail, true, true, 0);
         }
+
 
         private void RefreshPopoverDetail()
         {

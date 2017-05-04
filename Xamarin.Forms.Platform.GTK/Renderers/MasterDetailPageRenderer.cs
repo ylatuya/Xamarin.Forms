@@ -105,6 +105,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 Control.Master = Platform.GetRenderer(MasterDetailPage.Master).Container;
                 Control.Detail = Platform.GetRenderer(MasterDetailPage.Detail).Container;
+
+                if (!string.IsNullOrEmpty(MasterDetailPage.Detail.Title))
+                {
+                    Control.DetailTitleVisibility = true;
+                    Control.DetailTitle = MasterDetailPage.Detail.Title;
+                }
+                else
+                {
+                    Control.DetailTitleVisibility = false;
+                }
             }
         }
 

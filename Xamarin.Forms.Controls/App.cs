@@ -77,7 +77,7 @@ namespace Xamarin.Forms.Controls
             Label label = new Label { Text = "-", BackgroundColor = Color.White };
             label.FontFamily = "Jokerman";
             frame.Content = label;
-            
+
             Button button = new Button { Text = "Click me!" };
             button.BackgroundColor = Color.Red;
             button.Image = "coffee.png";
@@ -153,6 +153,7 @@ namespace Xamarin.Forms.Controls
             scrollView.Content = stack;
 
             var tabbedPage = new TabbedPage();
+            tabbedPage.Title = "Title";
             tabbedPage.BarBackgroundColor = Color.GreenYellow;
             tabbedPage.BarTextColor = Color.HotPink;
 
