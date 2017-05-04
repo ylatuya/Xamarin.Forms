@@ -92,7 +92,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.UpdateBackgroundColor();
 
             if (_treeView == null)
+            {
                 return;
+            }
+
+            if (Element.BackgroundColor.IsDefault)
+            {
+                return;
+            }
 
             var backgroundColor = Element.BackgroundColor.ToGtkColor();
 
