@@ -3,7 +3,6 @@ using System;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using static Xamarin.Forms.Button;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -136,14 +135,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (!string.IsNullOrEmpty(Element.Image))
             {
-                var iconPixBuf = new Gdk.Pixbuf(Element.Image);
-                Control.ImageWidget.Pixbuf = iconPixBuf;
-                Control.ApplyContent(Element.ContentLayout);
+                Control.SetImageFromFile(Element.Image);
+                Control.ImageSpacing = (uint)Element.ContentLayout.Spacing;
+                Control.SetImagePosition(Element.ContentLayout.Position.AsPositionType());
                 Control.ImageWidget.Visible = true;
             }
             else
             {
-                Control.ApplyContent(new ButtonContentLayout(ButtonContentLayout.ImagePosition.Right, 0));
                 Control.ImageWidget.Visible = false;
             }
         }

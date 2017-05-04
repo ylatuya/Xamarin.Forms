@@ -1,5 +1,6 @@
 ﻿using Pango;
 using System.Text;
+using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Extensions
 {
@@ -35,12 +36,8 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
 
             builder.Append("<span ");
 
-            FontDescription fontDescription = new FontDescription();
-            fontDescription.Size = (int)(span.FontSize * Pango.Scale.PangoScale);
-            fontDescription.Family = span.FontFamily;
-            fontDescription.Weight = span.FontAttributes == FontAttributes.Bold ? Weight.Bold : Weight.Normal;
-            fontDescription.Style = span.FontAttributes == FontAttributes.Italic ? Pango.Style.Italic : Pango.Style.Normal;
-            fontDescription.Family = span.FontFamily;
+            FontDescription fontDescription = FontDescriptionHelper.CreateFontDescription(
+                span.FontSize, span.FontFamily, span.FontAttributes);
 
             builder.AppendFormat(" font=\"{0}\"", fontDescription.ToString());
 

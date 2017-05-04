@@ -1,5 +1,5 @@
-﻿using Gtk;
-using static Xamarin.Forms.Button;
+﻿using System;
+using Gtk;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -10,6 +10,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Box _centralCellContainer;
         private Gtk.Image _image;
         private Gtk.Label _label;
+        private uint _imageSpacing = 0;
 
         public ImageButton()
         {
@@ -39,6 +40,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public Gtk.Image ImageWidget => _image;
 
+        public uint ImageSpacing
+        {
+            get
+            {
+                return _imageSpacing;
+            }
+
+            set
+            {
+                _imageSpacing = value;
+                UpdateImageSpacing();
+            }
+        }
+
         public void SetBackgroundColor(Gdk.Color color)
         {
             _container.ModifyBg(StateType.Normal, color);
@@ -60,9 +75,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _container.BorderWidth = width;
         }
 
-        public void ApplyContent(ButtonContentLayout layout)
+        public void SetImagePosition(PositionType position)
         {
-            RecreateContainer(layout);
+            ImagePosition = position;
+            RecreateContainer();
+        }
+
+        public void SetImageFromFile(string fileName)
+        {
+            var iconPixBuf = new Gdk.Pixbuf(fileName);
+            ImageWidget.Pixbuf = iconPixBuf;
         }
 
         public override void Dispose()
@@ -76,7 +98,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _centralRowContainer = null;
         }
 
-        private void RecreateContainer(ButtonContentLayout layout)
+        private void RecreateContainer()
         {
             if (_centralCellContainer != null)
             {
@@ -86,27 +108,27 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _centralCellContainer = null;
             }
 
-            switch (layout.Position)
+            switch (ImagePosition)
             {
-                case ButtonContentLayout.ImagePosition.Left:
+                case PositionType.Left:
                     _centralCellContainer = new HBox();
-                    _centralCellContainer.PackStart(_image, false, false, (uint)layout.Spacing);
+                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
                     _centralCellContainer.PackStart(_label, false, false, 0);
                     break;
-                case ButtonContentLayout.ImagePosition.Top:
+                case PositionType.Top:
                     _centralCellContainer = new VBox();
-                    _centralCellContainer.PackStart(_image, false, false, (uint)layout.Spacing);
+                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
                     _centralCellContainer.PackStart(_label, false, false, 0);
                     break;
-                case ButtonContentLayout.ImagePosition.Right:
+                case PositionType.Right:
                     _centralCellContainer = new HBox();
                     _centralCellContainer.PackStart(_label, false, false, 0);
-                    _centralCellContainer.PackStart(_image, false, false, (uint)layout.Spacing);
+                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
                     break;
-                case ButtonContentLayout.ImagePosition.Bottom:
+                case PositionType.Bottom:
                     _centralCellContainer = new VBox();
                     _centralCellContainer.PackStart(_label, false, false, 0);
-                    _centralCellContainer.PackStart(_image, false, false, (uint)layout.Spacing);
+                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
                     break;
             }
 
@@ -116,6 +138,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _centralRowContainer.ReorderChild(_centralCellContainer, 1);
                 _centralRowContainer.ShowAll();
             }
+        }
+
+        private void UpdateImageSpacing()
+        {
+            _centralCellContainer.SetChildPacking(_image, false, false, _imageSpacing, PackType.Start);
         }
     }
 }
