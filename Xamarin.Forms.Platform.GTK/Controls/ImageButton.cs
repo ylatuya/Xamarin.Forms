@@ -34,6 +34,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             CanFocus = false;
 
             Add(_container);
+
+            RecreateContainer();
         }
 
         public Gtk.Label LabelWidget => _label;
