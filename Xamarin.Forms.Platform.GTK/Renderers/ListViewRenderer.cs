@@ -56,6 +56,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     panel.Add(_footer);
 
                     Viewport viewPort = new Viewport();
+                    viewPort.ShadowType = ShadowType.None;
                     viewPort.Add(panel);
 
                     scroller.Add(viewPort);
