@@ -226,6 +226,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     _hboxContainer = new HBox();
                     root.PackEnd(_hboxContainer);
                     _masterContainer = new Fixed();
+                    _masterContainer.BorderWidth = 0;
                     _masterContainer.SizeAllocated += MasterContainer_SizeAllocated;
                     _masterContainer.HasWindow = true;
                     _hboxContainer.PackStart(_masterContainer, false, false, 0);
