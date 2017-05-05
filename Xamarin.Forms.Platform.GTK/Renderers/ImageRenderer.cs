@@ -150,7 +150,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (!string.IsNullOrEmpty(file))
                 {
                     var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
-                    image = new Pixbuf(imagePath);
+
+                    if (File.Exists(imagePath))
+                    {
+                        image = new Pixbuf(imagePath);
+                    }
                 }
             }
 
