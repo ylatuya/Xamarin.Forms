@@ -93,6 +93,7 @@
     <Compile Include="Controls\MasterDetailPage.cs" />
     <Compile Include="Controls\NavigationChildPage.cs" />
     <Compile Include="Controls\OpenGLView.cs" />
+    <Compile Include="Controls\SearchEntry.cs" />
     <Compile Include="Controls\TabbedPageHeader.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Renderers\PickerRenderer.cs" />
     <Compile Include="Renderers\ProgressBarRenderer.cs" />
     <Compile Include="Renderers\ScrollViewRenderer.cs" />
+    <Compile Include="Renderers\SearchBarRenderer.cs" />
     <Compile Include="Renderers\SliderRenderer.cs" />
     <Compile Include="Renderers\StepperRenderer.cs" />
     <Compile Include="Renderers\SwitchRenderer.cs" />
