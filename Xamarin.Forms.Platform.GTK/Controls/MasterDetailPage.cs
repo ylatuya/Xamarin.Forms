@@ -302,12 +302,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_detail != null)
             {
-                _hboxContainer.Remove(newDetail);
+                _hboxContainer.Remove(_detail);
             }
 
             _detail = newDetail;
 
             _hboxContainer.PackEnd(_detail, true, true, 0);
+            _detail.ShowAll();
         }
 
 
