@@ -137,8 +137,8 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-                UpdateEnabled();
+            if (e.PropertyName == VisualElement.IsVisibleProperty.PropertyName)
+                UpdateIsVisible();
             else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
                 UpdateBackgroundColor();
         }
@@ -157,12 +157,9 @@ namespace Xamarin.Forms.Platform.GTK
             Container.VisibleWindow = !isDefault;
         }
 
-        private void UpdateEnabled()
+        private void UpdateIsVisible()
         {
-            var control = Control as Control;
-
-            if (control != null)
-                control.Visible = Element.IsEnabled;
+            Container.Visible = Element.IsVisible;
         }
     }
 }
