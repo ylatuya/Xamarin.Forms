@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using System;
+using System.Collections.Specialized;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -25,6 +27,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnElementChanged(ElementChangedEventArgs<ListView> e)
         {
+            if (e.OldElement != null)
+            {
+                var templatedItems = ((ITemplatedItemsView<Cell>)e.OldElement).TemplatedItems;
+                templatedItems.CollectionChanged -= OnCollectionChanged;
+            }
+
             if (e.NewElement != null)
             {
                 if (Control == null)
@@ -63,6 +71,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(scroller);
                 }
 
+                var templatedItems = ((ITemplatedItemsView<Cell>)e.NewElement).TemplatedItems;
+                templatedItems.CollectionChanged += OnCollectionChanged;
+
                 UpdateItems();
                 UpdateHeader();
                 UpdateFooter();
@@ -82,9 +93,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == ListView.ItemsSourceProperty.PropertyName)
                 UpdateItems();
-            else if (e.PropertyName.Equals("HeaderElement", System.StringComparison.InvariantCultureIgnoreCase))
+            else if (e.PropertyName.Equals("HeaderElement", StringComparison.InvariantCultureIgnoreCase))
                 UpdateHeader();
-            else if (e.PropertyName.Equals("FooterElement", System.StringComparison.InvariantCultureIgnoreCase))
+            else if (e.PropertyName.Equals("FooterElement", StringComparison.InvariantCultureIgnoreCase))
                 UpdateFooter();
             else if (e.PropertyName == ListView.RowHeightProperty.PropertyName)
                 UpdateRowHeight();
@@ -110,6 +121,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
 
                 _disposed = true;
+
+                if (Element != null)
+                {
+                    var templatedItems = TemplatedItemsView.TemplatedItems;
+                    templatedItems.CollectionChanged -= OnCollectionChanged;
+                }
             }
         }
 
@@ -352,6 +369,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     }
                 }
             }
+        }
+
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateItems();
         }
     }
 }
