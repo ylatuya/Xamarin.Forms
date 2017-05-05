@@ -24,7 +24,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
 
         private static void OnUnhandledException(UnhandledExceptionArgs args)
         {
-            System.Diagnostics.Debug.WriteLine($"Unhandled GTK# exception: {args}");
+            System.Diagnostics.Debug.WriteLine($"Unhandled GTK# exception: {args.ExceptionObject}");
         }
     }
 }
