@@ -1,6 +1,8 @@
-﻿using Gdk;
+﻿using System;
+using Gdk;
 using Gtk;
 using Pango;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -10,35 +12,65 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Entry _entry;
         private Gtk.Label _placeholder;
         private Gtk.EventBox _placeholderContainer;
+        private bool _isEnabled;
 
         public EntryWrapper()
         {
             _table = new Table(1, 1, true);
             _entry = new Gtk.Entry();
             _entry.FocusOutEvent += EntryFocusedOut;
+            _entry.Changed += EntryChanged;
             _placeholder = new Gtk.Label();
 
             _placeholderContainer = new EventBox();
             _placeholderContainer.Add(_placeholder);
             _placeholderContainer.ButtonPressEvent += PlaceHolderContainerPressed;
 
+            SetBackgroundColor(_entry.Style.BaseColors[(int)StateType.Normal]);
+
             Add(_table);
 
             _table.Attach(_entry, 0, 1, 0, 1);
-            _table.Attach(_placeholderContainer, 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Fill, 3, 4);
+            _table.Attach(_placeholderContainer, 0, 1, 0, 1, AttachOptions.Fill, AttachOptions.Fill, 0, 0);
         }
 
         public Gtk.Entry Entry => _entry;
 
+        public bool IsEnabled
+        {
+            get
+            {
+                return _isEnabled;
+            }
+            set
+            {
+                _isEnabled = value;
+                UpdateIsEnabled();
+            }
+        }
+
+        public string PlaceholderText
+        {
+            get
+            {
+                return _placeholder.Text;
+            }
+            set
+            {
+                _placeholder.Text = value;
+            }
+        }
+
         public void SetBackgroundColor(Gdk.Color color)
         {
+            ModifyBg(StateType.Normal, color);
             _entry.ModifyBase(StateType.Normal, color);
             _placeholderContainer.ModifyBg(StateType.Normal, color);
         }
 
-        public void SetPlaceholderText(string text)
+        public void SetTextColor(Gdk.Color color)
         {
-            _placeholder.Text = text;
+            _entry.ModifyText(StateType.Normal, color);
         }
 
         public void SetPlaceholderTextColor(Gdk.Color color)
@@ -65,9 +97,34 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             ShowPlaceholderIfNeeded();
         }
 
+        private void ShowPlaceholderIfNeeded()
+        {
+            if (string.IsNullOrEmpty(_entry.Text) && !string.IsNullOrEmpty(_placeholder.Text))
+            {
+                Entry.Sensitive = false;
+                _placeholderContainer.GdkWindow?.Raise();
+            }
+            else
+            {
+                _entry.GdkWindow?.Raise();
+            }
+        }
+
+        private void UpdateIsEnabled()
+        {
+            Entry.IsEditable = _isEnabled;
+            Entry.CanFocus = _isEnabled;
+            Entry.Sensitive = _isEnabled;
+        }
+
         private void PlaceHolderContainerPressed(object o, ButtonPressEventArgs args)
         {
-            _entry.GdkWindow?.Raise();
+            if (IsEnabled)
+            {
+                Entry.Sensitive = true;
+                Entry.HasFocus = true;
+                _entry.GdkWindow?.Raise();
+            }
         }
 
         private void EntryFocusedOut(object o, FocusOutEventArgs args)
@@ -75,12 +132,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             ShowPlaceholderIfNeeded();
         }
 
-        private void ShowPlaceholderIfNeeded()
+        private void EntryChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(_entry.Text) && !string.IsNullOrEmpty(_placeholder.Text))
-            {
-                _placeholderContainer.GdkWindow?.Raise();
-            }
+            ShowPlaceholderIfNeeded();
         }
     }
 }

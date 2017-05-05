@@ -99,7 +99,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             var textColor = Element.TextColor;
 
-            Control.Entry.ModifyText(StateType.Normal, textColor.ToGtkColor());
+            Control.SetTextColor(textColor.ToGtkColor());
         }
 
         private void UpdateAlignment()
@@ -121,13 +121,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdatePlaceholder()
         {
-            Control.SetPlaceholderText(Element.Placeholder);
+            Control.PlaceholderText = Element.Placeholder;
             Control.SetPlaceholderTextColor(Element.PlaceholderColor.ToGtkColor());
         }
 
         private void UpdateEditable()
         {
-            Control.Entry.IsEditable = Element.IsEnabled;
+            Control.IsEnabled = Element.IsEnabled;
         }
 
         private void OnChanged(object sender, System.EventArgs e)
