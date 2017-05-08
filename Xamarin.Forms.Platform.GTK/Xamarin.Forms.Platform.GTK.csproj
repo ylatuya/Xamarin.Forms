@@ -110,6 +110,7 @@
     <Compile Include="Forms.cs" />
     <Compile Include="FormsWindow.cs" />
     <Compile Include="GtkDeviceInfo.cs" />
+    <Compile Include="GtkExpressionSearch.cs" />
     <Compile Include="GtkIsolatedStorageFile.cs" />
     <Compile Include="GtkPlatformServices.cs" />
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
