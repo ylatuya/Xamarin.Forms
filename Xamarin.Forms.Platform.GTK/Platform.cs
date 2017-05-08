@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Gtk;
+using System;
+using System.Linq;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.GTK
@@ -21,19 +23,51 @@ namespace Xamarin.Forms.Platform.GTK
 
         Page Page { get; set; }
 
-        Application TargetApplication
-        {
-            get
-            {
-                if (Page == null)
-                    return null;
-                return Page.RealParent as Application;
-            }
-        }
-
         internal Platform()
         {
             _renderer = new PlatformRenderer(this);
+
+            MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>
+            {
+                MessageDialog messageDialog = new MessageDialog(
+                    PlatformRenderer.Toplevel as Window,
+                    DialogFlags.DestroyWithParent,
+                    MessageType.Other,
+                    ButtonsType.Ok,
+                    arguments.Message);
+
+                messageDialog.Title = arguments.Title;
+
+                ResponseType result = (ResponseType)messageDialog.Run();
+
+                if(result == ResponseType.Ok)
+                {
+                    messageDialog.Destroy();
+                    arguments.SetResult(true);
+                }
+
+                arguments.SetResult(false);
+            });
+
+            MessagingCenter.Subscribe(this, Page.ActionSheetSignalName, (Page sender, ActionSheetArguments arguments) =>
+            {
+                MessageDialog messageDialog = new MessageDialog(
+                   PlatformRenderer.Toplevel as Window,
+                   DialogFlags.DestroyWithParent,
+                   MessageType.Other,
+                   ButtonsType.Ok,
+                   arguments.Title);
+
+                ResponseType result = (ResponseType)messageDialog.Run();
+
+                if (result == ResponseType.Ok)
+                {
+                    messageDialog.Destroy();
+                    arguments.SetResult(string.Empty);
+                }
+
+                arguments.SetResult(string.Empty);
+            });
         }
 
         SizeRequest IPlatform.GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
@@ -69,6 +103,10 @@ namespace Xamarin.Forms.Platform.GTK
             if (_disposed) return;
 
             _disposed = true;
+
+            MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName);
+            MessagingCenter.Unsubscribe<Page, AlertArguments>(this, Page.AlertSignalName);
+            MessagingCenter.Unsubscribe<Page, bool>(this, Page.BusySetSignalName);
 
             PlatformRenderer.Dispose();
         }
