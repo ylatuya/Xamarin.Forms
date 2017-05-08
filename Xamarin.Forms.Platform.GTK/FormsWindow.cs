@@ -61,9 +61,9 @@ namespace Xamarin.Forms.Platform.GTK
             }
 
             var platform = new Platform();
-            platform.Renderer.SetSizeRequest(WidthRequest, HeightRequest);
+            platform.PlatformRenderer.SetSizeRequest(WidthRequest, HeightRequest);
 
-            Add(platform.Renderer);
+            Add(platform.PlatformRenderer);
             platform.SetPage(_application.MainPage);
 
             Child.ShowAll();

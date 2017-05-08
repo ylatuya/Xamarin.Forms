@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.GTK;
-using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
 // General Information about an assembly is controlled through the following 
@@ -16,10 +15,6 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportImageSourceHandler(typeof(UriImageSource), typeof(UriImageSourceHandler))]
 
 [assembly: Dependency(typeof(ResourcesProvider))]
-
-[assembly: ExportCell(typeof(Cell), typeof(CellRenderer))]
-[assembly: ExportCell(typeof(TextCell), typeof(TextCellRenderer))]
-[assembly: ExportCell(typeof(ImageCell), typeof(ImageCellRenderer))]
 
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(BoxView), typeof(BoxViewRenderer))]

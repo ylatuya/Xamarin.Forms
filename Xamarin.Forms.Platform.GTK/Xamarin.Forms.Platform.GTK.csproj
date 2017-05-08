@@ -78,11 +78,8 @@
   <ItemGroup>
     <Compile Include="Animations\BaseAnimation.cs" />
     <Compile Include="Animations\FloatAnimation.cs" />
-    <Compile Include="Cells\CellRenderer.cs" />
-    <Compile Include="Cells\GtkImageCell.cs" />
-    <Compile Include="Cells\GtkTextCell.cs" />
-    <Compile Include="Cells\ImageCellRenderer.cs" />
-    <Compile Include="Cells\TextCellRenderer.cs" />
+    <Compile Include="Cells\ImageCell.cs" />
+    <Compile Include="Cells\TextCell.cs" />
     <Compile Include="Controls\ActivityIndicator.cs" />
     <Compile Include="Controls\BoxView.cs" />
     <Compile Include="Controls\CustomComboBox.cs" />
@@ -97,7 +94,6 @@
     <Compile Include="Controls\TabbedPageHeader.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
-    <Compile Include="ExportCellAttribute.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="ExportRendererAttribute.cs" />
     <Compile Include="Extensions\AlignmentExtensions.cs" />

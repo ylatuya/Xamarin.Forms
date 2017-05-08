@@ -20,6 +20,7 @@ namespace Xamarin.Forms.Platform.GTK
         public VisualElementChangedEventArgs(VisualElement oldElement, VisualElement newElement)
             : base(oldElement, newElement)
         {
+
         }
     }
 }

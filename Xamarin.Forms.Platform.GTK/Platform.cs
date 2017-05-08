@@ -5,6 +5,9 @@ namespace Xamarin.Forms.Platform.GTK
 {
     public class Platform : BindableObject, IPlatform, IDisposable
     {
+        private bool _disposed;
+        private readonly PlatformRenderer _renderer;
+
         internal static readonly BindableProperty RendererProperty =
             BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(Platform), default(IVisualElementRenderer),
             propertyChanged: (bindable, oldvalue, newvalue) =>
@@ -14,10 +17,19 @@ namespace Xamarin.Forms.Platform.GTK
                     view.IsPlatformEnabled = newvalue != null;
             });
 
-        private bool _disposed;
-        private readonly PlatformRenderer _renderer;
+        internal PlatformRenderer PlatformRenderer => _renderer;
 
-        internal PlatformRenderer Renderer => _renderer;
+        Page Page { get; set; }
+
+        Application TargetApplication
+        {
+            get
+            {
+                if (Page == null)
+                    return null;
+                return Page.RealParent as Application;
+            }
+        }
 
         internal Platform()
         {
@@ -58,13 +70,20 @@ namespace Xamarin.Forms.Platform.GTK
 
             _disposed = true;
 
-            Renderer.Dispose();
+            PlatformRenderer.Dispose();
         }
 
-        internal void SetPage(Page mainPage)
+        internal void SetPage(Page newRoot)
         {
-            mainPage.Platform = this;
-            AddChild(mainPage);
+            if (newRoot == null)
+                return;
+
+            if (Page != null)
+                throw new NotImplementedException();
+
+            Page = newRoot;
+            Page.Platform = this;
+            AddChild(Page);
         }
 
         private void AddChild(Page mainPage)
@@ -75,9 +94,9 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 viewRenderer = CreateRenderer(mainPage);
                 SetRenderer(mainPage, viewRenderer);
-                Renderer.Add(viewRenderer.Container);
 
-                _renderer.ShowAll();
+                PlatformRenderer.Add(viewRenderer.Container);
+                PlatformRenderer.ShowAll();
             }
         }
 

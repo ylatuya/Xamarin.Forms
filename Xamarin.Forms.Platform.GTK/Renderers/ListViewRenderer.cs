@@ -1,6 +1,5 @@
 ﻿using Gdk;
 using Gtk;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Xamarin.Forms.Platform.GTK.Cells;
@@ -54,7 +53,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     // List
                     _treeView = new TreeView();
                     _treeView.RulesHint = true;
-                    _treeView.HeadersVisible = false;
+                    _treeView.HeadersVisible = false;    
+                    
+                    // Create a column
+                    TreeViewColumn column = new TreeViewColumn();
+                    _treeView.AppendColumn(column);
+
                     panel.Add(_treeView);
 
                     _treeView.Selection.Changed += OnSelectionChanged;
@@ -171,32 +175,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             ListStore listStore = null;
+            TreeViewColumn column = _treeView.GetColumn(0);
+            Cell element = items.FirstOrDefault();
+            string cellType = element.GetType().Name;
 
-            // Create a column 
-            TreeViewColumn column = new TreeViewColumn();
-            _treeView.AppendColumn(column);
-
-            var element = items.FirstOrDefault();
-
-            if (element == null)
-            {
-                return;
-            }
-
-            List<object> cells = new List<object>();
-
-            foreach (var item in items)
-            {
-                var renderer =
-                    (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
-                var nativeCell = renderer.GetCell(item, null, _treeView);
-                cells.Add(nativeCell);
-            }
-
-            switch (element.GetType().Name)
+            switch (cellType)
             {
                 case "ImageCell":
-                    var gtkImageCell = new GtkImageCell();
+                    var gtkImageCell = new Cells.ImageCell();
 
                     column.PackStart(gtkImageCell, true);
                     column.AddAttribute(gtkImageCell, "image", 0);
@@ -205,14 +191,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     listStore = new ListStore(typeof(Pixbuf), typeof(string), typeof(string));
 
-                    foreach (var cell in cells)
+                    foreach (var item in items)
                     {
-                        var typedCell = (GtkImageCell)cell;
-                        listStore.AppendValues(typedCell.Image, typedCell.Text, typedCell.Detail);
+                        var imageCell = (ImageCell)item;
+                        listStore.AppendValues(imageCell.ImageSource.ToPixbuf(), imageCell.Text, imageCell.Detail);
                     }
                     break;
                 case "TextCell":
-                    var gtkTextCell = new GtkTextCell();
+                    var gtkTextCell = new Cells.TextCell();
 
                     column.PackStart(gtkTextCell, true);
                     column.AddAttribute(gtkTextCell, "text", 0);
@@ -220,31 +206,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     listStore = new ListStore(typeof(string), typeof(string));
 
-                    foreach (var cell in cells)
+                    foreach (var item in items)
                     {
-                        var typedCell = (GtkTextCell)cell;
-                        listStore.AppendValues(typedCell.Text, typedCell.Detail);
+                        var textCell = (TextCell)item;
+                        listStore.AppendValues(textCell.Text, textCell.Detail);
                     }
                     break;
                 default:
-                    // Create Cell
-                    var defaultCell = new GtkTextCell();
-
-                    // Add the cell to the column	
-                    column.PackStart(defaultCell, true);
-
-                    // Tell the Cell Renderers which items in the model to display
-                    column.AddAttribute(defaultCell, "text", 0);
-                    column.AddAttribute(defaultCell, "detail", 1);
-
-                    listStore = new ListStore(typeof(string), typeof(string));
-
-                    // Add data to the store
-                    foreach (var cell in cells)
-                    {
-                        var typedCell = (GtkTextCell)cell;
-                        listStore.AppendValues(typedCell.Text, typedCell.Detail);
-                    }
                     break;
             }
 
@@ -331,7 +299,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         }
 
-        private void OnSelectionChanged(object sender, System.EventArgs e)
+        private void OnSelectionChanged(object sender, EventArgs e)
         {
             TreeIter selectedIter;
             if (_treeView.Selection.GetSelected(out selectedIter))

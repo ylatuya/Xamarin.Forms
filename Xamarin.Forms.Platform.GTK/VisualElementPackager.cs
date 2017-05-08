@@ -4,19 +4,22 @@ namespace Xamarin.Forms.Platform.GTK
 {
     public class VisualElementPackager : IDisposable
     {
-        private readonly IVisualElementRenderer _renderer;
-
+        private bool _isDisposed;
         private VisualElement _element;
 
-        private IElementController ElementController => _renderer.Element as IElementController;
+        private IElementController ElementController => Renderer.Element as IElementController;
+
+        protected IVisualElementRenderer Renderer { get; set; }
 
         public VisualElementPackager(IVisualElementRenderer renderer)
         {
             if (renderer == null)
                 throw new ArgumentNullException(nameof(renderer));
 
-            _renderer = renderer;
-            SetElement(null, _renderer.Element);
+            Renderer = renderer;
+            renderer.ElementChanged += OnRendererElementChanged;
+
+            SetElement(null, Renderer.Element);
         }
 
         public void Dispose()
@@ -36,10 +39,20 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void Dispose(bool disposing)
         {
+            if (_isDisposed)
+                return;
+
             if (disposing)
             {
-                // TODO:
+                SetElement(_element, null);
+                if (Renderer != null)
+                {
+                    Renderer.ElementChanged -= OnRendererElementChanged;
+                    Renderer = null;
+                }
             }
+
+            _isDisposed = true;
         }
 
         protected virtual void OnChildAdded(VisualElement view)
@@ -47,12 +60,12 @@ namespace Xamarin.Forms.Platform.GTK
             var viewRenderer = Platform.CreateRenderer(view);
             Platform.SetRenderer(view, viewRenderer);
 
-            Gtk.Container container = _renderer.Container;
+            Gtk.Container container = Renderer.Container;
             Gtk.Fixed fixedControl = null;
 
-            if (_renderer is Renderers.LayoutRenderer)
+            if (Renderer is Renderers.LayoutRenderer)
             {
-                fixedControl = (_renderer as Renderers.LayoutRenderer).Control;
+                fixedControl = (Renderer as Renderers.LayoutRenderer).Control;
                 container = fixedControl;
             }
 
@@ -62,6 +75,14 @@ namespace Xamarin.Forms.Platform.GTK
         private void SetElement(VisualElement oldElement, VisualElement newElement)
         {
             _element = newElement;
+        }
+
+        private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs args)
+        {
+            if (args.NewElement == _element)
+                return;
+
+            SetElement(_element, args.NewElement);
         }
     }
 }
