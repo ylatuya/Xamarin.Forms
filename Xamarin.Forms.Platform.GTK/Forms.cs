@@ -26,6 +26,7 @@ namespace Xamarin.Forms
 
             Device.PlatformServices = new GtkPlatformServices();
             Device.Info = new GtkDeviceInfo();
+            ExpressionSearch.Default = new GtkExpressionSearch();
 
             Registrar.RegisterAll(new[]
             {
