@@ -40,6 +40,15 @@ namespace Xamarin.Forms.Platform.GTK
             return base.OnConfigureEvent(evnt);
         }
 
+        protected override bool OnDeleteEvent(Gdk.Event evnt)
+        {
+            base.OnDeleteEvent(evnt);
+
+            Gtk.Application.Quit();
+
+            return true;
+        }
+
         private void ApplicationOnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
             if (args.PropertyName == nameof(Application.MainPage))
