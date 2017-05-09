@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -61,20 +62,45 @@ namespace Xamarin.Forms.Platform.GTK
             Platform.SetRenderer(view, viewRenderer);
 
             Gtk.Container container = Renderer.Container;
-            Gtk.Fixed fixedControl = null;
 
             if (Renderer is Renderers.LayoutRenderer)
             {
-                fixedControl = (Renderer as Renderers.LayoutRenderer).Control;
+                var fixedControl = (Renderer as Renderers.LayoutRenderer).Control;
                 container = fixedControl;
             }
 
             container.Add(viewRenderer.Container);
+            viewRenderer.Container.ShowAll();
+        }
+
+        protected virtual void OnChildRemoved(VisualElement view)
+        {
+            var viewRenderer = Platform.GetRenderer(view);
+
+            if (viewRenderer != null)
+            {
+                var parent = viewRenderer.Container.Parent;
+                parent.Remove(viewRenderer.Container);
+            }
         }
 
         private void SetElement(VisualElement oldElement, VisualElement newElement)
         {
+            if (oldElement != null)
+            {
+                oldElement.ChildAdded -= OnChildAdded;
+                oldElement.ChildRemoved -= OnChildRemoved;
+                oldElement.ChildrenReordered -= OnChildReordered;
+            }
+
             _element = newElement;
+
+            if (newElement != null)
+            {
+                newElement.ChildAdded += OnChildAdded;
+                newElement.ChildRemoved += OnChildRemoved;
+                newElement.ChildrenReordered += OnChildReordered;
+            }
         }
 
         private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs args)
@@ -83,6 +109,26 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
 
             SetElement(_element, args.NewElement);
+        }
+
+        private void OnChildAdded(object sender, ElementEventArgs e)
+        {
+            var view = e.Element as VisualElement;
+            if (view != null)
+                OnChildAdded(view);
+        }
+
+        private void OnChildRemoved(object sender, ElementEventArgs e)
+        {
+            var view = e.Element as VisualElement;
+            if (view != null)
+                OnChildRemoved(view);
+        }
+
+
+        private void OnChildReordered(object sender, EventArgs e)
+        {
+            // TODO
         }
     }
 }

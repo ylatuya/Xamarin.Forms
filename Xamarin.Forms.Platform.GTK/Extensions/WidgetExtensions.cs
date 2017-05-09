@@ -61,6 +61,16 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             }
         }
 
+        public static void Remove(this Widget self, Widget child)
+        {
+            var container = self as Container;
+
+            if (container != null)
+            {
+                container.Remove(child);
+            }
+        }
+
         public static void PrintTree(this Widget widget)
         {
             const char indent = '-';
