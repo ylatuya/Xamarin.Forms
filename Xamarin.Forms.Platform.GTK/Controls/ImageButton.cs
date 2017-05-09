@@ -1,5 +1,7 @@
 ﻿using System;
 using Gtk;
+using System.IO;
+using GLib;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -85,8 +87,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetImageFromFile(string fileName)
         {
-            var iconPixBuf = new Gdk.Pixbuf(fileName);
-            ImageWidget.Pixbuf = iconPixBuf;
+            try
+            {
+                var iconPixBuf = new Gdk.Pixbuf(fileName);
+                ImageWidget.Pixbuf = iconPixBuf;
+            }
+            catch(Exception ex)
+            {
+                Internals.Log.Warning("Image Loading", $"Image failed to load: {ex}");
+            }
         }
 
         public override void Dispose()
