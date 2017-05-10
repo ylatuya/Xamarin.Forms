@@ -1,5 +1,4 @@
-﻿using Gtk;
-using System;
+﻿using System;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
@@ -15,6 +14,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             _propertyChangedHandler = OnElementPropertyChanged;
         }
+
+        public Controls.Page Control { get; private set; }
 
         public VisualElement Element { get; private set; }
 
@@ -90,13 +91,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
         {
-            ElementChanged?.Invoke(this, e);
-        }
+            if (e.NewElement != null)
+            {
+                if (Control == null)
+                {
+                    Control = new Controls.Page();
+                    Add(Control);
+                }
+            }
 
-        private void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-                UpdateBackgroundColor();
+            ElementChanged?.Invoke(this, e);
         }
 
         protected virtual void UpdateBackgroundColor()
@@ -105,8 +109,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (backgroundColor != Color.Default)
             {
-                ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
+                Control.SetBackgroundColor(backgroundColor.ToGtkColor());
             }
+        }
+
+        private void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
+                UpdateBackgroundColor();
         }
     }
 }

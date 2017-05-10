@@ -138,21 +138,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected virtual async Task<bool> OnPopToRoot(Page page, bool animated)
         {
             var removed = await PopToRootPageAsync(page, animated);
-
+            Platform.NativeToolbarTracker.UpdateToolBar();
             return removed;
         }
 
         protected virtual async Task<bool> OnPop(Page page, bool animated)
         {
             var removed = await PopPageAsync(page, animated);
-
+            Platform.NativeToolbarTracker.UpdateToolBar();
             return removed;
         }
 
         protected virtual async Task<bool> OnPush(Page page, bool animated)
         {
             var shown = await AddPage(page, animated);
-
+            Platform.NativeToolbarTracker.UpdateToolBar();
             return shown;
         }
 
@@ -171,11 +171,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 throw new InvalidOperationException(
                     "NavigationPage must have a root Page before being used. Either call PushAsync with a valid Page, or pass a Page to the constructor before usage.");
 
+            Platform.NativeToolbarTracker.Navigation = navPage;
             NavigationController.PushRequested += OnPushRequested;
             NavigationController.PopRequested += OnPopRequested;
             NavigationController.PopToRootRequested += OnPopToRootRequested;
             NavigationController.RemovePageRequested += OnRemovedPageRequested;
             NavigationController.InsertPageBeforeRequested += OnInsertPageBeforeRequested;
+
+            navPage.Popped += (sender, e) => Platform.NativeToolbarTracker.UpdateToolBar();
+            navPage.PoppedToRoot += (sender, e) => Platform.NativeToolbarTracker.UpdateToolBar();
 
             UpdateBarBackgroundColor();
             UpdateBarTextColor();
@@ -203,6 +207,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnRemovedPageRequested(object sender, NavigationRequestedEventArgs e)
         {
             RemovePage(e.Page, true);
+            Platform.NativeToolbarTracker.UpdateToolBar();
         }
 
         private void OnInsertPageBeforeRequested(object sender, NavigationRequestedEventArgs e)
@@ -339,12 +344,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBarBackgroundColor()
         {
-            // TODO:
+            Platform.NativeToolbarTracker.UpdateToolBar();
         }
 
         private void UpdateBarTextColor()
         {
-            // TODO:
+            Platform.NativeToolbarTracker.UpdateToolBar();
         }
 
         private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)

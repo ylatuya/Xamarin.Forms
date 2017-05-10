@@ -96,8 +96,40 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\bank.png">
+      <Link>bank.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\calculator.png">
+      <Link>calculator.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\coffee.png">
       <Link>coffee.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\cover1.jpg">
+      <Link>cover1.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\crimson.jpg">
+      <Link>crimson.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\menuIcon.png">
+      <Link>menuIcon.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\oasis.jpg">
+      <Link>oasis.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\test.jpg">
+      <Link>test.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\toolbar_close.png">
+      <Link>toolbar_close.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

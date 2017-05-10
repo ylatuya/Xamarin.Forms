@@ -62,14 +62,22 @@ namespace Xamarin.Forms.Platform.GTK
 
             Gtk.Container container = Renderer.Container;
             Gtk.Fixed fixedControl = null;
+            Controls.Page page = null;
 
             if (Renderer is Renderers.LayoutRenderer)
             {
                 fixedControl = (Renderer as Renderers.LayoutRenderer).Control;
                 container = fixedControl;
+                container.Add(viewRenderer.Container);
             }
+            else if (Renderer is Renderers.PageRenderer)
+            {
+                page = (Renderer as Renderers.PageRenderer).Control;
 
-            container.Add(viewRenderer.Container);
+                page.Content = viewRenderer.Container;
+            }
+            else
+                container.Add(viewRenderer.Container);
         }
 
         private void SetElement(VisualElement oldElement, VisualElement newElement)

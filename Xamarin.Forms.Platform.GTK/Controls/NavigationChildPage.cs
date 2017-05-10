@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
     {
         bool _disposed;
 
-        public NavigationChildPage(Page page)
+        public NavigationChildPage(Xamarin.Forms.Page page)
         {
             Page = page;
             Identifier = Guid.NewGuid().ToString();
@@ -25,6 +25,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public string Identifier { get; set; }
 
-        public Page Page { get; private set; }
+        public Xamarin.Forms.Page Page { get; private set; }
     }
 }

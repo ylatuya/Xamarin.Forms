@@ -93,6 +93,7 @@
     <Compile Include="Controls\SearchEntry.cs" />
     <Compile Include="Controls\TabbedPageHeader.cs" />
     <Compile Include="Controls\TimePicker.cs" />
+    <Compile Include="Controls\Page.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
     <Compile Include="ExportRendererAttribute.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
+    <Compile Include="NativeToolbarTracker.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PlatformRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,6 +1,5 @@
 ﻿using Gtk;
 using System;
-using System.Linq;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.GTK
@@ -11,7 +10,8 @@ namespace Xamarin.Forms.Platform.GTK
         private readonly PlatformRenderer _renderer;
 
         internal static readonly BindableProperty RendererProperty =
-            BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), typeof(Platform), default(IVisualElementRenderer),
+            BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), 
+                typeof(Platform), default(IVisualElementRenderer),
             propertyChanged: (bindable, oldvalue, newvalue) =>
             {
                 var view = bindable as VisualElement;
@@ -20,6 +20,8 @@ namespace Xamarin.Forms.Platform.GTK
             });
 
         internal PlatformRenderer PlatformRenderer => _renderer;
+
+        internal static NativeToolbarTracker NativeToolbarTracker = new NativeToolbarTracker();
 
         Page Page { get; set; }
 

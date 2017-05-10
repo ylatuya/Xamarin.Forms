@@ -5,10 +5,11 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class TabbedPageRenderer : EventBox, IVisualElementRenderer
+    public class TabbedPageRenderer : Container, IVisualElementRenderer
     {
         private bool _disposed;
 
@@ -22,7 +23,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         VisualElement IVisualElementRenderer.Element => Element;
 
-        public EventBox Container => this;
+        public Container Container => this;
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 

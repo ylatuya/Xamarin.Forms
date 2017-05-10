@@ -46,11 +46,17 @@ namespace Xamarin.Forms.Controls
         }
 
         public Page CreateDefaultMainPage()
-        {         
-			return new MasterDetailPage
+        {
+            var master = new ContentPage { Title = "Master", BackgroundColor = Color.Red };
+            var masterContent = new StackLayout();
+            masterContent.BackgroundColor = Color.Pink;
+            masterContent.Children.Add(new Label { Text = "Test" });
+            master.Content = masterContent;
+
+            return new MasterDetailPage
 			{
 				AutomationId = DefaultMainPageId,
-				Master = new ContentPage { Title = "Master", BackgroundColor = Color.Red },
+				Master = master,
 				Detail = CoreGallery.GetMainPage()
 			};
         }
