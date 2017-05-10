@@ -80,7 +80,7 @@ namespace Xamarin.Forms.Platform.GTK
             if (viewRenderer != null)
             {
                 var parent = viewRenderer.Container.Parent;
-                parent.Remove(viewRenderer.Container);
+                parent.RemoveFromContainer(viewRenderer.Container);
             }
         }
 

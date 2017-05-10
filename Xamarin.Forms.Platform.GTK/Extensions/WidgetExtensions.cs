@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System;
+using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Extensions
 {
@@ -61,14 +62,19 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             }
         }
 
-        public static void Remove(this Widget self, Widget child)
+        public static void RemoveFromContainer(this Widget self, Widget child)
         {
             var container = self as Container;
 
-            if (container != null)
+            if (container != null && container.HasChild(child))
             {
                 container.Remove(child);
             }
+        }
+
+        public static bool HasChild(this Container self, Widget child)
+        {
+            return self.Children.Contains(child);
         }
 
         public static void PrintTree(this Widget widget)
