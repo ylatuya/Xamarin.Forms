@@ -1,5 +1,8 @@
 ﻿using System;
 using Gtk;
+using System.IO;
+using GLib;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -85,8 +88,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetImageFromFile(string fileName)
         {
-            var iconPixBuf = new Gdk.Pixbuf(fileName);
-            ImageWidget.Pixbuf = iconPixBuf;
+            try
+            {
+                var iconPixBuf = new Gdk.Pixbuf(fileName);
+                ImageWidget.Pixbuf = iconPixBuf;
+            }
+            catch(Exception ex)
+            {
+                Internals.Log.Warning("Image Loading", $"Image failed to load: {ex}");
+            }
         }
 
         public override void Dispose()
@@ -104,9 +114,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_centralCellContainer != null)
             {
-                _centralCellContainer.Remove(_image);
-                _centralCellContainer.Remove(_label);
-                _centralRowContainer.Remove(_centralCellContainer);
+                _centralCellContainer.RemoveFromContainer(_image);
+                _centralCellContainer.RemoveFromContainer(_label);
+                _centralRowContainer.RemoveFromContainer(_centralCellContainer);
                 _centralCellContainer = null;
             }
 

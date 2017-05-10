@@ -22,6 +22,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     SetNativeControl(new NativeLabel());
+                    Control.MaxWidthChars = 1000000;
                 }
 
                 UpdateText();
@@ -99,37 +100,31 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             switch (Element.LineBreakMode)
             {
                 case LineBreakMode.NoWrap:
-                    Control.SingleLineMode = true;
                     Control.LineWrap = false;
                     Control.Ellipsize = Pango.EllipsizeMode.None;
                     break;
                 case LineBreakMode.WordWrap:
                     Control.LineWrap = true;
-                    Control.SingleLineMode = false;
                     Control.LineWrapMode = Pango.WrapMode.Word;
                     Control.Ellipsize = Pango.EllipsizeMode.None;
                     break;
                 case LineBreakMode.CharacterWrap:
                     Control.LineWrap = true;
-                    Control.SingleLineMode = false;
                     Control.LineWrapMode = Pango.WrapMode.Char;
                     Control.Ellipsize = Pango.EllipsizeMode.None;
                     break;
                 case LineBreakMode.HeadTruncation:
                     Control.LineWrap = false;
-                    Control.SingleLineMode = true;
                     Control.LineWrapMode = Pango.WrapMode.Word;
                     Control.Ellipsize = Pango.EllipsizeMode.Start;
                     break;
                 case LineBreakMode.TailTruncation:
                     Control.LineWrap = false;
-                    Control.SingleLineMode = true;
                     Control.LineWrapMode = Pango.WrapMode.Word;
                     Control.Ellipsize = Pango.EllipsizeMode.End;
                     break;
                 case LineBreakMode.MiddleTruncation:
                     Control.LineWrap = false;
-                    Control.SingleLineMode = true;
                     Control.LineWrapMode = Pango.WrapMode.Word;
                     Control.Ellipsize = Pango.EllipsizeMode.Middle;
                     break;

@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System;
+using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Extensions
 {
@@ -59,6 +60,21 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             {
                 self.SetSizeRequest(calcWidth, calcHeight);
             }
+        }
+
+        public static void RemoveFromContainer(this Widget self, Widget child)
+        {
+            var container = self as Container;
+
+            if (container != null && container.HasChild(child))
+            {
+                container.Remove(child);
+            }
+        }
+
+        public static bool HasChild(this Container self, Widget child)
+        {
+            return self.Children.Contains(child);
         }
 
         public static void PrintTree(this Widget widget)
