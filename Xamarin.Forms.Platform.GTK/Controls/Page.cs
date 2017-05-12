@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System.Linq;
+using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -46,6 +47,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public Page()
         {
             BuildPage();
+        }
+
+        public void SetToolbarColor(Gdk.Color backgroundColor)
+        {
+            if (_headerContainer != null)
+            {
+                _headerContainer.ModifyBg(StateType.Normal, backgroundColor);
+            }
         }
 
         public void SetBackgroundColor(Gdk.Color backgroundColor)

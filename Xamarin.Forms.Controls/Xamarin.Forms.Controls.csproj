@@ -123,6 +123,12 @@
       <DependentUpon>Page1.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPageLifeCycleTests.cs" />
+    <Compile Include="Monkeys\Helpers\MonkeyHelper.cs" />
+    <Compile Include="Monkeys\Models\Monkey.cs" />
+    <Compile Include="Monkeys\ViewModels\MonkeysViewModel.cs" />
+    <Compile Include="Monkeys\Views\MonkeysView.xaml.cs">
+      <DependentUpon>MonkeysView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NavReproApp.cs" />
     <Compile Include="RootPages\RootContentPage.cs" />
     <Compile Include="RootPages\SwapHierachyStackLayout.cs" />
@@ -384,6 +390,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Weather\WeatherPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Monkeys\Views\MonkeysView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

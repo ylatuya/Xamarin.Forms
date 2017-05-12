@@ -125,16 +125,29 @@ namespace Xamarin.Forms.Platform.GTK
             return _navigation.Peek(0).Title ?? string.Empty;
         }
 
-        private void UpdateBarBackgroundColor()
+        private void UpdateBarBackgroundColor(Controls.Page page)
         {
-            var backgroundColor = Color.Default.ToGtkColor();
             if (Navigation != null && Navigation.BarBackgroundColor != Color.Default)
-                backgroundColor = Navigation.BarBackgroundColor.ToGtkColor();
-
-            if (_toolbar != null)
             {
-                _toolbar.ModifyBg(StateType.Normal, backgroundColor);
-                _toolbar.Parent?.ModifyBg(StateType.Normal, backgroundColor);
+                var backgroundColor = Navigation.BarBackgroundColor.ToGtkColor();
+
+                if (_toolbar != null && page != null)
+                {
+                    page.SetToolbarColor(backgroundColor);
+                }
+            }
+        }
+
+        private void UpdateBarTextColor()
+        {
+            if (Navigation != null && Navigation.BarTextColor != Color.Default)
+            {
+                var textColor = Navigation.BarTextColor.ToGtkColor();
+
+                if (_toolbar != null && _toolbarTitle != null)
+                {
+                    _toolbarTitle.ModifyFg(StateType.Normal, textColor);
+                }
             }
         }
 
@@ -280,7 +293,7 @@ namespace Xamarin.Forms.Platform.GTK
                 UpdateNavigationItems();
                 UpdateTitle();
                 UpdateToolbarItems();
-                UpdateBarBackgroundColor();
+                UpdateBarTextColor();
 
                 var pageRenderer = Platform.GetRenderer(currentPage);
                 var page = pageRenderer?.Container?.Child as Controls.Page;
@@ -288,6 +301,7 @@ namespace Xamarin.Forms.Platform.GTK
                 if(page != null)
                 {
                     page.Toolbar = _toolbar;
+                    UpdateBarBackgroundColor(page);
                 }
             }
             else
