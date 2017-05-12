@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.Monkeys.Views.MonkeysView"
+             Title="Monkeys">
+    <ListView 
+        HasUnevenRows="true"
+        ItemsSource="{Binding Monkeys}"
+        SeparatorVisibility="None"
+        RowHeight="250">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <ViewCell>
+                    <Grid 
+                        BackgroundColor="Orange">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Image 
+                            Grid.Row="0"
+                            Source="{Binding Image}" 
+                            Aspect="AspectFit"/>
+                        <Label 
+                            Grid.Row="1"
+                            Text="{Binding Name}"
+                            FontSize="Large"
+                            TextColor="Red"/>
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</ContentPage>

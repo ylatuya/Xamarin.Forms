@@ -1,115 +1,118 @@
-﻿using Gdk;
-using Gtk;
+﻿using Gtk;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
-    public class ImageCell : CellRenderer
+    public class ImageCell : HBox
     {
-        private const int ImageCellSpacing = 6;
+        private VBox _root;
+        private Gtk.Image _imageControl;
+        private Gtk.Label _textLabel;
+        private Gtk.Label _detailLabel;
+        private Gdk.Pixbuf _image;
+        private string _text;
+        private string _detail;
+        private Gdk.Color _textColor;
+        private Gdk.Color _detailColor;
 
-        [GLib.Property("image")]
-        public Pixbuf Image { get; set; }
-
-        [GLib.Property("text")]
-        public string Text { get; set; }
-
-        [GLib.Property("textcolor")]
-        public Gdk.Color TextColor { get; set; }
-
-        [GLib.Property("detail")]
-        public string Detail { get; set; }
-
-        [GLib.Property("detailcolor")]
-        public Gdk.Color DetailColor { get; set; }
-
-        public override void GetSize(Widget widget, ref Gdk.Rectangle cell_area, out int x_offset, out int y_offset, out int width, out int height)
+        public ImageCell(   
+            Gdk.Pixbuf image,
+            string text,
+            Gdk.Color textColor,
+            string detail,
+            Gdk.Color detailColor)
         {
-            base.GetSize(widget, ref cell_area, out x_offset, out y_offset, out width, out height);
 
-            width = 250;
+            _imageControl = new Gtk.Image();
+            _imageControl.Pixbuf = image;
+
+            PackStart(_imageControl, false, false, 0);
+
+            _root = new VBox();
+
+            _textLabel = new Gtk.Label();
+            _textLabel.SetAlignment(0, 0);
+            _textLabel.ModifyFg(StateType.Normal, textColor);
+            _textLabel.Text = text;
+
+            _root.PackStart(_textLabel, false, false, 0);
+
+            _detailLabel = new Gtk.Label();
+            _detailLabel.SetAlignment(0, 0);
+            _detailLabel.ModifyFg(StateType.Normal, detailColor);
+            _detailLabel.Text = detail;
+
+            _root.PackStart(_detailLabel, true, true, 0);
+
+            PackStart(_root, false, false, 0);
         }
 
-        protected override void Render(Drawable window, Widget widget, Gdk.Rectangle background_area, Gdk.Rectangle cell_area, Gdk.Rectangle expose_area, CellRendererState flags)
+        public Gdk.Pixbuf Image
         {
-            using (var ctx = CairoHelper.Create(window))
-            {
-                using (var layout = new Pango.Layout(widget.PangoContext))
-                {
-                    DrawImage(Image, window, widget, cell_area, flags);
-                    DrawText(Text, window, widget, cell_area, flags);
-
-                    if (!string.IsNullOrEmpty(Detail))
-                    {
-                        int height, width;
-                        layout.GetPixelSize(out width, out height);
-                        DrawDetail(Detail, window, widget, cell_area, flags, height + ImageCellSpacing);
-                    }
-                }
-            }
-
-            base.Render(window, widget, background_area, cell_area, expose_area, flags);
+            get { return _image; }
+            set { _image = value; UpdateImage(_image); }
         }
 
-        private void DrawImage(Pixbuf image, Drawable window, Widget widget, Gdk.Rectangle cell_area, CellRendererState flags)
+        public string Text
         {
-            using (var layout = new Pango.Layout(widget.PangoContext))
-            {
-                layout.Alignment = Pango.Alignment.Left;
-   
-                StateType state = flags.HasFlag(CellRendererState.Selected) ?
-                    widget.IsFocus ? StateType.Selected : StateType.Active : StateType.Normal;
-
-                window.DrawPixbuf(
-                    widget.Style.ForegroundGC(state), 
-                    image, 
-                    0, 
-                    0, 
-                    cell_area.X, 
-                    cell_area.Y,
-                    cell_area.Height,
-                    cell_area.Height, 
-                    RgbDither.None,
-                    0,
-                    0);
-            }
+            get { return _text; }
+            set { _text = value; UpdateText(_text); }
         }
 
-        private void DrawText(string text, Drawable window, Widget widget, Gdk.Rectangle cell_area, CellRendererState flags)
+        public string Detail
         {
-            using (var layout = new Pango.Layout(widget.PangoContext))
+            get { return _detail; }
+            set { _detail = value; UpdateDetail(_detail); }
+        }
+
+        public Gdk.Color TextColor
+        {
+            get { return _textColor; }
+            set { _textColor = value; UpdateTextColor(_textColor); }
+        }
+
+        public Gdk.Color DetailColor
+        {
+            get { return _detailColor; }
+            set { _detailColor = value; UpdateDetailColor(_detailColor); }
+        }
+
+        private void UpdateImage(Gdk.Pixbuf image)
+        {
+            if (_imageControl != null)
             {
-                layout.Alignment = Pango.Alignment.Left;
-                layout.SetText(text);
-
-                Pango.FontDescription desc = Pango.FontDescription.FromString("12");
-                layout.FontDescription = desc;
-
-                StateType state = flags.HasFlag(CellRendererState.Selected) ?
-                    widget.IsFocus ? StateType.Selected : StateType.Active : StateType.Normal;
-
-                window.DrawLayout(
-                    widget.Style.TextGC(state), 
-                    cell_area.X + ImageCellSpacing + ((Image != null) ? cell_area.Height : 0), 
-                    cell_area.Y + ImageCellSpacing, 
-                    layout);
+                _imageControl.Pixbuf = image;
             }
         }
 
-        private void DrawDetail(string text, Drawable window, Widget widget, Gdk.Rectangle cell_area, CellRendererState flags, int topMargin)
+        private void UpdateText(string text)
         {
-            using (var layout = new Pango.Layout(widget.PangoContext))
+            if (_textLabel != null)
             {
-                layout.Alignment = Pango.Alignment.Left;
-                layout.SetText(text);
+                _textLabel.Text = text;
+            }
+        }
 
-                StateType state = flags.HasFlag(CellRendererState.Selected) ?
-                    widget.IsFocus ? StateType.Selected : StateType.Active : StateType.Normal;
+        private void UpdateDetail(string detail)
+        {
+            if (_detailLabel != null)
+            {
+                _detailLabel.Text = detail;
+            }
+        }
 
-                window.DrawLayout(
-                    widget.Style.TextGC(state),
-                    cell_area.X + ImageCellSpacing +((Image != null) ? cell_area.Height : 0), 
-                    cell_area.Y + ImageCellSpacing +topMargin, 
-                    layout);
+        private void UpdateTextColor(Gdk.Color textColor)
+        {
+            if (_textLabel != null)
+            {
+                _textLabel.ModifyFg(StateType.Normal, textColor);
+            }
+        }
+
+        private void UpdateDetailColor(Gdk.Color detailColor)
+        {
+            if (_detailLabel != null)
+            {
+                _detailLabel.ModifyFg(StateType.Normal, detailColor);
             }
         }
     }

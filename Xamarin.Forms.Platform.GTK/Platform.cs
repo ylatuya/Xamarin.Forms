@@ -72,6 +72,20 @@ namespace Xamarin.Forms.Platform.GTK
             });
         }
 
+        internal static void DisposeModelAndChildrenRenderers(Element view)
+        {
+            IVisualElementRenderer renderer;
+
+            foreach (VisualElement child in view.Descendants())
+                DisposeModelAndChildrenRenderers(child);
+
+            renderer = GetRenderer((VisualElement)view);
+
+            renderer?.Dispose();
+
+            view.ClearValue(RendererProperty);
+        }
+
         SizeRequest IPlatform.GetNativeSize(VisualElement view, double widthConstraint, double heightConstraint)
         {
             var renderView = GetRenderer(view);

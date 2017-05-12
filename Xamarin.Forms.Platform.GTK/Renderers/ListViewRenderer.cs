@@ -1,24 +1,28 @@
-﻿using Gdk;
-using Gtk;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
-using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using System;
 using System.Collections.Specialized;
+using System.Collections.Generic;
+using Gtk;
+using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class ListViewRenderer : ViewRenderer<ListView, ScrolledWindow>
+    public class ListViewRenderer : ViewRenderer<ListView, Controls.ListView>
     {
         public const int DefaultRowHeight = 44;
 
         private bool _disposed;
-        private TreeView _treeView;
-        private EventBox _header;
-        private EventBox _footer;
+        private Controls.ListView _listView;
         private IVisualElementRenderer _headerRenderer;
         private IVisualElementRenderer _footerRenderer;
+        private List<Gtk.Container> _cells;
+
+        public ListViewRenderer()
+        {
+            _cells = new List<Gtk.Container>();
+        }
 
         IListViewController Controller => Element;
 
@@ -36,44 +40,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    var scroller = new ScrolledWindow
-                    {
-                        CanFocus = true,
-                        ShadowType = ShadowType.None,
-                        HscrollbarPolicy = PolicyType.Never,
-                        VscrollbarPolicy = PolicyType.Automatic
-                    };
+                    _listView = new Controls.ListView();
 
-                    var panel = new VBox();
-
-                    // Header
-                    _header = new EventBox();
-                    panel.Add(_header);
-
-                    // List
-                    _treeView = new TreeView();
-                    _treeView.RulesHint = true;
-                    _treeView.HeadersVisible = false;    
-                    
-                    // Create a column
-                    TreeViewColumn column = new TreeViewColumn();
-                    _treeView.AppendColumn(column);
-
-                    panel.Add(_treeView);
-
-                    _treeView.Selection.Changed += OnSelectionChanged;
-
-                    // Footer
-                    _footer = new EventBox();
-                    panel.Add(_footer);
-
-                    Viewport viewPort = new Viewport();
-                    viewPort.ShadowType = ShadowType.None;
-                    viewPort.Add(panel);
-
-                    scroller.Add(viewPort);
-
-                    SetNativeControl(scroller);
+                    SetNativeControl(_listView);
                 }
 
                 var templatedItems = ((ITemplatedItemsView<Cell>)e.NewElement).TemplatedItems;
@@ -120,31 +89,35 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (disposing && !_disposed)
             {
-                if (_treeView != null)
-                {
-                    _treeView.Selection.Changed -= OnSelectionChanged;
-                }
-
                 _disposed = true;
+
+                _cells = null;
 
                 if (Element != null)
                 {
                     var templatedItems = TemplatedItemsView.TemplatedItems;
                     templatedItems.CollectionChanged -= OnCollectionChanged;
                 }
-            }
-        }
 
-        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            return base.GetDesiredSize(widthConstraint, heightConstraint);
+                if (_headerRenderer != null)
+                {
+                    Platform.DisposeModelAndChildrenRenderers(_headerRenderer.Element);
+                    _headerRenderer = null;
+                }
+
+                if (_footerRenderer != null)
+                {
+                    Platform.DisposeModelAndChildrenRenderers(_footerRenderer.Element);
+                    _footerRenderer = null;
+                }
+            }
         }
 
         protected override void UpdateBackgroundColor()
         {
             base.UpdateBackgroundColor();
 
-            if (_treeView == null)
+            if (_listView == null)
             {
                 return;
             }
@@ -156,17 +129,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             var backgroundColor = Element.BackgroundColor.ToGtkColor();
 
-            foreach (var column in _treeView.Columns)
-            {
-                foreach (var cell in column.Cells)
-                {
-                    cell.CellBackgroundGdk = backgroundColor;
-                }
-            }
+            _listView.SetBackgroundColor(backgroundColor);
         }
 
         private void UpdateItems()
         {
+            _cells.Clear();
+
             var items = TemplatedItemsView.TemplatedItems;
 
             if (!items.Any())
@@ -174,50 +143,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            ListStore listStore = null;
-            TreeViewColumn column = _treeView.GetColumn(0);
-            Cell element = items.FirstOrDefault();
-            string cellType = element.GetType().Name;
-
-            switch (cellType)
+            foreach (var item in items)
             {
-                case "ImageCell":
-                    var gtkImageCell = new Cells.ImageCell();
+                var renderer =
+                    (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
+                var nativeCell = renderer.GetCell(item, null, _listView);
 
-                    column.PackStart(gtkImageCell, true);
-                    column.AddAttribute(gtkImageCell, "image", 0);
-                    column.AddAttribute(gtkImageCell, "text", 1);
-                    column.AddAttribute(gtkImageCell, "detail", 2);
-
-                    listStore = new ListStore(typeof(Pixbuf), typeof(string), typeof(string));
-
-                    foreach (var item in items)
-                    {
-                        var imageCell = (ImageCell)item;
-                        listStore.AppendValues(imageCell.ImageSource.ToPixbuf(), imageCell.Text, imageCell.Detail);
-                    }
-                    break;
-                case "TextCell":
-                    var gtkTextCell = new Cells.TextCell();
-
-                    column.PackStart(gtkTextCell, true);
-                    column.AddAttribute(gtkTextCell, "text", 0);
-                    column.AddAttribute(gtkTextCell, "detail", 1);
-
-                    listStore = new ListStore(typeof(string), typeof(string));
-
-                    foreach (var item in items)
-                    {
-                        var textCell = (TextCell)item;
-                        listStore.AppendValues(textCell.Text, textCell.Detail);
-                    }
-                    break;
-                default:
-                    break;
+                _cells.Add(nativeCell);
             }
 
-            // Assign the model to the TreeView
-            _treeView.Model = listStore;
+            _listView.Items = _cells;
         }
 
         private void UpdateHeader()
@@ -230,12 +165,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 _headerRenderer = Platform.CreateRenderer(headerView);
                 Platform.SetRenderer(headerView, _headerRenderer);
 
-                _header.Add(_headerRenderer.Container);
+                _listView.Header = _headerRenderer.Container;
             }
             else
             {
-                _header.HeightRequest = 0;
+                ClearHeader();
             }
+        }
+
+        private void ClearHeader()
+        {
+            _listView.Header = null;
+            if (_headerRenderer == null)
+                return;
+            Platform.DisposeModelAndChildrenRenderers(_headerRenderer.Element);
+            _headerRenderer = null;
         }
 
         private void UpdateFooter()
@@ -248,28 +192,31 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 _footerRenderer = Platform.CreateRenderer(footerView);
                 Platform.SetRenderer(footerView, _footerRenderer);
 
-                _footer.Add(_footerRenderer.Container);
+                _listView.Footer = _footerRenderer.Container;
             }
             else
             {
-                _footer.HeightRequest = 0;
+                ClearFooter();
             }
         }
 
+        private void ClearFooter()
+        {
+            _listView.Footer = null;
+            if (_footerRenderer == null)
+                return;
+            Platform.DisposeModelAndChildrenRenderers(_footerRenderer.Element);
+            _footerRenderer = null;
+        }
+
+        //TODO: Implement RowHeight
         private void UpdateRowHeight()
         {
             var rowHeight = Element.RowHeight;
 
-            var column = _treeView.Columns.FirstOrDefault();
-
-            if (column != null)
+            foreach (var cell in _cells)
             {
-                var cell = column.Cells.FirstOrDefault();
-
-                if (cell != null)
-                {
-                    cell.Height = rowHeight > 0 ? rowHeight : DefaultRowHeight;
-                }
+                cell.HeightRequest = rowHeight > 0 ? rowHeight : DefaultRowHeight;
             }
         }
 
@@ -279,12 +226,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         }
 
+        //TODO: Implement SeparatorVisibility
         private void UpdateSeparatorVisibility()
         {
             if (Element.SeparatorVisibility == SeparatorVisibility.Default)
-                _treeView.EnableGridLines = TreeViewGridLines.Horizontal;
+            {
+
+            }
             else
-                _treeView.EnableGridLines = TreeViewGridLines.None;
+            {
+
+            }
         }
 
         //TODO: Implement UpdateIsRefreshing
@@ -297,47 +249,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdatePullToRefreshEnabled()
         {
 
-        }
-
-        private void OnSelectionChanged(object sender, EventArgs e)
-        {
-            TreeIter selectedIter;
-            if (_treeView.Selection.GetSelected(out selectedIter))
-            {
-                var selected = _treeView.Model.GetValue(selectedIter, 0);
-                var items = TemplatedItemsView.TemplatedItems;
-
-                if (!items.Any())
-                {
-                    return;
-                }
-
-                if (selected != null)
-                {
-                    var itemsSource = items.ItemsSource.Cast<object>().ToList();
-                    object selectedItemsSource = null;
-
-                    foreach (var item in itemsSource)
-                    {
-                        var properties = item.GetType().GetProperties();
-
-                        foreach (var property in properties)
-                        {
-                            var value = property.GetValue(item)?.ToString();
-                            if (value != null && value.Equals(selected.ToString()))
-                            {
-                                selectedItemsSource = item;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (selectedItemsSource != null)
-                    {
-                        ((IElementController)Element).SetValueFromRenderer(ListView.SelectedItemProperty, selectedItemsSource);
-                    }
-                }
-            }
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

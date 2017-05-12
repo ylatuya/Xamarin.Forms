@@ -4,10 +4,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Gdk;
+using Gtk;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class ImageRenderer : ViewRenderer<Image, Gtk.Image>
+    public class ImageRenderer : ViewRenderer<Image, Controls.ImageControl>
     {
         private bool _isDisposed;
 
@@ -34,14 +35,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (Control == null)
             {
-                var image = new Gtk.Image();
+                var image = new Controls.ImageControl();
                 SetNativeControl(image);
             }
 
             if (e.NewElement != null)
             {
-                SetAspect();
                 SetImage(e.OldElement);
+                SetAspect();
                 SetOpacity();
             }
 
@@ -74,7 +75,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     && ((FileImageSource)oldSource).File == ((FileImageSource)source).File)
                     return;
 
-                Control.ImageProp = null;
+                Control.Pixbuf = null;
             }
 
             IImageSourceHandler handler;
@@ -94,6 +95,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     image = null;
                 }
+                catch(Exception)
+                {
+                    image = null;
+                }
 
                 var imageView = Control;
                 if (imageView != null)
@@ -103,7 +108,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     ((IVisualElementController)Element).NativeSizeChanged();
             }
             else
-                Control.ImageProp = null;
+                Control.Pixbuf = null;
 
             if (!_isDisposed)
                 ((IImageController)Element).SetIsLoading(false);
@@ -111,24 +116,33 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void SetAspect()
         {
-            //TODO: Implement set Image Aspect
+            var height = Allocation.Height;
+            var width = Allocation.Width;
+
+            if (height <= 1 || width <= 1)
+            {
+                return;
+            }
+
             if (Element.Aspect == Aspect.AspectFill)
             {
-
+                Control.SetScale(width, height);
             }
             else if (Element.Aspect == Aspect.AspectFit)
             {
-
+                Control.SetScale(width, height);
             }
             else
             {
-
+                Control.SetScale(width, height);
             }
         }
 
         private void SetOpacity()
         {
-            //TODO: Implement set Image Opacity
+            var opacity = Element.Opacity;
+
+            Control.SetAlpha(opacity);
         }
     }
 
@@ -140,10 +154,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
     public sealed class FileImageSourceHandler : IImageSourceHandler
     {
-        public Task<Pixbuf> LoadImageAsync(ImageSource imagesource, CancellationToken cancelationToken = default(CancellationToken), float scale = 1f)
+        public Task<Pixbuf> LoadImageAsync(
+            ImageSource imagesource, 
+            CancellationToken cancelationToken = default(CancellationToken), 
+            float scale = 1f)
         {
             Pixbuf image = null;
             var filesource = imagesource as FileImageSource;
+
             if (filesource != null)
             {
                 var file = filesource.File;
@@ -164,22 +182,27 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
     public sealed class UriImageSourceHandler : IImageSourceHandler
     {
-        public async Task<Pixbuf> LoadImageAsync(ImageSource imagesource, CancellationToken cancelationToken = default(CancellationToken), float scale = 1)
+        public async Task<Pixbuf> LoadImageAsync(
+            ImageSource imagesource,
+            CancellationToken cancelationToken = default(CancellationToken),
+            float scale = 1)
         {
             Pixbuf image = null;
 
             var imageLoader = imagesource as UriImageSource;
+
             if (imageLoader?.Uri == null)
                 return null;
 
             Stream streamImage = await imageLoader.GetStreamAsync(cancelationToken);
+
             if (streamImage == null || !streamImage.CanRead)
             {
                 return null;
             }
-
+    
             image = new Pixbuf(streamImage);
-
+           
             return image;
         }
     }

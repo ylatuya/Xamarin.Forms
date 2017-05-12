@@ -311,8 +311,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _hboxContainer.PackEnd(_detail, true, true, 0);
             _detail.ShowAll();
         }
-
-
+        
         private void RefreshPopoverDetail()
         {
 
