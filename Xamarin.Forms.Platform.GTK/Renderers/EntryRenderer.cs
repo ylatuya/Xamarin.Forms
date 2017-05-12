@@ -23,6 +23,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 wrapper.Entry.Changed += OnChanged;
                 wrapper.Entry.Focused += OnFocused;
                 wrapper.Entry.EditingDone += OnEditingDone;
+                wrapper.Entry.KeyReleaseEvent += OnKeyReleased;
             }
 
             if (e.NewElement != null)
@@ -75,6 +76,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control.Entry.Changed -= OnChanged;
                     Control.Entry.Focused -= OnFocused;
                     Control.Entry.EditingDone -= OnEditingDone;
+                    Control.Entry.KeyReleaseEvent -= OnKeyReleased;
                 }
             }
 
@@ -144,6 +146,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
             EntryController?.SendCompleted();
+        }
+
+        private void OnKeyReleased(object o, KeyReleaseEventArgs args)
+        {
+            if (args.Event.Key == Gdk.Key.Return)
+            {
+                EntryController.SendCompleted();
+            }
         }
     }
 }
