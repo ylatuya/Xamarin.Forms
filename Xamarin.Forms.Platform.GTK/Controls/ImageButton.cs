@@ -1,29 +1,34 @@
-﻿using System;
+﻿using Gdk;
 using Gtk;
-using System.IO;
-using GLib;
+using System;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public sealed class ImageButton : Gtk.Button
     {
-        private EventBox _container;
         private HBox _centralRowContainer;
         private Box _centralCellContainer;
+
+        private Gdk.Color _defaultBorderColor;
+        private Gdk.Color _defaultBackgroundColor;
+        private Gdk.Color? _borderColor;
+        private Gdk.Color? _backgroundColor;
+
         private Gtk.Image _image;
         private Gtk.Label _label;
         private uint _imageSpacing = 0;
+        private uint _borderWidth = 0;
 
         public ImageButton()
         {
-            _container = new EventBox();
+            _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
+            _defaultBorderColor = Style.BaseColors[(int)StateType.Active];
 
             _image = new Gtk.Image();
             _label = new Gtk.Label();
 
             var cellsContainer = new VBox();
-            _container.Add(cellsContainer);
             cellsContainer.PackStart(new HBox(), true, true, 0);
             _centralRowContainer = new HBox();
             _centralCellContainer = new HBox();
@@ -36,7 +41,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             Relief = ReliefStyle.None;
             CanFocus = false;
 
-            Add(_container);
+            Add(cellsContainer);
 
             RecreateContainer();
         }
@@ -59,13 +64,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public void SetBackgroundColor(Gdk.Color color)
+        public void SetBackgroundColor(Gdk.Color? color)
         {
-            _container.ModifyBg(StateType.Normal, color);
-            _container.ModifyBg(StateType.Selected, color);
-            _container.ModifyBg(StateType.Prelight, color);
-            _container.ModifyBg(StateType.Active, color);
-            _container.ModifyBg(StateType.Insensitive, color);
+            _backgroundColor = color;
+            QueueDraw();
+        }
+
+        public void ResetBackgroundColor()
+        {
+            _backgroundColor = _defaultBackgroundColor;
+            QueueDraw();
         }
 
         public void SetForegroundColor(Gdk.Color color)
@@ -77,7 +85,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetBorderWidth(uint width)
         {
-            _container.BorderWidth = width;
+            _borderWidth = width;
+            QueueDraw();
+        }
+
+        public void SetBorderColor(Gdk.Color? color)
+        {
+            _borderColor = color;
+            QueueDraw();
+        }
+
+        public void ResetBorderColor()
+        {
+            _borderColor = _defaultBorderColor;
+            QueueDraw();
         }
 
         public void SetImagePosition(PositionType position)
@@ -93,7 +114,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 var iconPixBuf = new Gdk.Pixbuf(fileName);
                 ImageWidget.Pixbuf = iconPixBuf;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Internals.Log.Warning("Image Loading", $"Image failed to load: {ex}");
             }
@@ -105,9 +126,41 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _label = null;
             _image = null;
-            _container = null;
             _centralCellContainer = null;
             _centralRowContainer = null;
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+        }
+
+        protected override bool OnExposeEvent(EventExpose evnt)
+        {
+            double colorMaxValue = 65535;
+
+            using (var cr = CairoHelper.Create(GdkWindow))
+            {
+                cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
+
+                if (_backgroundColor.HasValue)
+                {
+                    var color = _backgroundColor.Value;
+                    cr.SetSourceRGBA(color.Red / colorMaxValue, color.Green / colorMaxValue, color.Blue / colorMaxValue, 1.0);
+                    cr.FillPreserve();
+                }
+
+                if (_borderColor.HasValue)
+                {
+                    cr.LineWidth = _borderWidth;
+
+                    var color = _borderColor.Value;
+                    cr.SetSourceRGB(color.Red / colorMaxValue, color.Green / colorMaxValue, color.Blue / colorMaxValue);
+                    cr.Stroke();
+                }
+            }
+
+            return base.OnExposeEvent(evnt);
         }
 
         private void RecreateContainer()

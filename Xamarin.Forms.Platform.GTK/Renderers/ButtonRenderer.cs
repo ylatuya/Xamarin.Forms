@@ -8,8 +8,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class ButtonRenderer : ViewRenderer<Button, ImageButton>
     {
-        private static Gdk.Color DefaultBackgroundColor = new Gdk.Color(0xee, 0xeb, 0xe7);
-        private static Gdk.Color DefaultForegroundColor = new Gdk.Color(0x00, 0x00, 0x00);
+        private const uint DefaultBorderWidth = 1;
+
+        public ButtonRenderer()
+        {
+            Container.VisibleWindow = false;
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -70,14 +74,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (Element.BackgroundColor.IsDefault)
             {
-                Control.SetBackgroundColor(DefaultBackgroundColor);
+                Control.ResetBackgroundColor();
             }
             else if (Element.BackgroundColor != Color.Transparent)
             {
                 Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
             }
-
-            Container.VisibleWindow = Element.BackgroundColor != Color.Transparent;
+            else
+            {
+                Control.SetBackgroundColor(null);
+            }
         }
 
         private void OnButtonClicked(object sender, EventArgs e)
@@ -100,11 +106,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateTextColor()
         {
-            if (Element.TextColor.IsDefaultOrTransparent())
-            {
-                Control.SetForegroundColor(DefaultForegroundColor);
-            }
-            else
+            if (!Element.TextColor.IsDefaultOrTransparent())
             {
                 Control.SetForegroundColor(Element.TextColor.ToGtkColor());
             }
@@ -112,22 +114,23 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBorder()
         {
-            var borderWidth = Element.BorderWidth >= 0
-                ? (uint)Element.BorderWidth
-                : 0;
+            var borderWidth = Element.BorderWidth < 0
+                       ? DefaultBorderWidth
+                       : (uint)Element.BorderWidth;
 
             Control.SetBorderWidth(borderWidth);
 
-            if (borderWidth == 0 || Element.BorderColor.IsDefaultOrTransparent())
+            if (Element.BorderColor.IsDefault)
             {
-                if (!Element.BackgroundColor.IsDefault)
-                {
-                    Container.ModifyBg(StateType.Normal, Element.BackgroundColor.ToGtkColor());
-                }
+                Control.ResetBorderColor();
+            }
+            else if (Element.BorderColor != Color.Transparent)
+            {
+                Control.SetBorderColor(Element.BorderColor.ToGtkColor());
             }
             else
             {
-                Container.ModifyBg(StateType.Normal, Element.BorderColor.ToGtkColor());
+                Control.SetBorderColor(null);
             }
         }
 
