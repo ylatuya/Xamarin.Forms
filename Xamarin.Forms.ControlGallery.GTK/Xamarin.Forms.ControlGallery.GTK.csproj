@@ -112,8 +112,16 @@
       <Link>cover1.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\cover1small.jpg">
+      <Link>cover1small.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\crimson.jpg">
       <Link>crimson.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\crimsonsmall.jpg">
+      <Link>crimsonsmall.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\menuIcon.png">
@@ -122,6 +130,10 @@
     </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\oasis.jpg">
       <Link>oasis.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\oasissmall.jpg">
+      <Link>oasissmall.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\home.png">

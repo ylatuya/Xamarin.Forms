@@ -1,4 +1,5 @@
 ﻿using Gtk;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
@@ -20,10 +21,16 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             _root = new VBox();
 
+            var span = new Span()
+            {
+                FontSize = 12,
+                Text = text
+            };
+
             _textLabel = new Gtk.Label();
             _textLabel.SetAlignment(0, 0);
             _textLabel.ModifyFg(StateType.Normal, textColor);
-            _textLabel.Text = text;
+            _textLabel.SetTextFromSpan(span);
 
             _root.PackStart(_textLabel, false, false, 0);
 
