@@ -47,18 +47,7 @@ namespace Xamarin.Forms.Controls
 
         public Page CreateDefaultMainPage()
         {
-            var master = new ContentPage { Title = "Master", BackgroundColor = Color.Red };
-            var masterContent = new StackLayout();
-            masterContent.BackgroundColor = Color.Pink;
-            masterContent.Children.Add(new Label { Text = "Test" });
-            master.Content = masterContent;
-
-            return new MasterDetailPage
-			{
-				AutomationId = DefaultMainPageId,
-				Master = master,
-				Detail = CoreGallery.GetMainPage()
-			};
+            return new CellForceUpdateSizeGalleryPage();
         }
 
         protected override void OnAppLinkRequestReceived(Uri uri)

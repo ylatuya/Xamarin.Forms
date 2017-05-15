@@ -2,9 +2,10 @@
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
-    public class ImageCell : HBox
+    public class ImageCell : CellBase
     {
-        private VBox _root;
+        private HBox _root;
+        private VBox _vertical;
         private Gtk.Image _imageControl;
         private Gtk.Label _textLabel;
         private Gtk.Label _detailLabel;
@@ -21,29 +22,31 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             string detail,
             Gdk.Color detailColor)
         {
+            _root = new HBox();
+            Add(_root);
 
             _imageControl = new Gtk.Image();
             _imageControl.Pixbuf = image;
 
-            PackStart(_imageControl, false, false, 0);
+            _root.PackStart(_imageControl, false, false, 0);
 
-            _root = new VBox();
+            _vertical = new VBox();
 
             _textLabel = new Gtk.Label();
             _textLabel.SetAlignment(0, 0);
             _textLabel.ModifyFg(StateType.Normal, textColor);
             _textLabel.Text = text;
 
-            _root.PackStart(_textLabel, false, false, 0);
+            _vertical.PackStart(_textLabel, false, false, 0);
 
             _detailLabel = new Gtk.Label();
             _detailLabel.SetAlignment(0, 0);
             _detailLabel.ModifyFg(StateType.Normal, detailColor);
             _detailLabel.Text = detail;
 
-            _root.PackStart(_detailLabel, true, true, 0);
+            _vertical.PackStart(_detailLabel, true, true, 0);
 
-            PackStart(_root, false, false, 0);
+            _root.PackStart(_vertical, false, false, 0);
         }
 
         public Gdk.Pixbuf Image
