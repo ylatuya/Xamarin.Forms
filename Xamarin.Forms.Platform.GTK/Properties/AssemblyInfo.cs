@@ -40,6 +40,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportRenderer(typeof(Stepper), typeof(StepperRenderer))]
 [assembly: ExportRenderer(typeof(Switch), typeof(SwitchRenderer))]
 [assembly: ExportRenderer(typeof(TabbedPage), typeof(TabbedPageRenderer))]
+[assembly: ExportRenderer(typeof(TableView), typeof(TableViewRenderer))]
 [assembly: ExportRenderer(typeof(TimePicker), typeof(TimePickerRenderer))]
 
 [assembly: ExportCell(typeof(Cell), typeof(CellRenderer))]
