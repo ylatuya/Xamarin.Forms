@@ -6,14 +6,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private const int DefaultRowHeight = 44;
 
+        private Controls.TableView _tableView;
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+        }
+
         protected override void OnElementChanged(ElementChangedEventArgs<TableView> e)
         {
             if (e.NewElement != null)
             {
                 if (Control == null)
                 {
-                    var tableView = new Controls.TableView();
-                    SetNativeControl(tableView);
+                    _tableView = new Controls.TableView();
+                    SetNativeControl(_tableView);
                 }
 
                 SetSource();
@@ -38,7 +45,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void SetSource()
         {
-
+            if (_tableView != null)
+            {
+                var model = Element.Root;
+                _tableView.Source = model;
+            }
         }
 
         private void UpdateRowHeight()

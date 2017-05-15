@@ -96,12 +96,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set { _selectedItem = value; }
         }
 
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            Debug.WriteLine($"{allocation.Height} x {allocation.Width}");
-            base.OnSizeAllocated(allocation);
-        }
-
         private void BuildListView()
         {
             CanFocus = true;
