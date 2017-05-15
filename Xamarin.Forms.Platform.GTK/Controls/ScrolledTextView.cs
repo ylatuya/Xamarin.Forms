@@ -1,0 +1,26 @@
+﻿using Gtk;
+
+namespace Xamarin.Forms.Platform.GTK.Controls
+{
+    public class ScrolledTextView : ScrolledWindow
+    {
+        private TextView _textView;
+
+        public ScrolledTextView()
+        {
+            ShadowType = ShadowType.In;
+            HscrollbarPolicy = PolicyType.Never;
+            VscrollbarPolicy = PolicyType.Always;
+
+            _textView = new TextView
+            {
+                AcceptsTab = true,
+                WrapMode = Gtk.WrapMode.WordChar
+            };
+
+            Add(_textView);
+        }
+
+        public TextView TextView => _textView;
+    }
+}

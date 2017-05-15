@@ -102,6 +102,7 @@
     <Compile Include="Controls\MasterDetailPage.cs" />
     <Compile Include="Controls\NavigationChildPage.cs" />
     <Compile Include="Controls\OpenGLView.cs" />
+    <Compile Include="Controls\ScrolledTextView.cs" />
     <Compile Include="Controls\SearchEntry.cs" />
     <Compile Include="Controls\TabbedPageHeader.cs" />
     <Compile Include="Controls\TableView.cs" />
