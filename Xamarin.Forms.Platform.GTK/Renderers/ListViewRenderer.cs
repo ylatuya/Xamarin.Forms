@@ -4,8 +4,6 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 using System;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using Gtk;
-using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -41,7 +39,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     _listView = new Controls.ListView();
-
+                    _listView.OnSelectedItemChanged += OnSelectedItemChanged;
                     SetNativeControl(_listView);
                 }
 
@@ -103,6 +101,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     Platform.DisposeModelAndChildrenRenderers(_headerRenderer.Element);
                     _headerRenderer = null;
+                }
+
+                if (_listView != null)
+                {
+                    _listView.OnSelectedItemChanged -= OnSelectedItemChanged;
                 }
 
                 if (_footerRenderer != null)
@@ -254,6 +257,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UpdateItems();
+        }
+
+        private void OnSelectedItemChanged(object sender, Controls.SelectedItemEventArgs args)
+        {
+            if (_listView != null && _listView.SelectedItem != null)
+            {
+                ((IElementController)Element).SetValueFromRenderer(
+                    ListView.SelectedItemProperty,
+                    _listView.SelectedItem);
+            }
         }
     }
 }

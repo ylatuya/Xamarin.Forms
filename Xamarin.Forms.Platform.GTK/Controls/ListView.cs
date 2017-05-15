@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Xamarin.Forms.Platform.GTK.Cells;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -30,6 +31,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private VBox _list;
         private EventBox _footer;
         private IEnumerable<Widget> _cells;
+        private object _selectedItem;
 
         public delegate void SelectedItemEventHandler(object sender, SelectedItemEventArgs args);
 
@@ -88,6 +90,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public object SelectedItem
+        {
+            get { return _selectedItem; }
+            set { _selectedItem = value; }
+        }
+
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             Debug.WriteLine($"{allocation.Height} x {allocation.Width}");
@@ -138,6 +146,18 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (item != null)
                 {
+                    item.ButtonPressEvent += (sender, args) =>
+                    {
+                        var gtkCell = sender as CellBase;
+
+                        if (gtkCell != null)
+                        {
+                            var selectedItem = gtkCell.Cell.BindingContext;
+                            SelectedItem = selectedItem;
+                            OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(SelectedItem));
+                        }
+                    };
+
                     _list.PackStart(item, false, false, 0);
                 }
             }
