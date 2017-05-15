@@ -39,23 +39,23 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         private void HandlePropertyChanged(object sender, PropertyChangedEventArgs args)
         {
             var gtkEntryCell = (EntryCell)sender;
-            var switchCell = (Xamarin.Forms.EntryCell)gtkEntryCell.Cell;
+            var entryCell = (Xamarin.Forms.EntryCell)gtkEntryCell.Cell;
 
-            if (args.PropertyName == Xamarin.Forms.EntryCell.TextProperty.PropertyName)
+            if (args.PropertyName == Xamarin.Forms.EntryCell.LabelProperty.PropertyName)
             {
-                gtkEntryCell.Label = switchCell.Label ?? string.Empty;
+                gtkEntryCell.Label = entryCell.Label ?? string.Empty;
             }
             else if (args.PropertyName == Xamarin.Forms.EntryCell.LabelColorProperty.PropertyName)
             {
-                gtkEntryCell.LabelColor = switchCell.LabelColor.ToGtkColor();
+                gtkEntryCell.LabelColor = entryCell.LabelColor.ToGtkColor();
             }
             else if (args.PropertyName == Xamarin.Forms.EntryCell.TextProperty.PropertyName)
             {
-                gtkEntryCell.Text = switchCell.Text;
+                gtkEntryCell.Text = entryCell.Text;
             }
             else if (args.PropertyName == Xamarin.Forms.EntryCell.PlaceholderProperty.PropertyName)
             {
-                gtkEntryCell.Placeholder = switchCell.Placeholder;
+                gtkEntryCell.Placeholder = entryCell.Placeholder;
             }
         }
 
