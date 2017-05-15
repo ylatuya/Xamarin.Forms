@@ -47,6 +47,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 templatedItems.CollectionChanged += OnCollectionChanged;
 
                 UpdateItems();
+                UpdateBackgroundColor();
                 UpdateHeader();
                 UpdateFooter();
                 UpdateRowHeight();
