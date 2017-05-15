@@ -80,6 +80,8 @@
     <Compile Include="Animations\FloatAnimation.cs" />
     <Compile Include="Cells\CellBase.cs" />
     <Compile Include="Cells\CellRenderer.cs" />
+    <Compile Include="Cells\EntryCell.cs" />
+    <Compile Include="Cells\EntryCellRenderer.cs" />
     <Compile Include="Cells\ImageCell.cs" />
     <Compile Include="Cells\ImageCellRenderer.cs" />
     <Compile Include="Cells\SwitchCell.cs" />
