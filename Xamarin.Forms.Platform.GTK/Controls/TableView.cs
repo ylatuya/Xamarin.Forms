@@ -86,49 +86,49 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 title.SetAlignment(0, 0);
                 title.SetTextFromSpan(titleSpan);
                 _list.PackStart(title, false, false, 0);
+            }
 
-                // Add Table Section
-                for (int i = 0; i < source.Count; i++)
+            // Add Table Section
+            for (int i = 0; i < source.Count; i++)
+            {
+                var tableSection = source[i] as TableSection;
+
+                if (tableSection != null)
                 {
-                    var tableSection = source[i] as TableSection;
-
-                    if (tableSection != null)
+                    var tableSectionSpan = new Span()
                     {
-                        var tableSectionSpan = new Span()
-                        {
-                            FontSize = 12,
-                            Text = tableSection.Title
-                        };
+                        FontSize = 12,
+                        Text = tableSection.Title
+                    };
 
-                        // Table Section Title
-                        Gtk.Label sectionTitle = new Gtk.Label();
-                        sectionTitle.SetAlignment(0, 0);
-                        sectionTitle.SetTextFromSpan(tableSectionSpan);
-                        _list.PackStart(sectionTitle, false, false, 0);
+                    // Table Section Title
+                    Gtk.Label sectionTitle = new Gtk.Label();
+                    sectionTitle.SetAlignment(0, 0);
+                    sectionTitle.SetTextFromSpan(tableSectionSpan);
+                    _list.PackStart(sectionTitle, false, false, 0);
 
-                        // Table Section Separator
-                        EventBox separator = new EventBox();
-                        separator.HeightRequest = 1;
-                        separator.ModifyBg(StateType.Normal, Color.Black.ToGtkColor());
-                        _list.PackStart(separator, false, false, 0);
+                    // Table Section Separator
+                    EventBox separator = new EventBox();
+                    separator.HeightRequest = 1;
+                    separator.ModifyBg(StateType.Normal, Color.Black.ToGtkColor());
+                    _list.PackStart(separator, false, false, 0);
 
-                        // Cells
-                        _cells.Clear();
-                        for (int j = 0; j < tableSection.Count; j++)
-                        {
-                            var cell = tableSection[j];
+                    // Cells
+                    _cells.Clear();
+                    for (int j = 0; j < tableSection.Count; j++)
+                    {
+                        var cell = tableSection[j];
 
-                            var renderer =
-                                (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
-                            var nativeCell = renderer.GetCell(cell, null, null);
+                        var renderer =
+                            (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
+                        var nativeCell = renderer.GetCell(cell, null, null);
 
-                            _cells.Add(nativeCell);
-                        }
+                        _cells.Add(nativeCell);
+                    }
 
-                        foreach(var cell in _cells)
-                        {
-                            _list.PackStart(cell, false, false, 0);
-                        }
+                    foreach (var cell in _cells)
+                    {
+                        _list.PackStart(cell, false, false, 0);
                     }
                 }
             }

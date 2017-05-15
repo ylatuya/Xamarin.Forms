@@ -73,7 +73,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             var root = new VBox(false, 0);
 
             _headerContainer = new EventBox();
-            root.PackStart(_headerContainer, true, true, 0);
+            root.PackStart(_headerContainer, false, false, 0);
 
             _contentContainer = new EventBox();
             root.PackStart(_contentContainer, true, true, 0);
