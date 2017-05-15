@@ -23,6 +23,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _placeholder = new Gtk.Label();
 
             _placeholderContainer = new EventBox();
+            _placeholderContainer.BorderWidth = 2;
             _placeholderContainer.Add(_placeholder);
             _placeholderContainer.ButtonPressEvent += PlaceHolderContainerPressed;
 
@@ -115,6 +116,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             Entry.IsEditable = _isEnabled;
             Entry.CanFocus = _isEnabled;
             Entry.Sensitive = _isEnabled;
+            _placeholderContainer.State = _isEnabled ? StateType.Normal : StateType.Insensitive;
         }
 
         private void PlaceHolderContainerPressed(object o, ButtonPressEventArgs args)
