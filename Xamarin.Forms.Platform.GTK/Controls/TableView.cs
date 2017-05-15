@@ -1,4 +1,5 @@
 ﻿using Gtk;
+using System.Collections.Generic;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
@@ -8,13 +9,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private VBox _root;
         private VBox _list;
         private TableRoot _source;
+        private List<Container> _cells;
 
         public TableView()
         {
             BuildTableView();
         }
 
-        public TableRoot Source
+        public TableRoot Root
         {
             get
             {
@@ -30,17 +32,34 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public void SetBackgroundColor(Gdk.Color backgroundColor)
+        {
+            if (_root != null)
+            {
+                _root.ModifyBg(StateType.Normal, backgroundColor);
+            }
+        }
+
+        public void SetRowHeight(int rowHeight)
+        {
+            foreach (var cell in _cells)
+            {
+                cell.HeightRequest = rowHeight;
+            }
+        }
+
         private void BuildTableView()
         {
             CanFocus = true;
             ShadowType = ShadowType.None;
             HscrollbarPolicy = PolicyType.Never;
             VscrollbarPolicy = PolicyType.Automatic;
+            BorderWidth = 0;
 
-            _root = new VBox();
+            _root = new VBox(false, 0);
 
             // List
-            _list = new VBox();
+            _list = new VBox(false, 0);
             _root.PackStart(_list, true, true, 0);
 
             Viewport viewPort = new Viewport();
@@ -48,6 +67,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             viewPort.Add(_root);
 
             Add(viewPort);
+
+            _cells = new List<Container>();
         }
 
         private void RefreshSource(TableRoot source)
@@ -73,19 +94,26 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                     if (tableSection != null)
                     {
+                        var tableSectionSpan = new Span()
+                        {
+                            FontSize = 12,
+                            Text = tableSection.Title
+                        };
+
                         // Table Section Title
                         Gtk.Label sectionTitle = new Gtk.Label();
                         sectionTitle.SetAlignment(0, 0);
-                        sectionTitle.Text = tableSection.Title;
+                        sectionTitle.SetTextFromSpan(tableSectionSpan);
                         _list.PackStart(sectionTitle, false, false, 0);
 
                         // Table Section Separator
                         EventBox separator = new EventBox();
                         separator.HeightRequest = 1;
                         separator.ModifyBg(StateType.Normal, Color.Black.ToGtkColor());
-                        _list.PackStart(sectionTitle, true, true, 0);
+                        _list.PackStart(separator, false, false, 0);
 
                         // Cells
+                        _cells.Clear();
                         for (int j = 0; j < tableSection.Count; j++)
                         {
                             var cell = tableSection[j];
@@ -94,7 +122,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                                 (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
                             var nativeCell = renderer.GetCell(cell, null, null);
 
-                            _list.PackStart(nativeCell, false, false, 0);
+                            _cells.Add(nativeCell);
+                        }
+
+                        foreach(var cell in _cells)
+                        {
+                            _list.PackStart(cell, false, false, 0);
                         }
                     }
                 }

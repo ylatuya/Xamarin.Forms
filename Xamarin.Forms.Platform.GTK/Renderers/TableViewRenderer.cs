@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -48,18 +49,32 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (_tableView != null)
             {
                 var model = Element.Root;
-                _tableView.Source = model;
+                _tableView.Root = model;
             }
         }
 
         private void UpdateRowHeight()
         {
+            var rowHeight = Element.RowHeight;
 
+            _tableView.SetRowHeight(rowHeight > 0 ? rowHeight : DefaultRowHeight);
         }
 
         private void UpdateBackgroundView()
         {
+            if (_tableView == null)
+            {
+                return;
+            }
 
+            if (Element.BackgroundColor.IsDefault)
+            {
+                return;
+            }
+
+            var backgroundColor = Element.BackgroundColor.ToGtkColor();
+
+            _tableView.SetBackgroundColor(backgroundColor);
         }
     }
 }
