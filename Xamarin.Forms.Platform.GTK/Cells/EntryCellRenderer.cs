@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
@@ -8,12 +9,16 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             var entryCell = (Xamarin.Forms.EntryCell)item;
 
-            var text = entryCell.Text ?? string.Empty;
+            var label = entryCell.Label ?? string.Empty;
+            var labelColor = entryCell.LabelColor.ToGtkColor();
+            var text = entryCell.Text;
             var placeholder = entryCell.Placeholder;
 
             var gtkEntryCell =
                 reusableView as EntryCell ??
                 new EntryCell(
+                    label,
+                    labelColor, 
                     text,
                     placeholder);
 
@@ -38,7 +43,15 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
             if (args.PropertyName == Xamarin.Forms.EntryCell.TextProperty.PropertyName)
             {
-                gtkEntryCell.Text = switchCell.Text ?? string.Empty;
+                gtkEntryCell.Label = switchCell.Label ?? string.Empty;
+            }
+            else if (args.PropertyName == Xamarin.Forms.EntryCell.LabelColorProperty.PropertyName)
+            {
+                gtkEntryCell.LabelColor = switchCell.LabelColor.ToGtkColor();
+            }
+            else if (args.PropertyName == Xamarin.Forms.EntryCell.TextProperty.PropertyName)
+            {
+                gtkEntryCell.Text = switchCell.Text;
             }
             else if (args.PropertyName == Xamarin.Forms.EntryCell.PlaceholderProperty.PropertyName)
             {

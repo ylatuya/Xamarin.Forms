@@ -124,6 +124,34 @@
       <Link>oasis.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\home.png">
+      <Link>home.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\lists.png">
+      <Link>lists.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\notifications.png">
+      <Link>notifications.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\profile.png">
+      <Link>profile.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\rui.jpg">
+      <Link>rui.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\search.png">
+      <Link>search.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\xamarinlogo.png">
+      <Link>xamarinlogo.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\test.jpg">
       <Link>test.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
