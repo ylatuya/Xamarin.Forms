@@ -43,6 +43,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportRenderer(typeof(TimePicker), typeof(TimePickerRenderer))]
 
 [assembly: ExportCell(typeof(Cell), typeof(CellRenderer))]
+[assembly: ExportCell(typeof(Xamarin.Forms.EntryCell), typeof(EntryCellRenderer))]
 [assembly: ExportCell(typeof(Xamarin.Forms.TextCell), typeof(TextCellRenderer))]
 [assembly: ExportCell(typeof(Xamarin.Forms.ImageCell), typeof(ImageCellRenderer))]
 [assembly: ExportCell(typeof(Xamarin.Forms.SwitchCell), typeof(SwitchCellRenderer))]
