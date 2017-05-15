@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
+using Xamarin.Forms.Controls.Perf.Bindings.Views;
 
 namespace Xamarin.Forms.Controls
 {
@@ -47,13 +48,19 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
+            /*
 			return new MasterDetailPage
 			{
 				AutomationId = DefaultMainPageId,
 				Master = new ContentPage { Title = "Master", BackgroundColor = Color.Red },
 				Detail = CoreGallery.GetMainPage()
 			};
-		}
+            */
+
+            // PERFORMANCE BINDINGS
+            return new NoBindingView();
+            //return new BindingView();
+        }
 
 		protected override void OnAppLinkRequestReceived(Uri uri)
 		{
