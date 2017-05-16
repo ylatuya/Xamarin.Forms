@@ -23,6 +23,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 Width = WidthRequest
             };
 
+            _activityIndicator.SetFlag(WidgetFlags.NoWindow);
+
             Add(_activityIndicator);
         }
 
