@@ -102,6 +102,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateEditable()
         {
             Control.Editable = Element.IsEnabled;
+            UpdateTextColor();
         }
 
         private void UpdateFont()
@@ -121,7 +122,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 TextBuffer buffer = Control.TextView.Buffer;
                 TextTag tag = buffer.TagTable.Lookup(TextColorTagName);
-                tag.ForegroundGdk = textColor;
+                tag.ForegroundGdk = Element.IsEnabled ? textColor : Control.Style.Foregrounds[(int)StateType.Normal];
                 Control.TextView.Buffer.ApplyTag(tag, buffer.StartIter, buffer.EndIter);
             }
         }
