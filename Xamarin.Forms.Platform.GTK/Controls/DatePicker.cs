@@ -290,7 +290,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _currentDate = value;
-                _comboBox.Entry.Text = value.ToLongDateString();
+                UpdateEntryText();
             }
         }
 
@@ -348,6 +348,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _dateFormat = value;
+                UpdateEntryText();
             }
         }
 
@@ -421,6 +422,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
 
             Show();
+        }
+
+        private void UpdateEntryText()
+        {
+            _comboBox.Entry.Text = string.IsNullOrEmpty(_dateFormat)
+                ? _currentDate.ToLongDateString()
+                : _currentDate.ToString(_dateFormat);
         }
     }
 }
