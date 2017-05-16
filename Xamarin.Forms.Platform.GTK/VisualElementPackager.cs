@@ -133,8 +133,7 @@ namespace Xamarin.Forms.Platform.GTK
             if (view != null)
                 OnChildRemoved(view);
         }
-
-
+        
         private void OnChildReordered(object sender, EventArgs e)
         {
             // TODO

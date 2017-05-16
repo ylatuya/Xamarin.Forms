@@ -92,6 +92,7 @@
     <Compile Include="Cells\ViewCellRenderer.cs" />
     <Compile Include="Controls\ActivityIndicator.cs" />
     <Compile Include="Controls\BoxView.cs" />
+    <Compile Include="Controls\Carousel.cs" />
     <Compile Include="Controls\CustomComboBox.cs" />
     <Compile Include="Controls\DatePicker.cs" />
     <Compile Include="Controls\EntryWrapper.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Controls\MasterDetailPage.cs" />
     <Compile Include="Controls\NavigationChildPage.cs" />
     <Compile Include="Controls\OpenGLView.cs" />
+    <Compile Include="Controls\PageContainer.cs" />
     <Compile Include="Controls\SearchEntry.cs" />
     <Compile Include="Controls\TabbedPageHeader.cs" />
     <Compile Include="Controls\TableView.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="Renderers\ActivityIndicatorRenderer.cs" />
     <Compile Include="Renderers\BoxViewRenderer.cs" />
     <Compile Include="Renderers\ButtonRenderer.cs" />
+    <Compile Include="Renderers\CarouselPageRenderer.cs" />
     <Compile Include="Renderers\DatePickerRenderer.cs" />
     <Compile Include="Renderers\EditorRenderer.cs" />
     <Compile Include="Renderers\EntryRenderer.cs" />

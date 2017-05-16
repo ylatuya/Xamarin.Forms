@@ -9,14 +9,15 @@ namespace Xamarin.Forms.Platform.GTK
 {
     internal class GtkExpressionSearch : ExpressionVisitor, IExpressionSearch
     {
-        List<object> _results;
-        Type _targetType;
+        private List<object> _results;
+        private Type _targetType;
 
         public List<T> FindObjects<T>(Expression expression) where T : class
         {
             _results = new List<object>();
             _targetType = typeof(T);
             Visit(expression);
+
             return _results.Select(o => o as T).ToList();
         }
 
@@ -30,6 +31,7 @@ namespace Xamarin.Forms.Platform.GTK
                 if (_targetType.IsInstanceOfType(value))
                     _results.Add(value);
             }
+
             return base.VisitMember(node);
         }
     }

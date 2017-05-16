@@ -20,6 +20,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(BoxView), typeof(BoxViewRenderer))]
 [assembly: ExportRenderer(typeof(Button), typeof(ButtonRenderer))]
+[assembly: ExportRenderer(typeof(CarouselPage), typeof(CarouselPageRenderer))]
 [assembly: ExportRenderer(typeof(DatePicker), typeof(DatePickerRenderer))]
 [assembly: ExportRenderer(typeof(Editor), typeof(EditorRenderer))]
 [assembly: ExportRenderer(typeof(Entry), typeof(EntryRenderer))]

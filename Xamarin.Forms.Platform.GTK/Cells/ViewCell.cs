@@ -1,7 +1,6 @@
 ﻿using Gtk;
 using System;
 using static Xamarin.Forms.Platform.GTK.Platform;
-using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
@@ -91,11 +90,6 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             }
 
             Platform.SetRenderer(_viewCell.View, renderer);
-        }
-
-        private void SetSize(Rectangle rec)
-        {
-
         }
     }
 }

@@ -95,7 +95,7 @@ namespace Xamarin.Forms.Platform.GTK
                     renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
                 }
             }
-
+      
             return true;
         }
 

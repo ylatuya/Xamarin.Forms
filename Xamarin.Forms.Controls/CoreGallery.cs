@@ -443,6 +443,7 @@ namespace Xamarin.Forms.Controls
 			};
 
 			var stackLayout = new StackLayout () { 
+                BackgroundColor = Color.White,
 				Children = {
 					testCasesButton,
 					searchBar,
@@ -458,7 +459,7 @@ namespace Xamarin.Forms.Controls
 				}
 			};
 
-			Content = new AbsoluteLayout {
+            Content = new AbsoluteLayout {
 				Children = {
 					{ new CoreRootView (), new Rectangle(0, 0.0, 1, 0.35), AbsoluteLayoutFlags.All },
 					{ stackLayout, new Rectangle(0, 0.5, 1, 0.30), AbsoluteLayoutFlags.All },

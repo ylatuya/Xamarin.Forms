@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Xamarin.Forms.Platform.GTK.Cells;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -24,6 +25,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
     }
 
+    public class ListViewSeparator : EventBox
+    {
+        public ListViewSeparator()
+        {
+            HeightRequest = 1;
+            ModifyBg(StateType.Normal, Color.Gray.ToGtkColor());    // Default Color: Gray
+            VisibleWindow = false;
+        }
+    }
+
     public class ListView : ScrolledWindow
     {
         private VBox _root;
@@ -31,6 +42,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private VBox _list;
         private EventBox _footer;
         private IEnumerable<Widget> _cells;
+        private List<ListViewSeparator> _separators;
         private object _selectedItem;
 
         public delegate void SelectedItemEventHandler(object sender, SelectedItemEventArgs args);
@@ -96,6 +108,30 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set { _selectedItem = value; }
         }
 
+        public void SetBackgroundColor(Gdk.Color backgroundColor)
+        {
+            if (_root != null)
+            {
+                _root.ModifyBg(StateType.Normal, backgroundColor);
+            }
+        }
+
+        public void SetSeparatorColor(Gdk.Color separatorColor)
+        {
+            foreach(var separator in _separators)
+            {
+                separator.ModifyBg(StateType.Normal, separatorColor);
+            }
+        }
+
+        public void SetSeparatorVisibility(bool isVisible)
+        {
+            foreach (var separator in _separators)
+            {
+                separator.Visible = isVisible;
+            }
+        }
+
         private void BuildListView()
         {
             CanFocus = true;
@@ -111,6 +147,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             // List
             _list = new VBox();
+            _separators = new List<ListViewSeparator>();
             _root.PackStart(_list, true, true, 0);
 
             // Footer
@@ -119,9 +156,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             Viewport viewPort = new Viewport();
             viewPort.ShadowType = ShadowType.None;
+            viewPort.BorderWidth = 0;
             viewPort.Add(_root);
 
             Add(viewPort);
+
+            ShowAll();
         }
 
         private void RefreshHeader(EventBox header)
@@ -136,6 +176,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RefreshItems(IEnumerable<Widget> items)
         {
+            _separators.Clear();
+
             foreach (var item in items)
             {
                 if (item != null)
@@ -153,6 +195,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     };
 
                     _list.PackStart(item, false, false, 0);
+
+                    var separator = new ListViewSeparator();
+                    _separators.Add(separator);
+                    _list.PackStart(separator, false, false, 0);
                 }
             }
 
@@ -166,14 +212,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_footer != null)
             {
                 _footer.ShowAll();
-            }
-        }
-
-        public void SetBackgroundColor(Gdk.Color backgroundColor)
-        {
-            if (_root != null)
-            {
-                _root.ModifyBg(StateType.Normal, backgroundColor);
             }
         }
     }

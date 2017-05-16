@@ -15,11 +15,6 @@ namespace Xamarin.Forms.Platform.GTK
 
         public override void Dispose()
         {
-            if (!_disposed)
-            {
-                // TODO:
-            }
-
             _disposed = true;
 
             base.Dispose();

@@ -280,6 +280,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 });
             }).Run();
 
+            _masterContainer.WidthRequest = from;
+
             if (!_isPresented)
             {
                 _masterContainer.Visible = false;

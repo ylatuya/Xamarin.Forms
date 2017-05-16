@@ -42,8 +42,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
             }
         }
-
-
+        
         public Page()
         {
             BuildPage();

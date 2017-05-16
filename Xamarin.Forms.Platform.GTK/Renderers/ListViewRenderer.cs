@@ -213,7 +213,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _footerRenderer = null;
         }
 
-        //TODO: Implement RowHeight
         private void UpdateRowHeight()
         {
             var rowHeight = Element.RowHeight;
@@ -224,22 +223,35 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        //TODO: Implement SeparatorColor
         private void UpdateSeparatorColor()
         {
+            if (Element.SeparatorColor.IsDefault)
+            {
+                return;
+            }
 
+            var separatorColor = Element.SeparatorColor.ToGtkColor();
+
+            if (_listView != null)
+            {
+                _listView.SetSeparatorColor(separatorColor);
+            }
         }
 
-        //TODO: Implement SeparatorVisibility
         private void UpdateSeparatorVisibility()
         {
+            if (_listView != null)
+            {
+                return;
+            }
+
             if (Element.SeparatorVisibility == SeparatorVisibility.Default)
             {
-
+                _listView.SetSeparatorVisibility(true);
             }
             else
             {
-
+                _listView.SetSeparatorVisibility(false);
             }
         }
 

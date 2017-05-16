@@ -52,9 +52,9 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
         }
 
-        internal static Gtk.CellRenderer GetRealCell(BindableObject cell)
+        internal static Gtk.Container GetRealCell(BindableObject cell)
         {
-            return (Gtk.CellRenderer)cell.GetValue(s_realCellProperty);
+            return (Gtk.Container)cell.GetValue(s_realCellProperty);
         }
 
         internal static void SetRealCell(BindableObject cell, Gtk.Container renderer)
