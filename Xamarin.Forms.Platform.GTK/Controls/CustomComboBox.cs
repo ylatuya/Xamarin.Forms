@@ -39,16 +39,6 @@
             }
         }
 
-        protected virtual void OnEntryFocusInEvent(object o, Gtk.FocusInEventArgs args)
-        {
-            QueueDraw();
-        }
-
-        protected virtual void OnEntryFocusOutEvent(object o, Gtk.FocusOutEventArgs args)
-        {
-            QueueDraw();
-        }
-
         private void BuildCustomComboBox()
         {
             _box = new Gtk.HBox();
@@ -57,7 +47,6 @@
             _entry.CanFocus = true;
             _entry.IsEditable = true;
             _entry.HasFrame = false;
-            _entry.InvisibleChar = '●';
             _box.Add(_entry);
 
             Gtk.Box.BoxChild entryBoxChild = ((Gtk.Box.BoxChild)(_box[_entry]));
@@ -82,9 +71,6 @@
             }
 
             Show();
-
-            _entry.FocusInEvent += new Gtk.FocusInEventHandler(OnEntryFocusInEvent);
-            _entry.FocusOutEvent += new Gtk.FocusOutEventHandler(OnEntryFocusOutEvent);
         }
     }
 }
