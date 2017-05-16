@@ -277,7 +277,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             TextColor = _comboBox.Entry.Style.Text(StateType.Normal);
 
-            _comboBox.Entry.Changed += new EventHandler(OnTxtDateChanged);
+            _comboBox.Entry.CanDefault = false;
+            _comboBox.Entry.CanFocus = false;
+            _comboBox.Entry.IsEditable = false;
+            _comboBox.Entry.State = StateType.Normal;
+            _comboBox.Entry.FocusGrabbed += new EventHandler(OnEntryFocused);
             _comboBox.PopupButton.Clicked += new EventHandler(OnBtnShowCalendarClicked);
         }
 
@@ -330,15 +334,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _comboBox.Color = _color;
             }
         }
-
-        public string Text
-        {
-            get
-            {
-                return _comboBox.Entry.Text;
-            }
-        }
-
+        
         public string DateFormat
         {
             get
@@ -352,31 +348,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public bool IsDateValid()
-        {
-            bool is_date_correct = true;
-
-            try
-            {
-                IFormatProvider culture = System.Globalization.CultureInfo.CurrentCulture;
-                CurrentDate = DateTime.Parse(_comboBox.Entry.Text, culture);
-            }
-            catch
-            {
-                is_date_correct = false;
-            }
-
-            return is_date_correct;
-        }
-
-        protected virtual void OnTxtDateChanged(object sender, EventArgs e)
-        {
-            _comboBox.Entry.ModifyText(StateType.Normal, TextColor);
-
-            DateChanged?.Invoke(this, e);
-        }
-
-        protected virtual void OnBtnShowCalendarClicked(object sender, EventArgs e)
+        private void ShowPickerWindow()
         {
             int x = 0;
             int y = 0;
@@ -409,6 +381,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
 
             CurrentDate = args.Date;
+            DateChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void BuildDatePicker()
@@ -429,6 +402,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _comboBox.Entry.Text = string.IsNullOrEmpty(_dateFormat)
                 ? _currentDate.ToLongDateString()
                 : _currentDate.ToString(_dateFormat);
+        }
+
+        private void OnBtnShowCalendarClicked(object sender, EventArgs e)
+        {
+            ShowPickerWindow();
+        }
+
+        private void OnEntryFocused(object sender, EventArgs e)
+        {
+            ShowPickerWindow();
         }
     }
 }
