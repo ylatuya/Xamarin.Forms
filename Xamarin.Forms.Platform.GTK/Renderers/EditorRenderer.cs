@@ -101,7 +101,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateEditable()
         {
-            Control.TextView.Editable = Element.IsEnabled;
+            Control.Editable = Element.IsEnabled;
         }
 
         private void UpdateFont()
