@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms
@@ -211,43 +212,52 @@ namespace Xamarin.Forms
 		}
 
 		protected void UpdateChildrenLayout()
-		{
-			_hasDoneLayout = true;
+        {
+            try
+            {
+                LayoutsProfiler.Start(ClassId);
 
-			if (!ShouldLayoutChildren())
-				return;
+                _hasDoneLayout = true;
 
-			var oldBounds = new Rectangle[LogicalChildrenInternal.Count];
-			for (var index = 0; index < oldBounds.Length; index++)
-			{
-				var c = (VisualElement)LogicalChildrenInternal[index];
-				oldBounds[index] = c.Bounds;
-			}
+                if (!ShouldLayoutChildren())
+                    return;
 
-			double width = Width;
-			double height = Height;
+                var oldBounds = new Rectangle[LogicalChildrenInternal.Count];
+                for (var index = 0; index < oldBounds.Length; index++)
+                {
+                    var c = (VisualElement)LogicalChildrenInternal[index];
+                    oldBounds[index] = c.Bounds;
+                }
 
-			double x = Padding.Left;
-			double y = Padding.Top;
-			double w = Math.Max(0, width - Padding.HorizontalThickness);
-			double h = Math.Max(0, height - Padding.VerticalThickness);
+                double width = Width;
+                double height = Height;
 
-			LayoutChildren(x, y, w, h);
+                double x = Padding.Left;
+                double y = Padding.Top;
+                double w = Math.Max(0, width - Padding.HorizontalThickness);
+                double h = Math.Max(0, height - Padding.VerticalThickness);
 
-			for (var i = 0; i < oldBounds.Length; i++)
-			{
-				Rectangle oldBound = oldBounds[i];
-				Rectangle newBound = ((VisualElement)LogicalChildrenInternal[i]).Bounds;
-				if (oldBound != newBound)
-				{
-					EventHandler handler = LayoutChanged;
-					if (handler != null)
-						handler(this, EventArgs.Empty);
-					return;
-				}
-			}
+                LayoutChildren(x, y, w, h);
 
-			_lastLayoutSize = new Size(width, height);
+                for (var i = 0; i < oldBounds.Length; i++)
+                {
+                    Rectangle oldBound = oldBounds[i];
+                    Rectangle newBound = ((VisualElement)LogicalChildrenInternal[i]).Bounds;
+                    if (oldBound != newBound)
+                    {
+                        EventHandler handler = LayoutChanged;
+                        if (handler != null)
+                            handler(this, EventArgs.Empty);
+                        return;
+                    }
+                }
+
+                _lastLayoutSize = new Size(width, height);
+            }
+            finally
+            {
+                LayoutsProfiler.Stop(ClassId);
+            }
 		}
 
 		internal static void LayoutChildIntoBoundingRegion(View child, Rectangle region, SizeRequest childSizeRequest)

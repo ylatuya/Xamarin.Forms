@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.Perf.Layout.TestRelativeLayoutView">
+    <!-- TEST -->
+    <!--
+    Call ID: InvalidateMeasureInternal - , Call Count: 6, Time: 0.0974 ms
+    Call ID: InvalidateMeasureInternal - Button1, Call Count: 2, Time: 0.1406 ms
+    Call ID: InvalidateMeasureInternal - Button2, Call Count: 2, Time: 0.0008 ms
+    Call ID: InvalidateMeasureInternal - Button3, Call Count: 2, Time: 0.0008 ms
+    Call ID: InvalidateMeasureInternal - Button4, Call Count: 2, Time: 1.0018 ms
+    Call ID: InvalidateMeasureInternal - RelativeLayout, Call Count: 6, Time: 0.1609 ms
+    Call ID: UpdateChildrenLayout - RelativeLayout, Call Count: 6, Time: 4.6698 ms
+    -->
+    <RelativeLayout ClassId="RelativeLayout">
+        <Button x:Name="Button1" 
+               ClassId="Button1" 
+               Text="Test!" />
+        <Button x:Name="Button2"
+               ClassId="Button2" 
+               Text="Test!"
+               RelativeLayout.YConstraint=
+                 "{ConstraintExpression Type=RelativeToView,
+                                        Property=Y, 
+                                        ElementName=Button1,
+                                        Constant=24}" />
+        <Button x:Name="Button3" 
+               ClassId="Button3" 
+               Text="Test!"
+               RelativeLayout.YConstraint=
+                 "{ConstraintExpression Type=RelativeToView,
+                                        Property=Y, 
+                                        ElementName=Button2,
+                                        Constant=24}" />
+        <Button x:Name="Button4" 
+               ClassId="Button4" 
+               Text="Test!"
+               RelativeLayout.YConstraint=
+                 "{ConstraintExpression Type=RelativeToView,
+                                        Property=Y, 
+                                        ElementName=Button3,
+                                        Constant=24}" />
+    </RelativeLayout>
+</ContentPage>

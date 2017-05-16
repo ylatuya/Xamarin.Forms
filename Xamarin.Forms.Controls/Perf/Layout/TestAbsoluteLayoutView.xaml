@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.Perf.Layout.TestAbsoluteLayoutView">
+    <!-- TEST 1 -->
+    <!--
+    Call ID: InvalidateMeasureInternal - , Call Count: 4, Time: 0.0009 ms
+    Call ID: InvalidateMeasureInternal - AbsoluteLayout, Call Count: 6, Time: 0.1645 ms
+    Call ID: InvalidateMeasureInternal - Button1, Call Count: 2, Time: 0.2471 ms
+    Call ID: InvalidateMeasureInternal - Button2, Call Count: 2, Time: 0.0009 ms
+    Call ID: InvalidateMeasureInternal - Button3, Call Count: 2, Time: 0.0007 ms
+    Call ID: InvalidateMeasureInternal - Button4, Call Count: 2, Time: 0.9957 ms
+    Call ID: UpdateChildrenLayout - AbsoluteLayout, Call Count: 6, Time: 0.712 ms
+    -->
+    <AbsoluteLayout ClassId="AbsoluteLayout">
+        <Button x:Name="Button1"
+               ClassId="Button1" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds="12,40,200,100" />
+        <Button x:Name="Button2" 
+               ClassId="Button2" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds="12,80,200,100" />
+        <Button x:Name="Button3" 
+               ClassId="Button3" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds="12,120,200,100" />
+        <Button x:Name="Button4" 
+               ClassId="Button4" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds="12,160,200,100" />
+    </AbsoluteLayout>
+    <!-- TEST 2 -->
+    <!--
+    Call ID: InvalidateMeasureInternal - , Call Count: 4, Time: 0.0007 ms
+    Call ID: InvalidateMeasureInternal - AbsoluteLayout, Call Count: 6, Time: 0.1849 ms
+    Call ID: InvalidateMeasureInternal - Button1, Call Count: 2, Time: 0.2304 ms
+    Call ID: InvalidateMeasureInternal - Button2, Call Count: 2, Time: 0.0007 ms
+    Call ID: InvalidateMeasureInternal - Button3, Call Count: 2, Time: 0.0005 ms
+    Call ID: InvalidateMeasureInternal - Button4, Call Count: 2, Time: 1.0673 ms
+    Call ID: UpdateChildrenLayout - AbsoluteLayout, Call Count: 6, Time: 2.3401 ms
+    -->
+    <!--
+    <AbsoluteLayout ClassId="AbsoluteLayout">
+        <Button x:Name="Button1" 
+               ClassId="Button1" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds=".02,.02"
+               AbsoluteLayout.LayoutFlags="PositionProportional"/>
+        <Button x:Name="Button2"
+               ClassId="Button2" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds=".02,.04"
+               AbsoluteLayout.LayoutFlags="PositionProportional"/>
+        <Button x:Name="Button3" 
+               ClassId="Button3" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds=".02,.06"
+               AbsoluteLayout.LayoutFlags="PositionProportional"/>
+        <Button x:Name="Button4" 
+               ClassId="Button4" 
+               Text="Test!"
+               AbsoluteLayout.LayoutBounds=".02,.08"
+               AbsoluteLayout.LayoutFlags="PositionProportional"/>
+    </AbsoluteLayout>
+    -->
+</ContentPage>

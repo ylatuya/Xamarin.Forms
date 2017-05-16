@@ -7,29 +7,29 @@ using System.Text;
 
 namespace Xamarin.Forms
 {
-    public class PerformanceProfiler
+    public class LayoutsProfiler
     {
-        static readonly Dictionary<string, PerformanceData> Statistics = 
-            new Dictionary<string, PerformanceData>();
+        static readonly Dictionary<string, LayoutData> Statistics =
+            new Dictionary<string, LayoutData>();
 
-        public static void Start([CallerMemberName] string member = null)
+        public static void Start(string tag = null, [CallerMemberName] string member = null)
         {
-            string id = member;
+            string id = string.Format("{0} - {1}", member, tag);
 
-            PerformanceData stats;
+            LayoutData stats;
             if (!Statistics.TryGetValue(id, out stats))
-                Statistics[id] = stats = new PerformanceData();
+                Statistics[id] = stats = new LayoutData();
 
             stats.CallCount++;
             stats.StartTimes.Push(Stopwatch.GetTimestamp());
         }
 
-        public static void Stop([CallerMemberName] string member = null)
+        public static void Stop(string tag = null, [CallerMemberName] string member = null)
         {
-            string id = member;
+            string id = string.Format("{0} - {1}", member, tag);
             long stop = Stopwatch.GetTimestamp();
 
-            PerformanceData stats = Statistics[id];
+            LayoutData stats = Statistics[id];
             long start = stats.StartTimes.Pop();
             if (!stats.StartTimes.Any())
                 stats.TotalTime += stop - start;
@@ -39,14 +39,14 @@ namespace Xamarin.Forms
         {
             var b = new StringBuilder();
             b.AppendLine();
-            foreach (KeyValuePair<string, PerformanceData> kvp in 
+            foreach (KeyValuePair<string, LayoutData> kvp in
                 Statistics.OrderBy(kvp => kvp.Key))
             {
                 string id = kvp.Key;
                 int callCount = kvp.Value.CallCount;
                 double time = TimeSpan.FromTicks(kvp.Value.TotalTime).TotalMilliseconds;
-                b.Append(string.Format("Call ID: {0}, Call Count: {1}, Time: {2} ms", 
-                    id, 
+                b.Append(string.Format("Call ID: {0}, Call Count: {1}, Time: {2} ms",
+                    id,
                     callCount,
                     time));
                 b.AppendLine();
@@ -55,7 +55,7 @@ namespace Xamarin.Forms
         }
     }
 
-    internal class PerformanceData
+    internal class LayoutData
     {
         public readonly Stack<long> StartTimes = new Stack<long>();
         public int CallCount;

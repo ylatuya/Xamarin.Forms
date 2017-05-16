@@ -19,7 +19,7 @@ namespace Xamarin.Forms.Controls.Perf.Bindings.Views
             await Task.Delay(TimeSpan.FromSeconds(3));
 
             // Call ID: SetValueActual, Call Count: 469, Time: 2.9479 ms
-            Debug.WriteLine(PerformanceProfiler.GetStats());
+            Debug.WriteLine(BindingsProfiler.GetStats());
         }
     }
 }

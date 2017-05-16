@@ -7,6 +7,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using Xamarin.Forms.Controls.Perf.Bindings.Views;
+using Xamarin.Forms.Controls.Perf.Layout;
 
 namespace Xamarin.Forms.Controls
 {
@@ -58,11 +59,18 @@ namespace Xamarin.Forms.Controls
             */
 
             // PERFORMANCE BINDINGS
-            return new NoBindingView();
+            //return new NoBindingView();
             //return new BindingView();
+
+            // PERFORMANCE LAYOUTS
+            //return new InvalidationView();
+            return new TestAbsoluteLayoutView();
+            //return new TestGridView();
+            //return new TestRelativeLayoutView();
+            //return new TestStackLayoutView();
         }
 
-		protected override void OnAppLinkRequestReceived(Uri uri)
+        protected override void OnAppLinkRequestReceived(Uri uri)
 		{
 			var appDomain = "http://" + AppName.ToLowerInvariant() + "/";
 

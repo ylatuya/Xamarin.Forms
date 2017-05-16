@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.Perf.Layout.InvalidationView">
+    <!--
+    Call ID: InvalidateMeasureInternal - , Call Count: 5, Time: 0.0013 ms
+    Call ID: InvalidateMeasureInternal - Button1, Call Count: 3, Time: 0.1708 ms
+    Call ID: InvalidateMeasureInternal - Button2, Call Count: 2, Time: 0.0007 ms
+    Call ID: InvalidateMeasureInternal - Button3, Call Count: 2, Time: 0.0014 ms
+    Call ID: InvalidateMeasureInternal - Button4, Call Count: 2, Time: 1.1045 ms
+    Call ID: InvalidateMeasureInternal - Grid, Call Count: 11, Time: 0.3818 ms
+    Call ID: UpdateChildrenLayout - Grid, Call Count: 10, Time: 3.8263 ms
+    -->
+    <Grid 
+        x:Name="Grid" 
+        ClassId="Grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="Button1" 
+               ClassId="Button1" 
+               Text="Test!"/>
+        <Button Grid.Row="1" 
+               x:Name="Button2" 
+               ClassId="Button2"
+               Text="Test!"/>
+        <Button Grid.Row="2"
+               x:Name="Button3"
+               ClassId="Button3"
+               Text="Test!"/>
+        <Button Grid.Row="3" 
+               x:Name="Button4"
+               ClassId="Button4" 
+               Text="Test!"/>
+    </Grid>
+</ContentPage>

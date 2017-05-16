@@ -547,7 +547,7 @@ namespace Xamarin.Forms
 		{
             try
             {
-                PerformanceProfiler.Start();
+                BindingsProfiler.Start();
 
                 object original = context.Value;
                 bool raiseOnEqual = (attributes & SetValueFlags.RaiseOnEqual) != 0;
@@ -601,7 +601,7 @@ namespace Xamarin.Forms
             }
             finally
             {
-                PerformanceProfiler.Stop();
+                BindingsProfiler.Stop();
             }
         }
 

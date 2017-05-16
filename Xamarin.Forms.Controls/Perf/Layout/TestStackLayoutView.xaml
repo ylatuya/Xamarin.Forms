@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.Perf.Layout.TestStackLayoutView">
+    <!-- TEST -->
+    <!-- 
+    Call ID: InvalidateMeasureInternal - , Call Count: 4, Time: 0.0009 ms
+    Call ID: InvalidateMeasureInternal - Button1, Call Count: 2, Time: 0.2524 ms
+    Call ID: InvalidateMeasureInternal - Button2, Call Count: 2, Time: 0.0007 ms
+    Call ID: InvalidateMeasureInternal - Button3, Call Count: 2, Time: 0.0005 ms
+    Call ID: InvalidateMeasureInternal - Button4, Call Count: 2, Time: 1.0445 ms
+    Call ID: InvalidateMeasureInternal - StackLayout, Call Count: 6, Time: 0.224 ms
+    Call ID: UpdateChildrenLayout - StackLayout, Call Count: 6, Time: 3.6712 ms
+    -->
+    <StackLayout x:Name="StackLayout"
+                 ClassId="StackLayout">
+        <Button x:Name="Button1" 
+               ClassId="Button1"
+               Text="Test!"/>
+        <Button x:Name="Button2"
+               ClassId="Button2" 
+               Text="Test!"/>
+        <Button x:Name="Button3"
+               ClassId="Button3"
+               Text="Test!"/>
+        <Button x:Name="Button4"
+               ClassId="Button4" 
+               Text="Test!"/>
+    </StackLayout>
+</ContentPage>
