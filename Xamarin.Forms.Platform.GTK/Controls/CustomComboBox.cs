@@ -35,7 +35,7 @@
             set
             {
                 _color = value;
-                Entry.ModifyFg(Gtk.StateType.Normal, _color);
+                Entry.ModifyText(Gtk.StateType.Normal, _color);
             }
         }
 
