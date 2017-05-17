@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     public class NavigationPageRenderer : Container, IVisualElementRenderer
     {
         private bool _disposed;
+        private bool _appeared;
         private Stack<NavigationChildPage> _currentStack;
         private VisualElementPackager _packager;
 
@@ -63,6 +64,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _packager = new VisualElementPackager(this);
             _packager.Load();
 
+            Platform.NativeToolbarTracker.Navigation = Element;
+
+            if (_appeared)
+                return;
+
+            _appeared = true;
+
             PageController.SendAppearing();
 
             base.OnShown();
@@ -70,6 +78,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnDestroyed()
         {
+            if (!_appeared)
+                return;
+
+            Platform.NativeToolbarTracker.TryHide(Element as NavigationPage);
+            _appeared = false;
+
             PageController.SendDisappearing();
 
             base.OnDestroyed();
