@@ -66,25 +66,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateMaximumDate()
         {
-            if (Control == null || Element == null)
-                return;
-
             Control.MaxDate = Element.MaximumDate;
         }
 
         private void UpdateMinimumDate()
         {
-            if (Control == null || Element == null)
-                return;
-
             Control.MinDate = Element.MinimumDate;
         }
 
         private void UpdateTextColor()
         {
-            if (Control == null || Element == null)
-                return;
-
             var textColor = Element.TextColor;
 
             Control.TextColor = textColor.ToGtkColor();
@@ -97,9 +88,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnDateChanged(object sender, EventArgs e)
         {
-            if (Control == null || Element == null)
-                return;
-
             ElementController?.SetValueFromRenderer(DatePicker.DateProperty, Control.CurrentDate.Date);
         }
     }
