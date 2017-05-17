@@ -9,7 +9,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
     {
         private IList _itemsSource;
         private int _selectedIndex;
-        private Container _root;
+        private Table _root;
         private List<Container> _pages;
         private double _initialPos;
         private bool _animated;
@@ -59,7 +59,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             _pages = new List<Container>();
 
-            _root = new Container();
+            _root = new Table(1, 1, true);
             Add(_root);
 
             ButtonPressEvent += OnCarouselButtonPressEvent;
@@ -99,10 +99,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _pages.Clear();
 
-            int counter = 0;
-            foreach (var item in items)
+            for(int i = 0; i < items.Count; i++)
             {
-                var pageContainer = item as PageContainer;
+                var pageContainer = items[i] as PageContainer;
 
                 if (pageContainer != null)
                 {
@@ -110,62 +109,46 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     var gtkPage = Platform.CreateRenderer(page);
 
                     _pages.Add(gtkPage.Container);
-
-                    if (counter == 0)
-                    {
-                        _root.Add(gtkPage.Container);
-                    }
+                    _root.Attach(gtkPage.Container, 0, 1, 0, 1);
                 }
             }
 
             SelectedIndex = 0;
         }
 
-        private void LayoutChildren(Widget children)
-        {
-            if (_root == null) return;
-
-            if (children == null) return;
-
-            children.WidthRequest = _root.WidthRequest;
-        }
-
         private void MoveLeft(bool animate = false)
         {
-            _root.Remove(_pages[SelectedIndex]);
-
             if (SelectedIndex <= 0)
-                SelectedIndex = _pages.Count - 1;
-            else
-                SelectedIndex--;
-
-            _root.Add(_pages[SelectedIndex]);
-
-            ShowAll();
-
-            if (animate)
             {
-                // TODO:
+                return;
             }
+
+            SelectedIndex--;
+
+            foreach(var page in _pages)
+            {
+                page.Visible = false;
+            }
+
+            _pages[SelectedIndex].Visible = true;
+
         }
 
         private void MoveRight(bool animate = false)
         {
-            _root.Remove(_pages[SelectedIndex]);
-
             if (SelectedIndex >= (ItemsSource.Count - 1))
-                SelectedIndex = 0;
-            else
-                SelectedIndex++;
-
-            _root.Add(_pages[SelectedIndex]);
-
-            ShowAll();
-
-            if (animate)
             {
-                // TODO:
+                return;
             }
+            
+            SelectedIndex++;
+
+            foreach (var page in _pages)
+            {
+                page.Visible = false;
+            }
+
+            _pages[SelectedIndex].Visible = true;
         }
     }
 }
