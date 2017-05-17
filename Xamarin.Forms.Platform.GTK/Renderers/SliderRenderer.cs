@@ -9,8 +9,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private double _maximum;
         private bool _disposed;
 
-        IElementController ElementController => Element;
-
         protected override void Dispose(bool disposing)
         {
             if (Control != null)
