@@ -1,6 +1,5 @@
 ﻿using Gtk;
 using System;
-using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -311,6 +310,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _dateFormat = value;
                 UpdateEntryText();
             }
+        }
+
+        public void SetBackgroundColor(Gdk.Color color)
+        {
+            _comboBox.SetBackgroundColor(color);
         }
 
         private void ShowPickerWindow()

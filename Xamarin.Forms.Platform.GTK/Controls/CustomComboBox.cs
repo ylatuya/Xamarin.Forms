@@ -1,8 +1,9 @@
-﻿namespace Xamarin.Forms.Platform.GTK.Controls
+﻿using Xamarin.Forms.Platform.GTK.Extensions;
+
+namespace Xamarin.Forms.Platform.GTK.Controls
 {
-    public class CustomComboBox : Gtk.EventBox
+    public class CustomComboBox : Gtk.HBox
     {
-        private Gtk.HBox _box;
         private Gtk.Entry _entry;
         private Gtk.Button _button;
         private Gtk.Arrow _arrow;
@@ -39,37 +40,25 @@
             }
         }
 
+        public void SetBackgroundColor(Gdk.Color color)
+        {
+            ModifyBg(Gtk.StateType.Normal, Xamarin.Forms.Color.Red.ToGtkColor());
+            Entry.ModifyBase(Gtk.StateType.Normal, Xamarin.Forms.Color.Blue.ToGtkColor());
+        }
+
         private void BuildCustomComboBox()
         {
-            _box = new Gtk.HBox();
-
             _entry = new Gtk.Entry();
             _entry.CanFocus = true;
             _entry.IsEditable = true;
-            _box.Add(_entry);
-
-            Gtk.Box.BoxChild entryBoxChild = ((Gtk.Box.BoxChild)(_box[_entry]));
-            entryBoxChild.Position = 0;
+            PackStart(_entry, true, true, 0);
 
             _button = new Gtk.Button();
             _button.WidthRequest = 30;
             _button.CanFocus = true;
             _arrow = new Gtk.Arrow(Gtk.ArrowType.Down, Gtk.ShadowType.EtchedOut);
             _button.Add(_arrow);
-            _box.Add(_button);
-
-            Gtk.Box.BoxChild buttonBoxChild = ((Gtk.Box.BoxChild)(_box[_button]));
-            buttonBoxChild.Position = 1;
-            buttonBoxChild.Expand = false;
-
-            Add(_box);
-
-            if ((Child != null))
-            {
-                Child.ShowAll();
-            }
-
-            Show();
+            PackEnd(_button, false, false, 0);
         }
     }
 }
