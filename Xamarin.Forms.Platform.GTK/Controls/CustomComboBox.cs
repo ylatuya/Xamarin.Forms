@@ -46,7 +46,6 @@
             _entry = new Gtk.Entry();
             _entry.CanFocus = true;
             _entry.IsEditable = true;
-            _entry.HasFrame = false;
             _box.Add(_entry);
 
             Gtk.Box.BoxChild entryBoxChild = ((Gtk.Box.BoxChild)(_box[_entry]));
