@@ -61,6 +61,14 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
+        public void TryHide(NavigationPage navPage = null)
+        {
+            if (navPage == null || navPage == _navigation)
+            {
+                Navigation = null;
+            }
+        }
+
         protected virtual HBox ConfigureToolbar()
         {
             var toolbar = new HBox();

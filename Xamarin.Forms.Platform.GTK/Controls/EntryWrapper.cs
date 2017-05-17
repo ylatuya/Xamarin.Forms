@@ -1,17 +1,15 @@
 ﻿using System;
-using Gdk;
 using Gtk;
 using Pango;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public class EntryWrapper : EventBox
     {
-        private Gtk.Table _table;
+        private Table _table;
         private Gtk.Entry _entry;
         private Gtk.Label _placeholder;
-        private Gtk.EventBox _placeholderContainer;
+        private EventBox _placeholderContainer;
         private bool _isEnabled;
 
         public EntryWrapper()
