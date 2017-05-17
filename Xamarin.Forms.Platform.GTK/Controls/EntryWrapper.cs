@@ -99,6 +99,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (Sensitive)
             {
+                _entry.Sensitive = true;
+                _entry.HasFocus = true;
                 _entry.GdkWindow?.Raise();
             }
         }
