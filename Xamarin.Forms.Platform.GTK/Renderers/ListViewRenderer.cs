@@ -4,6 +4,7 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 using System;
 using System.Collections.Specialized;
 using System.Collections.Generic;
+using Xamarin.Forms.Platform.GTK.Cells;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -51,6 +52,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateHeader();
                 UpdateFooter();
                 UpdateRowHeight();
+                UpdateHasUnevenRows();
                 UpdateSeparatorColor();
                 UpdateSeparatorVisibility();
                 UpdateIsRefreshing();
@@ -72,6 +74,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateFooter();
             else if (e.PropertyName == ListView.RowHeightProperty.PropertyName)
                 UpdateRowHeight();
+            else if (e.PropertyName == ListView.HasUnevenRowsProperty.PropertyName)
+                UpdateHasUnevenRows();
             else if (e.PropertyName == ListView.SeparatorColorProperty.PropertyName)
                 UpdateSeparatorColor();
             else if (e.PropertyName == ListView.SeparatorVisibilityProperty.PropertyName)
@@ -150,7 +154,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             foreach (var item in items)
             {
                 var renderer =
-                    (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
+                    (CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
                 var nativeCell = renderer.GetCell(item, null, _listView);
 
                 _cells.Add(nativeCell);
@@ -221,6 +225,42 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 cell.HeightRequest = rowHeight > 0 ? rowHeight : DefaultRowHeight;
             }
+        }
+
+        private void UpdateHasUnevenRows()
+        {
+            var hasUnevenRows = Element.HasUnevenRows;
+
+            if (hasUnevenRows)
+            {
+                foreach (var cell in _cells)
+                {
+                    var height = GetUnevenRowCellHeight(cell);
+
+                    cell.HeightRequest = height;
+                }
+            }
+            else
+            {
+                UpdateRowHeight();
+            }
+        }
+
+        private int GetUnevenRowCellHeight(Gtk.Container cell)
+        {
+            int height = -1;
+
+            var formsCell = cell
+                .GetType()
+                .GetProperty("Cell")
+                .GetValue(cell, null) as Cell;
+
+            if (formsCell != null)
+            {
+                height = Convert.ToInt32(formsCell.Height);
+            }
+
+            return height;
         }
 
         private void UpdateSeparatorColor()
