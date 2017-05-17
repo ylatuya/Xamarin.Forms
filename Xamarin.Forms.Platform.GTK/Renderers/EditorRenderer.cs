@@ -47,7 +47,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateText();
                 UpdateFont();
                 UpdateTextColor();
-                UpdateEditable();
             }
 
             base.OnElementChanged(e);
@@ -59,8 +58,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == Editor.TextProperty.PropertyName)
                 UpdateText();
-            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-                UpdateEditable();
             else if (e.PropertyName == Editor.TextColorProperty.PropertyName)
                 UpdateTextColor();
             else if (e.PropertyName == Editor.FontAttributesProperty.PropertyName)
@@ -97,12 +94,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 buffer.Text = Element.Text ?? string.Empty;
                 UpdateTextColor();
             }
-        }
-
-        private void UpdateEditable()
-        {
-            Control.Editable = Element.IsEnabled;
-            UpdateTextColor();
         }
 
         private void UpdateFont()

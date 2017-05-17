@@ -43,8 +43,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateSelectedIndex();
             if (e.PropertyName == Picker.ItemsSourceProperty.PropertyName)
                 UpdateItemsSource();
-            if (e.PropertyName == Picker.TextColorProperty.PropertyName ||
-                e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+            if (e.PropertyName == Picker.TextColorProperty.PropertyName)
                 UpdateTextColor();
         }
 

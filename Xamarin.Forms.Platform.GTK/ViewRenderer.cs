@@ -32,11 +32,6 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
-        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            base.OnElementPropertyChanged(sender, e);
-        }
-
         protected override void SetNativeControl(TNativeView view)
         {
             base.SetNativeControl(view);

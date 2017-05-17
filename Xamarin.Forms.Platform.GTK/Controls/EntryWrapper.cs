@@ -1,6 +1,6 @@
-﻿using System;
-using Gtk;
+﻿using Gtk;
 using Pango;
+using System;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -10,7 +10,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Entry _entry;
         private Gtk.Label _placeholder;
         private EventBox _placeholderContainer;
-        private bool _isEnabled;
 
         public EntryWrapper()
         {
@@ -34,19 +33,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
 
         public Gtk.Entry Entry => _entry;
-
-        public bool IsEnabled
-        {
-            get
-            {
-                return _isEnabled;
-            }
-            set
-            {
-                _isEnabled = value;
-                UpdateIsEnabled();
-            }
-        }
 
         public string PlaceholderText
         {
@@ -109,20 +95,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        private void UpdateIsEnabled()
-        {
-            Entry.IsEditable = _isEnabled;
-            Entry.CanFocus = _isEnabled;
-            Entry.Sensitive = _isEnabled;
-            _placeholderContainer.State = _isEnabled ? StateType.Normal : StateType.Insensitive;
-        }
-
         private void PlaceHolderContainerPressed(object o, ButtonPressEventArgs args)
         {
-            if (IsEnabled)
+            if (Sensitive)
             {
-                Entry.Sensitive = true;
-                Entry.HasFocus = true;
                 _entry.GdkWindow?.Raise();
             }
         }

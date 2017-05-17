@@ -49,8 +49,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateMinimumDate();
             else if (e.PropertyName == DatePicker.MaximumDateProperty.PropertyName)
                 UpdateMaximumDate();
-            else if (e.PropertyName == DatePicker.TextColorProperty.PropertyName ||
-                   e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+            else if (e.PropertyName == DatePicker.TextColorProperty.PropertyName)
                 UpdateTextColor();
             else if (e.PropertyName == DatePicker.FormatProperty.PropertyName)
                 UpdateFormat();
@@ -94,6 +93,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateFormat()
         {
             Control.DateFormat = Element.Format;
+        }
+
+        private void UpdateIsEnabled()
+        {
+            Control.Sensitive = Element.IsEnabled;
         }
 
         private void OnDateChanged(object sender, EventArgs e)

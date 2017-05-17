@@ -19,7 +19,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control.SearchButtonClicked += SearchButtonClicked;
                 }
 
-                UpdateIsEnabled();
                 UpdateText();
                 UpdateTextColor();
                 UpdateFont();
@@ -33,6 +32,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            base.OnElementPropertyChanged(sender, e);
+
             if (e.PropertyName == SearchBar.TextProperty.PropertyName)
                 UpdateText();
             else if (e.PropertyName == SearchBar.TextColorProperty.PropertyName)
@@ -51,8 +52,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdatePlaceholder();
             else if (e.PropertyName == SearchBar.CancelButtonColorProperty.PropertyName)
                 UpdateCancelButtonColor();
-            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-                UpdateIsEnabled();
         }
 
         protected override void UpdateBackgroundColor()
@@ -77,11 +76,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control.SearchButtonClicked -= SearchButtonClicked;
                 }
             }
-        }
-
-        private void UpdateIsEnabled()
-        {
-            Control.IsEnabled = Element.IsEnabled;
         }
 
         private void UpdateText()

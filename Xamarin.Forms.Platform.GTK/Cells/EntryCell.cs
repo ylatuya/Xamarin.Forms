@@ -30,7 +30,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             _root.PackStart(_textLabel, false, false, 0);
 
             _entry = new EntryWrapper();
-            _entry.IsEnabled = true;
+            _entry.Sensitive = true;
             _entry.Entry.Text = text;
             _entry.PlaceholderText = placeholder;
 
