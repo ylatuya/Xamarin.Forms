@@ -3,7 +3,7 @@ using System;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
-    public class ImageControl : Gtk.EventBox
+    public class ImageControl : Gtk.HBox
     {
         public const int MinWidth = 1;
         public const int MinHeight = 1;
@@ -94,7 +94,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _image = new Gtk.Image();
 
-            Add(_image);
+            PackStart(_image, true, true, 0);
         }
 
         private static void ScaleRatio(int srcWidth, int srcHeight, int destWidth, int destHeight, out int resultWidth, out int resultHeight)
