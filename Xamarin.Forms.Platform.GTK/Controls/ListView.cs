@@ -133,6 +133,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             CanFocus = true;
             ShadowType = ShadowType.None;
+            BorderWidth = 0;
             HscrollbarPolicy = PolicyType.Never;
             VscrollbarPolicy = PolicyType.Automatic;
             

@@ -11,7 +11,8 @@ namespace Xamarin.Forms.Platform.GTK
         public FormsWindow()
             : base(WindowType.Toplevel)
         {
-            SetSizeRequest(800, 600);
+            SetDefaultSize(800, 600);
+            SetSizeRequest(400, 400);
         }
 
         public void LoadApplication(Application application)
