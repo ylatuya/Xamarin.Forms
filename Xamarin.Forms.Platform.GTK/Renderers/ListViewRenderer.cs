@@ -48,6 +48,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 templatedItems.CollectionChanged += OnCollectionChanged;
 
                 UpdateItems();
+                UpdateGrouping();
                 UpdateBackgroundColor();
                 UpdateHeader();
                 UpdateFooter();
@@ -68,6 +69,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == ListView.ItemsSourceProperty.PropertyName)
                 UpdateItems();
+            else if(e.PropertyName == ListView.IsGroupingEnabledProperty.PropertyName)
+                UpdateGrouping();
             else if (e.PropertyName.Equals("HeaderElement", StringComparison.InvariantCultureIgnoreCase))
                 UpdateHeader();
             else if (e.PropertyName.Equals("FooterElement", StringComparison.InvariantCultureIgnoreCase))
@@ -147,6 +150,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var items = TemplatedItemsView.TemplatedItems;
 
             if (!items.Any())
+            {
+                return;
+            }
+
+            bool grouping = Element.IsGroupingEnabled;
+
+            if (grouping)
             {
                 return;
             }
@@ -307,9 +317,60 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         }
 
+        private void UpdateGrouping()
+        {
+            var templatedItems = TemplatedItemsView.TemplatedItems;
+
+            if (!templatedItems.Any())
+            {
+                return;
+            }
+
+            bool grouping = Element.IsGroupingEnabled;
+
+            if (grouping && templatedItems.ShortNames != null)
+            {
+                _cells.Clear();
+
+                int index = 0;
+                foreach (var groupItem in templatedItems.ShortNames)
+                {
+                    var group = templatedItems.GetGroup(index);
+
+                    if (group.Count != 0)
+                    {
+                        var header = group.HeaderContent;
+                        var headerRenderer =
+                            (CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(header.GetType());
+                        var headerCell = headerRenderer.GetCell(header, null, _listView);
+
+                        _cells.Add(headerCell);
+
+                        foreach(var item in group.ToList())
+                        {
+                            var renderer =                   
+                                (CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
+                            var cell = renderer.GetCell(item as Cell, null, _listView);
+
+                            _cells.Add(cell);
+                        }
+                    }
+
+                    index++;
+                }
+
+                _listView.Items = _cells;
+            }
+        }
+
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateItems();
+            bool grouping = Element.IsGroupingEnabled;
+
+            if (grouping)
+                UpdateGrouping();
+            else
+                UpdateItems();
         }
 
         private void OnSelectedItemChanged(object sender, Controls.SelectedItemEventArgs args)

@@ -9,7 +9,10 @@ namespace Xamarin.Forms.Controls.Monkeys.ViewModels
         public MonkeysViewModel()
         {
             Monkeys = MonkeyHelper.Monkeys;
+            MonkeysGrouped = MonkeyHelper.MonkeysGrouped;
         }
+
+        public ObservableCollection<Helpers.Grouping<string, Monkey>> MonkeysGrouped { get; set; }
 
         public ObservableCollection<Monkey> Monkeys { get; set; }
     }

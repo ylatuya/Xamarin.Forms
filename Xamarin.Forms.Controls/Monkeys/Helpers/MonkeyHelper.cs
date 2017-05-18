@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
 using Xamarin.Forms.Controls.Monkeys.Models;
 
@@ -6,18 +7,20 @@ namespace Xamarin.Forms.Controls.Monkeys.Helpers
 {
     public static class MonkeyHelper
     {
-        private static Random random;
+        private static Random _random;
 
         public static Monkey GetRandomMonkey()
         {
-            return Monkeys[random.Next(0, Monkeys.Count)];
+            return Monkeys[_random.Next(0, Monkeys.Count)];
         }
+
+        public static ObservableCollection<Grouping<string, Monkey>> MonkeysGrouped { get; set; }
 
         public static ObservableCollection<Monkey> Monkeys { get; set; }
 
         static MonkeyHelper()
         {
-            random = new Random();
+            _random = new Random();
             Monkeys = new ObservableCollection<Monkey>();
 
             Monkeys.Add(new Monkey
@@ -84,6 +87,13 @@ namespace Xamarin.Forms.Controls.Monkeys.Helpers
                 Details = "The proboscis monkey or long-nosed monkey, known as the bekantan in Malay, is a reddish-brown arboreal Old World monkey that is endemic to the south-east Asian island of Borneo.",
                 Image = "http://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Proboscis_Monkey_in_Borneo.jpg/250px-Proboscis_Monkey_in_Borneo.jpg"
             });
+            var sorted = 
+                from monkey in Monkeys
+                orderby monkey.Name
+                group monkey by monkey.NameSort into monkeyGroup
+                select new Grouping<string, Monkey>(monkeyGroup.Key, monkeyGroup);
+
+            MonkeysGrouped = new ObservableCollection<Grouping<string, Monkey>>(sorted);
         }
     }
 }

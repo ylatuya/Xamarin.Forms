@@ -30,7 +30,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(new ScrolledWindow
                     {
                         CanFocus = true,
-                        ShadowType = ShadowType.In,
+                        ShadowType = ShadowType.None,
+                        BorderWidth = 0,
                         HscrollbarPolicy = PolicyType.Automatic,
                         VscrollbarPolicy = PolicyType.Automatic
                     });

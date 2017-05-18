@@ -123,6 +123,7 @@
       <DependentUpon>Page1.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPageLifeCycleTests.cs" />
+    <Compile Include="Monkeys\Helpers\Grouping.cs" />
     <Compile Include="Monkeys\Helpers\MonkeyHelper.cs" />
     <Compile Include="Monkeys\Models\Monkey.cs" />
     <Compile Include="Monkeys\ViewModels\MonkeysViewModel.cs" />

@@ -5,9 +5,11 @@
              Title="Monkeys">
     <ListView 
         HasUnevenRows="true"
-        ItemsSource="{Binding Monkeys}"
+        ItemsSource="{Binding MonkeysGrouped}"
         SeparatorVisibility="None"
-        RowHeight="250">
+        GroupShortNameBinding ="{Binding Key}"
+        IsGroupingEnabled ="true"
+        GroupDisplayBinding ="{Binding Key}">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>
@@ -20,7 +22,7 @@
                         <Image 
                             Grid.Row="0"
                             Source="{Binding Image}" 
-                            Aspect="AspectFit"/>
+                            Aspect="AspectFill"/>
                         <Label 
                             Grid.Row="1"
                             Text="{Binding Name}"
