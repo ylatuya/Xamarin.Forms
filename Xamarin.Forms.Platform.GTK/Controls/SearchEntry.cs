@@ -10,7 +10,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private EntryWrapper _entryWrapper;
         private ImageButton _searchButton;
         private ImageButton _clearButton;
-        private bool _isEnabled;
 
         public SearchEntry()
         {
@@ -56,20 +55,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _entryWrapper.PlaceholderText = value;
-            }
-        }
-
-        public bool IsEnabled
-        {
-            get
-            {
-                return _isEnabled;
-            }
-
-            set
-            {
-                _isEnabled = value;
-                UpdateIsEnabled();
             }
         }
 
@@ -177,13 +162,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 _container.Remove(_clearButton);
             }
-        }
-
-        private void UpdateIsEnabled()
-        {
-            _entryWrapper.IsEnabled = _isEnabled;
-            _searchButton.Sensitive = _isEnabled;
-            _clearButton.Sensitive = _isEnabled;
         }
 
         private void EntryChanged(object sender, EventArgs e)

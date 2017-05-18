@@ -8,17 +8,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private bool _disposed;
 
-        protected override void Dispose(bool disposing)
+        protected override void UpdateBackgroundColor()
         {
-            if (disposing && !_disposed)
+            base.UpdateBackgroundColor();
+
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
             {
-                if (Control != null)
-                    Control.DateChanged -= OnDateChanged;
-
-                _disposed = true;
+                Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
             }
-
-            base.Dispose(disposing);
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<DatePicker> e)
@@ -52,11 +49,23 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateMinimumDate();
             else if (e.PropertyName == DatePicker.MaximumDateProperty.PropertyName)
                 UpdateMaximumDate();
-            else if (e.PropertyName == DatePicker.TextColorProperty.PropertyName ||
-                   e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+            else if (e.PropertyName == DatePicker.TextColorProperty.PropertyName)
                 UpdateTextColor();
             else if (e.PropertyName == DatePicker.FormatProperty.PropertyName)
                 UpdateFormat();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && !_disposed)
+            {
+                if (Control != null)
+                    Control.DateChanged -= OnDateChanged;
+
+                _disposed = true;
+            }
+
+            base.Dispose(disposing);
         }
 
         private void UpdateDate(DateTime date)
@@ -84,6 +93,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateFormat()
         {
             Control.DateFormat = Element.Format;
+        }
+
+        private void UpdateIsEnabled()
+        {
+            Control.Sensitive = Element.IsEnabled;
         }
 
         private void OnDateChanged(object sender, EventArgs e)

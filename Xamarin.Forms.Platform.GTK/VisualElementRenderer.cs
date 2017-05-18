@@ -125,6 +125,10 @@ namespace Xamarin.Forms.Platform.GTK
         protected virtual void SetNativeControl(TNativeElement view)
         {
             Control = view;
+
+            UpdateBackgroundColor();
+            UpdateIsVisible();
+            UpdateSensitive();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -141,6 +145,8 @@ namespace Xamarin.Forms.Platform.GTK
                 UpdateIsVisible();
             else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
                 UpdateBackgroundColor();
+            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+                UpdateSensitive();
         }
 
         protected virtual void UpdateBackgroundColor()
@@ -160,6 +166,11 @@ namespace Xamarin.Forms.Platform.GTK
         private void UpdateIsVisible()
         {
             Container.Visible = Element.IsVisible;
+        }
+
+        private void UpdateSensitive()
+        {
+            Control.Sensitive = Element.IsEnabled;
         }
     }
 }

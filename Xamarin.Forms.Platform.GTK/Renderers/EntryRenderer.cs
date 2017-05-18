@@ -34,7 +34,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateFont();
                 UpdateTextVisibility();
                 UpdatePlaceholder();
-                UpdateEditable();
             }
 
             base.OnElementChanged(e);
@@ -60,8 +59,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdatePlaceholder();
             else if (e.PropertyName == Entry.PlaceholderColorProperty.PropertyName)
                 UpdatePlaceholder();
-            else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
-                UpdateEditable();
 
             base.OnElementPropertyChanged(sender, e);
         }
@@ -125,11 +122,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             Control.PlaceholderText = Element.Placeholder;
             Control.SetPlaceholderTextColor(Element.PlaceholderColor.ToGtkColor());
-        }
-
-        private void UpdateEditable()
-        {
-            Control.IsEnabled = Element.IsEnabled;
         }
 
         private void OnChanged(object sender, System.EventArgs e)

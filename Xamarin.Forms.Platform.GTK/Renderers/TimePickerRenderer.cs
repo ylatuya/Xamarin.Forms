@@ -46,8 +46,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (e.PropertyName == TimePicker.TimeProperty.PropertyName ||
                 e.PropertyName == TimePicker.FormatProperty.PropertyName)
                 UpdateTime();
-            if (e.PropertyName == TimePicker.TextColorProperty.PropertyName ||
-                     e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
+            if (e.PropertyName == TimePicker.TextColorProperty.PropertyName)
                 UpdateTextColor();
         }
 
