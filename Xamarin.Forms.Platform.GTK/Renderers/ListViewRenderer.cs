@@ -164,11 +164,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             foreach (var item in items)
             {
-                var renderer =
-                    (CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
-                var nativeCell = renderer.GetCell(item, null, _listView);
+                var cell = GetCell(item);
 
-                _cells.Add(nativeCell);
+                _cells.Add(cell);
             }
 
             _listView.Items = _cells;
@@ -241,12 +239,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             foreach (var cell in _cells)
             {
-                var formsCell = GetCell(cell);
-                var isGroupHeader = formsCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
+                var formsCell = GetXamarinFormsCell(cell);
 
-                if (!isGroupHeader)
+                if (formsCell != null)
                 {
-                    cell.HeightRequest = rowHeight > 0 ? rowHeight : DefaultRowHeight;
+                    var isGroupHeader = formsCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
+
+                    if (!isGroupHeader)
+                    {
+                        cell.HeightRequest = rowHeight > 0 ? rowHeight : DefaultRowHeight;
+                    }
                 }
             }
         }
@@ -274,7 +276,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             int height = -1;
 
-            var formsCell = GetCell(cell);
+            var formsCell = GetXamarinFormsCell(cell);
 
             if (formsCell != null)
             {
@@ -284,14 +286,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             return height;
         }
 
-        private Cell GetCell(Gtk.Container cell)
+        private Cell GetXamarinFormsCell(Gtk.Container cell)
         {
-            var formsCell = cell
-               .GetType()
-               .GetProperty("Cell")
-               .GetValue(cell, null) as Cell;
+            try
+            {
+                var formsCell = cell
+                   .GetType()
+                   .GetProperty("Cell")
+                   .GetValue(cell, null) as Cell;
 
-            return formsCell;
+                return formsCell;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void UpdateSeparatorColor()
@@ -349,29 +358,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             bool grouping = Element.IsGroupingEnabled;
 
-            if (grouping && templatedItems.ShortNames != null)
+            if (grouping)
             {
                 _cells.Clear();
 
                 int index = 0;
-                foreach (var groupItem in templatedItems.ShortNames)
+                foreach (var groupItem in templatedItems)
                 {
                     var group = templatedItems.GetGroup(index);
 
                     if (group.Count != 0)
                     {
-                        var header = group.HeaderContent;
-                        var headerRenderer =
-                            (CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(header.GetType());
-                        var headerCell = headerRenderer.GetCell(header, null, _listView);
-                        _cells.Add(headerCell);
+                        if (templatedItems.ShortNames != null)
+                            _cells.Add(GetCell(group.HeaderContent));
+                        else
+                            _cells.Add(CreateEmptyHeader());
 
-                        foreach(var item in group.ToList())
+                        foreach (var item in group.ToList())
                         {
-                            var renderer =                   
-                                (CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(item.GetType());
-                            var cell = renderer.GetCell(item as Cell, null, _listView);
-                            _cells.Add(cell);
+                            _cells.Add(GetCell(item as Cell));
                         }
                     }
 
@@ -380,6 +385,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 _listView.Items = _cells;
             }
+        }
+
+        private Cells.TextCell CreateEmptyHeader()
+        {
+            return new Cells.TextCell(
+                string.Empty,
+                Color.Black.ToGtkColor(),
+                string.Empty,
+                Color.Black.ToGtkColor());
+        }
+
+        private Gtk.Container GetCell(Cell cell)
+        {
+            var renderer = 
+                (CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
+
+            var realCell = renderer.GetCell(cell, null, _listView);
+
+            return realCell;
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

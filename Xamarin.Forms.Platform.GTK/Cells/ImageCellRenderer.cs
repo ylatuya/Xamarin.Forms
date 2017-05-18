@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
@@ -82,6 +83,10 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                     image = await handler.LoadImageAsync(source).ConfigureAwait(false);
                 }
                 catch (System.Threading.Tasks.TaskCanceledException)
+                {
+                    image = null;
+                }
+                catch(Exception)
                 {
                     image = null;
                 }
