@@ -11,7 +11,29 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Image _image;
         private Pixbuf _original;
         private Gdk.Size _imageSize;
-        private bool _resized;
+        private ImageAspect _aspect;
+
+        private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
+
+        public ImageControl()
+        {
+            _aspect = ImageAspect.AspectFill;
+            BuildImageControl();
+        }
+
+        public ImageAspect Aspect
+        {
+            get
+            {
+                return _aspect;
+            }
+
+            set
+            {
+                _aspect = value;
+                QueueDraw();
+            }
+        }
 
         public Pixbuf Pixbuf
         {
@@ -27,17 +49,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public ImageControl()
-        {
-            BuildImageControl();
-        }
-
         public void SetScale(int width, int height)
         {
             if (_image == null || _original == null)
                 return;
 
-                if (width <= 0 || height <= 0)
+            if (width <= 0 || height <= 0)
                 return;
 
             if (width < MinWidth)
@@ -72,19 +89,33 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
-            if ((_image.Pixbuf != null) && (!_resized))
+            base.OnSizeAllocated(allocation);
+
+            if (_image.Pixbuf != null && !_lastAllocation.Equals(allocation))
             {
+                _lastAllocation = allocation;
+
                 var srcWidth = _original.Width;
                 var srcHeight = _original.Height;
-                int resultWidth, resultHeight;
-                ScaleRatio(srcWidth, srcHeight, allocation.Width, allocation.Height, out resultWidth, out resultHeight);
-                _image.Pixbuf = _original.ScaleSimple(resultWidth, resultHeight, InterpType.Bilinear);
-                _resized = true;
-            }
-            else
-            {
-                _resized = false;
-                base.OnSizeAllocated(allocation);
+
+                Pixbuf newPixBuf = null;
+
+                switch (Aspect)
+                {
+                    case ImageAspect.AspectFit:
+                        newPixBuf = GetAspectFitPixBuf(_original, allocation);
+                        break;
+                    case ImageAspect.AspectFill:
+                        newPixBuf = GetAspectFillPixBuf(_original, allocation);
+                        break;
+                    case ImageAspect.Fill:
+                        newPixBuf = GetFillPixBuf(_original, allocation);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(Aspect));
+                }
+
+                _image.Pixbuf = newPixBuf;
             }
         }
 
@@ -97,14 +128,40 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             PackStart(_image, true, true, 0);
         }
 
-        private static void ScaleRatio(int srcWidth, int srcHeight, int destWidth, int destHeight, out int resultWidth, out int resultHeight)
+        private static Pixbuf GetAspectFitPixBuf(Pixbuf original, Gdk.Rectangle allocation)
         {
-            var widthRatio = (float)destWidth / srcWidth;
-            var heigthRatio = (float)destHeight / srcHeight;
+            var widthRatio = (float)allocation.Width / original.Width;
+            var heigthRatio = (float)allocation.Height / original.Height;
 
-            var ratio = Math.Min(widthRatio, heigthRatio);
-            resultHeight = (int)(srcHeight * ratio);
-            resultWidth = (int)(srcWidth * ratio);
+            var fitRatio = Math.Min(widthRatio, heigthRatio);
+            var finalWidth = (int)(original.Width * fitRatio);
+            var finalHeight = (int)(original.Height * fitRatio);
+
+            return original.ScaleSimple(finalWidth, finalHeight, InterpType.Bilinear);
         }
+
+        private static Pixbuf GetAspectFillPixBuf(Pixbuf original, Gdk.Rectangle allocation)
+        {
+            var widthRatio = (float)allocation.Width / original.Width;
+            var heigthRatio = (float)allocation.Height / original.Height;
+
+            var fitRatio = Math.Max(widthRatio, heigthRatio);
+            var finalWidth = (int)(original.Width * fitRatio);
+            var finalHeight = (int)(original.Height * fitRatio);
+
+            return original.ScaleSimple(finalWidth, finalHeight, InterpType.Bilinear);
+        }
+
+        private static Pixbuf GetFillPixBuf(Pixbuf original, Gdk.Rectangle allocation)
+        {
+            return original.ScaleSimple(allocation.Width, allocation.Height, InterpType.Bilinear);
+        }
+    }
+
+    public enum ImageAspect
+    {
+        AspectFit,
+        AspectFill,
+        Fill
     }
 }

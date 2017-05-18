@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Gdk;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Gdk;
-using Gtk;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -59,6 +58,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 SetOpacity();
             else if (e.PropertyName == Image.AspectProperty.PropertyName)
                 SetAspect();
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            Control.SetSizeRequest(allocation.Width, allocation.Height);
         }
 
         private async void SetImage(Image oldElement = null)
@@ -116,25 +122,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void SetAspect()
         {
-            var height = Allocation.Height;
-            var width = Allocation.Width;
-
-            if (height <= 1 || width <= 1)
+            switch (Element.Aspect)
             {
-                return;
-            }
-
-            if (Element.Aspect == Aspect.AspectFill)
-            {
-                Control.SetScale(width, height);
-            }
-            else if (Element.Aspect == Aspect.AspectFit)
-            {
-                Control.SetScale(width, height);
-            }
-            else
-            {
-                Control.SetScale(width, height);
+                case Aspect.AspectFit:
+                    Control.Aspect = Controls.ImageAspect.AspectFit;
+                    break;
+                case Aspect.AspectFill:
+                    Control.Aspect = Controls.ImageAspect.AspectFill;
+                    break;
+                case Aspect.Fill:
+                    Control.Aspect = Controls.ImageAspect.Fill;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Element.Aspect));
             }
         }
 
