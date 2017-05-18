@@ -194,15 +194,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (imageLoader?.Uri == null)
                 return null;
 
-            Stream streamImage = await imageLoader.GetStreamAsync(cancelationToken);
-
-            if (streamImage == null || !streamImage.CanRead)
+            using (Stream streamImage = await imageLoader.GetStreamAsync(cancelationToken))
             {
-                return null;
+                if (streamImage == null || !streamImage.CanRead)
+                {
+                    return null;
+                }
+
+                image = new Pixbuf(streamImage);
             }
-    
-            image = new Pixbuf(streamImage);
-           
+
             return image;
         }
     }
