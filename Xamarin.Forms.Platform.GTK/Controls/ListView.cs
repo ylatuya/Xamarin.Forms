@@ -1,7 +1,6 @@
 ﻿using Gtk;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -115,9 +114,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetSeparatorColor(Gdk.Color separatorColor)
         {
-            foreach(var separator in _separators)
+            foreach (var separator in _separators)
             {
                 separator.ModifyBg(StateType.Normal, separatorColor);
+                separator.VisibleWindow = true;
             }
         }
 

@@ -4,19 +4,18 @@
              x:Class="Xamarin.Forms.Controls.Monkeys.Views.MonkeysView"
              Title="Monkeys">
     <ListView 
-        HasUnevenRows="true"
         ItemsSource="{Binding MonkeysGrouped}"
         SeparatorVisibility="None"
         GroupShortNameBinding ="{Binding Key}"
         IsGroupingEnabled ="true"
-        GroupDisplayBinding ="{Binding Key}">
+        GroupDisplayBinding ="{Binding Key}"
+        RowHeight="300">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <ViewCell>
-                    <Grid 
-                        BackgroundColor="Orange">
+                    <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="250"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Image 

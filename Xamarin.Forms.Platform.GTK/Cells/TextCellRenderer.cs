@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
@@ -26,6 +27,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 gtkTextCell.Cell.PropertyChanged -= gtkTextCell.HandlePropertyChanged;
 
             gtkTextCell.Cell = textCell;
+            gtkTextCell.IsGroupHeader = textCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
 
             textCell.PropertyChanged += gtkTextCell.HandlePropertyChanged;
             gtkTextCell.PropertyChanged = HandlePropertyChanged;

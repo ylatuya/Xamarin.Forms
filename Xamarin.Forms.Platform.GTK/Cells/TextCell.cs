@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         private string _detail;
         private Gdk.Color _textColor;
         private Gdk.Color _detailColor;
+        private bool _isGroupHeader;
 
         public TextCell(
             string text,
@@ -68,6 +69,12 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             set { _detailColor = value; UpdateDetailColor(_detailColor); }
         }
 
+        public bool IsGroupHeader
+        {
+            get { return _isGroupHeader; }
+            set { _isGroupHeader = value; UpdateIsGroupHeader(_isGroupHeader); }
+        }
+
         private void UpdateText(string text)
         {
             if(_textLabel != null)
@@ -97,6 +104,20 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             if (_detailLabel != null)
             {
                 _detailLabel.ModifyFg(StateType.Normal, detailColor);
+            }
+        }
+
+        private void UpdateIsGroupHeader(bool isGroupHeader)
+        {
+            if (_textLabel != null)
+            {
+                var span = new Span()
+                {
+                    FontSize = isGroupHeader ? 18 : 12,
+                    Text = _textLabel.Text
+                };
+
+                _textLabel.SetTextFromSpan(span);
             }
         }
     }
