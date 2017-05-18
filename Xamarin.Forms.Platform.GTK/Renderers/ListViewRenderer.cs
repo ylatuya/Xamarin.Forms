@@ -24,6 +24,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _cells = new List<Gtk.Container>();
         }
 
+        Xamarin.Forms.ListView ListView => Element;
+
         IListViewController Controller => Element;
 
         ITemplatedItemsView<Cell> TemplatedItemsView => Element;
@@ -245,10 +247,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     var isGroupHeader = formsCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
 
-                    if (!isGroupHeader)
-                    {
+                    if (isGroupHeader)
+                        cell.HeightRequest = DefaultRowHeight;
+                    else
                         cell.HeightRequest = rowHeight > 0 ? rowHeight : DefaultRowHeight;
-                    }
                 }
             }
         }
@@ -325,13 +327,18 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            if (Element.SeparatorVisibility == SeparatorVisibility.Default)
+            var visibility = Element.SeparatorVisibility;
+
+            switch (visibility)
             {
-                _listView.SetSeparatorVisibility(true);
-            }
-            else
-            {
-                _listView.SetSeparatorVisibility(false);
+                case SeparatorVisibility.Default:
+                    _listView.SetSeparatorVisibility(true);
+                    break;
+                case SeparatorVisibility.None:
+                    _listView.SetSeparatorVisibility(false);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -369,7 +376,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     if (group.Count != 0)
                     {
-                        if (templatedItems.ShortNames != null)
+                        if (group.HeaderContent != null && ListView.GroupHeaderTemplate != null)
                             _cells.Add(GetCell(group.HeaderContent));
                         else
                             _cells.Add(CreateEmptyHeader());

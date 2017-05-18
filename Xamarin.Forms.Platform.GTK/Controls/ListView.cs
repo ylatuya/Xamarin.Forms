@@ -121,11 +121,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public void SetSeparatorVisibility(bool isVisible)
+        public void SetSeparatorVisibility(bool visible)
         {
             foreach (var separator in _separators)
             {
-                separator.Visible = isVisible;
+                separator.HeightRequest = visible ? 1 : 0;
             }
         }
 
@@ -184,7 +184,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     {
                         var gtkCell = sender as CellBase;
 
-                        if (gtkCell != null)
+                        if (gtkCell != null && gtkCell.Cell != null)
                         {
                             var selectedItem = gtkCell.Cell.BindingContext;
                             SelectedItem = selectedItem;
