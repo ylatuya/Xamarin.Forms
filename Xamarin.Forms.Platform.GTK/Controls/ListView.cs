@@ -78,11 +78,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                if (_cells != value)
-                {
-                    _cells = value;
-                    RefreshItems(_cells);
-                }
+                _cells = value;
+                RefreshItems(_cells);
             }
         }
 
@@ -176,7 +173,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RefreshItems(IEnumerable<Widget> items)
         {
-            _separators.Clear();
+            ClearList();
 
             foreach (var item in items)
             {
@@ -203,6 +200,22 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
 
             _list.ShowAll();
+        }
+
+        private void ClearList()
+        {
+            if (_list != null)
+            {
+                foreach (var cell in _list.Children)
+                {
+                    cell.Destroy();
+                }
+            }
+
+            if (_separators != null)
+            {
+                _separators.Clear();
+            }
         }
 
         private void RefreshFooter(EventBox footer)
