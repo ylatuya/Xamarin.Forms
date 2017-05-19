@@ -100,10 +100,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 catch (OperationCanceledException)
                 {
                     image = null;
+                    Internals.Log.Warning("Image loading", "Image load cancelled");
                 }
-                catch(Exception)
+                catch(Exception ex)
                 {
                     image = null;
+                    Internals.Log.Warning("Image loading", $"Image load failed: {ex}");
                 }
 
                 var imageView = Control;

@@ -130,6 +130,7 @@
     <Compile Include="GtkTicker.cs" />
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
+    <Compile Include="IDesiredSizeProvider.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="NativeToolbarTracker.cs" />
     <Compile Include="Platform.cs" />

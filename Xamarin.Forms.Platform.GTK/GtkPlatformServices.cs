@@ -83,10 +83,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         public IIsolatedStorageFile GetUserStoreForApplication()
         {
-            return new GtkIsolatedStorageFile(
-                IsolatedStorageFile.GetStore(
-                    IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly,
-                    null, null));
+            return new GtkIsolatedStorageFile();
         }
 
         public void OpenUriAction(Uri uri)
