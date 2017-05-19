@@ -376,7 +376,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     if (group.Count != 0)
                     {
-                        if (group.HeaderContent != null && ListView.GroupHeaderTemplate != null)
+                        if (group.HeaderContent != null)
                             _cells.Add(GetCell(group.HeaderContent));
                         else
                             _cells.Add(CreateEmptyHeader());
