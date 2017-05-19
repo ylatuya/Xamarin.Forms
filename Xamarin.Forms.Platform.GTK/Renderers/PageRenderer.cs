@@ -7,6 +7,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class PageRenderer : Container, IVisualElementRenderer
     {
+        private bool _disposed;
+        private bool _appeared;
         private VisualElementPackager _packager;
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
@@ -16,6 +18,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         }
 
         public Controls.Page Control { get; private set; }
+
+        Page Page => Element as Page;
 
         public VisualElement Element { get; private set; }
 
@@ -52,17 +56,51 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.Dispose();
 
-            Dispose(true);
+            if (!_disposed)
+            {
+                if (_appeared)
+                    Page.SendDisappearing();
+
+                _appeared = false;
+
+                if (_packager != null)
+                {
+                    _packager.Dispose();
+                    _packager = null;
+                }
+
+                Element = null;
+                _disposed = true;
+
+                Dispose(true);
+            }
         }
 
         protected override void OnShown()
         {
             base.OnShown();
 
+            if (_appeared || _disposed)
+                return;
+
             _packager = new VisualElementPackager(this);
             _packager.Load();
 
             UpdateBackgroundColor();
+
+            Page.SendAppearing();
+            _appeared = true;
+        }
+
+        protected override void OnDestroyed()
+        {
+            base.OnDestroyed();
+
+            if (!_appeared || _disposed)
+                return;
+
+            Page.SendDisappearing();
+            _appeared = false;
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)

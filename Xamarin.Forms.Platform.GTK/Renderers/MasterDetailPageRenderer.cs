@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private bool _disposed;
         private MasterDetailPage _masterDetailPage;
+        private VisualElementTracker<Page, Container> _tracker;
 
         IPageController PageController => Element as IPageController;
 
@@ -20,6 +21,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
         protected MasterDetailPage MasterDetailPage => _masterDetailPage ?? (_masterDetailPage = (MasterDetailPage)Element);
+
+        protected VisualElementTracker<Page, Container> Tracker
+        {
+            get { return _tracker; }
+            set
+            {
+                if (_tracker == value)
+                    return;
+
+                if (_tracker != null)
+                    _tracker.Dispose();
+
+                _tracker = value;
+            }
+        }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
         {

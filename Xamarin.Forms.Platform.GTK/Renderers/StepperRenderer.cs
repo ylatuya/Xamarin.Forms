@@ -9,6 +9,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private double _minimum;
         private double _maximum;
 
+        protected override bool PreventGestureBubbling { get; set; } = true;
+
         protected override void Dispose(bool disposing)
         {
             if (Control != null)

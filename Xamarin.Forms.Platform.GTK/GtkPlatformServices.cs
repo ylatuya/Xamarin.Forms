@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         public Ticker CreateTicker()
         {
-            throw new NotImplementedException();
+            return new GtkTicker();
         }
 
         public Assembly[] GetAssemblies()

@@ -16,6 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private bool _appeared;
         private Stack<NavigationChildPage> _currentStack;
         private VisualElementPackager _packager;
+        private VisualElementTracker<Page, Container> _tracker;
 
         IPageController PageController => Element as IPageController;
 
@@ -35,6 +36,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         VisualElement IVisualElementRenderer.Element => Element;
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+
+        protected VisualElementTracker<Page, Container> Tracker
+        {
+            get { return _tracker; }
+            set
+            {
+                if (_tracker == value)
+                    return;
+
+                if (_tracker != null)
+                    _tracker.Dispose();
+
+                _tracker = value;
+            }
+        }
 
         public override void Dispose()
         {

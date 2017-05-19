@@ -13,12 +13,38 @@ namespace Xamarin.Forms.Platform.GTK
         where TElement : VisualElement
         where TNativeElement : Control
     {
+        private bool _disposed;
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
         private readonly List<EventHandler<VisualElementChangedEventArgs>> _elementChangedHandlers = new List<EventHandler<VisualElementChangedEventArgs>>();
+        private VisualElementTracker<TElement, TNativeElement> _tracker;
 
         protected VisualElementRenderer()
         {
             _propertyChangedHandler = OnElementPropertyChanged;
+        }
+
+        protected VisualElementTracker<TElement, TNativeElement> Tracker
+        {
+            get { return _tracker; }
+            set
+            {
+                if (_tracker == value)
+                    return;
+
+                if (_tracker != null)
+                {
+                    _tracker.Dispose();
+                    _tracker.Updated -= OnTrackerUpdated;
+                }
+
+                _tracker = value;
+
+                if (_tracker != null)
+                {
+                    _tracker.Updated += OnTrackerUpdated;
+                    UpdateTracker();
+                }
+            }
         }
 
         public TNativeElement Control { get; set; }
@@ -36,6 +62,8 @@ namespace Xamarin.Forms.Platform.GTK
         }
 
         protected IElementController ElementController => Element as IElementController;
+
+        protected virtual bool PreventGestureBubbling { get; set; } = false;
 
         event EventHandler<VisualElementChangedEventArgs> IVisualElementRenderer.ElementChanged
         {
@@ -63,6 +91,11 @@ namespace Xamarin.Forms.Platform.GTK
             if (element != null)
             {
                 element.PropertyChanged += _propertyChangedHandler;
+
+                if (Tracker == null)
+                {
+                    Tracker = new VisualElementTracker<TElement, TNativeElement>();
+                }
             }
 
             OnElementChanged(new ElementChangedEventArgs<TElement>(oldElement, element));
@@ -110,6 +143,7 @@ namespace Xamarin.Forms.Platform.GTK
         public sealed override void Dispose()
         {
             base.Dispose();
+
             Dispose(true);
         }
 
@@ -133,10 +167,18 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (!disposing || _disposed)
                 return;
 
+            _disposed = true;
+
+            Tracker?.Dispose();
+            Tracker = null;
+
             Element = null;
+
+            SetNativeControl(null);
+            SetElement(null);
         }
 
         protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -163,6 +205,11 @@ namespace Xamarin.Forms.Platform.GTK
             Container.VisibleWindow = !isDefault;
         }
 
+        protected virtual void UpdateNativeControl()
+        {
+            UpdateSensitive();
+        }
+
         private void UpdateIsVisible()
         {
             Container.Visible = Element.IsVisible;
@@ -170,7 +217,28 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateSensitive()
         {
+            if(Control == null)
+            {
+                return;
+            }
+
             Control.Sensitive = Element.IsEnabled;
+        }
+
+        private void OnTrackerUpdated(object sender, EventArgs e)
+        {
+            UpdateNativeControl();
+        }
+
+        private void UpdateTracker()
+        {
+            if (_tracker == null)
+                return;
+
+            _tracker.PreventGestureBubbling = PreventGestureBubbling;
+            _tracker.Control = Control;
+            _tracker.Element = Element;
+            _tracker.Container = Container;
         }
     }
 }

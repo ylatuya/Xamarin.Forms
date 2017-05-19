@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     public class TabbedPageRenderer : Container, IVisualElementRenderer
     {
         private bool _disposed;
+        private VisualElementTracker<Page, Container> _tracker;
 
         public Notebook Control { get; private set; }
 
@@ -26,6 +27,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         public Container Container => this;
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+
+        protected VisualElementTracker<Page, Container> Tracker
+        {
+            get { return _tracker; }
+            set
+            {
+                if (_tracker == value)
+                    return;
+
+                if (_tracker != null)
+                    _tracker.Dispose();
+
+                _tracker = value;
+            }
+        }
 
         public override void Dispose()
         {

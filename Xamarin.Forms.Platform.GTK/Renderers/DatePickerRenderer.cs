@@ -8,6 +8,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private bool _disposed;
 
+        protected override bool PreventGestureBubbling { get; set; } = true;
+
         protected override void UpdateBackgroundColor()
         {
             base.UpdateBackgroundColor();

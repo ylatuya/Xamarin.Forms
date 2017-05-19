@@ -6,21 +6,25 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Xamarin.Forms.Internals;
-using Control = Gtk.Widget;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementTracker<TElement, TNativeElement> : IDisposable where TElement
-        : VisualElement where TNativeElement : Control
+    public class VisualElementTracker<TElement, TNativeElement> : IDisposable where TElement : VisualElement where TNativeElement : Widget
     {
-        private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
         private bool _isDisposed;
         private TNativeElement _control;
         private TElement _element;
         private EventBox _container;
         private bool _invalidateArrangeNeeded;
 
+        private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+
         public event EventHandler Updated;
+
+        public VisualElementTracker()
+        {
+            _collectionChangedHandler = ModelGestureRecognizersOnCollectionChanged;
+        }
 
         public EventBox Container
         {
@@ -141,6 +145,33 @@ namespace Xamarin.Forms.Platform.GTK
 
             if (!disposing)
                 return;
+
+            if (_container != null)
+            {
+                _container.ButtonPressEvent -= OnContainerButtonPressEvent;
+            }
+
+            if (_element != null)
+            {
+                _element.BatchCommitted -= OnRedrawNeeded;
+                _element.PropertyChanged -= OnPropertyChanged;
+
+                var view = _element as View;
+                if (view != null)
+                {
+                    var oldRecognizers = (ObservableCollection<IGestureRecognizer>)view.GestureRecognizers;
+                    oldRecognizers.CollectionChanged -= _collectionChangedHandler;
+                }
+            }
+
+            if (_control != null)
+            {
+                _control.ButtonPressEvent -= OnControlButtonPressEvent;
+            }
+
+            Control = null;
+            Element = null;
+            Container = null;
         }
 
         protected virtual void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -185,6 +216,11 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 UpdateInputTransparent(Element, Container);
             }
+        }
+
+        private void ModelGestureRecognizersOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        {
+            UpdatingGestureRecognizers();
         }
 
         private void OnUpdated()
@@ -232,6 +268,7 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
         }
 
+        // TODO: Implement Scale
         private static void UpdateScaleAndRotation(VisualElement view, EventBox eventBox)
         {
             double anchorX = view.AnchorX;
@@ -239,6 +276,7 @@ namespace Xamarin.Forms.Platform.GTK
             double scale = view.Scale;
         }
 
+        // TODO: Implement Rotation
         private static void UpdateRotation(VisualElement view, EventBox eventBox)
         {
             double anchorX = view.AnchorX;
@@ -253,17 +291,19 @@ namespace Xamarin.Forms.Platform.GTK
 
         private static void UpdateVisibility(VisualElement view, EventBox eventBox)
         {
-
+            eventBox.Visible = view.IsVisible;
         }
 
+        // TODO: Implement Opacity
         private static void UpdateOpacity(VisualElement view, EventBox eventBox)
         {
 
         }
 
+        // TODO: Implement InputTransparent
         private static void UpdateInputTransparent(VisualElement view, EventBox eventBox)
         {
-
+    
         }
 
         private void OnContainerButtonPressEvent(object o, ButtonPressEventArgs args)
@@ -284,7 +324,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void OnControlButtonPressEvent(object o, ButtonPressEventArgs args)
         {
-
+            args.RetVal = true;
         }
     }
 }

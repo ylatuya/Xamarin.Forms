@@ -127,6 +127,7 @@
     <Compile Include="GtkExpressionSearch.cs" />
     <Compile Include="GtkIsolatedStorageFile.cs" />
     <Compile Include="GtkPlatformServices.cs" />
+    <Compile Include="GtkTicker.cs" />
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="ViewRenderer.cs" />
     <Compile Include="VisualElementPackager.cs" />
     <Compile Include="VisualElementRenderer.cs" />
+    <Compile Include="VisualElementTracker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">

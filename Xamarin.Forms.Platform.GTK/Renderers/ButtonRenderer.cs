@@ -15,6 +15,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Container.VisibleWindow = false;
         }
 
+        protected override bool PreventGestureBubbling { get; set; } = true;
+
         protected override void Dispose(bool disposing)
         {
             if (Control != null)
