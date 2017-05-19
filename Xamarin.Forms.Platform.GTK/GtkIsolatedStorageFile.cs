@@ -8,44 +8,56 @@ namespace Xamarin.Forms.Platform.GTK
 {
     public class GtkIsolatedStorageFile : IIsolatedStorageFile
     {
-        private readonly IsolatedStorageFile _isolatedStorageFile;
-
-        public GtkIsolatedStorageFile(IsolatedStorageFile isolatedStorageFile)
-        {
-            _isolatedStorageFile = isolatedStorageFile;
-        }
-
         public Task CreateDirectoryAsync(string path)
         {
-            _isolatedStorageFile.CreateDirectory(path);
+            var storage = CreateStorageFileInstance();
+
+            storage.CreateDirectory(path);
             return Task.FromResult(true);
         }
 
         public Task<bool> GetDirectoryExistsAsync(string path)
         {
-            return Task.FromResult(_isolatedStorageFile.DirectoryExists(path));
+            var storage = CreateStorageFileInstance();
+
+            return Task.FromResult(storage.DirectoryExists(path));
         }
 
         public Task<bool> GetFileExistsAsync(string path)
         {
-            return Task.FromResult(_isolatedStorageFile.FileExists(path));
+            var storage = CreateStorageFileInstance();
+
+            return Task.FromResult(storage.FileExists(path));
         }
 
         public Task<DateTimeOffset> GetLastWriteTimeAsync(string path)
         {
-            return Task.FromResult(_isolatedStorageFile.GetLastWriteTime(path));
+            var storage = CreateStorageFileInstance();
+
+            return Task.FromResult(storage.GetLastWriteTime(path));
         }
 
         public Task<Stream> OpenFileAsync(string path, Internals.FileMode mode, Internals.FileAccess access)
         {
-            Stream stream = _isolatedStorageFile.OpenFile(path, (System.IO.FileMode)mode, (System.IO.FileAccess)access);
+            var storage = CreateStorageFileInstance();
+
+            Stream stream = storage.OpenFile(path, (System.IO.FileMode)mode, (System.IO.FileAccess)access);
             return Task.FromResult(stream);
         }
 
         public Task<Stream> OpenFileAsync(string path, Internals.FileMode mode, Internals.FileAccess access, Internals.FileShare share)
         {
-            Stream stream = _isolatedStorageFile.OpenFile(path, (System.IO.FileMode)mode, (System.IO.FileAccess)access, (System.IO.FileShare)share);
+            var storage = CreateStorageFileInstance();
+
+            Stream stream = storage.OpenFile(path, (System.IO.FileMode)mode, (System.IO.FileAccess)access, (System.IO.FileShare)share);
             return Task.FromResult(stream);
+        }
+
+        private IsolatedStorageFile CreateStorageFileInstance()
+        {
+            return IsolatedStorageFile.GetStore(
+                    IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly,
+                    null, null);
         }
     }
 }

@@ -3,14 +3,10 @@ using System;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
-    public class ImageControl : Gtk.HBox
+    public class ImageControl : Gtk.HBox, IDesiredSizeProvider
     {
-        public const int MinWidth = 1;
-        public const int MinHeight = 1;
-
         private Gtk.Image _image;
         private Pixbuf _original;
-        private Gdk.Size _imageSize;
         private ImageAspect _aspect;
 
         private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
@@ -45,34 +41,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 _original = value;
                 _image.Pixbuf = value;
-                _imageSize = _image.Allocation.Size;
             }
-        }
-
-        public void SetScale(int width, int height)
-        {
-            if (_image == null || _original == null)
-                return;
-
-            if (width <= 0 || height <= 0)
-                return;
-
-            if (width < MinWidth)
-                width = MinWidth;
-
-            if (height < MinHeight)
-                height = MinHeight;
-
-            if (width == _original.Width && height == _original.Height)
-                _image.Pixbuf = _original;
-            else
-                _image.Pixbuf = _original.ScaleSimple(width, height, InterpType.Bilinear);
-
-            _image.SetSizeRequest(width, height);
-            _imageSize.Width = width;
-            _imageSize.Height = height;
-
-            _image.ShowAll();
         }
 
         public void SetAlpha(double opacity)
@@ -85,6 +54,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     ((byte)(255 * opacity)), 
                     ((byte)(255 * opacity)));
             }
+        }
+
+        public Gdk.Size GetDesiredSize()
+        {
+            return _original != null
+                ? new Gdk.Size(_original.Width, _original.Height)
+                : Gdk.Size.Empty;
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
@@ -115,7 +91,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                         throw new ArgumentOutOfRangeException(nameof(Aspect));
                 }
 
-                _image.Pixbuf = newPixBuf;
+                if (newPixBuf != null)
+                {
+                    _image.Pixbuf = newPixBuf;
+                }
             }
         }
 
