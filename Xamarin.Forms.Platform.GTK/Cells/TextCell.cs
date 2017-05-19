@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         private Gdk.Color _textColor;
         private Gdk.Color _detailColor;
         private bool _isGroupHeader;
+        private bool _enabled;
 
         public TextCell(
             string text,
@@ -75,6 +76,12 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             set { _isGroupHeader = value; UpdateIsGroupHeader(_isGroupHeader); }
         }
 
+        public bool Enabled
+        {
+            get { return _enabled; }
+            set { _enabled = value; UpdateEnabled(_enabled); }
+        }
+
         private void UpdateText(string text)
         {
             if(_textLabel != null)
@@ -118,6 +125,19 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 };
 
                 _textLabel.SetTextFromSpan(span);
+            }
+        }
+
+        private void UpdateEnabled(bool enabled)
+        {
+            if (_textLabel != null)
+            {
+                _textLabel.Sensitive = enabled;
+            }
+
+            if (_detailLabel != null)
+            {
+                _detailLabel.Sensitive = enabled;
             }
         }
     }

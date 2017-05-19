@@ -33,6 +33,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             gtkTextCell.PropertyChanged = HandlePropertyChanged;
 
             WireUpForceUpdateSizeRequested(item, gtkTextCell, listView);
+            UpdateIsEnabled(gtkTextCell, textCell);
             UpdateBackground(gtkTextCell, item);
 
             return gtkTextCell;
@@ -60,6 +61,11 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         internal override void UpdateBackgroundChild(Cell cell, Gdk.Color backgroundColor)
         {
             base.UpdateBackgroundChild(cell, backgroundColor);
+        }
+
+        static void UpdateIsEnabled(TextCell textCell, Xamarin.Forms.TextCell cell)
+        {
+            textCell.Enabled = cell.IsEnabled;
         }
     }
 }
