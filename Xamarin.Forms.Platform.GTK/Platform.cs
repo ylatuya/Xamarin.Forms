@@ -103,7 +103,10 @@ namespace Xamarin.Forms.Platform.GTK
 
         public static void SetRenderer(VisualElement element, IVisualElementRenderer value)
         {
-            element.SetValue(RendererProperty, value);
+            if (element != null)
+            {
+                element.SetValue(RendererProperty, value);
+            }
         }
 
         public static IVisualElementRenderer CreateRenderer(VisualElement element)

@@ -36,6 +36,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
     public class ListView : ScrolledWindow
     {
+        private const int RefreshHeight = 48;
+
         private VBox _root;
         private EventBox _header;
         private VBox _list;
@@ -43,10 +45,17 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private IEnumerable<Widget> _cells;
         private List<ListViewSeparator> _separators;
         private object _selectedItem;
+        private Table _refreshHeader;
+        private ImageButton _refreshButton;
+        private Gtk.Label _refreshLabel;
+        private bool _isPullToRequestEnabled;
+        private bool _refreshing;
 
         public delegate void SelectedItemEventHandler(object sender, SelectedItemEventArgs args);
-
         public event SelectedItemEventHandler OnSelectedItemChanged = null;
+
+        public delegate void RefreshEventHandler(object sender, EventArgs args);
+        public event RefreshEventHandler OnRefresh = null;
 
         public ListView()
         {
@@ -104,6 +113,18 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set { _selectedItem = value; }
         }
 
+        public bool IsPullToRequestEnabled
+        {
+            get { return _isPullToRequestEnabled; }
+            set { _isPullToRequestEnabled = value; }
+        }
+
+        public bool Refreshing
+        {
+            get { return _refreshing; }
+            set { _refreshing = value; }
+        }
+
         public void SetBackgroundColor(Gdk.Color backgroundColor)
         {
             if (_root != null)
@@ -129,6 +150,44 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public void UpdatePullToRefreshEnabled(bool isPullToRequestEnabled)
+        {
+            IsPullToRequestEnabled = isPullToRequestEnabled;
+
+            if(_refreshHeader == null)
+            {
+                return;
+            }
+
+            if (IsPullToRequestEnabled)
+            {
+                _root.Remove(_refreshHeader);
+                _root.PackStart(_refreshHeader, false, false, 0);
+                _root.ReorderChild(_refreshHeader, 0);
+            }
+            else
+            {
+                _root.Remove(_refreshHeader);
+            }
+        }
+
+        public void UpdateIsRefreshing(bool refreshing)
+        {
+            Refreshing = refreshing;
+
+            if(Refreshing)
+            {
+                _refreshHeader.Attach(_refreshLabel, 0, 1, 0, 1);
+            }
+            else
+            {
+                _refreshHeader.Remove(_refreshLabel);
+            }
+
+            _refreshButton.Visible = !Refreshing;
+            _refreshLabel.Visible = Refreshing;
+        }
+
         private void BuildListView()
         {
             CanFocus = true;
@@ -136,8 +195,32 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             BorderWidth = 0;
             HscrollbarPolicy = PolicyType.Never;
             VscrollbarPolicy = PolicyType.Automatic;
-            
+
             _root = new VBox();
+            _refreshHeader = new Table(1, 1, true);
+            _refreshHeader.HeightRequest = RefreshHeight;
+
+            // Refresh Loading
+            _refreshLabel = new Gtk.Label();
+            _refreshLabel.Text = "Loading";
+
+            // Refresh Button
+            _refreshButton = new ImageButton();
+            _refreshButton.LabelWidget.SetTextFromSpan(
+                new Span()
+                {
+                    Text = "Refresh"
+                });
+            _refreshButton.ImageWidget.Stock = Stock.Refresh;
+            _refreshButton.SetImagePosition(PositionType.Left);
+            _refreshButton.Clicked += (sender, args) =>  
+            {
+                OnRefresh?.Invoke(this, new EventArgs());
+            };
+
+            _refreshHeader.Attach(_refreshButton, 0, 1, 0, 1);
+
+            _root.PackStart(_refreshHeader, false, false, 0);
 
             // Header
             _header = new EventBox();
@@ -159,9 +242,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             Add(viewPort);
 
-            ShowAll();
+            ShowAll(); 
         }
-
+       
         private void RefreshHeader(EventBox header)
         {
             _header = header;
