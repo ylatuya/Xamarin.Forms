@@ -48,7 +48,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName.Equals("Content", StringComparison.InvariantCultureIgnoreCase))
+            if (e.PropertyName == nameof(ScrollView.Content))
                 LoadContent();
             else if (e.PropertyName == ScrollView.OrientationProperty.PropertyName)
                 UpdateOrientation();
@@ -100,13 +100,22 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateOrientation()
         {
-            if (Element.Orientation == ScrollOrientation.Horizontal || Element.Orientation == ScrollOrientation.Both)
+            switch (Element.Orientation)
             {
-                Control.HscrollbarPolicy = PolicyType.Automatic;
-            }
-            else
-            {
-                Control.HscrollbarPolicy = PolicyType.Never;
+                case ScrollOrientation.Vertical:
+                    Control.HscrollbarPolicy = PolicyType.Never;
+                    Control.VscrollbarPolicy = PolicyType.Automatic;
+                    break;
+                case ScrollOrientation.Horizontal:
+                    Control.HscrollbarPolicy = PolicyType.Automatic;
+                    Control.VscrollbarPolicy = PolicyType.Never;
+                    break;
+                case ScrollOrientation.Both:
+                    Control.HscrollbarPolicy = PolicyType.Automatic;
+                    Control.VscrollbarPolicy = PolicyType.Automatic;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Element.Orientation));
             }
         }
 
