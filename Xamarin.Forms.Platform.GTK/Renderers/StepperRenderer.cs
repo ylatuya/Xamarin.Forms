@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System;
 using System.ComponentModel;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -10,7 +11,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private double _maximum;
 
         protected override bool PreventGestureBubbling { get; set; } = true;
-
+        
         protected override void Dispose(bool disposing)
         {
             if (Control != null)
@@ -52,6 +53,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateValue();
             else if (e.PropertyName == Stepper.IncrementProperty.PropertyName)
                 UpdateIncrement();
+        }
+
+        protected override void UpdateBackgroundColor()
+        {
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                Control.ModifyBase(StateType.Normal, Element.BackgroundColor.ToGtkColor());
+            }
         }
 
         private void OnValueChanged(object sender, EventArgs e)
