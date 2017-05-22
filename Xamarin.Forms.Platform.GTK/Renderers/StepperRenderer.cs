@@ -29,13 +29,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     _minimum = 0;
                     _maximum = 100;
                     SetNativeControl(new SpinButton(_minimum, _maximum, 1));
-                    Control.ValueChanged += OnValueChanged;
                 }
+
+                // Detach change event until new element properties are initialized
+                Control.ValueChanged -= OnValueChanged;
 
                 UpdateMinimum();
                 UpdateMaximum();
                 UpdateValue();
                 UpdateIncrement();
+
+                Control.ValueChanged += OnValueChanged;
             }
 
             base.OnElementChanged(e);
