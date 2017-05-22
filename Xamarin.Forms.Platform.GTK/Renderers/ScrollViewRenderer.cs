@@ -20,7 +20,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.OldElement != null)
             {
-                ((IScrollViewController)e.OldElement).ScrollToRequested -= OnScrollToRequested;
+                e.OldElement.ScrollToRequested -= OnScrollToRequested;
             }
 
             if (e.NewElement != null)
@@ -36,8 +36,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         VscrollbarPolicy = PolicyType.Automatic
                     });
 
-                    Control.ScrollEvent += OnScrollEvent;
+                    Control.Hadjustment.ValueChanged += OnScrollEvent;
+                    Control.Vadjustment.ValueChanged += OnScrollEvent;
                 }
+
+                Element.ScrollToRequested += OnScrollToRequested;
 
                 UpdateOrientation();
                 LoadContent();
@@ -59,6 +62,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Control != null)
             {
                 Control.ScrollEvent -= OnScrollEvent;
+                Control.Hadjustment.ValueChanged -= OnScrollEvent;
+                Control.Vadjustment.ValueChanged -= OnScrollEvent;
             }
 
             base.Dispose(disposing);
@@ -73,7 +78,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         }
 
 
-        private void OnScrollEvent(object o, ScrollEventArgs args)
+        private void OnScrollEvent(object o, EventArgs args)
         {
             Controller.SetScrolledPosition(Control.Hadjustment.Value, Control.Vadjustment.Value);
         }
