@@ -114,7 +114,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (disposing)
             {
-                Element.PropertyChanged -= OnElementPropertyChanged;
+                if (Element != null)
+                {
+                    Element.PropertyChanged -= OnElementPropertyChanged;
+                }
+
                 Platform.SetRenderer(Element, null);
 
                 if (_packager != null)
