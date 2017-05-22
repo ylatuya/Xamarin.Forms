@@ -24,7 +24,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _cells = new List<Gtk.Container>();
         }
 
-        Xamarin.Forms.ListView ListView => Element;
+        ListView ListView => Element;
 
         IListViewController Controller => Element;
 
@@ -44,6 +44,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     _listView = new Controls.ListView();
                     _listView.OnSelectedItemChanged += OnSelectedItemChanged;
+                    _listView.OnRefresh += OnRefresh;
                     SetNativeControl(_listView);
                 }
 
@@ -72,7 +73,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == ListView.ItemsSourceProperty.PropertyName)
                 UpdateItems();
-            else if(e.PropertyName == ListView.IsGroupingEnabledProperty.PropertyName)
+            else if (e.PropertyName == ListView.IsGroupingEnabledProperty.PropertyName)
                 UpdateGrouping();
             else if (e.PropertyName.Equals("HeaderElement", StringComparison.InvariantCultureIgnoreCase))
                 UpdateHeader();
@@ -117,6 +118,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (_listView != null)
                 {
                     _listView.OnSelectedItemChanged -= OnSelectedItemChanged;
+                    _listView.OnRefresh -= OnRefresh;
                 }
 
                 if (_footerRenderer != null)
@@ -342,16 +344,24 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        //TODO: Implement UpdateIsRefreshing
         private void UpdateIsRefreshing()
         {
+            var refreshing = Element.IsRefreshing;
 
+            if (_listView != null)
+            {
+                _listView.UpdateIsRefreshing(refreshing);
+            }
         }
 
-        //TODO: Implement PullToRefresh
         private void UpdatePullToRefreshEnabled()
         {
+            var isPullToRefreshEnabled = Element.IsPullToRefreshEnabled;
 
+            if (_listView != null)
+            {
+                _listView.UpdatePullToRefreshEnabled(isPullToRefreshEnabled);
+            }
         }
 
         private void UpdateGrouping()
@@ -405,7 +415,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private Gtk.Container GetCell(Cell cell)
         {
-            var renderer = 
+            var renderer =
                 (CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
 
             var realCell = renderer.GetCell(cell, null, _listView);
@@ -430,6 +440,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 ((IElementController)Element).SetValueFromRenderer(
                     ListView.SelectedItemProperty,
                     _listView.SelectedItem);
+            }
+        }
+
+        private void OnRefresh(object sender, EventArgs args)
+        {
+            if(Element == null)
+            {
+                return;
+            }
+
+            var refeshCommand = Element.RefreshCommand;
+
+            if (refeshCommand != null)
+            {
+                refeshCommand.Execute(null);
             }
         }
     }

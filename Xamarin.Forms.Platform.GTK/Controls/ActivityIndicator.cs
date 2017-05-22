@@ -5,7 +5,7 @@ using System;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
-    public class ActivityIndicator : VBox
+    public class ActivityIndicator : EventBox
     {
         private const int DefaultHeight = 48;
         private const int DefaultWidth = 48;
