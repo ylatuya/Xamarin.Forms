@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -20,9 +19,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(new Gtk.CheckButton());
                 }
 
+                Control.Toggled -= OnCheckButtonToggled;
+
                 UpdateState();
                 UpdateBackgroundColor();
                 e.NewElement.Toggled += OnElementToggled;
+
+                Control.Toggled += OnCheckButtonToggled;
             }
 
             base.OnElementChanged(e);
@@ -47,18 +50,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (disposing && !_disposed)
             {
                 _disposed = true;
+
+                if (Control != null)
+                {
+                    Control.Toggled -= OnCheckButtonToggled;
+                }
             }
 
             base.Dispose(disposing);
-        }
-
-        protected override void UpdateBackgroundColor()
-        {
-            Color backgroundColor = Element.BackgroundColor;
-
-            Control.ModifyBg(Gtk.StateType.Normal, backgroundColor.ToGtkColor());
-
-            base.UpdateBackgroundColor();
         }
 
         private void OnElementToggled(object sender, EventArgs e)
@@ -69,6 +68,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateState()
         {
             Control.Active = Element.IsToggled ? true : false;
+        }
+
+        private void OnCheckButtonToggled(object sender, EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(Switch.IsToggledProperty, Control.Active);
         }
     }
 }

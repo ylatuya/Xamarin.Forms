@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System;
 using System.ComponentModel;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -10,7 +11,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private double _maximum;
 
         protected override bool PreventGestureBubbling { get; set; } = true;
-
+        
         protected override void Dispose(bool disposing)
         {
             if (Control != null)
@@ -28,13 +29,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     _minimum = 0;
                     _maximum = 100;
                     SetNativeControl(new SpinButton(_minimum, _maximum, 1));
-                    Control.ValueChanged += OnValueChanged;
                 }
+
+                // Detach change event until new element properties are initialized
+                Control.ValueChanged -= OnValueChanged;
 
                 UpdateMinimum();
                 UpdateMaximum();
                 UpdateValue();
                 UpdateIncrement();
+
+                Control.ValueChanged += OnValueChanged;
             }
 
             base.OnElementChanged(e);
@@ -54,9 +59,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateIncrement();
         }
 
+        protected override void UpdateBackgroundColor()
+        {
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                Control.ModifyBase(StateType.Normal, Element.BackgroundColor.ToGtkColor());
+            }
+        }
+
         private void OnValueChanged(object sender, EventArgs e)
         {
-            ((IElementController)Element).SetValueFromRenderer(Stepper.ValueProperty, Control.Value);
+            ElementController.SetValueFromRenderer(Stepper.ValueProperty, Control.Value);
         }
 
         private void UpdateIncrement()

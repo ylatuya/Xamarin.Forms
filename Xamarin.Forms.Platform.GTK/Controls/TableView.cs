@@ -7,7 +7,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
     public class TableView : ScrolledWindow
     {
         private VBox _root;
-        private VBox _list;
         private TableRoot _source;
         private List<Container> _cells;
 
@@ -34,10 +33,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetBackgroundColor(Gdk.Color backgroundColor)
         {
-            if (_root != null)
-            {
-                _root.ModifyBg(StateType.Normal, backgroundColor);
-            }
+            Child?.ModifyBg(StateType.Normal, backgroundColor);
         }
 
         public void SetRowHeight(int rowHeight)
@@ -57,10 +53,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             BorderWidth = 0;
 
             _root = new VBox(false, 0);
-
-            // List
-            _list = new VBox(false, 0);
-            _root.PackStart(_list, true, true, 0);
 
             Viewport viewPort = new Viewport();
             viewPort.ShadowType = ShadowType.None;
@@ -85,7 +77,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 Gtk.Label title = new Gtk.Label();
                 title.SetAlignment(0, 0);
                 title.SetTextFromSpan(titleSpan);
-                _list.PackStart(title, false, false, 0);
+                _root.PackStart(title, false, false, 0);
             }
 
             // Add Table Section
@@ -105,13 +97,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     Gtk.Label sectionTitle = new Gtk.Label();
                     sectionTitle.SetAlignment(0, 0);
                     sectionTitle.SetTextFromSpan(tableSectionSpan);
-                    _list.PackStart(sectionTitle, false, false, 0);
+                    _root.PackStart(sectionTitle, false, false, 0);
 
                     // Table Section Separator
                     EventBox separator = new EventBox();
                     separator.HeightRequest = 1;
                     separator.ModifyBg(StateType.Normal, Color.Black.ToGtkColor());
-                    _list.PackStart(separator, false, false, 0);
+                    _root.PackStart(separator, false, false, 0);
 
                     // Cells
                     _cells.Clear();
@@ -128,7 +120,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                     foreach (var cell in _cells)
                     {
-                        _list.PackStart(cell, false, false, 0);
+                        _root.PackStart(cell, false, false, 0);
                     }
                 }
             }

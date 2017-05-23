@@ -10,6 +10,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override bool PreventGestureBubbling { get; set; } = true;
 
+        protected override void UpdateBackgroundColor()
+        {
+            base.UpdateBackgroundColor();
+
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
@@ -36,6 +46,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 UpdateTime();
                 UpdateTextColor();
+                UpdateFormat();
             }
 
             base.OnElementChanged(e);
@@ -45,11 +56,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName == TimePicker.TimeProperty.PropertyName ||
-                e.PropertyName == TimePicker.FormatProperty.PropertyName)
+            if (e.PropertyName == TimePicker.TimeProperty.PropertyName)
                 UpdateTime();
             if (e.PropertyName == TimePicker.TextColorProperty.PropertyName)
                 UpdateTextColor();
+            else if (e.PropertyName == TimePicker.FormatProperty.PropertyName)
+                UpdateFormat();
         }
 
         private void UpdateTime()
@@ -67,6 +79,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             var textColor = Element.TextColor.ToGtkColor();
             Control.TextColor = textColor;
+        }
+        private void UpdateFormat()
+        {
+            Control.TimeFormat = Element.Format;
         }
 
         private void OnTimeChanged(object sender, EventArgs e)
