@@ -69,7 +69,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnValueChanged(object sender, EventArgs e)
         {
-            ((IElementController)Element).SetValueFromRenderer(Stepper.ValueProperty, Control.Value);
+            ElementController.SetValueFromRenderer(Stepper.ValueProperty, Control.Value);
         }
 
         private void UpdateIncrement()

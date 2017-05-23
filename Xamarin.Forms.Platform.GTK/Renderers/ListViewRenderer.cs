@@ -437,7 +437,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (_listView != null && _listView.SelectedItem != null)
             {
-                ((IElementController)Element).SetValueFromRenderer(
+                ElementController.SetValueFromRenderer(
                     ListView.SelectedItemProperty,
                     _listView.SelectedItem);
             }

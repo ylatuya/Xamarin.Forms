@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -59,15 +58,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             base.Dispose(disposing);
-        }
-
-        protected override void UpdateBackgroundColor()
-        {
-            Color backgroundColor = Element.BackgroundColor;
-
-            Control.ModifyBg(Gtk.StateType.Normal, backgroundColor.ToGtkColor());
-
-            base.UpdateBackgroundColor();
         }
 
         private void OnElementToggled(object sender, EventArgs e)

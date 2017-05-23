@@ -123,7 +123,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             TextBuffer buffer = Control.TextView.Buffer;
 
             if (Element.Text != buffer.Text)
-                ((IElementController)Element).SetValueFromRenderer(Editor.TextProperty, buffer.Text);
+                ElementController.SetValueFromRenderer(Editor.TextProperty, buffer.Text);
 
             UpdateTextColor();
         }

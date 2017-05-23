@@ -58,7 +58,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnControlValueChanged(object sender, EventArgs eventArgs)
         {
-            ((IElementController)Element).SetValueFromRenderer(Slider.ValueProperty, Control.Value);
+            ElementController.SetValueFromRenderer(Slider.ValueProperty, Control.Value);
         }
 
         private void UpdateMaximum()
