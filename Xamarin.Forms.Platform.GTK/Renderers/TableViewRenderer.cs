@@ -7,7 +7,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private const int DefaultRowHeight = 44;
 
-        private Controls.TableView _tableView;
+        protected override void UpdateBackgroundColor()
+        {
+            base.UpdateBackgroundColor();
+
+            UpdateBackgroundView();
+        }
 
         protected override void Dispose(bool disposing)
         {
@@ -20,8 +25,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    _tableView = new Controls.TableView();
-                    SetNativeControl(_tableView);
+                    var tableView = new Controls.TableView();
+                    SetNativeControl(tableView);
                 }
 
                 SetSource();
@@ -40,41 +45,29 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateRowHeight();
             else if (e.PropertyName == TableView.HasUnevenRowsProperty.PropertyName)
                 SetSource();
-            else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-                UpdateBackgroundView();
         }
 
         private void SetSource()
         {
-            if (_tableView != null)
-            {
-                var model = Element.Root;
-                _tableView.Root = model;
-            }
+            Control.Root = Element.Root;
         }
 
         private void UpdateRowHeight()
         {
             var rowHeight = Element.RowHeight;
 
-            _tableView.SetRowHeight(rowHeight > 0 ? rowHeight : DefaultRowHeight);
+            Control.SetRowHeight(rowHeight > 0 ? rowHeight : DefaultRowHeight);
         }
 
         private void UpdateBackgroundView()
         {
-            if (_tableView == null)
-            {
-                return;
-            }
-
             if (Element.BackgroundColor.IsDefault)
             {
                 return;
             }
 
             var backgroundColor = Element.BackgroundColor.ToGtkColor();
-
-            _tableView.SetBackgroundColor(backgroundColor);
+            Control.SetBackgroundColor(backgroundColor);
         }
     }
 }
