@@ -48,7 +48,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             RefreshTime();
         }
-
+        
         private void BuildTimePickerWindow()
         {
             Title = "TimePicker";
@@ -229,9 +229,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
     public class TimePicker : Gtk.EventBox
     {
+        private const string DefaultTimeFormat = @"hh\:mm\:ss";
+
         private CustomComboBox _comboBox;
         private Gdk.Color _color;
         private TimeSpan _currentTime;
+        private string _timeFormat;
 
         public event EventHandler TimeChanged;
 
@@ -256,7 +259,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _currentTime = value;
-                _comboBox.Entry.Text = value.ToString(@"hh\:mm\:ss");
+                UpdateEntryText();
             }
         }
 
@@ -273,29 +276,17 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public string Text
+        public string TimeFormat
         {
             get
             {
-                return _comboBox.Entry.Text;
+                return _timeFormat;
             }
-        }
-
-        public bool IsDateValid()
-        {
-            bool is_time_correct = true;
-
-            try
+            set
             {
-                IFormatProvider culture = System.Globalization.CultureInfo.CurrentCulture;
-                CurrentTime = TimeSpan.Parse(_comboBox.Entry.Text, culture);
+                _timeFormat = value;
+                UpdateEntryText();
             }
-            catch
-            {
-                is_time_correct = false;
-            }
-
-            return is_time_correct;
         }
 
         public void SetBackgroundColor(Gdk.Color color)
@@ -343,6 +334,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
 
             Show();
+        }
+
+        private void UpdateEntryText()
+        {
+            _comboBox.Entry.Text = string.IsNullOrEmpty(_timeFormat)
+                ? _currentTime.ToString(DefaultTimeFormat)
+                : DateTime.Now.Add(_currentTime).ToString(_timeFormat);
         }
     }
 }
