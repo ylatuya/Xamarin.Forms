@@ -1,6 +1,5 @@
 ﻿using Gtk;
 using System.Linq;
-using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -42,7 +41,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
             }
         }
-        
+
         public Page()
         {
             BuildPage();
@@ -101,7 +100,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
 
             _contentContainer.Add(_content);
-            _content.ShowAll(); 
+            _content.ShowAll();
         }
     }
 }

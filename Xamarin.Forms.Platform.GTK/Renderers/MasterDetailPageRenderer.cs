@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
+using Xamarin.Forms.Internals;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class MasterDetailPageRenderer : Container, IVisualElementRenderer
+    public class MasterDetailPageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
     {
         private bool _disposed;
         private MasterDetailPage _masterDetailPage;
@@ -21,6 +22,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
         protected MasterDetailPage MasterDetailPage => _masterDetailPage ?? (_masterDetailPage = (MasterDetailPage)Element);
+
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                platformEffect.SetContainer(Container);
+        }
 
         protected VisualElementTracker<Page, Container> Tracker
         {
@@ -55,6 +63,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateMasterDetail();
 
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
+
+            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
         public void SetElementSize(Size size)

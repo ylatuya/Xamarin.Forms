@@ -134,6 +134,7 @@
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="NativeToolbarTracker.cs" />
     <Compile Include="Platform.cs" />
+    <Compile Include="PlatformEffect.cs" />
     <Compile Include="PlatformRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RendererFactory.cs" />

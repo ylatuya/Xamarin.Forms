@@ -9,7 +9,7 @@ using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class TabbedPageRenderer : Container, IVisualElementRenderer
+    public class TabbedPageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
     {
         private bool _disposed;
         private VisualElementTracker<Page, Container> _tracker;
@@ -27,6 +27,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         public Container Container => this;
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                platformEffect.SetContainer(Container);
+        }
 
         protected VisualElementTracker<Page, Container> Tracker
         {
@@ -103,6 +110,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateCurrentPage();
             UpdateBarBackgroundColor();
             UpdateBarTextColor();
+
+            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
         public void SetElementSize(Size size)

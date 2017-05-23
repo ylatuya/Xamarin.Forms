@@ -1,12 +1,16 @@
 ﻿using Gtk;
 using System;
 using Xamarin.Forms.Internals;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class Platform : BindableObject, IPlatform, IDisposable
+    public class Platform : BindableObject, IPlatform, INavigation, IDisposable
     {
         private bool _disposed;
+        readonly List<Page> _modals;
         private readonly PlatformRenderer _renderer;
 
         internal static readonly BindableProperty RendererProperty =
@@ -25,9 +29,21 @@ namespace Xamarin.Forms.Platform.GTK
 
         Page Page { get; set; }
 
+        IReadOnlyList<Page> INavigation.ModalStack
+        {
+            get { return _modals; }
+        }
+
+        IReadOnlyList<Page> INavigation.NavigationStack
+        {
+            get { return new List<Page>(); }
+        }
+
         internal Platform()
         {
             _renderer = new PlatformRenderer(this);
+            _modals = new List<Page>();
+            Application.Current.NavigationProxy.Inner = this;
 
             MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>
             {
@@ -106,14 +122,16 @@ namespace Xamarin.Forms.Platform.GTK
             if (element != null)
             {
                 element.SetValue(RendererProperty, value);
+                element.IsPlatformEnabled = value != null;
             }
         }
 
         public static IVisualElementRenderer CreateRenderer(VisualElement element)
         {
-            var t = element.GetType();
-            var renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(t) ?? new DefaultRenderer();
+            var elementType = element.GetType();
+            var renderer = Registrar.Registered.GetHandler<IVisualElementRenderer>(elementType) ?? new DefaultRenderer();
             renderer.SetElement(element);
+
             return renderer;
         }
 
@@ -141,6 +159,8 @@ namespace Xamarin.Forms.Platform.GTK
             Page = newRoot;
             Page.Platform = this;
             AddChild(Page);
+
+            Application.Current.NavigationProxy.Inner = this;
         }
 
         private void AddChild(Page mainPage)
@@ -156,8 +176,81 @@ namespace Xamarin.Forms.Platform.GTK
                 PlatformRenderer.ShowAll();
             }
         }
+        void INavigation.InsertPageBefore(Page page, Page before)
+        {
+            throw new InvalidOperationException("InsertPageBefore is not supported globally on GTK, please use a NavigationPage.");
+        }
 
-        internal class DefaultRenderer : VisualElementRenderer<VisualElement, Gtk.Widget>
+        Task<Page> INavigation.PopAsync()
+        {
+            return ((INavigation)this).PopAsync(true);
+        }
+
+        Task<Page> INavigation.PopAsync(bool animated)
+        {
+            throw new InvalidOperationException("PopAsync is not supported globally on GTK, please use a NavigationPage.");
+        }
+
+        Task<Page> INavigation.PopModalAsync()
+        {
+            return ((INavigation)this).PopModalAsync(true);
+        }
+
+        Task<Page> INavigation.PopModalAsync(bool animated)
+        {
+            var modal = _modals.Last();
+            _modals.Remove(modal);
+
+            var modalPage = GetRenderer(modal) as Container;
+
+            // TODO:
+
+            DisposeModelAndChildrenRenderers(modal);
+
+            return Task.FromResult<Page>(null);
+        }
+
+        Task INavigation.PopToRootAsync()
+        {
+            return ((INavigation)this).PopToRootAsync(true);
+        }
+
+        Task INavigation.PopToRootAsync(bool animated)
+        {
+            throw new InvalidOperationException("PopToRootAsync is not supported globally on GTK, please use a NavigationPage.");
+        }
+
+        Task INavigation.PushAsync(Page root)
+        {
+            return ((INavigation)this).PushAsync(root, true);
+        }
+
+        Task INavigation.PushAsync(Page root, bool animated)
+        {
+            throw new InvalidOperationException("PushAsync is not supported globally on GTK, please use a NavigationPage.");
+        }
+
+        Task INavigation.PushModalAsync(Page modal)
+        {
+            return ((INavigation)this).PushModalAsync(modal, true);
+        }
+
+        Task INavigation.PushModalAsync(Page modal, bool animated)
+        {
+            _modals.Add(modal);
+            modal.Platform = this;
+
+            // TODO:
+
+            return Task.FromResult<object>(null);
+        }
+
+        void INavigation.RemovePage(Page page)
+        {
+            throw new InvalidOperationException("RemovePage is not supported globally on GTK, please use a NavigationPage.");
+        }
+
+        internal class DefaultRenderer : VisualElementRenderer<VisualElement, Widget>
         {
 
         }

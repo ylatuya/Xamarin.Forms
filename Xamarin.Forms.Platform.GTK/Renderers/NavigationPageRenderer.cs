@@ -10,7 +10,7 @@ using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class NavigationPageRenderer : Container, IVisualElementRenderer
+    public class NavigationPageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
     {
         private bool _disposed;
         private bool _appeared;
@@ -36,6 +36,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         VisualElement IVisualElementRenderer.Element => Element;
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                platformEffect.SetContainer(Container);
+        }
 
         protected VisualElementTracker<Page, Container> Tracker
         {
@@ -143,6 +150,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Init();
 
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
+
+            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
         public void SetElementSize(Size size)

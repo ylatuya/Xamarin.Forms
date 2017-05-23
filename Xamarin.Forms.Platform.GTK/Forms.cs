@@ -24,6 +24,7 @@ namespace Xamarin.Forms
 
             IsInitialized = true;
 
+            Device.SetIdiom(TargetIdiom.Desktop);
             Device.PlatformServices = new GtkPlatformServices();
             Device.Info = new GtkDeviceInfo();
             ExpressionSearch.Default = new GtkExpressionSearch();

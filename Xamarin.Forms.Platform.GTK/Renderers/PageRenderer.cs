@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.ComponentModel;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class PageRenderer : Container, IVisualElementRenderer
+    public class PageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
     {
         private bool _disposed;
         private bool _appeared;
@@ -19,6 +21,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public Controls.Page Control { get; private set; }
 
+        //public Table Table { get; private set; }
+
         Page Page => Element as Page;
 
         public VisualElement Element { get; private set; }
@@ -29,6 +33,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                platformEffect.SetContainer(Container);
+        }
+
         public void SetElement(VisualElement element)
         {
             VisualElement oldElement = Element;
@@ -37,9 +48,18 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (element != null)
             {
                 element.PropertyChanged += _propertyChangedHandler;
+
+                //if (Table == null)
+                //{
+                //    Table = new Table(1, 1, true);
+
+                //    Add(Table);
+                //}
             }
 
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
+
+            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
         public void SetElementSize(Size size)
@@ -138,6 +158,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     Control = new Controls.Page();
+                    //Table.Attach(Control, 0, 1, 0, 1);
                     Add(Control);
                 }
             }
