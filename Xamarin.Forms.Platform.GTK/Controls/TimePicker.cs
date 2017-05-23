@@ -298,6 +298,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             return is_time_correct;
         }
 
+        public void SetBackgroundColor(Gdk.Color color)
+        {
+            _comboBox.SetBackgroundColor(color);
+        }
+
         protected virtual void OnTxtTimeChanged(object sender, EventArgs e)
         {
             _comboBox.Entry.ModifyText(Gtk.StateType.Normal, TextColor);

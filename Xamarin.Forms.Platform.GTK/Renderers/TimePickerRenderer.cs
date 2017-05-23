@@ -10,6 +10,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override bool PreventGestureBubbling { get; set; } = true;
 
+        protected override void UpdateBackgroundColor()
+        {
+            base.UpdateBackgroundColor();
+
+            if (!Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && !_disposed)
