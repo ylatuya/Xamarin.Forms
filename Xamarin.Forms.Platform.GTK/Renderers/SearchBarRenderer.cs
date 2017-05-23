@@ -80,7 +80,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateText()
         {
-            Control.SearchText = Element.Text;
+            Control.SearchText = Element.Text ?? string.Empty;
         }
 
         private void UpdatePlaceholder()

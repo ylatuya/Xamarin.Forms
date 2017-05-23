@@ -4,6 +4,7 @@ using Xamarin.Forms.Internals;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Xamarin.Forms.Platform.GTK.Renderers;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -203,7 +204,30 @@ namespace Xamarin.Forms.Platform.GTK
 
             var modalPage = GetRenderer(modal) as Container;
 
-            // TODO:
+            var pageRenderer = PlatformRenderer.Child as PageRenderer;
+
+            if (pageRenderer != null)
+            {
+                var page = pageRenderer.Container.Child as Controls.Page;
+
+                if (page != null)
+                {
+                    if (page.Children.Length > 0)
+                    {
+                        page.Remove(modalPage);
+                    }
+
+                    if (page.Children != null)
+                    {
+                        foreach (var children in page.Children)
+                        {
+                            children.ShowAll();
+                        }
+
+                        page.ShowAll();
+                    }
+                }
+            }
 
             DisposeModelAndChildrenRenderers(modal);
 
@@ -240,7 +264,34 @@ namespace Xamarin.Forms.Platform.GTK
             _modals.Add(modal);
             modal.Platform = this;
 
-            // TODO:
+            var modalRenderer = GetRenderer(modal);
+            if (modalRenderer == null)
+            {
+                modalRenderer = CreateRenderer(modal);
+                SetRenderer(modal, modalRenderer);
+            }
+
+            var pageRenderer = PlatformRenderer.Child as PageRenderer;
+
+            if (pageRenderer != null)
+            {
+                var page = pageRenderer.Container.Child as Controls.Page;
+
+                if (page != null)
+                {
+                    page.Attach(modalRenderer.Container, 0, 1, 0, 1);
+
+                    if (page.Children != null)
+                    {
+                        foreach (var children in page.Children)
+                        {
+                            children.ShowAll();
+                        }
+
+                        page.ShowAll();
+                    }
+                }
+            }
 
             return Task.FromResult<object>(null);
         }

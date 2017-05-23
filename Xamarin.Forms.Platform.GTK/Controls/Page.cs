@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
-    public class Page : EventBox
+    public class Page : Table
     {
         private EventBox _headerContainer;
         private EventBox _contentContainer;
@@ -42,7 +42,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public Page()
+        public Page() : base(1, 1, true)
         {
             BuildPage();
         }

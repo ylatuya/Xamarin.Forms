@@ -64,6 +64,11 @@ namespace Xamarin.Forms.Platform.GTK
             Gtk.Container container = Renderer.Container;
             Controls.Page page = null;
 
+            if (Renderer is Renderers.NavigationPageRenderer)
+            {
+                return;
+            }
+
             if (Renderer is Renderers.LayoutRenderer)
             {
                 var fixedControl = (Renderer as Renderers.LayoutRenderer).Control;

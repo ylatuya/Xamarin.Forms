@@ -181,7 +181,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             else
             {
-                _refreshHeader.Remove(_refreshLabel);
+                _refreshHeader.RemoveFromContainer(_refreshLabel);
             }
 
             _refreshButton.Visible = !Refreshing;

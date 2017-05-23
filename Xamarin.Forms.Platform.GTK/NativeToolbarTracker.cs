@@ -159,6 +159,26 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
+        private void UpdateBarBackgroundColor()
+        {
+            var currentPage = _navigation.Peek(0);
+            var pageRenderer = Platform.GetRenderer(currentPage);
+
+            if (pageRenderer != null && pageRenderer.Container != null)
+            {
+                if (pageRenderer.Container.Child != null)
+                {
+                    var page = pageRenderer.Container.Child as Controls.Page;
+
+                    if (page != null)
+                    {
+                        page.Toolbar = _toolbar;
+                        UpdateBarBackgroundColor(page);
+                    }
+                }
+            }
+        }
+
         private void UpdateItems(IList<ToolbarItem> toolBarItems)
         {
             foreach (var toolBarItem in toolBarItems.Where(t => t.Order != ToolbarItemOrder.Secondary))
@@ -302,15 +322,7 @@ namespace Xamarin.Forms.Platform.GTK
                 UpdateTitle();
                 UpdateToolbarItems();
                 UpdateBarTextColor();
-
-                var pageRenderer = Platform.GetRenderer(currentPage);
-                var page = pageRenderer?.Container?.Child as Controls.Page;
-
-                if(page != null)
-                {
-                    page.Toolbar = _toolbar;
-                    UpdateBarBackgroundColor(page);
-                }
+                UpdateBarBackgroundColor();
             }
             else
             {

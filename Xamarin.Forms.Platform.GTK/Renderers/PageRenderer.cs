@@ -1,5 +1,4 @@
-﻿using Gtk;
-using System;
+﻿using System;
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -20,8 +19,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         }
 
         public Controls.Page Control { get; private set; }
-
-        //public Table Table { get; private set; }
 
         Page Page => Element as Page;
 
@@ -48,13 +45,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (element != null)
             {
                 element.PropertyChanged += _propertyChangedHandler;
-
-                //if (Table == null)
-                //{
-                //    Table = new Table(1, 1, true);
-
-                //    Add(Table);
-                //}
             }
 
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
@@ -158,7 +148,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     Control = new Controls.Page();
-                    //Table.Attach(Control, 0, 1, 0, 1);
                     Add(Control);
                 }
             }
