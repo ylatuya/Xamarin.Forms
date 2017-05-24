@@ -182,6 +182,26 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         }
     }
 
+    public sealed class StreamImagesourceHandler : IImageSourceHandler
+    {
+        public async Task<Pixbuf> LoadImageAsync(ImageSource imagesource, CancellationToken cancelationToken = default(CancellationToken), float scale = 1)
+        {
+            Pixbuf image = null;
+
+            var streamsource = imagesource as StreamImageSource;
+            if (streamsource?.Stream == null) return null;
+            using (
+                var streamImage = await((IStreamImageSource)streamsource)
+                .GetStreamAsync(cancelationToken).ConfigureAwait(false))
+            {
+                if (streamImage != null)
+                    image = new Pixbuf(streamImage);
+            }
+
+            return image;
+        }
+    }
+
     public sealed class UriImageSourceHandler : IImageSourceHandler
     {
         public async Task<Pixbuf> LoadImageAsync(

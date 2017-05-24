@@ -13,6 +13,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: AssemblyCulture("")]
 
 [assembly: ExportImageSourceHandler(typeof(FileImageSource), typeof(FileImageSourceHandler))]
+[assembly: ExportImageSourceHandler(typeof(StreamImageSource), typeof(StreamImagesourceHandler))]
 [assembly: ExportImageSourceHandler(typeof(UriImageSource), typeof(UriImageSourceHandler))]
 
 [assembly: Dependency(typeof(ResourcesProvider))]
