@@ -83,26 +83,26 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (_hasShadow)
                 {
-                    cr.Rectangle(Allocation.Left + _shadowWidth, Allocation.Top + _shadowWidth, Allocation.Width + _shadowWidth, Allocation.Height + _shadowWidth);
                     var color = Color.Black.ToGtkColor();
                     cr.SetSourceRGBA(color.Red / colorMaxValue, color.Green / colorMaxValue, color.Blue / colorMaxValue, 1.0);
+                    cr.Rectangle(Allocation.Left + _shadowWidth, Allocation.Top + _shadowWidth, Allocation.Width + _shadowWidth, Allocation.Height + _shadowWidth);
                     cr.Fill();
                 }
 
                 if (_backgroundColor.HasValue)
                 {
-                    cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
                     var color = _backgroundColor.Value;
                     cr.SetSourceRGBA(color.Red / colorMaxValue, color.Green / colorMaxValue, color.Blue / colorMaxValue, 1.0);
+                    cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
                     cr.FillPreserve();
                 }
 
                 if (_borderColor.HasValue)
                 {
-                    cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
                     cr.LineWidth = _borderWidth;
                     var color = _borderColor.Value;
                     cr.SetSourceRGB(color.Red / colorMaxValue, color.Green / colorMaxValue, color.Blue / colorMaxValue);
+                    cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
                     cr.Stroke();
                 }
             }
