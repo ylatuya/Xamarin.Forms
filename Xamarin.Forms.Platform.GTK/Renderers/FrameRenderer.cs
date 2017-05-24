@@ -1,10 +1,9 @@
-﻿using Gtk;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class FrameRenderer : ViewRenderer<Frame, Gtk.Frame>
+    public class FrameRenderer : ViewRenderer<Frame, Controls.CustomFrame>
     {
         protected override void OnElementChanged(ElementChangedEventArgs<Frame> e)
         {
@@ -14,8 +13,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    var frame = new Gtk.Frame();
-                    SetNativeControl(frame);
+                    var customFrame = new Controls.CustomFrame();
+                    customFrame.SetBorderWidth(2);
+                    customFrame.SetShadowWidth(2);
+
+                    SetNativeControl(customFrame);
                 }
 
                 PackChild();
@@ -40,19 +42,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void SetupLayer()
         {
             if (Element.BackgroundColor == Color.Default)
-                Control.ModifyBg(StateType.Normal, Color.White.ToGtkColor());
+                Control.ResetBackgroundColor();
             else
-                Control.ModifyBg(StateType.Normal, Element.BackgroundColor.ToGtkColor());
+                Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
+
+            if (Element.OutlineColor == Color.Default)
+                Control.ResetBorderColor();
+            else
+                Control.SetBorderColor(Element.OutlineColor.ToGtkColor());
 
             if (Element.HasShadow)
-            {
-                Control.ShadowType = ShadowType.EtchedIn;
-                Control.BorderWidth = 1;
-            }
+                Control.SetShadow();
             else
-            {
-                Control.ShadowType = ShadowType.None;
-            }
+                Control.ResetShadow();
         }
 
         private void PackChild()

@@ -94,6 +94,7 @@
     <Compile Include="Controls\BoxView.cs" />
     <Compile Include="Controls\Carousel.cs" />
     <Compile Include="Controls\CustomComboBox.cs" />
+    <Compile Include="Controls\CustomFrame.cs" />
     <Compile Include="Controls\DatePicker.cs" />
     <Compile Include="Controls\EntryWrapper.cs" />
     <Compile Include="Controls\GLWidget.cs" />
