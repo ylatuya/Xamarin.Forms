@@ -40,6 +40,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
+        public bool Disposed { get { return _disposed; } }
+
         protected override void OnShown()
         {
             base.OnShown();

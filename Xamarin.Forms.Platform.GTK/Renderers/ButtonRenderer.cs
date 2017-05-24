@@ -22,6 +22,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Control != null)
             {
                 Control.Clicked -= OnButtonClicked;
+                Control.ButtonPressEvent -= OnButtonPressEvent;
+                Control.ButtonReleaseEvent -= OnButtonReleaseEvent;
             }
 
             base.Dispose(disposing);
@@ -37,6 +39,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(btn);
 
                     Control.Clicked += OnButtonClicked;
+                    Control.ButtonPressEvent += OnButtonPressEvent;
+                    Control.ButtonReleaseEvent += OnButtonReleaseEvent;
                 }
 
                 UpdateBackgroundColor();
@@ -83,6 +87,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 Control.SetBackgroundColor(null);
             }
+        }
+
+        private void OnButtonPressEvent(object o, ButtonPressEventArgs args)
+        {
+            ((IButtonController)Element)?.SendPressed();
+        }
+
+        private void OnButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+        {
+            ((IButtonController)Element)?.SendReleased();
         }
 
         private void OnButtonClicked(object sender, EventArgs e)

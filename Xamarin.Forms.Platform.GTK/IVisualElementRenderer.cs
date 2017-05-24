@@ -11,6 +11,8 @@ namespace Xamarin.Forms.Platform.GTK
 
         Container Container { get; }
 
+        bool Disposed { get; }
+
         void SetElement(VisualElement element);
 
         SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint);

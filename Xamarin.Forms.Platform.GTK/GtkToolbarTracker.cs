@@ -8,7 +8,7 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class NativeToolbarTracker
+    public class GtkToolbarTracker
     {
         private const int BackButtonItemWidth = 36;
         private const int ToolbarItemWidth = 44;
@@ -27,7 +27,7 @@ namespace Xamarin.Forms.Platform.GTK
         private Gtk.Label _toolbarTitle;
         private NavigationPage _navigation;
 
-        public NativeToolbarTracker()
+        public GtkToolbarTracker()
         {
             _toolbarTracker = new ToolbarTracker();
             _toolbarTracker.CollectionChanged += ToolbarTrackerOnCollectionChanged;
@@ -164,18 +164,17 @@ namespace Xamarin.Forms.Platform.GTK
             var currentPage = _navigation.Peek(0);
             var pageRenderer = Platform.GetRenderer(currentPage);
 
-            if (pageRenderer != null && pageRenderer.Container != null)
+            if (pageRenderer != null && pageRenderer.Disposed)
             {
-                if (pageRenderer.Container.Child != null)
-                {
-                    var page = pageRenderer.Container.Child as Controls.Page;
+                return;
+            }
 
-                    if (page != null)
-                    {
-                        page.Toolbar = _toolbar;
-                        UpdateBarBackgroundColor(page);
-                    }
-                }
+            var page = pageRenderer?.Container?.Child as Controls.Page;
+
+            if (page != null)
+            {
+                page.Toolbar = _toolbar;
+                UpdateBarBackgroundColor(page);
             }
         }
 

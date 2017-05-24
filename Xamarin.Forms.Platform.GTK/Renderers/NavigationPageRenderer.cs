@@ -33,6 +33,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public NavigationPage Element { get; private set; }
 
+        public bool Disposed { get { return _disposed; } }
+
         VisualElement IVisualElementRenderer.Element => Element;
 
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;

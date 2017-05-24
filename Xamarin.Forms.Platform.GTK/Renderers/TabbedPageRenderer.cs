@@ -26,6 +26,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public Container Container => this;
 
+        public bool Disposed { get { return _disposed; } }
+
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
         void IEffectControlProvider.RegisterEffect(Effect effect)

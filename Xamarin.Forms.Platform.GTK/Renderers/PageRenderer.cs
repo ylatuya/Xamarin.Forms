@@ -20,6 +20,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public Controls.Page Control { get; private set; }
 
+        public bool Disposed { get { return _disposed; } }
+
         Page Page => Element as Page;
 
         public VisualElement Element { get; private set; }

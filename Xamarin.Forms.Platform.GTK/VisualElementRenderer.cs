@@ -53,6 +53,8 @@ namespace Xamarin.Forms.Platform.GTK
 
         public Container Container => this;
 
+        public bool Disposed { get { return _disposed; } }
+
         VisualElement IVisualElementRenderer.Element
         {
             get

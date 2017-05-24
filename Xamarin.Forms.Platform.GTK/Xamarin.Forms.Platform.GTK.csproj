@@ -132,7 +132,7 @@
     <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IDesiredSizeProvider.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
-    <Compile Include="NativeToolbarTracker.cs" />
+    <Compile Include="GtkToolbarTracker.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PlatformEffect.cs" />
     <Compile Include="PlatformRenderer.cs" />

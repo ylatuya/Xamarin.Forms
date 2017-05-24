@@ -26,7 +26,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         internal PlatformRenderer PlatformRenderer => _renderer;
 
-        internal static NativeToolbarTracker NativeToolbarTracker = new NativeToolbarTracker();
+        internal static GtkToolbarTracker NativeToolbarTracker = new GtkToolbarTracker();
 
         Page Page { get; set; }
 

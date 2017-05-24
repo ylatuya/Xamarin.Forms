@@ -19,6 +19,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public VisualElement Element { get; private set; }
 
+        public bool Disposed { get { return _disposed; } }
+
         public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
         protected MasterDetailPage MasterDetailPage => _masterDetailPage ?? (_masterDetailPage = (MasterDetailPage)Element);
