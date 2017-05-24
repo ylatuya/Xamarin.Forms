@@ -5,8 +5,8 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class CellRenderer : IRegisterable
     {
-        static readonly BindableProperty s_realCellProperty =
-            BindableProperty.CreateAttached("RealCell", typeof(Gtk.CellRenderer),
+        static readonly BindableProperty RealCellProperty =
+            BindableProperty.CreateAttached("RealCell", typeof(Gtk.Container),
                 typeof(Cell), null);
 
         EventHandler _onForceUpdateSizeRequested;
@@ -54,12 +54,12 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
         internal static Gtk.Container GetRealCell(BindableObject cell)
         {
-            return (Gtk.Container)cell.GetValue(s_realCellProperty);
+            return (Gtk.Container)cell.GetValue(RealCellProperty);
         }
 
         internal static void SetRealCell(BindableObject cell, Gtk.Container renderer)
         {
-            cell.SetValue(s_realCellProperty, renderer);
+            cell.SetValue(RealCellProperty, renderer);
         }
     }
 }
