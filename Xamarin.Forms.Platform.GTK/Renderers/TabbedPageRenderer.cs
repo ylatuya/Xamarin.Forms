@@ -110,7 +110,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             OnPagesChanged(Element.Children,
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
-            element.PropertyChanged += OnElementPropertyChanged;
+            Element.PropertyChanged += OnElementPropertyChanged;
+            Element.PagesChanged += OnPagesChanged;
 
             UpdateCurrentPage();
             UpdateBarBackgroundColor();
@@ -164,6 +165,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             e.Apply((o, i, c) => SetupPage((Page)o, i), (o, i) => TeardownPage((Page)o), Reset);
+            ResetPages();
             SetPages();
             UpdateChildrenOrderIndex();
         }
@@ -179,6 +181,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             page.PropertyChanged += OnPagePropertyChanged;
+        }
+
+        private void ResetPages()
+        {
+            do
+            {
+                for (var i = 0; i < Control.Children.Length; i++)
+                {
+                    Control.RemovePage(i);
+                }
+            } while (Control.Children.Length > 0);
         }
 
         private void SetPages()
@@ -199,10 +212,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         pageRenderer.Container,
                         new TabbedPageHeader(page.Title, page.Icon?.ToPixbuf()),
                         i);
+
+                    System.Diagnostics.Debug.WriteLine(page.Title);
                 }
             }
 
             Control.CurrentPage = 0;
+            Control.ShowAll();
         }
 
         private void TeardownPage(Page page)
@@ -265,7 +281,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 for (var i = 0; i < Element.Children.Count; i++)
                 {
-                    if (Element.SelectedItem == Element.Children[i])
+                    if (Element.Children[i].BindingContext.Equals(Element.SelectedItem))
                     {
                         break;
                     }
@@ -275,6 +291,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             Control.CurrentPage = selectedIndex;
+            Control.ShowAll();
         }
 
         private void UpdateChildrenOrderIndex()

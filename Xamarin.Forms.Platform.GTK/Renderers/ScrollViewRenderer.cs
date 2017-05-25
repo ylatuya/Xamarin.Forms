@@ -44,6 +44,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 UpdateOrientation();
                 LoadContent();
+                UpdateContentSize();
             }
         }
 
@@ -51,7 +52,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName == nameof(ScrollView.Content))
+            if (e.PropertyName == ScrollView.ContentSizeProperty.PropertyName)
+                UpdateContentSize();
+            else if(e.PropertyName == nameof(ScrollView.Content))
                 LoadContent();
             else if (e.PropertyName == ScrollView.OrientationProperty.PropertyName)
                 UpdateOrientation();
@@ -76,7 +79,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             return result;
         }
-
 
         private void OnScrollEvent(object o, EventArgs args)
         {
@@ -145,6 +147,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             Controller.SendScrollFinished();
+        }
+
+        private void UpdateContentSize()
+        {
+            var contentSize = Element.ContentSize;
+
+            // TODO: 
+            /*
+            var height = Convert.ToInt32(contentSize.Height);
+            var width = Convert.ToInt32(contentSize.Width);
+
+            Control.SetSizeRequest(width, height);
+            */
         }
     }
 }
