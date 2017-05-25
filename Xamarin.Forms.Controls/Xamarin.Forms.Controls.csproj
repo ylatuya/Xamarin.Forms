@@ -108,6 +108,7 @@
     <Compile Include="GalleryPages\NavigationPropertiesGallery.cs" />
     <Compile Include="ControlGalleryPages\ListViewSelectionColor.cs" />
     <Compile Include="GalleryPages\PlatformSpecificsGalleries\ApplicationAndroid.cs" />
+    <Compile Include="GalleryPages\PlatformSpecificsGalleries\BoxViewGtk.cs" />
     <Compile Include="GalleryPages\PlatformSpecificsGalleries\EntryPageiOS.cs" />
     <Compile Include="GalleryPages\PlatformSpecificsGalleries\MasterDetailPageiOS.cs" />
     <Compile Include="GalleryPages\PlatformSpecificsGalleries\MasterDetailPageWindows.cs" />

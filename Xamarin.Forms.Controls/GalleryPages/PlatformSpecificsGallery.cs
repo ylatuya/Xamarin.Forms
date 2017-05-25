@@ -19,6 +19,7 @@ namespace Xamarin.Forms.Controls
 			var tbAndroidButton = new Button { Text = "TabbedPage (Android)" };
 			var entryiOSButton = new Button() { Text = "Entry (iOS)" };
             var tabGtkButton = new Button() { Text = "TabbedPage (GTK)" };
+            var boxGtkButton = new Button() { Text = "BoxView (GTK)" };
 
             mdpiOSButton.Clicked += (sender, args) => { SetRoot(new MasterDetailPageiOS(new Command(RestoreOriginal))); };
 			mdpWindowsButton.Clicked += (sender, args) => { SetRoot(new MasterDetailPageWindows(new Command(RestoreOriginal))); };
@@ -31,10 +32,11 @@ namespace Xamarin.Forms.Controls
 			tbAndroidButton.Clicked += (sender, args) => { SetRoot(new TabbedPageAndroid(new Command(RestoreOriginal))); };
 			entryiOSButton.Clicked += (sender, args) => { Navigation.PushAsync(new EntryPageiOS()); };
             tabGtkButton.Clicked += (sender, args) => { Navigation.PushAsync(new TabbedPageGtk()); };
+            boxGtkButton.Clicked += (sender, args) => { Navigation.PushAsync(new BoxViewGtk()); };
 
             Content = new StackLayout
 			{
-				Children = { mdpiOSButton, mdpWindowsButton, npWindowsButton, tbiOSButton, tbWindowsButton, viselemiOSButton, appAndroidButton, tbAndroidButton, entryiOSButton, tabGtkButton }
+				Children = { mdpiOSButton, mdpWindowsButton, npWindowsButton, tbiOSButton, tbWindowsButton, viselemiOSButton, appAndroidButton, tbAndroidButton, entryiOSButton, tabGtkButton, boxGtkButton }
 			};
 		}
 
