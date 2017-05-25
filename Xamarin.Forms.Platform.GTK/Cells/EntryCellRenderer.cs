@@ -5,7 +5,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class EntryCellRenderer : CellRenderer
     {
-        public override Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        protected override Gtk.Container GetCellWidgetInstance(Cell item)
         {
             var entryCell = (Xamarin.Forms.EntryCell)item;
 
@@ -14,30 +14,17 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             var text = entryCell.Text;
             var placeholder = entryCell.Placeholder;
 
-            var gtkEntryCell =
-                reusableView as EntryCell ??
-                new EntryCell(
+            return new EntryCell(
                     label,
-                    labelColor, 
+                    labelColor,
                     text,
                     placeholder);
-
-            if (gtkEntryCell.Cell != null)
-                gtkEntryCell.Cell.PropertyChanged -= gtkEntryCell.HandlePropertyChanged;
-
-            gtkEntryCell.Cell = entryCell;
-
-            entryCell.PropertyChanged += gtkEntryCell.HandlePropertyChanged;
-            gtkEntryCell.PropertyChanged = HandlePropertyChanged;
-
-            WireUpForceUpdateSizeRequested(item, gtkEntryCell, listView);
-            UpdateBackground(gtkEntryCell, item);
-
-            return gtkEntryCell;
         }
 
-        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs args)
+        protected override void CellPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
+            base.CellPropertyChanged(sender, args);
+
             var gtkEntryCell = (EntryCell)sender;
             var entryCell = (Xamarin.Forms.EntryCell)gtkEntryCell.Cell;
 
@@ -57,11 +44,6 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             {
                 gtkEntryCell.Placeholder = entryCell.Placeholder;
             }
-        }
-
-        internal override void UpdateBackgroundChild(Cell cell, Gdk.Color backgroundColor)
-        {
-            base.UpdateBackgroundChild(cell, backgroundColor);
         }
     }
 }

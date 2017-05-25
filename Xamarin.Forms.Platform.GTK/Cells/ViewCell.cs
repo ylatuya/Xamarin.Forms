@@ -1,29 +1,16 @@
-﻿using Gtk;
-using System;
+﻿using System;
 using static Xamarin.Forms.Platform.GTK.Platform;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
-    public class ViewCell : EventBox
+    public class ViewCell : CellBase
     {
         private WeakReference<IVisualElementRenderer> _rendererRef;
-        private Xamarin.Forms.ViewCell _viewCell;
-
-        public Xamarin.Forms.ViewCell Cell
-        {
-            get { return _viewCell; }
-            set
-            {
-                if (_viewCell == value)
-                    return;
-
-                UpdateCell(value);
-            }
-        }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
-            var view = Cell.View;
+            var viewCell = Cell as Xamarin.Forms.ViewCell;
+            var view = viewCell.View;
 
             Layout.LayoutChildIntoBoundingRegion(
                view, 
@@ -54,23 +41,14 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             base.Dispose();
         }
 
-        private IVisualElementRenderer GetNewRenderer()
+        protected override void UpdateCell()
         {
-            var newRenderer = Platform.CreateRenderer(_viewCell.View);
-            _rendererRef = new WeakReference<IVisualElementRenderer>(newRenderer);
-            Add(newRenderer.Container);
+            var viewCell = Cell as Xamarin.Forms.ViewCell;
 
-            return newRenderer;
-        }
+            if (viewCell != null)
+                Device.BeginInvokeOnMainThread(viewCell.SendDisappearing);
 
-        private void UpdateCell(Xamarin.Forms.ViewCell cell)
-        {
-            if (_viewCell != null)
-                Device.BeginInvokeOnMainThread(_viewCell.SendDisappearing);
-
-            _viewCell = cell;
-
-            Device.BeginInvokeOnMainThread(_viewCell.SendAppearing);
+            Device.BeginInvokeOnMainThread(viewCell.SendAppearing);
 
             IVisualElementRenderer renderer;
             if (_rendererRef == null || !_rendererRef.TryGetTarget(out renderer))
@@ -80,16 +58,27 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 if (renderer.Element != null && renderer == Platform.GetRenderer(renderer.Element))
                     renderer.Element.ClearValue(Platform.RendererProperty);
 
-                var type = Internals.Registrar.Registered.GetHandlerType(_viewCell.View.GetType());
+                var type = Internals.Registrar.Registered.GetHandlerType(viewCell.View.GetType());
                 if (renderer.GetType() == type || (renderer is DefaultRenderer && type == null))
-                    renderer.SetElement(_viewCell.View);
+                    renderer.SetElement(viewCell.View);
                 else
                 {
                     renderer = GetNewRenderer();
                 }
             }
 
-            Platform.SetRenderer(_viewCell.View, renderer);
+            Platform.SetRenderer(viewCell.View, renderer);
+        }
+
+        private IVisualElementRenderer GetNewRenderer()
+        {
+            var viewCell = Cell as Xamarin.Forms.ViewCell;
+            var newRenderer = Platform.CreateRenderer(viewCell.View);
+
+            _rendererRef = new WeakReference<IVisualElementRenderer>(newRenderer);
+            Add(newRenderer.Container);
+
+            return newRenderer;
         }
     }
 }

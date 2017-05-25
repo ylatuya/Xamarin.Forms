@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using Xamarin.Forms.Platform.GTK.Extensions;
-using System;
-using System.Collections.Specialized;
+﻿using System;
 using System.Collections.Generic;
-using Xamarin.Forms.Platform.GTK.Cells;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Cells;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -75,9 +75,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateItems();
             else if (e.PropertyName == ListView.IsGroupingEnabledProperty.PropertyName)
                 UpdateGrouping();
-            else if (e.PropertyName.Equals("HeaderElement", StringComparison.InvariantCultureIgnoreCase))
+            else if (e.PropertyName == nameof(ListView.HeaderElement))
                 UpdateHeader();
-            else if (e.PropertyName.Equals("FooterElement", StringComparison.InvariantCultureIgnoreCase))
+            else if (e.PropertyName == nameof(ListView.FooterElement))
                 UpdateFooter();
             else if (e.PropertyName == ListView.RowHeightProperty.PropertyName)
                 UpdateRowHeight();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
@@ -13,13 +14,42 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
         public virtual Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
         {
-            var tvc = reusableView as Gtk.Container ?? new Gtk.Container(IntPtr.Zero);
+            var cell = reusableView as Gtk.Container ?? GetCellWidgetInstance(item);
 
-            WireUpForceUpdateSizeRequested(item, tvc, listView);
+            var cellBase = cell as CellBase;
 
-            UpdateBackground(tvc, item);
+            if (cellBase != null)
+            {
+                if (cellBase.Cell != null)
+                {
+                    cellBase.Cell.PropertyChanged -= cellBase.HandlePropertyChanged;
+                }
 
-            return tvc;
+                cellBase.Cell = item;
+
+                item.PropertyChanged += cellBase.HandlePropertyChanged;
+                cellBase.PropertyChanged = CellPropertyChanged;
+            }
+
+            SetRealCell(item, cell); // <-- ??
+            WireUpForceUpdateSizeRequested(item, cell);
+            UpdateBackground(cell, item);
+            UpdateIsEnabled(cellBase);
+
+            return cell;
+        }
+
+        protected virtual void CellPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            var viewCell = sender as CellBase;
+
+            if (args.PropertyName == Cell.IsEnabledProperty.PropertyName)
+                UpdateIsEnabled(viewCell);
+        }
+
+        protected virtual Gtk.Container GetCellWidgetInstance(Cell item)
+        {
+            return new Gtk.Container(IntPtr.Zero);
         }
 
         protected void UpdateBackground(Gtk.Container tableViewCell, Cell cell)
@@ -35,7 +65,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             tableViewCell.ModifyBg(Gtk.StateType.Normal, bgColor);
         }
 
-        protected void WireUpForceUpdateSizeRequested(ICellController cell, Gtk.Container nativeCell, Controls.ListView listView)
+        protected void WireUpForceUpdateSizeRequested(Cell cell, Gtk.Container nativeCell)
         {
             cell.ForceUpdateSizeRequested -= _onForceUpdateSizeRequested;
 
@@ -47,9 +77,17 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             cell.ForceUpdateSizeRequested += _onForceUpdateSizeRequested;
         }
 
+        private static void UpdateIsEnabled(CellBase cell)
+        {
+            if (cell?.Cell != null)
+            {
+                cell.Sensitive = cell.Cell.IsEnabled;
+            }
+        }
+
         internal virtual void UpdateBackgroundChild(Cell cell, Gdk.Color backgroundColor)
         {
-
+            // TODO
         }
 
         internal static Gtk.Container GetRealCell(BindableObject cell)

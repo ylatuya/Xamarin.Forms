@@ -8,31 +8,8 @@ namespace Xamarin.Forms.Platform.GTK.Cells
     {
         public override Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
         {
+            var gtkImageCell = base.GetCell(item, reusableView, listView) as ImageCell;
             var imageCell = (Xamarin.Forms.ImageCell)item;
-
-            var text = imageCell.Text ?? string.Empty;
-            var textColor = imageCell.TextColor.ToGtkColor();
-            var detail = imageCell.Detail ?? string.Empty;
-            var detailColor = imageCell.DetailColor.ToGtkColor();
-
-            var gtkImageCell = 
-                reusableView as ImageCell ?? 
-                new ImageCell(
-                    null, 
-                    text,
-                    textColor,
-                    detail, 
-                    detailColor);
-
-            if (gtkImageCell.Cell != null)
-                gtkImageCell.Cell.PropertyChanged -= gtkImageCell.HandlePropertyChanged;
-
-            gtkImageCell.Cell = imageCell;
-
-            imageCell.PropertyChanged += gtkImageCell.HandlePropertyChanged;
-            gtkImageCell.PropertyChanged = HandlePropertyChanged;
-
-            WireUpForceUpdateSizeRequested(item, gtkImageCell, listView);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             SetImage(imageCell, gtkImageCell);
@@ -41,8 +18,27 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             return gtkImageCell;
         }
 
-        private async void HandlePropertyChanged(object sender, PropertyChangedEventArgs args)
+        protected override Gtk.Container GetCellWidgetInstance(Cell item)
         {
+            var imageCell = (Xamarin.Forms.ImageCell)item;
+
+            var text = imageCell.Text ?? string.Empty;
+            var textColor = imageCell.TextColor.ToGtkColor();
+            var detail = imageCell.Detail ?? string.Empty;
+            var detailColor = imageCell.DetailColor.ToGtkColor();
+
+            return new ImageCell(
+                    null,
+                    text,
+                    textColor,
+                    detail,
+                    detailColor);
+        }
+
+        protected override async void CellPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            base.CellPropertyChanged(sender, args);
+
             var gtkImageCell = (ImageCell)sender;
             var imageCell = (Xamarin.Forms.ImageCell)gtkImageCell.Cell;
 
@@ -58,11 +54,6 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             {
                 await SetImage(imageCell, gtkImageCell);
             }
-        }
-
-        internal override void UpdateBackgroundChild(Cell cell, Gdk.Color backgroundColor)
-        {
-            base.UpdateBackgroundChild(cell, backgroundColor);
         }
 
         private static async System.Threading.Tasks.Task SetImage(Xamarin.Forms.ImageCell cell, ImageCell target)
