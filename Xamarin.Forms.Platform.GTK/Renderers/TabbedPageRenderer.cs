@@ -5,6 +5,7 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -109,9 +110,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             OnPagesChanged(Element.Children,
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
+            element.PropertyChanged += OnElementPropertyChanged;
+
             UpdateCurrentPage();
             UpdateBarBackgroundColor();
             UpdateBarTextColor();
+            UpdateTabPos();
 
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
@@ -145,9 +149,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (e.PropertyName == nameof(TabbedPage.CurrentPage))
             {
                 UpdateCurrentPage();
+                UpdateBarTextColor();
+                UpdateBarBackgroundColor();
             }
+            else if (e.PropertyName == TabbedPage.BarTextColorProperty.PropertyName)
+                UpdateBarTextColor();
             else if (e.PropertyName == TabbedPage.BarBackgroundColorProperty.PropertyName)
                 UpdateBarBackgroundColor();
+            else if (e.PropertyName ==
+                  PlatformConfiguration.GTKSpecific.TabbedPage.TabPositionProperty.PropertyName)
+                UpdateTabPos();
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -331,6 +342,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         tabbedPageHeader.GetTabbedPageTitle().ModifyFg(StateType.Active, barTextColor.ToGtkColor());
                     }
                 }
+            }
+        }
+
+        private void UpdateTabPos()
+        {
+            var tabposition = Element.OnThisPlatform().GetTabPosition();
+
+            switch(tabposition)
+            {
+                case TabPosition.Top:
+                    Control.TabPos = PositionType.Top;
+                    break;
+                case TabPosition.Bottom:
+                    Control.TabPos = PositionType.Bottom;
+                    break;
             }
         }
     }
