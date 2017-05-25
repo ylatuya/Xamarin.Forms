@@ -4,35 +4,22 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class SwitchCellRenderer : CellRenderer
     {
-        public override Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        protected override Gtk.Container GetCellWidgetInstance(Cell item)
         {
             var switchCell = (Xamarin.Forms.SwitchCell)item;
 
             var text = switchCell.Text ?? string.Empty;
             var on = switchCell.On;
 
-            var gtkSwitchCell = 
-                reusableView as SwitchCell ??
-                new SwitchCell(
+            return new SwitchCell(
                     text,
                     on);
-
-            if (gtkSwitchCell.Cell != null)
-                gtkSwitchCell.Cell.PropertyChanged -= gtkSwitchCell.HandlePropertyChanged;
-
-            gtkSwitchCell.Cell = switchCell;
-
-            switchCell.PropertyChanged += gtkSwitchCell.HandlePropertyChanged;
-            gtkSwitchCell.PropertyChanged = HandlePropertyChanged;
-
-            WireUpForceUpdateSizeRequested(item, gtkSwitchCell, listView);
-            UpdateBackground(gtkSwitchCell, item);
-
-            return gtkSwitchCell;
         }
 
-        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs args)
+        protected override void CellPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
+            base.CellPropertyChanged(sender, args);
+
             var gtkSwitchCell = (SwitchCell)sender;
             var switchCell = (Xamarin.Forms.SwitchCell)gtkSwitchCell.Cell;
 
@@ -44,11 +31,6 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             {
                 gtkSwitchCell.On = switchCell.On;
             }
-        }
-
-        internal override void UpdateBackgroundChild(Cell cell, Gdk.Color backgroundColor)
-        {
-            base.UpdateBackgroundChild(cell, backgroundColor);
         }
     }
 }

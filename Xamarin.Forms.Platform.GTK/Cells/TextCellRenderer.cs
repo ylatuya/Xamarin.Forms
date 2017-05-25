@@ -1,12 +1,22 @@
-﻿using Gtk;
-using Xamarin.Forms.Platform.GTK.Extensions;
+﻿using System.ComponentModel;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class TextCellRenderer : CellRenderer
     {
-        public override Container GetCell(Cell item, Container reusableView, Controls.ListView listView)
+        public override Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        {
+            var gtkTextCell = base.GetCell(item, reusableView, listView) as TextCell;
+            var textCell = (Xamarin.Forms.TextCell)item;
+
+            gtkTextCell.IsGroupHeader = textCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
+
+            return gtkTextCell;
+        }
+
+        protected override Gtk.Container GetCellWidgetInstance(Cell item)
         {
             var textCell = (Xamarin.Forms.TextCell)item;
 
@@ -15,32 +25,17 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             var detail = textCell.Detail ?? string.Empty;
             var detailColor = textCell.DetailColor.ToGtkColor();
 
-            var gtkTextCell =
-                reusableView as TextCell ??
-                new TextCell(
+            return new TextCell(
                     text,
                     textColor,
                     detail,
                     detailColor);
-
-            if (gtkTextCell.Cell != null)
-                gtkTextCell.Cell.PropertyChanged -= gtkTextCell.HandlePropertyChanged;
-
-            gtkTextCell.Cell = textCell;
-            gtkTextCell.IsGroupHeader = textCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
-
-            textCell.PropertyChanged += gtkTextCell.HandlePropertyChanged;
-            gtkTextCell.PropertyChanged = HandlePropertyChanged;
-
-            WireUpForceUpdateSizeRequested(item, gtkTextCell, listView);
-            UpdateIsEnabled(gtkTextCell, textCell);
-            UpdateBackground(gtkTextCell, item);
-
-            return gtkTextCell;
         }
 
-        private void HandlePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
+        protected override void CellPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
+            base.CellPropertyChanged(sender, args);
+
             var gtkTextCell = (TextCell)sender;
             var textCell = (Xamarin.Forms.TextCell)gtkTextCell.Cell;
 
@@ -56,16 +51,6 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 gtkTextCell.TextColor = textCell.TextColor.ToGtkColor();
             else if (args.PropertyName == Xamarin.Forms.TextCell.DetailColorProperty.PropertyName)
                 gtkTextCell.DetailColor = textCell.DetailColor.ToGtkColor();
-        }
-
-        internal override void UpdateBackgroundChild(Cell cell, Gdk.Color backgroundColor)
-        {
-            base.UpdateBackgroundChild(cell, backgroundColor);
-        }
-
-        static void UpdateIsEnabled(TextCell textCell, Xamarin.Forms.TextCell cell)
-        {
-            textCell.Enabled = cell.IsEnabled;
         }
     }
 }

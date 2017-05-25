@@ -28,6 +28,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                     Device.BeginInvokeOnMainThread(_cell.SendDisappearing);
 
                 _cell = value;
+                UpdateCell();
                 _contextActions = Cell.ContextActions;
 
                 if (_contextActions.Any())
@@ -43,6 +44,10 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         public void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
+        }
+        
+        protected virtual void UpdateCell()
+        {
         }
 
         private void AddMenu()
