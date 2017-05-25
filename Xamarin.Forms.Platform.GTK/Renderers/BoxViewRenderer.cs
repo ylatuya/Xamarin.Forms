@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -27,6 +28,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == BoxView.ColorProperty.PropertyName)
                 SetColor(Element.Color);
+            else if (e.PropertyName ==
+              PlatformConfiguration.GTKSpecific.BoxView.HasCornerRadiusProperty.PropertyName)
+                SetHasCornerRadius();
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
@@ -63,6 +67,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             int width = WidthRequest;
 
             Control.UpdateSize(height, width);
+        }
+
+        private void SetHasCornerRadius()
+        {
+            var hasCornerRadius = Element.OnThisPlatform().GetHasCornerRadius();
+
+            Control.UpdateHasBorderRadius(hasCornerRadius);
         }
     }
 }

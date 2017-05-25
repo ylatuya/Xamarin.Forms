@@ -40,6 +40,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _boxView.Width = width;
             }
         }
+
+        public void UpdateHasBorderRadius(bool hasBorderRadius)
+        {
+            if (_boxView != null)
+            {
+                _boxView.Radius = hasBorderRadius ? 5 : 0;
+            }
+        }
     }
 
     public class BoxViewDrawingArea : DrawingArea
@@ -49,6 +57,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gdk.Color _color;
         private int _height;
         private int _width;
+        private int _radius;
 
         public BoxViewDrawingArea()
         {
@@ -84,6 +93,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public int Radius
+        {
+            get { return (_radius); }
+            set
+            {
+                _radius = value;
+                QueueDraw();
+            }
+        }
+
         protected override bool OnExposeEvent(EventExpose ev)
         {
             using (var cr = CairoHelper.Create(GdkWindow))
@@ -107,7 +126,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             int clipHeight = ev.Area.Height > 0 ? Height : 0;
             int clipWidth = ev.Area.Width > 0 ? Width : 0;
 
-            double radius = 0;
+            double radius = Radius;
             int x = 0;
             int y = 0;
             int width = Width;

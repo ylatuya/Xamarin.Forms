@@ -103,7 +103,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     var color = _borderColor.Value;
                     cr.SetSourceRGB(color.Red / colorMaxValue, color.Green / colorMaxValue, color.Blue / colorMaxValue);
                     cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
-                    cr.Stroke();
+                    cr.StrokePreserve();
                 }
             }
 
