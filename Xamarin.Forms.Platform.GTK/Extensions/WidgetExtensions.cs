@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
 {
     public static class WidgetExtensions
     {
-        public static SizeRequest GetSizeRequest(
+        public static SizeRequest GetDesiredSize(
             this Widget self,
             double widthConstraint,
             double heightConstraint)
@@ -86,6 +86,32 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
         public static bool HasChild(this Container self, Widget child)
         {
             return self.Children.Contains(child);
+        }
+
+        public static Size GetMaxChildDesiredSize(this Widget self, double widthConstraint, double heightConstraint)
+        {
+            var container = self as Container;
+            var childReq = Size.Zero;
+
+            if (container != null)
+            {
+                foreach (var child in container.Children)
+                {
+                    var currentChildReq = child.GetMaxChildDesiredSize(widthConstraint, heightConstraint);
+
+                    if (currentChildReq.Height > childReq.Height)
+                    {
+                        childReq = currentChildReq;
+                    }
+                }
+            }
+
+            self.SetSizeRequest((int)widthConstraint - 1, -1);
+            var desiredSize = self.GetDesiredSize(widthConstraint, heightConstraint);
+
+            return childReq.Height > desiredSize.Request.Height 
+                ? childReq 
+                : desiredSize.Request;
         }
 
         public static void PrintTree(this Widget widget)
