@@ -5,12 +5,15 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Internals;
+using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class CarouselPageRenderer : Container, IVisualElementRenderer
     {
         private Carousel _carousel;
+        private List<PageContainer> _pages;
         private int _selectedIndex;
         private bool _appeared;
         private bool _disposed;
@@ -60,6 +63,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_appeared || _disposed)
                 return;
 
+            _pages = null;
             _appeared = false;
             Page.SendDisappearing();
         }
@@ -95,10 +99,20 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElement(VisualElement element)
         {
+            var newPage = element as CarouselPage;
+            if (element != null && newPage == null)
+                throw new ArgumentException("element must be a CarouselPage");
+
             VisualElement oldElement = Element;
             Element = element;
 
             Init();
+
+            if (newPage != null)
+            {
+                UpdateCurrentPage();
+                newPage.SendAppearing();
+            }
 
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
         }
@@ -138,7 +152,57 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateSource();
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+
+                    int index = e.NewStartingIndex;
+                    for (int i = 0; i < e.NewItems.Count; i++)
+                    {
+                        var page = e.NewItems[i] as Page;
+                        _carousel.AddPage(index, page);
+                        _pages.Add(new PageContainer(page, i));
+                        index++;
+                    }
+
+                    var newPages = new List<object>();
+                    foreach(var pc in _pages)
+                    {
+                        newPages.Add(pc.Page);
+                    }
+
+                    e.Apply(Carousel.Children, newPages);
+
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+
+                    for (int i = 0; i < e.OldItems.Count; i++)
+                    {
+                        var page = e.OldItems[i];
+                        _carousel.RemovePage(page);
+                        var pageContainer = _pages.FirstOrDefault(p => p.Page == page);
+                        _pages.Remove(pageContainer);
+                    }
+
+                    var oldPages = new List<object>();
+                    foreach (var pc in _pages)
+                    {
+                        oldPages.Add(pc.Page);
+                    }
+
+                    e.Apply(Carousel.Children, oldPages);
+                    UpdateCurrentPage();
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+
+                    if (_carousel != null)
+                    {
+                        _carousel.Reset();
+                        UpdateSource();
+                    }
+
+                    break;
+            }
         }
 
         private void UpdateCurrentPage()
@@ -152,10 +216,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (index < 0)
                     index = 0;
 
-                if (SelectedIndex == index)
-                    return;
-
                 SelectedIndex = index;
+
+                if (_carousel != null)
+                {
+                    _carousel.SetCurrentPage(SelectedIndex);
+                }
             }
         }
 
@@ -176,7 +242,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateSource()
         {
-            var pages = new List<PageContainer>();
+            _pages = new List<PageContainer>();
 
             for (var i = 0; i < Element.LogicalChildren.Count; i++)
             {
@@ -185,13 +251,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 if (child != null)
                 {
-                    pages.Add(new PageContainer(child, i));
+                    _pages.Add(new PageContainer(child, i));
                 }
             }
 
             if (_carousel != null)
             {
-                _carousel.ItemsSource = pages;
+                _carousel.ItemsSource = _pages;
             }
 
             UpdateCurrentPage();
