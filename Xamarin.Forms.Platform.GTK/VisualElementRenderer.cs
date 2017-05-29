@@ -139,7 +139,7 @@ namespace Xamarin.Forms.Platform.GTK
             if (Children.Length == 0)
                 return new SizeRequest();
 
-            return Control.GetSizeRequest(widthConstraint, heightConstraint);
+            return Control.GetDesiredSize(widthConstraint, heightConstraint);
         }
 
         public sealed override void Dispose()

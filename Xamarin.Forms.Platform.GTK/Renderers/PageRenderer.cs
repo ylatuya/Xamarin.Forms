@@ -61,7 +61,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
         {
-            return Container.GetSizeRequest(widthConstraint, heightConstraint);
+            return Container.GetDesiredSize(widthConstraint, heightConstraint);
         }
 
         public override void Dispose()

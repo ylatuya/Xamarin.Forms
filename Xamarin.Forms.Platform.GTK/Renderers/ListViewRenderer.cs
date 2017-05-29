@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Gdk;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -146,6 +147,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var backgroundColor = Element.BackgroundColor.ToGtkColor();
 
             _listView.SetBackgroundColor(backgroundColor);
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            foreach (var cell in _cells)
+            {
+                cell.WidthRequest = allocation.Width;
+                cell.QueueDraw();
+            }
         }
 
         private void UpdateItems()

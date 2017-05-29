@@ -31,10 +31,11 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 cellBase.PropertyChanged = CellPropertyChanged;
             }
 
-            SetRealCell(item, cell); // <-- ??
+            SetRealCell(item, cell);
             WireUpForceUpdateSizeRequested(item, cell);
             UpdateBackground(cell, item);
             UpdateIsEnabled(cellBase);
+            UpdateHeight(cellBase);
 
             return cell;
         }
@@ -45,6 +46,8 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
             if (args.PropertyName == Cell.IsEnabledProperty.PropertyName)
                 UpdateIsEnabled(viewCell);
+            else if (args.PropertyName == nameof(Cell.RenderHeight))
+                UpdateHeight(viewCell);
         }
 
         protected virtual Gtk.Container GetCellWidgetInstance(Cell item)
@@ -65,13 +68,27 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             tableViewCell.ModifyBg(Gtk.StateType.Normal, bgColor);
         }
 
-        protected void WireUpForceUpdateSizeRequested(Cell cell, Gtk.Container nativeCell)
+        protected virtual void OnForceUpdateSizeRequest(Cell cell, Gtk.Container nativeCell)
+        {
+            nativeCell.HeightRequest = (int)cell.RenderHeight;
+            nativeCell.QueueDraw();
+        }
+
+        protected void UpdateHeight(CellBase cell)
+        {
+            if (cell?.Cell != null)
+            {
+                cell.HeightRequest = (int)cell.Cell.RenderHeight;
+            }
+        }
+
+        private void WireUpForceUpdateSizeRequested(Cell cell, Gtk.Container nativeCell)
         {
             cell.ForceUpdateSizeRequested -= _onForceUpdateSizeRequested;
 
             _onForceUpdateSizeRequested = (sender, e) =>
             {
-                //TODO: Implement ForceUpdateSize
+                OnForceUpdateSizeRequest(cell, nativeCell);
             };
 
             cell.ForceUpdateSizeRequested += _onForceUpdateSizeRequested;
