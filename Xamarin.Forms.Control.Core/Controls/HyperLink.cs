@@ -1,6 +1,6 @@
 ﻿namespace Xamarin.Forms.Control.Core.Controls
 {
-    public class HyperLink
+    public class HyperLink : View
     {
 
     }

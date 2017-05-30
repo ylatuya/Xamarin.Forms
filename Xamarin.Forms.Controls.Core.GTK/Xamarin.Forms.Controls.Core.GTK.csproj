@@ -46,7 +46,7 @@
     <Compile Include="Renderers\ColorPickerRenderer.cs" />
     <Compile Include="Renderers\DateTimePickerRenderer.cs" />
     <Compile Include="Renderers\GridSplitterRenderer.cs" />
-    <Compile Include="Renderers\GridViewRenderer.cs" />
+    <Compile Include="Renderers\DataGridRenderer.cs" />
     <Compile Include="Renderers\HyperLinkRenderer.cs" />
     <Compile Include="Renderers\SeparatorRenderer.cs" />
   </ItemGroup>
