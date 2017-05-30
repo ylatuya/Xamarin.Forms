@@ -1,5 +1,4 @@
 ﻿using NativeView = Gtk.Widget;
-using System.ComponentModel;
 
 namespace Xamarin.Forms.Platform.GTK
 {

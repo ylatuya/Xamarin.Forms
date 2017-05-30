@@ -60,6 +60,10 @@
       <Name>Xamarin.Forms.Build.Tasks</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Control.Core\Xamarin.Forms.Control.Core.csproj">
+      <Project>{5344bcde-de03-4a0f-a53a-0c6f0ed6d860}</Project>
+      <Name>Xamarin.Forms.Control.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
       <Project>{57b8b73d-c3b5-4c42-869e-7b2f17d354ac}</Project>
       <Name>Xamarin.Forms.Core</Name>
@@ -99,6 +103,9 @@
     <Compile Include="ControlGalleryPages\NestedNativeControlGalleryPage.cs" />
     <Compile Include="ControlGalleryPages\PanGestureGalleryPage.cs" />
     <Compile Include="CoreGalleryPages\KeyboardCoreGalleryPage.cs" />
+    <Compile Include="CustomControls\CustomControlsPage.xaml.cs">
+      <DependentUpon>CustomControlsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GalleryPages\BackgroundImageGallery.cs" />
     <Compile Include="GalleryPages\ControlTemplatePage.cs" />
     <Compile Include="GalleryPages\ControlTemplateXamlPage.xaml.cs">
@@ -413,7 +420,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\CustomControlsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Target Name="BeforeBuild">
     <CreateItem Include="blank.config">
       <Output TaskParameter="Include" ItemName="ConfigFile" />
