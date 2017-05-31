@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Gdk;
 using Gtk;
 using Xamarin.Forms.Platform.GTK.Animations;
 
@@ -30,8 +31,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Button _menuButton;
         private HBox _masterToolbar;
         private Gtk.Label _detailTitleLabel;
+        private Action<bool> RefreshPresented;
 
-        private System.Action RefreshPresented;
+        public MasterDetailPage()
+        {
+            Build();
+            RefreshBehavior();
+            RefreshPresented(false);
+        }
 
         public MasterBehaviorType MasterBehaviorType
         {
@@ -62,7 +69,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     _isPresented = value;
 
-                    RefreshPresented();
+                    RefreshPresented(true);
                 }
             }
         }
@@ -189,66 +196,53 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public MasterDetailPage()
-        {
-            RefreshBehavior();
-            RefreshPresented();
-        }
-
         private void RefreshBehavior()
         {
             switch (_masterBehaviorType)
             {
-                case MasterBehaviorType.Popover:
-                    RefreshPresented = RefreshPopoverPresented;
-                    break;
-                case MasterBehaviorType.Default:
                 case MasterBehaviorType.Split:
-                default:
-                    var root = new VBox();
-                    var header = new HBox();
-                    _menuButton = new Gtk.Button();
-                    _menuButton.WidthRequest = DefaultToolbarSize;
-                    _menuButton.HeightRequest = DefaultToolbarSize;
-                    _menuButton.Label = null;
-                    _menuButton.CanFocus = false;
-                    _menuButton.Relief = ReliefStyle.None;
-                    var image = new Gtk.Image(new Gdk.Pixbuf("./Resources/hamburger.png"));
-                    _menuButton.Image = image;
-                    _menuButton.Clicked += OnMenuButtonClicked;
-                    header.PackStart(_menuButton, false, false, 0);
-                    _masterToolbar = new HBox();
-                    _masterToolbar.HeightRequest = DefaultToolbarSize;
-                    _detailTitleLabel = new Gtk.Label();
-                    _masterToolbar.PackStart(_detailTitleLabel, false, false, 25);
-                    header.PackEnd(_masterToolbar);
-                    root.PackStart(header, false, false, 0);
-                    _hboxContainer = new HBox();
-                    root.PackEnd(_hboxContainer);
-                    _masterContainer = new Fixed();
-                    _masterContainer.BorderWidth = 0;
-                    _masterContainer.SizeAllocated += MasterContainer_SizeAllocated;
-                    _masterContainer.HasWindow = true;
-                    _hboxContainer.PackStart(_masterContainer, false, false, 0);
-                    Add(root);
                     RefreshPresented = RefreshSplitPresented;
+                    break;
+                case MasterBehaviorType.Popover:
+                case MasterBehaviorType.Default:
+                default:
+                    RefreshPresented = RefreshPopoverPresented;
                     break;
             }
         }
 
-        private void MasterContainer_SizeAllocated(object o, SizeAllocatedArgs args)
+        private void Build()
         {
-            RefreshMasterSize();
+            var root = new VBox();
+            var header = new HBox();
+            _menuButton = new Gtk.Button();
+            _menuButton.WidthRequest = DefaultToolbarSize;
+            _menuButton.HeightRequest = DefaultToolbarSize;
+            _menuButton.Label = null;
+            _menuButton.CanFocus = false;
+            _menuButton.Relief = ReliefStyle.None;
+            var image = new Gtk.Image(new Gdk.Pixbuf("./Resources/hamburger.png"));
+            _menuButton.Image = image;
+            _menuButton.Clicked += OnMenuButtonClicked;
+            header.PackStart(_menuButton, false, false, 0);
+            _masterToolbar = new HBox();
+            _masterToolbar.HeightRequest = DefaultToolbarSize;
+            _detailTitleLabel = new Gtk.Label();
+            _masterToolbar.PackStart(_detailTitleLabel, false, false, 25);
+            header.PackEnd(_masterToolbar);
+            root.PackStart(header, false, false, 0);
+            _hboxContainer = new HBox();
+            root.PackEnd(_hboxContainer);
+            _masterContainer = new Fixed();
+            _masterContainer.BorderWidth = 0;
+            _masterContainer.HasWindow = true;
+            _hboxContainer.PackStart(_masterContainer, false, false, 0);
+            Add(root);
         }
 
         private void OnMenuButtonClicked(object sender, EventArgs e)
         {
             IsPresented = !IsPresented;
-        }
-
-        private void RefreshPopoverPresented()
-        {
-
         }
 
         private void RefreshMasterSize()
@@ -260,33 +254,51 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        private async void RefreshSplitPresented()
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            if (_master != null)
+            {
+                _master.HeightRequest = _masterContainer.Allocation.Height;
+            }
+        }
+
+        private async void RefreshPopoverPresented(bool animated)
         {
             if (_isPresented)
             {
                 _masterContainer.Visible = true;
-                _masterContainer.WidthRequest = _masterPanelWidth;
             }
 
             var from = (_isPresented) ? 0 : _masterPanelWidth;
             var to = (_isPresented) ? _masterPanelWidth : 0;
 
-            await new FloatAnimation(from, to, TimeSpan.FromSeconds(0.5), true, (f) =>
+            if (animated)
             {
-                Gtk.Application.Invoke(delegate
+                await new FloatAnimation(from, to, TimeSpan.FromSeconds(0.5), true, (f) =>
                 {
-                    _masterContainer.WidthRequest = (int)f;
-                    RefreshMasterSize();
-                });
-            }).Run();
+                    Gtk.Application.Invoke(delegate
+                    {
+                        var w = f < 1 ? 1 : (int)f;
 
-            _masterContainer.WidthRequest = from;
+                        _masterContainer.WidthRequest = w;
+                        RefreshMasterSize();
+                    });
+                }).Run();
+            }
 
             if (!_isPresented)
             {
                 _masterContainer.Visible = false;
-                _masterContainer.WidthRequest = 0;
             }
+        }
+
+        private void RefreshSplitPresented(bool animated)
+        {
+            _masterContainer.WidthRequest = _masterPanelWidth;
+            _master.HeightRequest = _masterContainer.Allocation.Height;
+            RefreshMasterSize();
         }
 
         private void RefreshMaster()
@@ -298,7 +310,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _masterContainer.Add(_master);
 
-            RefreshPresented();
+            RefreshPresented(false);
         }
 
         private void RefreshDetail(Widget newDetail)
@@ -312,11 +324,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _hboxContainer.PackEnd(_detail, true, true, 0);
             _detail.ShowAll();
-        }
-        
-        private void RefreshPopoverDetail()
-        {
-
         }
     }
 }

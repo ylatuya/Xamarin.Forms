@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Controls;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -62,8 +63,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             Element = element;
 
-            UpdateMasterDetail();
-
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
 
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
@@ -105,6 +104,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Add(Control);
 
                     UpdateMasterDetail();
+                    UpdateMasterBehavior();
                     UpdateIsPresented();
                 }
 
@@ -118,8 +118,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (e.PropertyName.Equals("Master", StringComparison.CurrentCultureIgnoreCase) || e.PropertyName.Equals("Detail", StringComparison.CurrentCultureIgnoreCase))
                 UpdateMasterDetail();
-            else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName || e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
+            else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName)
                 UpdateIsPresented();
+            else if (e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
+                UpdateMasterBehavior();
         }
 
         private void UpdateMasterDetail()
@@ -129,28 +131,44 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Platform.GetRenderer(MasterDetailPage.Detail) == null)
                 Platform.SetRenderer(MasterDetailPage.Detail, Platform.CreateRenderer(MasterDetailPage.Detail));
 
-            if (Control != null)
-            {
-                Control.Master = Platform.GetRenderer(MasterDetailPage.Master).Container;
-                Control.Detail = Platform.GetRenderer(MasterDetailPage.Detail).Container;
+            Control.Master = Platform.GetRenderer(MasterDetailPage.Master).Container;
+            Control.Detail = Platform.GetRenderer(MasterDetailPage.Detail).Container;
 
-                if (!string.IsNullOrEmpty(MasterDetailPage.Detail.Title))
-                {
-                    Control.DetailTitleVisibility = true;
-                    Control.DetailTitle = MasterDetailPage.Detail.Title;
-                }
-                else
-                {
-                    Control.DetailTitleVisibility = false;
-                }
+            if (!string.IsNullOrEmpty(MasterDetailPage.Detail.Title))
+            {
+                Control.DetailTitleVisibility = true;
+                Control.DetailTitle = MasterDetailPage.Detail.Title;
+            }
+            else
+            {
+                Control.DetailTitleVisibility = false;
             }
         }
 
         private void UpdateIsPresented()
         {
-            if (Control != null)
+            Control.IsPresented = MasterDetailPage.IsPresented;
+        }
+
+        private void UpdateMasterBehavior()
+        {
+            Control.MasterBehaviorType = GetMasterBehavior(MasterDetailPage.MasterBehavior);
+        }
+
+        private MasterBehaviorType GetMasterBehavior(MasterBehavior masterBehavior)
+        {
+            switch (masterBehavior)
             {
-                Control.IsPresented = MasterDetailPage.IsPresented;
+                case MasterBehavior.Split:
+                case MasterBehavior.SplitOnLandscape:
+                case MasterBehavior.SplitOnPortrait:
+                    return MasterBehaviorType.Split;
+                case MasterBehavior.Popover:
+                    return MasterBehaviorType.Popover;
+                case MasterBehavior.Default:
+                    return MasterBehaviorType.Default;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(masterBehavior));
             }
         }
     }
