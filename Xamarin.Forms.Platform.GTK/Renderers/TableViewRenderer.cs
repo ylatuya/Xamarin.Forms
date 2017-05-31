@@ -31,6 +31,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 SetSource();
                 UpdateRowHeight();
+                UpdateHasUnevenRows();
                 UpdateBackgroundView();
             }
 
@@ -44,7 +45,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (e.PropertyName == TableView.RowHeightProperty.PropertyName)
                 UpdateRowHeight();
             else if (e.PropertyName == TableView.HasUnevenRowsProperty.PropertyName)
+            {
+                UpdateHasUnevenRows();
                 SetSource();
+            }
         }
 
         private void SetSource()
@@ -54,9 +58,30 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateRowHeight()
         {
+            var hasUnevenRows = Element.HasUnevenRows;
+
+            if (hasUnevenRows)
+            {
+                return;
+            }
+
             var rowHeight = Element.RowHeight;
 
             Control.SetRowHeight(rowHeight > 0 ? rowHeight : DefaultRowHeight);
+        }
+
+        private void UpdateHasUnevenRows()
+        {
+            var hasUnevenRows = Element.HasUnevenRows;
+
+            if (hasUnevenRows)
+            {
+                Control.SetHasUnevenRows();
+            }
+            else
+            {
+                UpdateRowHeight();
+            }
         }
 
         private void UpdateBackgroundView()
