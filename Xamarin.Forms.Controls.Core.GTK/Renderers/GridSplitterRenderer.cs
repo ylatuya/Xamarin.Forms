@@ -1,12 +1,12 @@
 ﻿using Gtk;
+using GtkToolkit.Controls;
+using GtkToolkit.GTK.Renderers;
 using System.ComponentModel;
 using Xamarin.Forms;
-using Xamarin.Forms.Control.Core.Controls;
-using Xamarin.Forms.Controls.Core.GTK.Renderers;
 using Xamarin.Forms.Platform.GTK;
 
 [assembly: ExportRenderer(typeof(GridSplitter), typeof(GridSplitterRenderer))]
-namespace Xamarin.Forms.Controls.Core.GTK.Renderers
+namespace GtkToolkit.GTK.Renderers
 {
     public class GridSplitterRenderer : ViewRenderer<GridSplitter, EventBox>
     {
@@ -18,9 +18,10 @@ namespace Xamarin.Forms.Controls.Core.GTK.Renderers
             if (Control == null)
             {
                 _paned = new HPaned();
-                _paned.BorderWidth = 6;
+                _paned.CanFocus = true;
 
                 Add(_paned);
+                _paned.ShowAll();
                 SetNativeControl(this);
             }
 
@@ -56,7 +57,7 @@ namespace Xamarin.Forms.Controls.Core.GTK.Renderers
             if (_paned != null)
             {
                 var content1 = Element.Content1;
-                var nativeContent1 = Platform.GTK.Platform.GetRenderer(content1);
+                var nativeContent1 = Platform.CreateRenderer(content1);
                 _paned.Add1(nativeContent1.Container);
             }
         }
@@ -65,8 +66,8 @@ namespace Xamarin.Forms.Controls.Core.GTK.Renderers
         {
             if (_paned != null)
             {
-                var content2 = Element.Content1;
-                var nativeContent2 = Platform.GTK.Platform.GetRenderer(content2);
+                var content2 = Element.Content2;
+                var nativeContent2 = Platform.CreateRenderer(content2);
                 _paned.Add2(nativeContent2.Container);
             }
         }

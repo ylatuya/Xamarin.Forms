@@ -1,4 +1,6 @@
-﻿namespace Xamarin.Forms.Control.Core.Controls
+﻿using Xamarin.Forms;
+
+namespace GtkToolkit.Controls
 {
     public class DateTimePicker
     {

@@ -1,6 +1,7 @@
 ﻿using GLib;
+using System.Collections.Generic;
+using System.Reflection;
 using Xamarin.Forms.Platform.GTK;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.ControlGallery.GTK
 {
@@ -11,7 +12,11 @@ namespace Xamarin.Forms.ControlGallery.GTK
             ExceptionManager.UnhandledException += OnUnhandledException;
 
             Gtk.Application.Init();
-            Forms.Init();
+            Forms.Init(new List<Assembly>
+            {
+                typeof(GtkToolkit.Controls.GridSplitter).Assembly,
+                typeof(GtkToolkit.GTK.Renderers.GridSplitterRenderer).Assembly
+            });
 
             var app = new Controls.App();
             var window = new FormsWindow();

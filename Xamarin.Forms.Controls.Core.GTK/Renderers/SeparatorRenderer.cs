@@ -1,11 +1,11 @@
-﻿using System;
+﻿using GtkToolkit.Controls;
+using GtkToolkit.GTK.Renderers;
+using System;
 using Xamarin.Forms;
-using Xamarin.Forms.Control.Core.Controls;
-using Xamarin.Forms.Controls.Core.GTK.Renderers;
 using Xamarin.Forms.Platform.GTK;
 
 [assembly: ExportRenderer(typeof(Separator), typeof(SeparatorRenderer))]
-namespace Xamarin.Forms.Controls.Core.GTK.Renderers
+namespace GtkToolkit.GTK.Renderers
 {
     public class SeparatorRenderer : ViewRenderer<Separator, Gtk.Separator>
     {

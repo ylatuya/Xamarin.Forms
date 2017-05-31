@@ -82,13 +82,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xamarin.Forms.Control.Core\Xamarin.Forms.Control.Core.csproj">
+    <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">
       <Project>{5344bcde-de03-4a0f-a53a-0c6f0ed6d860}</Project>
-      <Name>Xamarin.Forms.Control.Core</Name>
+      <Name>GtkToolkit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Xamarin.Forms.Controls.Core.GTK\Xamarin.Forms.Controls.Core.GTK.csproj">
+    <ProjectReference Include="..\Xamarin.Forms.Controls.Core.GTK\GtkToolkit.GTK.csproj">
       <Project>{62af47ab-6144-4ab9-a631-466845d826ee}</Project>
-      <Name>Xamarin.Forms.Controls.Core.GTK</Name>
+      <Name>GtkToolkit.GTK</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.Controls\Xamarin.Forms.Controls.csproj">
       <Project>{cb9c96ce-125c-4a68-b6a1-c3ff1fbf93e1}</Project>

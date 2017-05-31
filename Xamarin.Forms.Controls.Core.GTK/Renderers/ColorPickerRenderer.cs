@@ -1,10 +1,10 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Control.Core.Controls;
-using Xamarin.Forms.Controls.Core.GTK.Renderers;
+﻿using GtkToolkit.Controls;
+using GtkToolkit.GTK.Renderers;
+using Xamarin.Forms;
 using Xamarin.Forms.Platform.GTK;
 
 [assembly: ExportRenderer(typeof(ColorPicker), typeof(ColorPickerRenderer))]
-namespace Xamarin.Forms.Controls.Core.GTK.Renderers
+namespace GtkToolkit.GTK.Renderers
 {
     public class ColorPickerRenderer : ViewRenderer<ColorPicker, Gtk.ColorSelectionDialog>
     {

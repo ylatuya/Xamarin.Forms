@@ -1,9 +1,9 @@
-﻿using Xamarin.Forms;
-using Xamarin.Forms.Control.Core.Controls;
-using Xamarin.Forms.Controls.Core.GTK.Renderers;
+﻿using GtkToolkit.Controls;
+using GtkToolkit.GTK.Renderers;
+using Xamarin.Forms;
 
 [assembly: ExportRenderer(typeof(DateTimePicker), typeof(DateTimePickerRenderer))]
-namespace Xamarin.Forms.Controls.Core.GTK.Renderers
+namespace GtkToolkit.GTK.Renderers
 {
     public class DateTimePickerRenderer
     {
