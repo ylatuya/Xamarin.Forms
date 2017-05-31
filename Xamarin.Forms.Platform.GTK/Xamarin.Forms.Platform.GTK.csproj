@@ -46,6 +46,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\GtkSharp\2.12\lib\gtk-sharp-2.0\glib-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="GLWidget, Version=1.0.3746.36713, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\GLWidget\GLWidget.dll</HintPath>
+    </Reference>
     <Reference Include="gtk-dotnet, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\GtkSharp\2.12\lib\gtk-sharp-2.0\gtk-dotnet.dll</HintPath>
@@ -97,7 +101,6 @@
     <Compile Include="Controls\CustomFrame.cs" />
     <Compile Include="Controls\DatePicker.cs" />
     <Compile Include="Controls\EntryWrapper.cs" />
-    <Compile Include="Controls\GLWidget.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\ImageControl.cs" />
     <Compile Include="Controls\ListView.cs" />
@@ -186,6 +189,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Libs\GLWidget\GLWidget.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Libs\GLWidget\README.txt" />
     <Content Include="Resources\hamburger.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

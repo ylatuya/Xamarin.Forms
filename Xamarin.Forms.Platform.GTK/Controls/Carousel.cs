@@ -2,15 +2,29 @@
 using System.Collections;
 using Container = Gtk.EventBox;
 using System.Collections.Generic;
+using System.Linq;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
+    public class CarouselPage
+    {
+        public Container GtkPage { get; set; }
+        public Xamarin.Forms.Page Page { get; set; }
+
+        public CarouselPage(Container gtkPage, Xamarin.Forms.Page page)
+        {
+            GtkPage = gtkPage;
+            Page = page;
+        }
+    }
+
     public class Carousel : Container
     {
         private IList _itemsSource;
         private int _selectedIndex;
         private Table _root;
-        private List<Container> _pages;
+        private List<CarouselPage> _pages;
         private double _initialPos;
         private bool _animated;
 
@@ -54,10 +68,72 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _root.ModifyBg(StateType.Normal, backgroundColor);
             }
         }
+        
+        public void SetCurrentPage(int selectedIndex)
+        {
+            if(!_pages.Any())
+            {
+                return;
+            }
+
+            SelectedIndex = selectedIndex;
+
+            foreach (var page in _pages)
+            {
+                page.GtkPage.Visible = false;
+            }
+
+            _pages[selectedIndex].GtkPage.Visible = true;
+        }
+
+        public void AddPage(int index, object element)
+        {
+            var page = element as Xamarin.Forms.Page;
+
+            if (page != null)
+            {
+                var gtkPage = Platform.CreateRenderer(page);
+                _pages.Insert(index, new CarouselPage(gtkPage.Container, page));
+                _root.Attach(gtkPage.Container, 0, 1, 0, 1);
+            }
+
+            ItemsSource = _pages;
+        }
+
+        public void RemovePage(object element)
+        {
+            var page = element as Xamarin.Forms.Page;
+
+            if (page != null)
+            {
+                var gtkPage = _pages.FirstOrDefault(p => p.Page == page);
+
+                if (gtkPage != null)
+                {
+                    _pages.Remove(gtkPage);
+                    _root.Remove(gtkPage.GtkPage);
+                }
+            }
+
+            ItemsSource = _pages;
+        }
+
+        public void Reset()
+        {
+            _pages.Clear();
+
+            do
+            {
+                foreach (var children in _root.Children)
+                {
+                    _root.RemoveFromContainer(children);
+                }
+            } while (_root.Children.Length > 0);
+        }
 
         private void BuildCarousel()
         {
-            _pages = new List<Container>();
+            _pages = new List<CarouselPage>();
 
             _root = new Table(1, 1, true);
             Add(_root);
@@ -97,9 +173,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 return;
             }
 
-            _pages.Clear();
-
-            for(int i = 0; i < items.Count; i++)
+            for (int i = 0; i < items.Count; i++)
             {
                 var pageContainer = items[i] as PageContainer;
 
@@ -108,12 +182,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     var page = pageContainer.Page;
                     var gtkPage = Platform.CreateRenderer(page);
 
-                    _pages.Add(gtkPage.Container);
+                    _pages.Add(new CarouselPage(gtkPage.Container, page));
                     _root.Attach(gtkPage.Container, 0, 1, 0, 1);
                 }
             }
 
             SelectedIndex = 0;
+            SetCurrentPage(SelectedIndex);
         }
 
         private void MoveLeft(bool animate = false)
@@ -125,13 +200,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             SelectedIndex--;
 
-            foreach(var page in _pages)
-            {
-                page.Visible = false;
-            }
-
-            _pages[SelectedIndex].Visible = true;
-
+            SetCurrentPage(SelectedIndex);
         }
 
         private void MoveRight(bool animate = false)
@@ -143,12 +212,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             
             SelectedIndex++;
 
-            foreach (var page in _pages)
-            {
-                page.Visible = false;
-            }
-
-            _pages[SelectedIndex].Visible = true;
+            SetCurrentPage(SelectedIndex);
         }
     }
 }

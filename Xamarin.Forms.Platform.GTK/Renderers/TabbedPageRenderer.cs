@@ -212,8 +212,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         pageRenderer.Container,
                         new TabbedPageHeader(page.Title, page.Icon?.ToPixbuf()),
                         i);
-
-                    System.Diagnostics.Debug.WriteLine(page.Title);
                 }
             }
 

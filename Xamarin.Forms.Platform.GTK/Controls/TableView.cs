@@ -1,4 +1,5 @@
 ﻿using Gtk;
+using System;
 using System.Collections.Generic;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -41,6 +42,47 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             foreach (var cell in _cells)
             {
                 cell.HeightRequest = rowHeight;
+            }
+        }
+
+        public void SetHasUnevenRows()
+        {
+            foreach (var cell in _cells)
+            {
+                var rowHeight = GetUnevenRowCellHeight(cell);
+
+                cell.HeightRequest = rowHeight;
+            }
+        }
+
+        private int GetUnevenRowCellHeight(Gtk.Container cell)
+        {
+            int height = -1;
+
+            var formsCell = GetXamarinFormsCell(cell);
+
+            if (formsCell != null)
+            {
+                height = Convert.ToInt32(formsCell.Height);
+            }
+
+            return height;
+        }
+
+        private Cell GetXamarinFormsCell(Container cell)
+        {
+            try
+            {
+                var formsCell = cell
+                   .GetType()
+                   .GetProperty("Cell")
+                   .GetValue(cell, null) as Cell;
+
+                return formsCell;
+            }
+            catch
+            {
+                return null;
             }
         }
 
