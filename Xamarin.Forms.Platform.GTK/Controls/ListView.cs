@@ -6,6 +6,24 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
+    public class ItemTappedEventArgs : EventArgs
+    {
+        private object _item;
+
+        public object Item
+        {
+            get
+            {
+                return _item;
+            }
+        }
+
+        public ItemTappedEventArgs(object item)
+        {
+            _item = item;
+        }
+    }
+
     public class SelectedItemEventArgs : EventArgs
     {
         private object _selectedItem;
@@ -50,6 +68,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Label _refreshLabel;
         private bool _isPullToRequestEnabled;
         private bool _refreshing;
+
+        public delegate void ItemTappedEventHandler(object sender, ItemTappedEventArgs args);
+        public event ItemTappedEventHandler OnItemTapped = null;
 
         public delegate void SelectedItemEventHandler(object sender, SelectedItemEventArgs args);
         public event SelectedItemEventHandler OnSelectedItemChanged = null;
@@ -110,7 +131,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public object SelectedItem
         {
             get { return _selectedItem; }
-            set { _selectedItem = value; }
+            set
+            {
+                if (value != _selectedItem)
+                {
+                    _selectedItem = value;
+                    OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(_selectedItem));
+                }
+            }
         }
 
         public bool IsPullToRequestEnabled
@@ -186,6 +214,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _refreshButton.Visible = !Refreshing;
             _refreshLabel.Visible = Refreshing;
+        }
+
+        public void SetSeletedItem(object selectedItem)
+        {
+            if(selectedItem == null)
+            {
+                return;
+            }
+
+            SelectedItem = selectedItem;
         }
 
         private void BuildListView()
@@ -271,7 +309,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                         {
                             var selectedItem = gtkCell.Cell.BindingContext;
                             SelectedItem = selectedItem;
-                            OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(SelectedItem));
+                            OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
                         }
                     };
 
