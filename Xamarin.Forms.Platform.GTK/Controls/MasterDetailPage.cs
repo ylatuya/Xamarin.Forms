@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using Gdk;
 using Gtk;
+using System;
 using Xamarin.Forms.Platform.GTK.Animations;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -12,26 +13,41 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         Split
     }
 
-    public class MasterDetailPage : VBox
+    public class MasterDetailPage : Fixed
     {
-        public const int DefaultWidth = 300;
-        public const int DefaultToolbarSize = 48;
-
-        private MasterBehaviorType _masterBehaviorType;
+        private const int DefaultMasterWidth = 300;
+        private const int IsPresentedAnimationMilliseconds = 300;
 
         private bool _isPresented;
+        private MasterDetailMasterTitleContainer _titleContainer;
+        private VBox _masterContainer;
         private Widget _master;
         private Widget _detail;
-        private Gdk.Color _toolbarForeground;
-        private Gdk.Color _toolbarBackground;
-        private HBox _hboxContainer;
-        private Fixed _masterContainer;
-        private int _masterPanelWidth = DefaultWidth;
-        private Gtk.Button _menuButton;
-        private HBox _masterToolbar;
-        private Gtk.Label _detailTitleLabel;
+        private MasterBehaviorType _masterBehaviorType;
+        private bool _displayTitle;
+        private bool _animationsEnabled;
 
-        private System.Action RefreshPresented;
+        public MasterDetailPage()
+        {
+            _animationsEnabled = false;
+            _masterBehaviorType = MasterBehaviorType.Default;
+
+            // Master Stuff
+            _masterContainer = new VBox();
+            _titleContainer = new MasterDetailMasterTitleContainer();
+            _titleContainer.HamburguerClicked += OnHamburgerClicked;
+            _titleContainer.HeightRequest = GtkToolbarConstants.ToolbarHeight;
+            _masterContainer.PackStart(_titleContainer, false, true, 0);
+
+            _master = new EventBox();
+            _masterContainer.PackEnd(_master, false, true, 0);
+
+            // Detail Stuff
+            _detail = new EventBox();
+
+            Add(_detail);
+            Add(_masterContainer);
+        }
 
         public MasterBehaviorType MasterBehaviorType
         {
@@ -39,45 +55,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 return _masterBehaviorType;
             }
+
             set
             {
                 if (_masterBehaviorType != value)
                 {
                     _masterBehaviorType = value;
-
-                    RefreshBehavior();
-                }
-            }
-        }
-
-        public bool IsPresented
-        {
-            get
-            {
-                return _isPresented;
-            }
-            set
-            {
-                if (_isPresented != value)
-                {
-                    _isPresented = value;
-
-                    RefreshPresented();
-                }
-            }
-        }
-
-        public Widget Detail
-        {
-            get
-            {
-                return _detail;
-            }
-            set
-            {
-                if (_detail != value)
-                {
-                    RefreshDetail(value);
                 }
             }
         }
@@ -88,235 +71,217 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 return _master;
             }
+
             set
             {
-                if (_master != value)
-                {
-                    _master = value;
-                    RefreshMaster();
-                }
+                RefreshMaster(value);
             }
         }
 
-        public int MasterPanelWidth
+        public Widget Detail
         {
             get
             {
-                return _masterPanelWidth;
+                return _detail;
             }
+
             set
             {
-                _masterPanelWidth = value;
-                RefreshMasterSize();
+                RefreshDetail(value);
             }
         }
 
-        public string DetailTitle
+        public bool IsPresented
         {
             get
             {
-                return _detailTitleLabel.Text;
+                return _isPresented;
             }
+
             set
             {
-                _detailTitleLabel.Text = value;
+                RefreshPresented(value);
+                NotifyIsPresentedChanged();
             }
         }
 
-        public Gdk.Color ToolbarForeground
+        public string MasterTitle
         {
             get
             {
-                return _toolbarForeground;
+                return _titleContainer.Title;
             }
+
             set
             {
-                _toolbarForeground = value;
-                _detailTitleLabel.ModifyFg(StateType.Normal, value);
+                _titleContainer.Title = value;
             }
         }
 
-        public Gdk.Color ToolbarBackground
+        public bool DisplayTitle
         {
             get
             {
-                return _toolbarBackground;
-            }
-            set
-            {
-                _toolbarBackground = value;
-                _menuButton.ModifyBg(StateType.Normal, value);
-                _masterToolbar.ModifyBg(StateType.Normal, value);
-            }
-        }
-
-        public bool DetailTitleVisibility
-        {
-            get
-            {
-                return _detailTitleLabel.Visible;
+                return _displayTitle;
             }
 
             set
             {
-                _detailTitleLabel.Visible = value;
+                RefreshDisplayTitle(value);
             }
         }
 
-        public bool MasterToolbarVisibility
+        public event EventHandler IsPresentedChanged;
+
+        public static Pixbuf HamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
-            get
-            {
-                return _masterToolbar.Visible;
-            }
+            base.OnSizeAllocated(allocation);
 
-            set
-            {
-                _masterToolbar.Visible = value;
-            }
-        }
+            _master.WidthRequest = DefaultMasterWidth;
+            _master.HeightRequest = _detail.HeightRequest = allocation.Height;
 
-        public bool ContentTogglePaneButtonVisibility
-        {
-            get
-            {
-                return _menuButton.Visible;
-            }
-
-            set
-            {
-                _menuButton.Visible = value;
-            }
-        }
-
-        public MasterDetailPage()
-        {
-            RefreshBehavior();
-            RefreshPresented();
-        }
-
-        private void RefreshBehavior()
-        {
             switch (_masterBehaviorType)
             {
-                case MasterBehaviorType.Popover:
-                    RefreshPresented = RefreshPopoverPresented;
+                case MasterBehaviorType.Split:
+                    _detail.WidthRequest = allocation.Width - DefaultMasterWidth;
+                    _detail.MoveTo(_master.WidthRequest, 0);
                     break;
                 case MasterBehaviorType.Default:
-                case MasterBehaviorType.Split:
-                default:
-                    var root = new VBox();
-                    var header = new HBox();
-                    _menuButton = new Gtk.Button();
-                    _menuButton.WidthRequest = DefaultToolbarSize;
-                    _menuButton.HeightRequest = DefaultToolbarSize;
-                    _menuButton.Label = null;
-                    _menuButton.CanFocus = false;
-                    _menuButton.Relief = ReliefStyle.None;
-                    var image = new Gtk.Image(new Gdk.Pixbuf("./Resources/hamburger.png"));
-                    _menuButton.Image = image;
-                    _menuButton.Clicked += OnMenuButtonClicked;
-                    header.PackStart(_menuButton, false, false, 0);
-                    _masterToolbar = new HBox();
-                    _masterToolbar.HeightRequest = DefaultToolbarSize;
-                    _detailTitleLabel = new Gtk.Label();
-                    _masterToolbar.PackStart(_detailTitleLabel, false, false, 25);
-                    header.PackEnd(_masterToolbar);
-                    root.PackStart(header, false, false, 0);
-                    _hboxContainer = new HBox();
-                    root.PackEnd(_hboxContainer);
-                    _masterContainer = new Fixed();
-                    _masterContainer.BorderWidth = 0;
-                    _masterContainer.SizeAllocated += MasterContainer_SizeAllocated;
-                    _masterContainer.HasWindow = true;
-                    _hboxContainer.PackStart(_masterContainer, false, false, 0);
-                    Add(root);
-                    RefreshPresented = RefreshSplitPresented;
+                case MasterBehaviorType.Popover:
+                    _detail.WidthRequest = allocation.Width;
+                    _detail.MoveTo(0, 0);
                     break;
             }
         }
 
-        private void MasterContainer_SizeAllocated(object o, SizeAllocatedArgs args)
+        protected override void OnShown()
         {
-            RefreshMasterSize();
+            base.OnShown();
+
+            _animationsEnabled = true;
         }
 
-        private void OnMenuButtonClicked(object sender, EventArgs e)
-        {
-            IsPresented = !IsPresented;
-        }
-
-        private void RefreshPopoverPresented()
-        {
-
-        }
-
-        private void RefreshMasterSize()
+        private void RefreshMaster(Widget newMaster)
         {
             if (_master != null)
             {
-                _master.WidthRequest = _masterPanelWidth;
-                _master.HeightRequest = _masterContainer.Allocation.Height;
-            }
-        }
-
-        private async void RefreshSplitPresented()
-        {
-            if (_isPresented)
-            {
-                _masterContainer.Visible = true;
-                _masterContainer.WidthRequest = _masterPanelWidth;
+                _masterContainer.RemoveFromContainer(_master);
             }
 
-            var from = (_isPresented) ? 0 : _masterPanelWidth;
-            var to = (_isPresented) ? _masterPanelWidth : 0;
-
-            await new FloatAnimation(from, to, TimeSpan.FromSeconds(0.5), true, (f) =>
-            {
-                Gtk.Application.Invoke(delegate
-                {
-                    _masterContainer.WidthRequest = (int)f;
-                    RefreshMasterSize();
-                });
-            }).Run();
-
-            _masterContainer.WidthRequest = from;
-
-            if (!_isPresented)
-            {
-                _masterContainer.Visible = false;
-                _masterContainer.WidthRequest = 0;
-            }
-        }
-
-        private void RefreshMaster()
-        {
-            if (_masterContainer.Children.Length > 0)
-            {
-                _masterContainer.Remove(_masterContainer.Children.First());
-            }
-
-            _masterContainer.Add(_master);
-
-            RefreshPresented();
+            _master = newMaster;
+            _masterContainer.PackEnd(newMaster, false, true, 0);
+            _master.ShowAll();
         }
 
         private void RefreshDetail(Widget newDetail)
         {
             if (_detail != null)
             {
-                _hboxContainer.Remove(_detail);
+                this.RemoveFromContainer(_detail);
             }
+
+            Remove(_masterContainer);
 
             _detail = newDetail;
 
-            _hboxContainer.PackEnd(_detail, true, true, 0);
+            Add(_detail);
+            Add(_masterContainer);
+
             _detail.ShowAll();
         }
-        
-        private void RefreshPopoverDetail()
-        {
 
+        private async void RefreshPresented(bool isPresented)
+        {
+            _isPresented = isPresented;
+
+            if (_masterBehaviorType == MasterBehaviorType.Split) return;
+
+            if (_animationsEnabled)
+            {
+                var from = (_isPresented) ? -DefaultMasterWidth : 0;
+                var to = (_isPresented) ? 0 : -DefaultMasterWidth;
+
+                await new FloatAnimation(from, to, TimeSpan.FromMilliseconds(IsPresentedAnimationMilliseconds), true, (f) =>
+                {
+                    Gtk.Application.Invoke(delegate
+                    {
+                        _masterContainer.MoveTo(f, 0);
+                    });
+                }).Run();
+            }
+            else
+            {
+                _masterContainer.MoveTo(_isPresented ? 0 : -DefaultMasterWidth, 0);
+            }
+        }
+
+        private void RefreshDisplayTitle(bool value)
+        {
+            _displayTitle = value;
+
+            _masterContainer.Remove(_titleContainer);
+
+            if (_displayTitle)
+            {
+                _masterContainer.PackStart(_titleContainer, false, true, 0);
+            }
+        }
+
+        private void OnHamburgerClicked(object sender, EventArgs e)
+        {
+            IsPresented = !IsPresented;
+        }
+
+        private void NotifyIsPresentedChanged()
+        {
+            IsPresentedChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private class MasterDetailMasterTitleContainer : EventBox
+        {
+            private HBox _root;
+            private ToolButton _hamburguerButton;
+            private Gtk.Label _titleLabel;
+
+            public MasterDetailMasterTitleContainer()
+            {
+                _root = new HBox();
+
+                var hamburguerIcon = new Gtk.Image(Controls.MasterDetailPage.HamburgerPixBuf);
+                _hamburguerButton = new ToolButton(hamburguerIcon, string.Empty);
+                _hamburguerButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                _hamburguerButton.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
+                _hamburguerButton.Clicked += OnHamburguerButtonClicked;
+
+                _titleLabel = new Gtk.Label();
+
+                _root.PackStart(_hamburguerButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
+                _root.PackStart(_titleLabel, false, false, 25);
+
+                Add(_root);
+            }
+
+            public string Title
+            {
+                get
+                {
+                    return _titleLabel.Text;
+                }
+
+                set
+                {
+                    _titleLabel.Text = value ?? string.Empty;
+                }
+            }
+
+            public event EventHandler HamburguerClicked;
+
+            private void OnHamburguerButtonClicked(object sender, EventArgs e)
+            {
+                HamburguerClicked?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }
