@@ -254,7 +254,7 @@ namespace Xamarin.Forms.Platform.GTK
 
                 navigationItems.Add(backButtonItem);
             }
-            else if (_parentMasterDetailPage != null && !_parentMasterDetailPage.ShouldShowSplitMode)
+            else if (_parentMasterDetailPage != null && _parentMasterDetailPage.ShouldShowToolbarButton())
             {
                 var image = new Gtk.Image(Controls.MasterDetailPage.HamburgerPixBuf);
                 ToolButton hamburguerButton = new ToolButton(image, string.Empty);
