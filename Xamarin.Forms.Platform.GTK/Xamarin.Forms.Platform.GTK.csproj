@@ -118,6 +118,7 @@
     <Compile Include="Controls\TableView.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="Controls\Page.cs" />
+    <Compile Include="Controls\WebView.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportCellAttribute.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
@@ -188,23 +189,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <Content Include="Libs\webkit-sharp\webkit-sharp.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Libs\webkit-sharp\webkit-sharp.dll.config" />
     <None Include="OpenTK.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="webkit-sharp.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Libs\GLWidget\GLWidget.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Libs\GLWidget\GLWidget.dll" />
     <Content Include="Libs\GLWidget\README.txt" />
     <Content Include="Libs\webkit-sharp\README.txt" />
-    <Content Include="Libs\webkit-sharp\webkit-sharp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Libs\webkit-sharp\webkit-sharp.dll" />
     <Content Include="Resources\hamburger.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
