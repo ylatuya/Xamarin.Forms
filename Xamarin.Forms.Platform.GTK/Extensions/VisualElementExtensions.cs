@@ -27,8 +27,9 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             Element current = self;
             Element parent;
 
-            while ((parent = self.RealParent) != null)
+            while (!Application.IsApplicationOrNull(self.RealParent))
             {
+                parent = self.RealParent;
                 yield return parent;
             }
         }
