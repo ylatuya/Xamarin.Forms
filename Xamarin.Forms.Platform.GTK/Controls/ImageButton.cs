@@ -111,7 +111,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             try
             {
-                var iconPixBuf = new Gdk.Pixbuf(fileName);
+                var iconPixBuf = new Pixbuf(fileName);
                 ImageWidget.Pixbuf = iconPixBuf;
             }
             catch (Exception ex)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using Gdk;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -35,17 +34,22 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (e.OldElement != null)
             {
+                e.OldElement.ScrollToRequested -= OnElementScrollToRequested;
+
                 var templatedItems = ((ITemplatedItemsView<Cell>)e.OldElement).TemplatedItems;
                 templatedItems.CollectionChanged -= OnCollectionChanged;
             }
 
             if (e.NewElement != null)
             {
+                e.NewElement.ScrollToRequested += OnElementScrollToRequested;
+
                 if (Control == null)
                 {
                     _listView = new Controls.ListView();
-                    _listView.OnSelectedItemChanged += OnSelectedItemChanged;
+                    _listView.OnItemTapped += OnItemTapped;
                     _listView.OnRefresh += OnRefresh;
+
                     SetNativeControl(_listView);
                 }
 
@@ -118,7 +122,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 if (_listView != null)
                 {
-                    _listView.OnSelectedItemChanged -= OnSelectedItemChanged;
+                    _listView.OnItemTapped -= OnItemTapped;
                     _listView.OnRefresh -= OnRefresh;
                 }
 
@@ -428,7 +432,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private Gtk.Container GetCell(Cell cell)
         {
             var renderer =
-                (CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
+                (Cells.CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
 
             var realCell = renderer.GetCell(cell, null, _listView);
 
@@ -445,16 +449,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateItems();
         }
 
-        private void OnSelectedItemChanged(object sender, Controls.SelectedItemEventArgs args)
-        {
-            if (_listView != null && _listView.SelectedItem != null)
-            {
-                ElementController.SetValueFromRenderer(
-                    ListView.SelectedItemProperty,
-                    _listView.SelectedItem);
-            }
-        }
-
         private void OnRefresh(object sender, EventArgs args)
         {
             if(Element == null)
@@ -467,6 +461,94 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (refeshCommand != null)
             {
                 refeshCommand.Execute(null);
+            }
+        }
+
+        private void OnElementScrollToRequested(object sender, ScrollToRequestedEventArgs e)
+        {
+            Cell cell;
+            int position = 0;
+            int height = 0;
+            var scrollArgs = (ITemplatedItemsListScrollToRequestedEventArgs)e;
+
+            var templatedItems = TemplatedItemsView.TemplatedItems;
+
+            if (Element.IsGroupingEnabled)
+            {
+                var results = templatedItems.GetGroupAndIndexOfItem(scrollArgs.Group, scrollArgs.Item);
+
+                if (results.Item1 == -1 || results.Item2 == -1)
+                    return;
+
+                var group = templatedItems.GetGroup(results.Item1);
+                cell = group[results.Item2];
+                position = templatedItems.GetGlobalIndexForGroup(group);
+            }
+            else
+            {
+                position = templatedItems.GetGlobalIndexOfItem(scrollArgs.Item);
+
+                if (position == -1)
+                    return;
+
+                cell = templatedItems[position];
+            }
+
+            foreach (var item in Control.Items)
+            {
+                height += item.Allocation.Height;
+
+                if (((CellBase)item).Cell == cell)
+                {
+                    break;
+                }
+            }
+
+            var cellHeight = (int)cell.RenderHeight;
+            var y = 0;
+
+            if (e.Position == ScrollToPosition.MakeVisible)
+            {
+                Control.Vadjustment.Value = height;
+                return;
+            }
+
+            var listHeight = _listView.Allocation.Height; 
+
+            if (e.Position == ScrollToPosition.Start)
+                y = height;
+            if (e.Position == ScrollToPosition.Center)
+                y = height - listHeight / 2;
+            else if (e.Position == ScrollToPosition.End)
+                y = height - listHeight + cellHeight;
+
+            Control.Vadjustment.Value = y;
+        }
+
+        private void OnItemTapped(object sender, Controls.ItemTappedEventArgs args)
+        {
+            if (Element == null)
+                return;
+
+            var templatedItems = TemplatedItemsView.TemplatedItems;
+            var index = -1;
+
+            if (Element.IsGroupingEnabled)
+            {
+                int selectedItemIndex = templatedItems.GetGlobalIndexOfItem(args.Item);
+                var leftOver = 0;
+                int groupIndex = templatedItems.GetGroupIndexFromGlobal(selectedItemIndex, out leftOver);
+
+                index = selectedItemIndex - (groupIndex + 1);
+            }
+            else
+            {
+                index = templatedItems.GetGlobalIndexOfItem(args.Item);
+            }
+
+            if (index > -1)
+            {
+                Element.NotifyRowTapped(index, cell: null);
             }
         }
     }

@@ -78,6 +78,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\webkit-sharp\webkit-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\BaseAnimation.cs" />
@@ -170,6 +174,7 @@
     <Compile Include="Renderers\TabbedPageRenderer.cs" />
     <Compile Include="Renderers\TableViewRenderer.cs" />
     <Compile Include="Renderers\TimePickerRenderer.cs" />
+    <Compile Include="Renderers\WebViewRenderer.cs" />
     <Compile Include="ResourcesProvider.cs" />
     <Compile Include="ViewRenderer.cs" />
     <Compile Include="VisualElementPackager.cs" />
@@ -184,6 +189,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Content Include="Libs\webkit-sharp\webkit-sharp.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="OpenTK.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -194,6 +202,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Libs\GLWidget\README.txt" />
+    <Content Include="Libs\webkit-sharp\README.txt" />
+    <Content Include="Libs\webkit-sharp\webkit-sharp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\hamburger.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
