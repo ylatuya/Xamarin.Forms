@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Xamarin.Forms.Platform.GTK.Extensions
 {
@@ -19,6 +21,18 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
 
             return renderer;
         }
+
+        internal static IEnumerable<Element> GetParentsPath(this VisualElement self)
+        {
+            Element current = self;
+            Element parent;
+
+            while ((parent = self.RealParent) != null)
+            {
+                yield return parent;
+            }
+        }
+
 
         internal static void Cleanup(this VisualElement self)
         {

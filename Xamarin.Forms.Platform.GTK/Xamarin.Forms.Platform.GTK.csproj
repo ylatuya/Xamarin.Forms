@@ -132,6 +132,7 @@
     <Compile Include="GtkIsolatedStorageFile.cs" />
     <Compile Include="GtkPlatformServices.cs" />
     <Compile Include="GtkTicker.cs" />
+    <Compile Include="GtkToolbarConstants.cs" />
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IDesiredSizeProvider.cs" />
