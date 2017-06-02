@@ -142,6 +142,9 @@
     <Compile Include="IDesiredSizeProvider.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="GtkToolbarTracker.cs" />
+    <Compile Include="Packagers\LayoutElementPackager.cs" />
+    <Compile Include="Packagers\PageElementPackager.cs" />
+    <Compile Include="Packagers\VisualElementPackager.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PlatformConfigurationExtensions.cs" />
     <Compile Include="PlatformEffect.cs" />
@@ -177,7 +180,6 @@
     <Compile Include="Renderers\WebViewRenderer.cs" />
     <Compile Include="ResourcesProvider.cs" />
     <Compile Include="ViewRenderer.cs" />
-    <Compile Include="VisualElementPackager.cs" />
     <Compile Include="VisualElementRenderer.cs" />
     <Compile Include="VisualElementTracker.cs" />
   </ItemGroup>

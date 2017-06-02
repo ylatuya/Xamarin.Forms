@@ -1,12 +1,12 @@
 ﻿using System;
-using Container = Gtk.EventBox;
-using System.ComponentModel;
-using System.Collections.Specialized;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using Xamarin.Forms.Internals;
-using System.Linq;
+using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -54,6 +54,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             _appeared = true;
             Page.SendAppearing();
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            SetElementSize(new Size(allocation.Width, allocation.Height));
         }
 
         protected override void OnDestroyed()
