@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Packagers;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -10,7 +11,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private bool _disposed;
         private bool _appeared;
-        private VisualElementPackager _packager;
+        private PageElementPackager _packager;
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
         public PageRenderer()
@@ -95,7 +96,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (_appeared || _disposed)
                 return;
 
-            _packager = new VisualElementPackager(this);
+            _packager = new PageElementPackager(this);
             _packager.Load();
 
             UpdateBackgroundColor();

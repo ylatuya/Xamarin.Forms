@@ -1,9 +1,9 @@
 ﻿using Gtk;
 using System.Collections;
-using Container = Gtk.EventBox;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {

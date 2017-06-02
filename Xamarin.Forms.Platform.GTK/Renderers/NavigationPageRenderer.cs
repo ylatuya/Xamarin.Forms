@@ -15,7 +15,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private bool _disposed;
         private bool _appeared;
         private Stack<NavigationChildPage> _currentStack;
-        private VisualElementPackager _packager;
         private VisualElementTracker<Page, Container> _tracker;
 
         IPageController PageController => Element as IPageController;
@@ -72,12 +71,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Element.PropertyChanged -= HandlePropertyChanged;
                 }
 
-                if (_packager != null)
-                {
-                    _packager.Dispose();
-                    _packager = null;
-                }
-
                 _disposed = true;
             }
 
@@ -86,9 +79,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnShown()
         {
-            _packager = new VisualElementPackager(this);
-            _packager.Load();
-
             Platform.NativeToolbarTracker.Navigation = Element;
 
             if (_appeared)
@@ -272,20 +262,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             var pageRenderer = Platform.GetRenderer(page);
 
-            pageRenderer.SetElementSize(new Size(Element.Bounds.Width, Element.Bounds.Height));
-            page.Layout(new Rectangle(0, 0, Element.Bounds.Width, Element.Bounds.Height));
-
             Control.Attach(pageRenderer.Container, 0, 1, 0, 1);
-
-            if (Control.Children != null)
-            {
-                foreach (var children in Control.Children)
-                {
-                    children.ShowAll();
-                }
-
-                Control.ShowAll();
-            }
+            pageRenderer.Container.ShowAll();
 
             (page as IPageController)?.SendAppearing();
 

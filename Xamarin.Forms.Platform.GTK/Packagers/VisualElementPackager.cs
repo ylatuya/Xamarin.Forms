@@ -1,18 +1,19 @@
 ﻿using System;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
-namespace Xamarin.Forms.Platform.GTK
+namespace Xamarin.Forms.Platform.GTK.Packagers
 {
-    public class VisualElementPackager : IDisposable
+    public class VisualElementPackager<TElementRenderer> : IDisposable 
+        where TElementRenderer : class, IVisualElementRenderer
     {
         private bool _isDisposed;
+
         private VisualElement _element;
 
-        private IElementController ElementController => Renderer.Element as IElementController;
+        protected IElementController ElementController => Renderer.Element as IElementController;
 
-        protected IVisualElementRenderer Renderer { get; set; }
+        protected TElementRenderer Renderer { get; set; }
 
-        public VisualElementPackager(IVisualElementRenderer renderer)
+        public VisualElementPackager(TElementRenderer renderer)
         {
             if (renderer == null)
                 throw new ArgumentNullException(nameof(renderer));
@@ -62,40 +63,15 @@ namespace Xamarin.Forms.Platform.GTK
             Platform.SetRenderer(view, viewRenderer);
 
             Gtk.Container container = Renderer.Container;
-            Controls.Page page = null;
-
-            if (Renderer is Renderers.NavigationPageRenderer)
-            {
-                return;
-            }
-
-            if (Renderer is Renderers.LayoutRenderer)
-            {
-                var fixedControl = (Renderer as Renderers.LayoutRenderer).Control;
-                container = fixedControl;
-                container.Add(viewRenderer.Container);
-            }
-            else if (Renderer is Renderers.PageRenderer)
-            {
-                page = (Renderer as Renderers.PageRenderer).Control;
-
-                page.Content = viewRenderer.Container;
-            }
-            else
-                container.Add(viewRenderer.Container);
-           
+            container.Add(viewRenderer.Container);
             viewRenderer.Container.ShowAll();
         }
 
         protected virtual void OnChildRemoved(VisualElement view)
         {
             var viewRenderer = Platform.GetRenderer(view);
-
-            if (viewRenderer != null)
-            {
-                var parent = viewRenderer.Container.Parent;
-                parent.RemoveFromContainer(viewRenderer.Container);
-            }
+            Gtk.Container container = Renderer.Container;
+            container.Remove(viewRenderer.Container);
         }
 
         private void SetElement(VisualElement oldElement, VisualElement newElement)
@@ -116,7 +92,6 @@ namespace Xamarin.Forms.Platform.GTK
                 newElement.ChildrenReordered += OnChildReordered;
             }
         }
-
         private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs args)
         {
             if (args.NewElement == _element)
@@ -138,7 +113,7 @@ namespace Xamarin.Forms.Platform.GTK
             if (view != null)
                 OnChildRemoved(view);
         }
-        
+
         private void OnChildReordered(object sender, EventArgs e)
         {
             // TODO
