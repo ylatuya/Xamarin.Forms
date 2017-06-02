@@ -4,24 +4,56 @@ using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class WebViewRenderer : ViewRenderer<WebView, WebKit.WebView>, IWebViewDelegate
+    public class WebViewRenderer : ViewRenderer<WebView, Controls.WebView>, IWebViewDelegate, IEffectControlProvider
     {
         private bool _disposed;
         private bool _ignoreSourceChanges;
         private WebNavigationEvent _lastBackForwardEvent;
         private WebNavigationEvent _lastEvent;
 
-        IWebViewController ElementController => Element;
+        IWebViewController WebViewController => Element;
 
-        public void LoadHtml(string html, string baseUrl)
+        void IEffectControlProvider.RegisterEffect(Effect effect)
         {
-            if (html != null)
-                Control.MainFrame.LoadString(html, string.Empty, string.Empty, baseUrl);
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                platformEffect.SetContainer(Container);
         }
 
-        public void LoadUrl(string url)
+        void IWebViewDelegate.LoadHtml(string html, string baseUrl)
         {
-            Control.Open(url);
+            if (string.IsNullOrEmpty(html))
+            {
+                var urlWebViewSource = Element.Source as HtmlWebViewSource;
+
+                if (urlWebViewSource != null)
+                {
+                    html = urlWebViewSource.Html;
+                }
+            }
+
+            if (Control != null)
+            {
+                Control.LoadString(html, baseUrl);
+            }
+        }
+
+        void IWebViewDelegate.LoadUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                var urlWebViewSource = Element.Source as UrlWebViewSource;
+
+                if (urlWebViewSource != null)
+                {
+                    url = urlWebViewSource.Url;
+                }
+            }
+
+            if (Control != null)
+            {
+                Control.Open(url);
+            }
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<WebView> e)
@@ -32,17 +64,30 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    var webView = new WebKit.WebView();
-                    SetNativeControl(webView);
+                    try
+                    {
+                        Control = new Controls.WebView();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("WebView loading", $"WebView load failed: {ex}");
+                    }
 
-                    Control.LoadFinished += OnLoadFinished;
-                    ElementController.EvalRequested += OnEvalRequested;
-                    ElementController.GoBackRequested += OnGoBackRequested;
-                    ElementController.GoForwardRequested += OnGoForwardRequested;
+                    SetNativeControl(Control);
+
+                    if (Control != null)
+                    {
+                        Control.Browser.LoadFinished += OnLoadFinished;
+                    }
+
+                    WebViewController.GoBackRequested += OnGoBackRequested;
+                    WebViewController.GoForwardRequested += OnGoForwardRequested;
                 }
             }
 
             Load();
+
+            EffectUtilities.RegisterEffectControlProvider(this, e.OldElement, e.NewElement);
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -59,10 +104,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 _disposed = true;
 
-                Control.LoadFinished -= OnLoadFinished;
-                ElementController.EvalRequested -= OnEvalRequested;
-                ElementController.GoBackRequested -= OnGoBackRequested;
-                ElementController.GoForwardRequested -= OnGoForwardRequested;
+                Control.Browser.LoadFinished -= OnLoadFinished;
+                WebViewController.GoBackRequested -= OnGoBackRequested;
+                WebViewController.GoForwardRequested -= OnGoForwardRequested;
             }
 
             base.Dispose(disposing);
@@ -78,29 +122,35 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateCanGoBackForward();
         }
 
-        private void OnEvalRequested(object sender, EvalRequested eventArg)
-        {
-            // TODO:
-        }
-
         private void UpdateCanGoBackForward()
         {
             if (Element == null)
                 return;
 
-            ElementController.CanGoBack = Control.CanGoBack();
-            ElementController.CanGoForward = Control.CanGoForward();
+            if (Control != null)
+            {
+                WebViewController.CanGoBack = Control.Browser.CanGoBack();
+                WebViewController.CanGoForward = Control.Browser.CanGoForward();
+            }
         }
 
         private void OnLoadFinished(object o, WebKit.LoadFinishedArgs args)
         {
+            if (Control == null)
+            {
+                return;
+            }
+
             _ignoreSourceChanges = true;
             ElementController?.SetValueFromRenderer(WebView.SourceProperty,
-                new UrlWebViewSource { Url = Control.Uri });
+                new UrlWebViewSource { Url = Control.Browser.Uri });
             _ignoreSourceChanges = false;
 
             _lastEvent = _lastBackForwardEvent;
-            ElementController?.SendNavigated(new WebNavigatedEventArgs(_lastEvent, Element?.Source, Control.Uri,
+            WebViewController?.SendNavigated(new WebNavigatedEventArgs(
+                _lastEvent,
+                Element?.Source,
+                Control.Browser.Uri,
                 WebNavigationResult.Success));
 
             UpdateCanGoBackForward();
@@ -108,10 +158,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnGoBackRequested(object sender, EventArgs eventArgs)
         {
-            if (Control.CanGoBack())
+            if (Control == null)
+            {
+                return;
+            }
+
+            if (Control.Browser.CanGoBack())
             {
                 _lastBackForwardEvent = WebNavigationEvent.Back;
-                Control.GoBack();
+                Control.Browser.GoBack();
             }
 
             UpdateCanGoBackForward();
@@ -119,10 +174,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnGoForwardRequested(object sender, EventArgs eventArgs)
         {
-            if (Control.CanGoForward())
+            if (Control == null)
+            {
+                return;
+            }
+
+            if (Control.Browser.CanGoForward())
             {
                 _lastBackForwardEvent = WebNavigationEvent.Forward;
-                Control.GoForward();
+                Control.Browser.GoForward();
             }
 
             UpdateCanGoBackForward();
