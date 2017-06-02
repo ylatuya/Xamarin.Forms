@@ -44,6 +44,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportRenderer(typeof(TabbedPage), typeof(TabbedPageRenderer))]
 [assembly: ExportRenderer(typeof(TableView), typeof(TableViewRenderer))]
 [assembly: ExportRenderer(typeof(TimePicker), typeof(TimePickerRenderer))]
+[assembly: ExportRenderer(typeof(WebView), typeof(WebViewRenderer))]
 
 [assembly: ExportCell(typeof(Cell), typeof(CellRenderer))]
 [assembly: ExportCell(typeof(Xamarin.Forms.EntryCell), typeof(EntryCellRenderer))]
