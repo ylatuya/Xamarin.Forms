@@ -27,7 +27,7 @@ namespace GtkToolkit.GTK.Renderers
 
             if (e.NewElement != null)
             {
-                RecreateContainer();
+                RecreateGridSplitter();
                 UpdateContent1();
                 UpdateContent2();
             }
@@ -38,8 +38,8 @@ namespace GtkToolkit.GTK.Renderers
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == GridSplitter.OrientationProperty.PropertyName)
-                RecreateContainer();
-            if (e.PropertyName == GridSplitter.Content1Property.PropertyName)
+                RecreateGridSplitter();
+            else if (e.PropertyName == GridSplitter.Content1Property.PropertyName)
                 UpdateContent1();
             else if (e.PropertyName == GridSplitter.Content2Property.PropertyName)
                 UpdateContent2();
@@ -62,8 +62,12 @@ namespace GtkToolkit.GTK.Renderers
             if (_paned != null)
             {
                 var content1 = Element.Content1;
-                var nativeContent1 = Platform.CreateRenderer(content1);
-                _paned.Pack1(nativeContent1.Container, true, true);
+
+                if (content1 != null)
+                {
+                    var nativeContent1 = Platform.CreateRenderer(content1);
+                    _paned.Pack1(nativeContent1.Container, true, true);
+                }
             }
         }
 
@@ -72,12 +76,16 @@ namespace GtkToolkit.GTK.Renderers
             if (_paned != null)
             {
                 var content2 = Element.Content2;
-                var nativeContent2 = Platform.CreateRenderer(content2);
-                _paned.Pack2(nativeContent2.Container, true, true);
+
+                if (content2 != null)
+                {
+                    var nativeContent2 = Platform.CreateRenderer(content2);
+                    _paned.Pack2(nativeContent2.Container, true, true);
+                }
             }
         }
 
-        private void RecreateContainer()
+        private void RecreateGridSplitter()
         {
             if (_paned != null)
             {

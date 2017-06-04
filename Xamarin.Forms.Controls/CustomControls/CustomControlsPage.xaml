@@ -9,7 +9,9 @@
             <StackLayout>
                 <Button x:Name="ColorPickerBtn" Text="ColorPicker" />
                 <Button x:Name="ExpanderBtn" Text="Expander" />
+                <Button x:Name="GridSplitterBtn" Text="GridSplitter" />
                 <Button x:Name="HyperLinkBtn" Text="HyperLink" />
+                <Button x:Name="SeparatorBtn" Text="Separator" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

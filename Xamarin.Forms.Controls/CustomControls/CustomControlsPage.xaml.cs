@@ -10,7 +10,9 @@ namespace Xamarin.Forms.Controls.CustomControls
 
             ColorPickerBtn.Clicked += (sender, args) => Navigation.PushAsync(new ColorPickerPage());
             ExpanderBtn.Clicked += (sender, args) => Navigation.PushAsync(new ExpanderPage());
+            GridSplitterBtn.Clicked += (sender, args) => Navigation.PushAsync(new GridSplitterPage());
             HyperLinkBtn.Clicked += (sender, args) => Navigation.PushAsync(new HyperLinkPage());
+            SeparatorBtn.Clicked += (sender, args) => Navigation.PushAsync(new SeparatorPage());
         }
     }
 }
