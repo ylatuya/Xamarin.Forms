@@ -40,6 +40,8 @@ namespace GtkToolkit.GTK.Renderers
                 UpdateContent1();
             else if (e.PropertyName == GridSplitter.Content2Property.PropertyName)
                 UpdateContent2();
+
+            base.OnElementPropertyChanged(sender, e);
         }
 
         protected override void Dispose(bool disposing)

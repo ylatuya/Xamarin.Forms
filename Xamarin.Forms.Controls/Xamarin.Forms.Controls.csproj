@@ -60,7 +60,7 @@
       <Name>Xamarin.Forms.Build.Tasks</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\Xamarin.Forms.Control.Core\Xamarin.Forms.Control.Core.csproj">
+    <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">
       <Project>{5344bcde-de03-4a0f-a53a-0c6f0ed6d860}</Project>
       <Name>Xamarin.Forms.Control.Core</Name>
     </ProjectReference>

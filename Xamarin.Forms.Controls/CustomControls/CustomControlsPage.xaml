@@ -5,21 +5,29 @@
              xmlns:controls="clr-namespace:GtkToolkit.Controls;assembly=GtkToolkit"
              Title="GridSplitter">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="GridSplitter Control"/>
-            <controls:GridSplitter
-                Orientation="Horizontal">
-                <controls:GridSplitter.Content1>
-                    <Grid>
-                        <Label Text="Content 1" />
-                    </Grid>
-                </controls:GridSplitter.Content1>
-                <controls:GridSplitter.Content2>
-                    <Grid>
-                        <Label Text="Content 2" />
-                    </Grid>
-                </controls:GridSplitter.Content2>
-            </controls:GridSplitter>
-        </StackLayout>
+        <ScrollView>
+            <StackLayout>
+                <Label Text="GridSplitter Control"/>
+                <controls:GridSplitter
+                    Orientation="Horizontal">
+                    <controls:GridSplitter.Content1>
+                        <Grid BackgroundColor="Red">
+                            <Label Text="Content 1" />
+                        </Grid>
+                    </controls:GridSplitter.Content1>
+                    <controls:GridSplitter.Content2>
+                        <Grid BackgroundColor="Blue">
+                            <Label Text="Content 2" />
+                        </Grid>
+                    </controls:GridSplitter.Content2>
+                </controls:GridSplitter>
+                <Label Text="HyperLink Control"/>
+                <controls:HyperLink
+                    Text="HyperLink"
+                    Uri="www.xamarin.com"/>
+                <Label Text="Separator Control"/>
+                <controls:Separator />
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>
