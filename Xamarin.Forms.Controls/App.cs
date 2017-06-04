@@ -56,7 +56,7 @@ namespace Xamarin.Forms.Controls
             };
             */
 
-            return new Xamarin.Forms.Controls.CustomControls.CustomControlsPage();
+            return new NavigationPage(new Xamarin.Forms.Controls.CustomControls.CustomControlsPage());
         }
 
         protected override void OnAppLinkRequestReceived(Uri uri)

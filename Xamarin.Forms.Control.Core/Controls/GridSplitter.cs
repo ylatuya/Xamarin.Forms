@@ -39,6 +39,5 @@ namespace GtkToolkit.Controls
         public static readonly BindableProperty Content2Property =
             BindableProperty.Create("Content2", typeof(View), typeof(GridSplitter), default(View),
                 BindingMode.TwoWay);
-
     }
 }

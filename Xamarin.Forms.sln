@@ -157,7 +157,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.Platform.GTK"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.ControlGallery.GTK", "Xamarin.Forms.ControlGallery.GTK\Xamarin.Forms.ControlGallery.GTK.csproj", "{03A51E5B-0A1E-41F0-AAE3-4B19406F7340}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin.Forms.Controls", "Xamarin.Forms.Controls", "{0F9BADD6-0919-4BC7-A881-44A80459AC41}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Xamarin.Forms.Controls.GTK", "Xamarin.Forms.Controls.GTK", "{0F9BADD6-0919-4BC7-A881-44A80459AC41}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtkToolkit", "Xamarin.Forms.Control.Core\GtkToolkit.csproj", "{5344BCDE-DE03-4A0F-A53A-0C6F0ED6D860}"
 EndProject

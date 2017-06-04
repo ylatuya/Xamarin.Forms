@@ -6,7 +6,7 @@ using Xamarin.Forms.Platform.GTK;
 [assembly: ExportRenderer(typeof(ColorPicker), typeof(ColorPickerRenderer))]
 namespace GtkToolkit.GTK.Renderers
 {
-    public class ColorPickerRenderer : ViewRenderer<ColorPicker, Gtk.ColorSelectionDialog>
+    public class ColorPickerRenderer : ViewRenderer<ColorPicker, Gtk.ColorSelection>
     {
         protected override void OnElementChanged(ElementChangedEventArgs<ColorPicker> e)
         {
@@ -14,7 +14,7 @@ namespace GtkToolkit.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    var colorPicker = new Gtk.ColorSelectionDialog("Color");
+                    var colorPicker = new Gtk.ColorSelection();
                     SetNativeControl(colorPicker);
                 }
             }

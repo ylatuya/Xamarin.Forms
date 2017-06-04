@@ -62,7 +62,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">
       <Project>{5344bcde-de03-4a0f-a53a-0c6f0ed6d860}</Project>
-      <Name>Xamarin.Forms.Control.Core</Name>
+      <Name>GtkToolkit</Name>
     </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
       <Project>{57b8b73d-c3b5-4c42-869e-7b2f17d354ac}</Project>
@@ -103,6 +103,15 @@
     <Compile Include="ControlGalleryPages\NestedNativeControlGalleryPage.cs" />
     <Compile Include="ControlGalleryPages\PanGestureGalleryPage.cs" />
     <Compile Include="CoreGalleryPages\KeyboardCoreGalleryPage.cs" />
+    <Compile Include="CustomControls\ColorPickerPage.xaml.cs">
+      <DependentUpon>ColorPickerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\ExpanderPage.xaml.cs">
+      <DependentUpon>ExpanderPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\HyperLinkPage.xaml.cs">
+      <DependentUpon>HyperLinkPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\CustomControlsPage.xaml.cs">
       <DependentUpon>CustomControlsPage.xaml</DependentUpon>
     </Compile>
@@ -422,6 +431,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CustomControls\CustomControlsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\HyperLinkPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\ExpanderPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\ColorPickerPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

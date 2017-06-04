@@ -51,9 +51,10 @@
   <ItemGroup>
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />
+    <Compile Include="Controls\Expander.cs" />
     <Compile Include="Controls\GridSplitter.cs" />
     <Compile Include="Controls\DataGrid.cs" />
-    <Compile Include="Controls\HyperLink.cs" />
+    <Compile Include="Controls\HyperLinkButton.cs" />
     <Compile Include="Controls\Separator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
