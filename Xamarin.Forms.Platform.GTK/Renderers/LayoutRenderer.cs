@@ -1,10 +1,11 @@
 ﻿using Gtk;
+using Xamarin.Forms.Platform.GTK.Packagers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class LayoutRenderer : ViewRenderer<Layout, Fixed>
     {
-        private VisualElementPackager _packager;
+        private LayoutElementPackager _packager;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Layout> e)
         {
@@ -15,7 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(new Fixed());
                 }
 
-                _packager = new VisualElementPackager(this);
+                _packager = new LayoutElementPackager(this);
                 _packager.Load();
             }
 

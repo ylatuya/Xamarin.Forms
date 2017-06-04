@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Controls;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -12,6 +13,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private VisualElementTracker<Page, Container> _tracker;
 
         IPageController PageController => Element as IPageController;
+
+        IElementController ElementController => Element as IElementController;
 
         public Controls.MasterDetailPage Control { get; private set; }
 
@@ -62,8 +65,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             Element = element;
 
-            UpdateMasterDetail();
-
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
 
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
@@ -86,6 +87,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Element = null;
                 }
 
+                if (Control != null)
+                {
+                    Control.IsPresentedChanged -= OnIsPresentedChanged;
+                }
+
                 _disposed = true;
             }
 
@@ -104,7 +110,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control = new Controls.MasterDetailPage();
                     Add(Control);
 
+                    Control.IsPresentedChanged += OnIsPresentedChanged;
+
                     UpdateMasterDetail();
+                    UpdateMasterBehavior();
                     UpdateIsPresented();
                 }
 
@@ -118,8 +127,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (e.PropertyName.Equals("Master", StringComparison.CurrentCultureIgnoreCase) || e.PropertyName.Equals("Detail", StringComparison.CurrentCultureIgnoreCase))
                 UpdateMasterDetail();
-            else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName || e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
+            else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName)
                 UpdateIsPresented();
+            else if (e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
+                UpdateMasterBehavior();
         }
 
         private void UpdateMasterDetail()
@@ -129,29 +140,52 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Platform.GetRenderer(MasterDetailPage.Detail) == null)
                 Platform.SetRenderer(MasterDetailPage.Detail, Platform.CreateRenderer(MasterDetailPage.Detail));
 
-            if (Control != null)
-            {
-                Control.Master = Platform.GetRenderer(MasterDetailPage.Master).Container;
-                Control.Detail = Platform.GetRenderer(MasterDetailPage.Detail).Container;
-
-                if (!string.IsNullOrEmpty(MasterDetailPage.Detail.Title))
-                {
-                    Control.DetailTitleVisibility = true;
-                    Control.DetailTitle = MasterDetailPage.Detail.Title;
-                }
-                else
-                {
-                    Control.DetailTitleVisibility = false;
-                }
-            }
+            Control.Master = Platform.GetRenderer(MasterDetailPage.Master).Container;
+            Control.Detail = Platform.GetRenderer(MasterDetailPage.Detail).Container;
+            Control.MasterTitle = MasterDetailPage.Master.Title;
         }
 
         private void UpdateIsPresented()
         {
-            if (Control != null)
+            Control.IsPresented = MasterDetailPage.IsPresented;
+        }
+
+        private void UpdateMasterBehavior()
+        {
+            if (MasterDetailPage.Detail is NavigationPage)
             {
-                Control.IsPresented = MasterDetailPage.IsPresented;
+                Control.MasterBehaviorType = GetMasterBehavior(MasterDetailPage.MasterBehavior);
             }
+            else
+            {
+                // The onlu way to display Master page is from a toolbar. If we have not access to one,
+                // we should force split mode to display menu (as no gestures are implemented)
+                Control.MasterBehaviorType = MasterBehaviorType.Split;
+            }
+
+            Control.DisplayTitle = Control.MasterBehaviorType != MasterBehaviorType.Split;
+        }
+
+        private MasterBehaviorType GetMasterBehavior(MasterBehavior masterBehavior)
+        {
+            switch (masterBehavior)
+            {
+                case MasterBehavior.Split:
+                case MasterBehavior.SplitOnLandscape:
+                case MasterBehavior.SplitOnPortrait:
+                    return MasterBehaviorType.Split;
+                case MasterBehavior.Popover:
+                    return MasterBehaviorType.Popover;
+                case MasterBehavior.Default:
+                    return MasterBehaviorType.Default;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(masterBehavior));
+            }
+        }
+
+        private void OnIsPresentedChanged(object sender, EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(MasterDetailPage.IsPresentedProperty, Control.IsPresented);
         }
     }
 }

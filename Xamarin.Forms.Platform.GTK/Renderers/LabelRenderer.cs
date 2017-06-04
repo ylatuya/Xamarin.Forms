@@ -10,7 +10,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
         {
-            Control.SetSizeRequest(-1, -1); // force widget to calculate its desired size
+            Control.SetSizeRequest(-1, -1); // Force widget to calculate its desired size
 
             return base.GetDesiredSize(widthConstraint, heightConstraint);
         }

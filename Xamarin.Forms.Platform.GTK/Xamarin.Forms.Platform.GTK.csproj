@@ -78,6 +78,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\webkit-sharp\webkit-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\BaseAnimation.cs" />
@@ -114,6 +118,7 @@
     <Compile Include="Controls\TableView.cs" />
     <Compile Include="Controls\TimePicker.cs" />
     <Compile Include="Controls\Page.cs" />
+    <Compile Include="Controls\WebView.cs" />
     <Compile Include="ElementChangedEventArgs.cs" />
     <Compile Include="ExportCellAttribute.cs" />
     <Compile Include="ExportImageSourceHandlerAttribute.cs" />
@@ -132,11 +137,15 @@
     <Compile Include="GtkIsolatedStorageFile.cs" />
     <Compile Include="GtkPlatformServices.cs" />
     <Compile Include="GtkTicker.cs" />
+    <Compile Include="GtkToolbarConstants.cs" />
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
     <Compile Include="IDesiredSizeProvider.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="GtkToolbarTracker.cs" />
+    <Compile Include="Packagers\LayoutElementPackager.cs" />
+    <Compile Include="Packagers\PageElementPackager.cs" />
+    <Compile Include="Packagers\VisualElementPackager.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="PlatformConfigurationExtensions.cs" />
     <Compile Include="PlatformEffect.cs" />
@@ -169,9 +178,9 @@
     <Compile Include="Renderers\TabbedPageRenderer.cs" />
     <Compile Include="Renderers\TableViewRenderer.cs" />
     <Compile Include="Renderers\TimePickerRenderer.cs" />
+    <Compile Include="Renderers\WebViewRenderer.cs" />
     <Compile Include="ResourcesProvider.cs" />
     <Compile Include="ViewRenderer.cs" />
-    <Compile Include="VisualElementPackager.cs" />
     <Compile Include="VisualElementRenderer.cs" />
     <Compile Include="VisualElementTracker.cs" />
   </ItemGroup>
@@ -183,16 +192,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Content Include="Libs\webkit-sharp\webkit-sharp.dll.config" />
     <None Include="OpenTK.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="webkit-sharp.dll.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Libs\GLWidget\GLWidget.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Libs\GLWidget\GLWidget.dll" />
     <Content Include="Libs\GLWidget\README.txt" />
+    <Content Include="Libs\webkit-sharp\README.txt" />
+    <Content Include="Libs\webkit-sharp\webkit-sharp.dll" />
     <Content Include="Resources\hamburger.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
