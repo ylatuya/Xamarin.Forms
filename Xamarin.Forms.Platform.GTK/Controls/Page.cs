@@ -1,14 +1,20 @@
-﻿using Gtk;
+﻿using Gdk;
+using Gtk;
+using System;
 using System.Linq;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public class Page : Table
     {
+        private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
         private EventBox _headerContainer;
-        private EventBox _contentContainer;
+        private EventBox _contentContainerWrapper;
+        private Gtk.Fixed _contentContainer;
         private HBox _toolbar;
         private EventBox _content;
+        private ImageControl _image;
 
         public HBox Toolbar
         {
@@ -36,8 +42,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (_content != value)
                 {
-                    _content = value;
-                    RefreshContent();
+                    RefreshContent(value);
                 }
             }
         }
@@ -49,17 +54,49 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetToolbarColor(Gdk.Color backgroundColor)
         {
-            if (_headerContainer != null)
+            _headerContainer.ModifyBg(StateType.Normal, backgroundColor);
+        }
+
+        public void SetBackgroundColor(Gdk.Color? backgroundColor)
+        {
+            if (backgroundColor != null)
+            { 
+                _contentContainerWrapper.VisibleWindow = true;
+                _contentContainerWrapper.ModifyBg(StateType.Normal, backgroundColor.Value);
+            }
+            else
             {
-                _headerContainer.ModifyBg(StateType.Normal, backgroundColor);
+                _contentContainerWrapper.VisibleWindow = false;
             }
         }
 
-        public void SetBackgroundColor(Gdk.Color backgroundColor)
+        public void SetBackgroundImage(string backgroundImagePath)
         {
-            if (_contentContainer != null)
+            try
             {
-                _contentContainer.ModifyBg(StateType.Normal, backgroundColor);
+                _image.Pixbuf = new Pixbuf(backgroundImagePath);
+            }
+            catch (Exception ex)
+            {
+                Internals.Log.Warning("Page BackgroundImage", "Could not load background image: {0}", ex);
+            }
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            if (!_lastAllocation.Equals(allocation))
+            {
+                _lastAllocation = allocation;
+
+                _image.SetSizeRequest(
+                    _contentContainer.Allocation.Width,
+                    _contentContainer.Allocation.Height);
+
+                _content.SetSizeRequest(
+                    _contentContainer.Allocation.Width,
+                    _contentContainer.Allocation.Height);
             }
         }
 
@@ -73,10 +110,17 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _headerContainer = new EventBox();
             root.PackStart(_headerContainer, false, false, 0);
 
-            _contentContainer = new EventBox();
-            root.PackStart(_contentContainer, true, true, 0);
+            _image = new ImageControl();
+            _image.Aspect = ImageAspect.Fill;
 
-            Add(root);
+            _contentContainerWrapper = new EventBox();
+            _contentContainer = new Gtk.Fixed();
+            _contentContainer.Add(_image);
+            _contentContainerWrapper.Add(_contentContainer);
+
+            root.PackStart(_contentContainerWrapper, true, true, 0);
+
+            Attach(root, 0, 1, 0, 1);
 
             ShowAll();
         }
@@ -92,13 +136,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _toolbar.ShowAll();
         }
 
-        private void RefreshContent()
+        private void RefreshContent(EventBox newContent)
         {
-            if (_contentContainer.Children.Length > 0)
-            {
-                _contentContainer.Remove(_contentContainer.Children.First());
-            }
+            _contentContainer.RemoveFromContainer(_content);
 
+            _content = newContent;
             _contentContainer.Add(_content);
             _content.ShowAll();
         }

@@ -153,6 +153,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control = new Controls.Page();
                     Add(Control);
                 }
+
+                UpdateBackgroundImage();
             }
 
             ElementChanged?.Invoke(this, e);
@@ -172,6 +174,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
                 UpdateBackgroundColor();
+            else if (e.PropertyName == Page.BackgroundImageProperty.PropertyName)
+                UpdateBackgroundImage();
+        }
+
+        private void UpdateBackgroundImage()
+        {
+            Control.SetBackgroundImage(Page.BackgroundImage);
         }
     }
 }

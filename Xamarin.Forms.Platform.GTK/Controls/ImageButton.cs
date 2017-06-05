@@ -130,11 +130,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _centralRowContainer = null;
         }
 
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            base.OnSizeAllocated(allocation);
-        }
-
         protected override bool OnExposeEvent(EventExpose evnt)
         {
             double colorMaxValue = 65535;
