@@ -1,6 +1,6 @@
 ﻿using GLib;
+using Xamarin.Forms.Maps.GTK;
 using Xamarin.Forms.Platform.GTK;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.ControlGallery.GTK
 {
@@ -12,6 +12,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
 
             Gtk.Application.Init();
             Forms.Init();
+            FormsMaps.Init(string.Empty);
 
             var app = new Controls.App();
             var window = new FormsWindow();
