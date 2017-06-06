@@ -1,5 +1,4 @@
-﻿using GMap.NET.GtkSharp;
-using GMap.NET.GtkSharp.Markers;
+﻿using GMap.NET.GTK;
 using GMap.NET.MapProviders;
 using Newtonsoft.Json;
 using System;
@@ -7,9 +6,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
-using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Forms.Markers;
 using Xamarin.Forms.Platform.GTK;
 
 namespace Xamarin.Forms.Maps.GTK
@@ -20,12 +18,19 @@ namespace Xamarin.Forms.Maps.GTK
         private const int MaxZoom = 24;
         private const int Zoom = 6;
 
-        private GMarkerGoogle _userPosition;
+        private GMapImageMarker _userPosition;
         private bool _disposed;
         private Timer _timer;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Map> e)
         {
+            if (e.OldElement != null)
+            {
+                var mapModel = e.OldElement;
+                MessagingCenter.Unsubscribe<Map, MapSpan>(this, "MapMoveToRegion");
+                ((System.Collections.ObjectModel.ObservableCollection<Pin>)mapModel.Pins).CollectionChanged -= OnCollectionChanged;
+            }
+
             if (e.NewElement != null)
             {
                 var mapModel = e.NewElement;
@@ -33,7 +38,7 @@ namespace Xamarin.Forms.Maps.GTK
                 if (Control == null)
                 {
                     var gMapControl = new GMapControl();
-                    var apikey = FormsMaps.AuthenticationToken;
+                    GMapProviders.GoogleMap.ApiKey = FormsMaps.AuthenticationToken;
                     gMapControl.MinZoom = MinZoom;
                     gMapControl.MaxZoom = MaxZoom;
                     gMapControl.Zoom = Zoom;
@@ -43,7 +48,8 @@ namespace Xamarin.Forms.Maps.GTK
                     Control.OnMapZoomChanged += OnMapZoomChanged;
                 }
 
-                MessagingCenter.Subscribe<Map, MapSpan>(this, "MapMoveToRegion", (s, a) => MoveToRegion(a), mapModel);
+                MessagingCenter.Subscribe<Map, MapSpan>(this, "MapMoveToRegion", (s, a) =>
+                MoveToRegion(a), mapModel);
 
                 UpdateMapType();
                 UpdateHasScrollEnabled();
@@ -64,9 +70,9 @@ namespace Xamarin.Forms.Maps.GTK
             base.OnElementChanged(e);
         }
 
-        private async void OnMapZoomChanged()
+        private void OnMapZoomChanged()
         {
-            await UpdateVisibleRegion();
+            UpdateVisibleRegion();
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -141,11 +147,11 @@ namespace Xamarin.Forms.Maps.GTK
 
             if (overlay != null)
             {
-                overlay.Markers.Add(new GMarkerGoogle(
+                overlay.Markers.Add(new GMapImageMarker(
                     new GMap.NET.PointLatLng(
                         pin.Position.Latitude,
                         pin.Position.Longitude),
-                    GMarkerGoogleType.red_dot));
+                    GMapImageMarkerType.RedDot));
             }
         }
 
@@ -161,7 +167,7 @@ namespace Xamarin.Forms.Maps.GTK
 
                 var pins = overlay.Markers.Where(p => p.Position == positionToRemove);
 
-                foreach(var pin in pins)
+                foreach (var pin in pins)
                 {
                     overlay.Markers.Remove(pin);
                 }
@@ -176,6 +182,8 @@ namespace Xamarin.Forms.Maps.GTK
             {
                 overlay.Markers.Clear();
             }
+
+            UpdateIsShowingUser();
         }
 
         private void UpdateMapType()
@@ -235,7 +243,7 @@ namespace Xamarin.Forms.Maps.GTK
 
             if (_userPosition == null)
             {
-                _userPosition = new GMarkerGoogle(userCoordinate, GMarkerGoogleType.arrow);
+                _userPosition = new GMapImageMarker(userCoordinate, GMapImageMarkerType.Red);
             }
 
             var overlay = Control.Overlays.FirstOrDefault();
@@ -303,7 +311,7 @@ namespace Xamarin.Forms.Maps.GTK
 
         private void MoveToRegion(MapSpan span)
         {
-            if(span == null)
+            if (span == null)
             {
                 return;
             }
@@ -315,14 +323,15 @@ namespace Xamarin.Forms.Maps.GTK
             Control.Position = region;
         }
 
-        private async Task UpdateVisibleRegion()
+        private void UpdateVisibleRegion()
         {
             if (Control == null || Element == null)
                 return;
 
             try
             {
-                // TODO:
+                var center = new Position(Control.Position.Lat, Control.Position.Lng);
+                Element.VisibleRegion = new MapSpan(center, 0, 0);
             }
             catch (Exception)
             {
