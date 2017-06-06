@@ -154,6 +154,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Add(Control);
                 }
 
+                VisibleWindow = false;
                 UpdateBackgroundImage();
             }
 
@@ -164,7 +165,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             Color backgroundColor = Element.BackgroundColor;
 
-            if (backgroundColor != Color.Default)
+            if (backgroundColor.IsDefaultOrTransparent())
+            {
+                Control.SetBackgroundColor(null);
+            }
+            else
             {
                 Control.SetBackgroundColor(backgroundColor.ToGtkColor());
             }
