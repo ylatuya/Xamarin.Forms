@@ -1,15 +1,17 @@
-﻿using Gtk;
+﻿using Gdk;
+using Gtk;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public class CarouselPage
     {
         public Container GtkPage { get; set; }
+
         public Xamarin.Forms.Page Page { get; set; }
 
         public CarouselPage(Container gtkPage, Xamarin.Forms.Page page)
@@ -19,11 +21,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
     }
 
-    public class Carousel : Container
+    public class Carousel : Fixed
     {
+        private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
         private IList _itemsSource;
         private int _selectedIndex;
+        private EventBox _wrapperBox;
         private Table _root;
+        private ImageControl _image;
         private List<CarouselPage> _pages;
         private double _initialPos;
         private bool _animated;
@@ -80,10 +85,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             foreach (var page in _pages)
             {
-                page.GtkPage.Visible = false;
+                bool isVisible = page == _pages[selectedIndex];
+                page.GtkPage.Visible = isVisible;
             }
-
-            _pages[selectedIndex].GtkPage.Visible = true;
         }
 
         public void AddPage(int index, object element)
@@ -131,15 +135,58 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             } while (_root.Children.Length > 0);
         }
 
+        public void SetBackgroundImage(string backgroundImagePath)
+        {
+            try
+            {
+                _image.Pixbuf = new Pixbuf(backgroundImagePath);
+            }
+            catch (Exception ex)
+            {
+                Internals.Log.Warning("CarouselPage BackgroundImage", "Could not load background image: {0}", ex);
+            }
+        }
+
+        protected override bool OnExposeEvent(EventExpose evnt)
+        {
+            if (_pages.Count(p => p.GtkPage.Visible) > 1)
+            {
+                SetCurrentPage(SelectedIndex);
+            }
+
+            return base.OnExposeEvent(evnt);
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            if (!_lastAllocation.Equals(allocation))
+            {
+                _lastAllocation = allocation;
+
+                _image.SetSizeRequest(allocation.Width, allocation.Height);
+                _wrapperBox.SetSizeRequest(allocation.Width, allocation.Height);
+            }
+        }
+
         private void BuildCarousel()
         {
             _pages = new List<CarouselPage>();
 
-            _root = new Table(1, 1, true);
-            Add(_root);
+            _image = new ImageControl();
+            _image.Aspect = ImageAspect.Fill;
+            Add(_image);
 
-            ButtonPressEvent += OnCarouselButtonPressEvent;
-            ButtonReleaseEvent += OnCarouselButtonReleaseEvent;
+            _wrapperBox = new EventBox();
+            _wrapperBox.VisibleWindow = false;
+            _root = new Table(1, 1, true);
+            _wrapperBox.Add(_root);
+
+            _wrapperBox.ButtonPressEvent += OnCarouselButtonPressEvent;
+            _wrapperBox.ButtonReleaseEvent += OnCarouselButtonReleaseEvent;
+
+            Add(_wrapperBox);
         }
 
         private void OnCarouselButtonPressEvent(object o, ButtonPressEventArgs args)

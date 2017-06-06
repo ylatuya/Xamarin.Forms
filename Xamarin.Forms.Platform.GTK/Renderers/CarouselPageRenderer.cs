@@ -134,6 +134,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             InitializeCarousel();
             UpdateBackground();
             UpdateSource();
+            UpdateBackgroundImage();
 
             Carousel.PropertyChanged += OnPropertyChanged;
             Carousel.PagesChanged += OnPagesChanged;
@@ -154,7 +155,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
                 UpdateBackground();
             else if (e.PropertyName == Page.BackgroundImageProperty.PropertyName)
-                UpdateBackground();
+                UpdateBackgroundImage();
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -268,6 +269,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             UpdateCurrentPage();
+        }
+
+        private void UpdateBackgroundImage()
+        {
+            _carousel.SetBackgroundImage(Page.BackgroundImage);
         }
 
         private void OnElementChanged(VisualElementChangedEventArgs e)
