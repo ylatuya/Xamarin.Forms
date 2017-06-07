@@ -110,6 +110,7 @@
     <Compile Include="Controls\ListView.cs" />
     <Compile Include="Controls\MasterDetailPage.cs" />
     <Compile Include="Controls\NavigationChildPage.cs" />
+    <Compile Include="Controls\NotebookWrapper.cs" />
     <Compile Include="Controls\OpenGLView.cs" />
     <Compile Include="Controls\ScrolledTextView.cs" />
     <Compile Include="Controls\PageContainer.cs" />

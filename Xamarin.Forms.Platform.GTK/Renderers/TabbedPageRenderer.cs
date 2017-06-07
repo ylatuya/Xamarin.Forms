@@ -15,7 +15,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private bool _disposed;
         private VisualElementTracker<Page, Container> _tracker;
 
-        public Notebook Control { get; private set; }
+        public NotebookWrapper Control { get; private set; }
 
         public TabbedPage Element { get; private set; }
 
@@ -60,6 +60,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 _disposed = true;
                 PageController.SendDisappearing();
                 Element.PagesChanged -= OnPagesChanged;
+
+                if (Control?.NoteBook != null)
+                {
+                    Control.NoteBook.SwitchPage -= OnNotebookPageSwitched;
+                }
             }
 
             base.Dispose();
@@ -93,13 +98,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    Control = new Notebook
-                    {
-                        CanFocus = true,
-                        Scrollable = true,
-                        ShowTabs = true,
-                        TabPos = PositionType.Top
-                    };
+                    Control = new NotebookWrapper();
 
                     Add(Control);
                 }
@@ -117,6 +116,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBarBackgroundColor();
             UpdateBarTextColor();
             UpdateTabPos();
+            UpdateBackgroundImage();
 
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
@@ -160,14 +160,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             else if (e.PropertyName ==
                   PlatformConfiguration.GTKSpecific.TabbedPage.TabPositionProperty.PropertyName)
                 UpdateTabPos();
+            else if (e.PropertyName == Page.BackgroundImageProperty.PropertyName)
+                UpdateBackgroundImage();
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            Control.NoteBook.SwitchPage -= OnNotebookPageSwitched;
+
             e.Apply((o, i, c) => SetupPage((Page)o, i), (o, i) => TeardownPage((Page)o), Reset);
             ResetPages();
             SetPages();
             UpdateChildrenOrderIndex();
+            UpdateCurrentPage();
+
+            Control.NoteBook.SwitchPage += OnNotebookPageSwitched;
         }
 
         private void SetupPage(Page page, int index)
@@ -185,13 +192,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void ResetPages()
         {
-            do
-            {
-                for (var i = 0; i < Control.Children.Length; i++)
-                {
-                    Control.RemovePage(i);
-                }
-            } while (Control.Children.Length > 0);
+            Control.RemoveAllPages();
         }
 
         private void SetPages()
@@ -210,18 +211,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     Control.InsertPage(
                         pageRenderer.Container,
-                        new TabbedPageHeader(page.Title, page.Icon?.ToPixbuf()),
+                        page.Title,
+                        page.Icon?.ToPixbuf(),
                         i);
                 }
             }
 
-            Control.CurrentPage = 0;
             Control.ShowAll();
         }
 
         private void TeardownPage(Page page)
         {
             page.PropertyChanged -= OnPagePropertyChanged;
+
+            var pageRenderer = Platform.GetRenderer(page);
+
+            if (pageRenderer != null)
+            {
+                Control.RemovePage(pageRenderer.Container);
+            }
 
             Platform.SetRenderer(page, null);
         }
@@ -241,12 +249,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 var index = TabbedPage.GetIndex(page);
                 var title = page.Title;
 
-                var pageRenderer = Platform.GetRenderer(page);
-                if (pageRenderer != null)
-                {
-                    var tabbedPageHeader = Control.GetTabLabel(pageRenderer.Container) as TabbedPageHeader;
-                    tabbedPageHeader.GetTabbedPageTitle().Text = title;
-                }
+                Control.SetTabLabelText(index, page.Title);
             }
             else if (e.PropertyName == Page.IconProperty.PropertyName)
             {
@@ -254,12 +257,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 var index = TabbedPage.GetIndex(page);
                 var icon = page.Icon;
 
-                var pageRenderer = Platform.GetRenderer(page);
-                if (pageRenderer != null)
-                {
-                    var tabbedPageHeader = Control.GetTabLabel(pageRenderer.Container) as TabbedPageHeader;
-                    tabbedPageHeader.GetTabbedPageIcon().Pixbuf = icon.ToPixbuf();
-                }
+                Control.SetTabIcon(index, icon.ToPixbuf());
             }
             else if (e.PropertyName == TabbedPage.BarBackgroundColorProperty.PropertyName)
                 UpdateBarBackgroundColor();
@@ -288,8 +286,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
             }
 
-            Control.CurrentPage = selectedIndex;
-            Control.ShowAll();
+            Control.NoteBook.CurrentPage = selectedIndex;
+            Control.NoteBook.ShowAll();
         }
 
         private void UpdateChildrenOrderIndex()
@@ -304,59 +302,27 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBarBackgroundColor()
         {
-            if (Element == null)
+            if (Element == null || Element.BarBackgroundColor.IsDefault)
                 return;
 
-            var barBackgroundColor = Element.BarBackgroundColor;
-            var isDefaultColor = barBackgroundColor.IsDefault;
-
-            if (isDefaultColor)
-                return;
+            var barBackgroundColor = Element.BarBackgroundColor.ToGtkColor();
 
             for (var i = 0; i < Element.Children.Count; i++)
             {
-                var child = Element.Children[i];
-                var page = child as Page;
-                var pageRenderer = Platform.GetRenderer(page);
-
-                if (pageRenderer != null)
-                {
-                    var tabbedPageHeader = Control.GetTabLabel(pageRenderer.Container);
-
-                    tabbedPageHeader.ModifyBg(StateType.Normal, barBackgroundColor.ToGtkColor());
-                    tabbedPageHeader.ModifyBg(StateType.Active, barBackgroundColor.ToGtkColor());
-                }
+                Control.SetTabBackgroundColor(i, barBackgroundColor);
             }
         }
 
         private void UpdateBarTextColor()
         {
-            if (Element == null)
+            if (Element == null || Element.BarTextColor.IsDefault)
                 return;
 
-            var barTextColor = Element.BarTextColor;
-
-            var isDefaultColor = barTextColor.IsDefault;
-
-            if (isDefaultColor)
-                return;
+            var barTextColor = Element.BarTextColor.ToGtkColor();
 
             for (var i = 0; i < Element.Children.Count; i++)
             {
-                var child = Element.Children[i];
-                var page = child as Page;
-                var pageRenderer = Platform.GetRenderer(page);
-
-                if (pageRenderer != null)
-                {
-                    var tabbedPageHeader = Control.GetTabLabel(pageRenderer.Container) as TabbedPageHeader;
-
-                    if (tabbedPageHeader != null)
-                    {
-                        tabbedPageHeader.GetTabbedPageTitle().ModifyFg(StateType.Normal, barTextColor.ToGtkColor());
-                        tabbedPageHeader.GetTabbedPageTitle().ModifyFg(StateType.Active, barTextColor.ToGtkColor());
-                    }
-                }
+                Control.SetTabTextColor(i, barTextColor);
             }
         }
 
@@ -367,11 +333,29 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             switch(tabposition)
             {
                 case TabPosition.Top:
-                    Control.TabPos = PositionType.Top;
+                    Control.NoteBook.TabPos = PositionType.Top;
                     break;
                 case TabPosition.Bottom:
-                    Control.TabPos = PositionType.Bottom;
+                    Control.NoteBook.TabPos = PositionType.Bottom;
                     break;
+            }
+        }
+
+        private void UpdateBackgroundImage()
+        {
+            Control.SetBackgroundImage(Element.BackgroundImage);
+        }
+
+        private void OnNotebookPageSwitched(object o, SwitchPageArgs args)
+        {
+            var currentPageIndex = (int)args.PageNum;
+            Element currentSelectedChild = Element.Children.Count > currentPageIndex
+                ? Element.Children[currentPageIndex]
+                : null;
+
+            if (currentSelectedChild != null)
+            {
+                ElementController.SetValueFromRenderer(TabbedPage.SelectedItemProperty, currentSelectedChild.BindingContext);
             }
         }
     }

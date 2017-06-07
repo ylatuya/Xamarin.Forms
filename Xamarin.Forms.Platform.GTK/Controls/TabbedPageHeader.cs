@@ -31,14 +31,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             Show();
         }
 
-        public Gtk.Label GetTabbedPageTitle()
-        {
-            return _label;
-        }
+        public Gtk.Label Label => _label;
 
-        public Gtk.Image GetTabbedPageIcon()
-        {
-            return _image;
-        }
+        public Gtk.Image Icon => _image;
     }
 }
