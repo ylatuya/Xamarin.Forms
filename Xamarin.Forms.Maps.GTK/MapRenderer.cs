@@ -118,6 +118,7 @@ namespace Xamarin.Forms.Maps.GTK
                         LoadPin(pin);
                     break;
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
+                    // Do nothing
                     break;
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
                     foreach (Pin pin in e.OldItems)
