@@ -54,13 +54,24 @@ namespace Xamarin.Forms.Platform.Android
 		Page _navigationPageCurrentPage;
 		NavigationModel _navModel = new NavigationModel();
 
-		internal Platform(Context context)
+		bool _embedded = true;
+
+		internal Platform(Context context, bool embedded = false)
 		{
+			_embedded = embedded;
 			_context = context;
 
-			_defaultActionBarTitleTextColor = SetDefaultActionBarTitleTextColor();
-
+			if (!embedded)
+			{
+				_defaultActionBarTitleTextColor = SetDefaultActionBarTitleTextColor();
+			}
+			
 			_renderer = new PlatformRenderer(context, this);
+
+			if (embedded)
+			{
+				return;
+			}
 
 			FormsApplicationActivity.BackPressed += HandleBackPressed;
 
@@ -299,6 +310,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		public void UpdateActionBarTextColor()
 		{
+			if (_embedded)
+			{
+				return;
+			}
+
 			SetActionBarTextColor();
 			UpdateActionBarUpImageColor();
 		}
@@ -336,6 +352,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void PrepareMenu(IMenu menu)
 		{
+			if (_embedded)
+			{
+				return;
+			}
+
 			foreach (ToolbarItem item in _toolbarTracker.ToolbarItems)
 				item.PropertyChanged -= HandleToolbarItemPropertyChanged;
 			menu.Clear();
@@ -439,7 +460,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void UpdateActionBar()
 		{
-			if (ActionBar == null) //Fullscreen theme doesn't have action bar
+			if (ActionBar == null || _embedded) //Fullscreen theme doesn't have action bar
 				return;
 
 			List<Page> relevantAncestors = AncestorPagesOfPage(_navModel.CurrentPage);
@@ -1070,9 +1091,12 @@ namespace Xamarin.Forms.Platform.Android
 
 				if (result && _notReallyHandled)
 				{
-					// If the child control returned true from its touch event handler but signalled that it was a fake "true", leave the event unhandled
-					// so parent controls have the opportunity
-					return false;
+					// If the child control returned true from its touch event handler but signalled that it was a fake "true", then we
+					// don't consider the event truly "handled" yet. 
+					// Since a child control short-circuited the normal dispatchTouchEvent stuff, this layout never got the chance for
+					// IOnTouchListener.OnTouch and the OnTouchEvent override to try handling the touches; we'll do that now
+
+					return OnTouchEvent(e);
 				}
 
 				return result;

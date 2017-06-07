@@ -45,15 +45,15 @@ namespace Xamarin.Forms.Controls
             //});
         }
 
-        public Page CreateDefaultMainPage()
-        {
-            return new MasterDetailPage
-            {
-                AutomationId = DefaultMainPageId,
-                Master = new ContentPage { Title = "Master", BackgroundColor = Color.Red },
-                Detail = CoreGallery.GetMainPage()
-            };
-        }
+		public Page CreateDefaultMainPage()
+		{
+			return new MasterDetailPage
+			{
+				AutomationId = DefaultMainPageId,
+				Master = new ContentPage { Title = "Master", Content = new View { BackgroundColor = Color.Red } },
+				Detail = CoreGallery.GetMainPage()
+			};
+		}
 
         protected override void OnAppLinkRequestReceived(Uri uri)
         {

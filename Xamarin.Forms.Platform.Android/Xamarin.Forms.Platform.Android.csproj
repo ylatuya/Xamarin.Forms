@@ -103,7 +103,9 @@
     <Compile Include="AndroidApplicationLifecycleState.cs" />
     <Compile Include="AndroidTitleBarVisibility.cs" />
     <Compile Include="AppCompat\FrameRenderer.cs" />
-    <Compile Include="FastRenderers\AccessibilityProvider.cs" />
+    <Compile Include="AppCompat\PageExtensions.cs" />
+    <Compile Include="Extensions\JavaObjectExtensions.cs" />
+    <Compile Include="FastRenderers\AutomationPropertiesProvider.cs" />
     <Compile Include="FastRenderers\ButtonRenderer.cs" />
     <Compile Include="AppCompat\FormsViewPager.cs" />
     <Compile Include="AppCompat\FragmentContainer.cs" />
@@ -191,7 +193,6 @@
     <Compile Include="Renderers\ToolbarImageButton.cs" />
     <Compile Include="Renderers\ViewGroupExtensions.cs" />
     <Compile Include="TapGestureHandler.cs" />
-    <Compile Include="TextViewExtensions.cs" />
     <Compile Include="TextColorSwitcher.cs" />
     <Compile Include="ViewInitializedEventArgs.cs" />
     <Compile Include="VisualElementChangedEventArgs.cs" />
