@@ -182,6 +182,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
+            Performance.Start();
+
             foreach (var item in items)
             {
                 var cell = GetCell(item);
@@ -190,6 +192,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             _listView.Items = _cells;
+
+            Performance.Stop();
         }
 
         private void UpdateHeader()
