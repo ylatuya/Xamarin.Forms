@@ -154,7 +154,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Add(Control);
                 }
 
-                VisibleWindow = false;
+                VisibleWindow = Page.ShouldDisplayNativeWindow();
                 UpdateBackgroundImage();
             }
 

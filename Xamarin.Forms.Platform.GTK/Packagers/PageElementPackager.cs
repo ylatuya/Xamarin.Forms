@@ -16,6 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
 
             Controls.Page page = Renderer.Control;
             page.Content = viewRenderer.Container;
+            page.Content.VisibleWindow = true;
 
             viewRenderer.Container.ShowAll();
         }
