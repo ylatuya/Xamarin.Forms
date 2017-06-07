@@ -4,12 +4,25 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
 {
     public static class PageExtensions
     {
-        public static Gtk.EventBox CreateContainer(this VisualElement view)
+        public static Gtk.EventBox CreateContainer(this Page view)
         {
             if (!Forms.IsInitialized)
                 throw new InvalidOperationException("call Forms.Init() before this");
 
-            throw new NotImplementedException();
+            if (!(view.RealParent is Application))
+            {
+                Application app = new DefaultApplication();
+                app.MainPage = view;
+            }
+
+            var result = new Platform();
+            result.SetPage(view);
+
+            return result.PlatformRenderer;
+        }
+
+        class DefaultApplication : Application
+        {
         }
     }
 }
