@@ -137,6 +137,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetBackgroundImage(string backgroundImagePath)
         {
+            if(string.IsNullOrEmpty(backgroundImagePath))
+            {
+                return;
+            }
+
             try
             {
                 _image.Pixbuf = new Pixbuf(backgroundImagePath);

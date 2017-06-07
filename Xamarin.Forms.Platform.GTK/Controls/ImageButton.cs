@@ -109,10 +109,17 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetImageFromFile(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                return;
+
             try
             {
                 var iconPixBuf = new Pixbuf(fileName);
-                ImageWidget.Pixbuf = iconPixBuf;
+
+                if (iconPixBuf != null)
+                {
+                    ImageWidget.Pixbuf = iconPixBuf;
+                }
             }
             catch (Exception ex)
             {

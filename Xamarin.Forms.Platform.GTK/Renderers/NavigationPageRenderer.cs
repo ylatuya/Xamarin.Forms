@@ -277,7 +277,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (Control.Children.Length > 0)
             {
-                Control.Remove(target.Container);
+                Control.RemoveFromContainer(target.Container);
             }
 
             if (Control.Children != null)

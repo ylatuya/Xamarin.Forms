@@ -1,6 +1,7 @@
 ﻿using System;
 using Gtk;
 using Pango;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -160,7 +161,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_clearButton.Parent != null)
             {
-                _container.Remove(_clearButton);
+                _container.RemoveFromContainer(_clearButton);
             }
         }
 

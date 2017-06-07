@@ -1,7 +1,6 @@
 ﻿using Gdk;
 using Gtk;
 using System;
-using System.Linq;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
@@ -11,7 +10,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
         private EventBox _headerContainer;
         private EventBox _contentContainerWrapper;
-        private Gtk.Fixed _contentContainer;
+        private Fixed _contentContainer;
         private HBox _toolbar;
         private EventBox _content;
         private ImageControl _image;
@@ -26,8 +25,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (_toolbar != value)
                 {
-                    _toolbar = value;
-                    RefreshToolbar();
+                    RefreshToolbar(value);
                 }
             }
         }
@@ -72,6 +70,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetBackgroundImage(string backgroundImagePath)
         {
+            if (string.IsNullOrEmpty(backgroundImagePath))
+            {
+                return;
+            }
+
             try
             {
                 _image.Pixbuf = new Pixbuf(backgroundImagePath);
@@ -114,7 +117,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _image.Aspect = ImageAspect.Fill;
 
             _contentContainerWrapper = new EventBox();
-            _contentContainer = new Gtk.Fixed();
+            _contentContainer = new Fixed();
             _contentContainer.Add(_image);
             _contentContainerWrapper.Add(_contentContainer);
 
@@ -125,13 +128,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             ShowAll();
         }
 
-        private void RefreshToolbar()
+        private void RefreshToolbar(HBox newToolbar)
         {
-            if (_headerContainer.Children.Length > 0)
-            {
-                _headerContainer.Remove(_headerContainer.Children.First());
-            }
-
+            _headerContainer.RemoveFromContainer(_toolbar);
+            _toolbar = newToolbar;
             _headerContainer.Add(_toolbar);
             _toolbar.ShowAll();
         }
@@ -139,7 +139,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private void RefreshContent(EventBox newContent)
         {
             _contentContainer.RemoveFromContainer(_content);
-
             _content = newContent;
             _contentContainer.Add(_content);
             _content.ShowAll();

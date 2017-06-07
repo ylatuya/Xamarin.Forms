@@ -256,8 +256,15 @@ namespace Xamarin.Forms.Platform.GTK
             }
             else if (_parentMasterDetailPage != null && _parentMasterDetailPage.ShouldShowToolbarButton())
             {
-                var image = new Gtk.Image(Controls.MasterDetailPage.HamburgerPixBuf);
-                ToolButton hamburguerButton = new ToolButton(image, string.Empty);
+                ToolButton hamburguerButton = new ToolButton(null, string.Empty);
+
+                var hamburgerPixBuf = Controls.MasterDetailPage.GetHamburgerPixBuf();
+                if (hamburgerPixBuf != null)
+                {
+                    var image = new Gtk.Image(hamburgerPixBuf);
+                    hamburguerButton = new ToolButton(image, string.Empty);
+                }
+
                 hamburguerButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 hamburguerButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
                 _toolbarNavigationSection.PackStart(hamburguerButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
@@ -328,6 +335,7 @@ namespace Xamarin.Forms.Platform.GTK
             if (NavigationPage.GetHasNavigationBar(currentPage))
             {
                 _toolbar = ConfigureToolbar();
+
                 _toolbarTitle = new Gtk.Label
                 {
                     WidthRequest = GtkToolbarConstants.NavigationTitleMinSize

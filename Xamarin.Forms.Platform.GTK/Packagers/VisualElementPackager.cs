@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Packagers
 {
@@ -71,7 +72,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
         {
             var viewRenderer = Platform.GetRenderer(view);
             Gtk.Container container = Renderer.Container;
-            container.Remove(viewRenderer.Container);
+            container.RemoveFromContainer(viewRenderer.Container);
         }
 
         private void SetElement(VisualElement oldElement, VisualElement newElement)
