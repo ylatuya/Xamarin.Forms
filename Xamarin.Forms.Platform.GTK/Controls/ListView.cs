@@ -189,13 +189,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             if (IsPullToRequestEnabled)
             {
-                _root.Remove(_refreshHeader);
+                _root.RemoveFromContainer(_refreshHeader);
                 _root.PackStart(_refreshHeader, false, false, 0);
                 _root.ReorderChild(_refreshHeader, 0);
             }
             else
             {
-                _root.Remove(_refreshHeader);
+                _root.RemoveFromContainer(_refreshHeader);
             }
         }
 
@@ -293,6 +293,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        // TODO: Improve cell creation for the highest performance
         private void RefreshItems(IEnumerable<Widget> items)
         {
             ClearList();

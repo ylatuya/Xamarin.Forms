@@ -158,8 +158,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
             else
             {
-                // The onlu way to display Master page is from a toolbar. If we have not access to one,
-                // we should force split mode to display menu (as no gestures are implemented)
+                // The only way to display Master page is from a toolbar. If we have not access to one,
+                // we should force split mode to display menu (as no gestures are implemented).
                 Control.MasterBehaviorType = MasterBehaviorType.Split;
             }
 

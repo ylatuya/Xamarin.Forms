@@ -131,9 +131,21 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public event EventHandler IsPresentedChanged;
+        public static Pixbuf GetHamburgerPixBuf()
+        {
+            try
+            {
+                var hamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
 
-        public static Pixbuf HamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
+                return hamburgerPixBuf;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public event EventHandler IsPresentedChanged;
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
@@ -221,7 +233,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             _displayTitle = value;
 
-            _masterContainer.Remove(_titleContainer);
+            _masterContainer.RemoveFromContainer(_titleContainer);
 
             if (_displayTitle)
             {
@@ -248,8 +260,18 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             public MasterDetailMasterTitleContainer()
             {
                 _root = new HBox();
+                var hamburguerIcon = new Gtk.Image();
 
-                var hamburguerIcon = new Gtk.Image(Controls.MasterDetailPage.HamburgerPixBuf);
+                try
+                {
+                    var hamburgerPixBuf = GetHamburgerPixBuf();
+                    hamburguerIcon = new Gtk.Image(hamburgerPixBuf);
+                }
+                catch (Exception ex)
+                {
+                    Internals.Log.Warning("MasterDetailPage HamburguerIcon", "Could not load hamburguer icon: {0}", ex);
+                }
+
                 _hamburguerButton = new ToolButton(hamburguerIcon, string.Empty);
                 _hamburguerButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 _hamburguerButton.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
