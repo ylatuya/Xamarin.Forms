@@ -141,6 +141,7 @@
     <Compile Include="GtkToolbarConstants.cs" />
     <Compile Include="Helpers\FontDescriptionHelper.cs" />
     <Compile Include="Helpers\GrabHelper.cs" />
+    <Compile Include="Helpers\PlatformHelper.cs" />
     <Compile Include="IDesiredSizeProvider.cs" />
     <Compile Include="IVisualElementRenderer.cs" />
     <Compile Include="GtkToolbarTracker.cs" />
