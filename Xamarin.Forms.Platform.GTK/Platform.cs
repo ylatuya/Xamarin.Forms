@@ -61,11 +61,14 @@ namespace Xamarin.Forms.Platform.GTK
 
                 if(result == ResponseType.Ok)
                 {
-                    messageDialog.Destroy();
                     arguments.SetResult(true);
                 }
+                else
+                {
+                    arguments.SetResult(false);
+                }
 
-                arguments.SetResult(false);
+                messageDialog.Destroy();
             });
 
             MessagingCenter.Subscribe(this, Page.ActionSheetSignalName, (Page sender, ActionSheetArguments arguments) =>
