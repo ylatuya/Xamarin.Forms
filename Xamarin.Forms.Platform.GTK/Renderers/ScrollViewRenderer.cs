@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     public class ScrollViewRenderer : ViewRenderer<ScrollView, ScrolledWindow>
     {
         private VisualElement _currentView;
+        private Viewport _viewPort;
 
         protected IScrollViewController Controller
         {
@@ -27,14 +28,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    SetNativeControl(new ScrolledWindow
+                    Control = new ScrolledWindow
                     {
                         CanFocus = true,
                         ShadowType = ShadowType.None,
                         BorderWidth = 0,
                         HscrollbarPolicy = PolicyType.Automatic,
                         VscrollbarPolicy = PolicyType.Automatic
-                    });
+                    };
+
+                    _viewPort = new Viewport();
+                    Control.Add(_viewPort);
+
+                    SetNativeControl(Control);
 
                     Control.Hadjustment.ValueChanged += OnScrollEvent;
                     Control.Vadjustment.ValueChanged += OnScrollEvent;
@@ -80,6 +86,28 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             return result;
         }
 
+        protected override void UpdateBackgroundColor()
+        {
+            if (Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                return;
+            }
+
+            var backgroundColor = Element.BackgroundColor;
+
+            if (Control != null)
+            {
+                Control.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
+            }
+
+            if (_viewPort != null)
+            {
+                _viewPort.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
+            }
+
+            base.UpdateBackgroundColor();
+        }
+
         private void OnScrollEvent(object o, EventArgs args)
         {
             Controller.SetScrolledPosition(Control.Hadjustment.Value, Control.Vadjustment.Value);
@@ -100,9 +128,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 renderer = _currentView.GetOrCreateRenderer();
             }
 
-            Viewport viewPort = new Viewport();
-            viewPort.Add(renderer != null ? renderer.Container : null);
-            Control.Add(viewPort);
+            _viewPort.Add(renderer != null ? renderer.Container : null);
         }
 
         private void UpdateOrientation()
