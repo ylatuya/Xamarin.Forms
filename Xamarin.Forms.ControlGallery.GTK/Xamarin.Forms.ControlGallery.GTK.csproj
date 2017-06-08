@@ -144,6 +144,34 @@
       <Link>oasissmall.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\about.png">
+      <Link>about.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\blog.png">
+      <Link>blog.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\facebook.png">
+      <Link>facebook.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\favorite.png">
+      <Link>favorite.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\googleplus.png">
+      <Link>googleplus.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\hm.png">
+      <Link>hm.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\hm_full.jpg">
+      <Link>hm_full.jpg</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\home.png">
       <Link>home.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -164,6 +192,14 @@
       <Link>rui.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\scott.png">
+      <Link>scott.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\scott159.png">
+      <Link>scott159.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\Resources\search.png">
       <Link>search.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -178,6 +214,24 @@
     </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\toolbar_close.png">
       <Link>toolbar_close.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ic_share.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ratchet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ratchet_full.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tdl.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="twitternav.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

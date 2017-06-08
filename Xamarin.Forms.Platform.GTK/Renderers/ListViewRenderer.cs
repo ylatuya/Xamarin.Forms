@@ -143,7 +143,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            if (Element.BackgroundColor.IsDefault)
+            if (Element.BackgroundColor.IsDefaultOrTransparent())
             {
                 return;
             }
