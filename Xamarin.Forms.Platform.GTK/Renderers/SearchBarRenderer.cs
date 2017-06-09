@@ -17,6 +17,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     Control.SearchTextChanged += SearchTextChanged;
                     Control.SearchButtonClicked += SearchButtonClicked;
+                    Control.Entry.Focused += SearchFocused;
+                    Control.Entry.FocusOutEvent += SearchFocusOutEvent;
                 }
 
                 UpdateText();
@@ -74,6 +76,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     Control.SearchTextChanged -= SearchTextChanged;
                     Control.SearchButtonClicked -= SearchButtonClicked;
+                    Control.Entry.Focused -= SearchFocused;
+                    Control.Entry.FocusOutEvent -= SearchFocusOutEvent;
                 }
             }
         }
@@ -122,6 +126,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void SearchButtonClicked(object sender, EventArgs e)
         {
             Element.OnSearchButtonPressed();
+        }
+
+        private void SearchFocused(object o, Gtk.FocusedArgs args)
+        {
+            ElementController?.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
+        }
+
+        private void SearchFocusOutEvent(object o, Gtk.FocusOutEventArgs args)
+        {
+            ElementController?.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
         }
     }
 }

@@ -34,6 +34,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             Add(_container);
         }
 
+        public Gtk.Entry Entry
+        {
+            get
+            {
+                return _entryWrapper.Entry;
+            }
+        }
+
         public string SearchText
         {
             get
@@ -45,7 +53,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _entryWrapper.Entry.Text = value;
             }
         }
-
 
         public string PlaceholderText
         {
