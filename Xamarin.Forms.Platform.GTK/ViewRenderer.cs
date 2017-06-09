@@ -1,5 +1,4 @@
 ﻿using NativeView = Gtk.Widget;
-using System.ComponentModel;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -8,9 +7,12 @@ namespace Xamarin.Forms.Platform.GTK
 
     }
 
-    public abstract class ViewRenderer<TView, TNativeView> : VisualElementRenderer<TView, TNativeView> 
+    public abstract class ViewRenderer<TView, TNativeView> : VisualElementRenderer<TView, TNativeView>
         where TView : View where TNativeView : NativeView
     {
+        private string _defaultAccessibilityLabel;
+        private string _defaultAccessibilityHint;
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -37,6 +39,50 @@ namespace Xamarin.Forms.Platform.GTK
             base.SetNativeControl(view);
 
             Add(view);
+        }
+
+        protected override void SetAccessibilityHint()
+        {
+            if (Control == null)
+            {
+                base.SetAccessibilityHint();
+                return;
+            }
+
+            if (Element == null)
+                return;
+
+            if (_defaultAccessibilityHint == null)
+                _defaultAccessibilityHint = Control.Accessible.Name;
+
+            var helpText = (string)Element.GetValue(AutomationProperties.HelpTextProperty) ?? _defaultAccessibilityHint;
+
+            if (!string.IsNullOrEmpty(helpText))
+            {
+                Control.Accessible.Name = helpText;
+            }
+        }
+
+        protected override void SetAccessibilityLabel()
+        {
+            if (Control == null)
+            {
+                base.SetAccessibilityLabel();
+                return;
+            }
+
+            if (Element == null)
+                return;
+
+            if (_defaultAccessibilityLabel == null)
+                _defaultAccessibilityLabel = Control.Accessible.Description;
+
+            var name = (string)Element.GetValue(AutomationProperties.NameProperty) ?? _defaultAccessibilityLabel;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                Control.Accessible.Description = name;
+            }
         }
     }
 }

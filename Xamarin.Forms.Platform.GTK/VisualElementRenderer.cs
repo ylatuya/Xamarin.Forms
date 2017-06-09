@@ -17,6 +17,8 @@ namespace Xamarin.Forms.Platform.GTK
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
         private readonly List<EventHandler<VisualElementChangedEventArgs>> _elementChangedHandlers = new List<EventHandler<VisualElementChangedEventArgs>>();
         private VisualElementTracker<TElement, TNativeElement> _tracker;
+        private string _defaultAccessibilityLabel;
+        private string _defaultAccessibilityHint;
 
         protected VisualElementRenderer()
         {
@@ -101,6 +103,9 @@ namespace Xamarin.Forms.Platform.GTK
             }
 
             OnElementChanged(new ElementChangedEventArgs<TElement>(oldElement, element));
+
+            SetAccessibilityLabel();
+            SetAccessibilityHint();
         }
 
         public void SetElementSize(Size size)
@@ -130,7 +135,7 @@ namespace Xamarin.Forms.Platform.GTK
                     renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
                 }
             }
-      
+
             return true;
         }
 
@@ -191,6 +196,10 @@ namespace Xamarin.Forms.Platform.GTK
                 UpdateBackgroundColor();
             else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
                 UpdateSensitive();
+            else if (e.PropertyName == AutomationProperties.HelpTextProperty.PropertyName)
+                SetAccessibilityHint();
+            else if (e.PropertyName == AutomationProperties.NameProperty.PropertyName)
+                SetAccessibilityLabel();
         }
 
         protected virtual void UpdateBackgroundColor()
@@ -207,6 +216,38 @@ namespace Xamarin.Forms.Platform.GTK
             Container.VisibleWindow = !isDefault;
         }
 
+        protected virtual void SetAccessibilityHint()
+        {
+            if (Element == null)
+                return;
+
+            if (_defaultAccessibilityHint == null)
+                _defaultAccessibilityHint = Accessible.Name;
+
+            var helpText = (string)Element.GetValue(AutomationProperties.HelpTextProperty) ?? _defaultAccessibilityHint;
+
+            if (!string.IsNullOrEmpty(helpText))
+            {
+                Accessible.Name = helpText;
+            }
+        }
+
+        protected virtual void SetAccessibilityLabel()
+        {
+            if (Element == null)
+                return;
+
+            if (_defaultAccessibilityLabel == null)
+                _defaultAccessibilityLabel = Accessible.Description;
+
+            var name = (string)Element.GetValue(AutomationProperties.NameProperty) ?? _defaultAccessibilityLabel;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                Accessible.Description = name;
+            }
+        }
+
         protected virtual void UpdateNativeControl()
         {
             UpdateSensitive();
@@ -219,7 +260,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateSensitive()
         {
-            if(Control == null)
+            if (Control == null)
             {
                 return;
             }
