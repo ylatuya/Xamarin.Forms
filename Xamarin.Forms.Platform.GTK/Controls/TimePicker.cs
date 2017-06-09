@@ -233,6 +233,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private string _timeFormat;
 
         public event EventHandler TimeChanged;
+        public event EventHandler GotFocus;
+        public event EventHandler LostFocus;
 
         public TimePicker()
         {
@@ -310,6 +312,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             picker.CurrentTime = CurrentTime;
             picker.OnTimeChanged += OnPopupTimeChanged;
             picker.Destroyed += OnPickerClosed;
+            GotFocus?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnPopupTimeChanged(object sender, TimeEventArgs args)
@@ -344,6 +347,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (window != null)
             {
                 Remove(window);
+                LostFocus?.Invoke(this, EventArgs.Empty);
             }
         }
     }

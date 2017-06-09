@@ -25,7 +25,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (disposing && !_disposed)
             {
                 if (Control != null)
+                {
+                    Control.GotFocus += GotFocus;
+                    Control.LostFocus += LostFocus;
                     Control.TimeChanged -= OnTimeChanged;
+                }
 
                 _disposed = true;
             }
@@ -40,6 +44,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     var timePicker = new Controls.TimePicker();
+                    timePicker.GotFocus += GotFocus;
+                    timePicker.LostFocus += LostFocus;
                     timePicker.TimeChanged += OnTimeChanged;
                     SetNativeControl(timePicker);
                 }
@@ -83,6 +89,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateFormat()
         {
             Control.TimeFormat = Element.Format;
+        }
+
+        private void GotFocus(object sender, EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
+        }
+
+        private void LostFocus(object sender, EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
         }
 
         private void OnTimeChanged(object sender, EventArgs e)
