@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Extensions
@@ -112,6 +113,23 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             return childReq.Height > desiredSize.Request.Height 
                 ? childReq 
                 : desiredSize.Request;
+        }
+
+        public static IEnumerable<Widget> GetDescendants(this Widget self)
+        {
+            var descendants = new List<Widget>();
+            var container = self as Container;
+
+            if (container != null)
+            {
+                foreach (var child in container.Children)
+                {
+                    descendants.Add(child);
+                    descendants.AddRange(child.GetDescendants());
+                }
+            }
+
+            return descendants;
         }
 
         public static void PrintTree(this Widget widget)
