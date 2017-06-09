@@ -86,6 +86,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accesibility\AccesibilityPage.xaml.cs">
+      <DependentUpon>AccesibilityPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.cs" />
     <Compile Include="AppLifeCycle.cs" />
     <Compile Include="Bugzilla44596SplashPage.cs" />
@@ -413,7 +416,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Accesibility\AccesibilityPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Target Name="BeforeBuild">
     <CreateItem Include="blank.config">
       <Output TaskParameter="Include" ItemName="ConfigFile" />
