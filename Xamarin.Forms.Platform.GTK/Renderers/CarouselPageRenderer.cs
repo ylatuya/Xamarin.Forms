@@ -60,7 +60,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            SetElementSize(new Size(allocation.Width, allocation.Height));
+            SetElementSize(allocation.ToSize());
         }
 
         protected override void OnDestroyed()

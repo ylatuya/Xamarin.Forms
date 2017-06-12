@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.ComponentModel;
-using Gtk;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -32,13 +32,6 @@ namespace Xamarin.Forms.Platform.GTK
             base.Dispose();
 
             Dispose(true);
-        }
-
-        protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
-        {
-            Child?.QueueDraw();
-
-            return base.OnConfigureEvent(evnt);
         }
 
         protected override bool OnDeleteEvent(Gdk.Event evnt)
