@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -178,7 +179,9 @@ namespace Xamarin.Forms.Platform.GTK
         {
             if (Element.Batched)
             {
-                if (e.PropertyName == VisualElement.XProperty.PropertyName || e.PropertyName == VisualElement.YProperty.PropertyName || e.PropertyName == VisualElement.WidthProperty.PropertyName ||
+                if (e.PropertyName == VisualElement.XProperty.PropertyName || 
+                    e.PropertyName == VisualElement.YProperty.PropertyName || 
+                    e.PropertyName == VisualElement.WidthProperty.PropertyName ||
                     e.PropertyName == VisualElement.HeightProperty.PropertyName)
                 {
                     _invalidateArrangeNeeded = true;
@@ -186,12 +189,15 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
             }
 
-            if (e.PropertyName == VisualElement.XProperty.PropertyName || e.PropertyName == VisualElement.YProperty.PropertyName || e.PropertyName == VisualElement.WidthProperty.PropertyName ||
+            if (e.PropertyName == VisualElement.XProperty.PropertyName || 
+                e.PropertyName == VisualElement.YProperty.PropertyName || 
+                e.PropertyName == VisualElement.WidthProperty.PropertyName ||
                 e.PropertyName == VisualElement.HeightProperty.PropertyName)
             {
                 MaybeInvalidate();
             }
-            else if (e.PropertyName == VisualElement.AnchorXProperty.PropertyName || e.PropertyName == VisualElement.AnchorYProperty.PropertyName)
+            else if (e.PropertyName == VisualElement.AnchorXProperty.PropertyName || 
+                e.PropertyName == VisualElement.AnchorYProperty.PropertyName)
             {
                 UpdateScaleAndRotation(Element, Container);
             }
@@ -199,8 +205,11 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 UpdateScaleAndRotation(Element, Container);
             }
-            else if (e.PropertyName == VisualElement.TranslationXProperty.PropertyName || e.PropertyName == VisualElement.TranslationYProperty.PropertyName ||
-                     e.PropertyName == VisualElement.RotationProperty.PropertyName || e.PropertyName == VisualElement.RotationXProperty.PropertyName || e.PropertyName == VisualElement.RotationYProperty.PropertyName)
+            else if (e.PropertyName == VisualElement.TranslationXProperty.PropertyName || 
+                e.PropertyName == VisualElement.TranslationYProperty.PropertyName ||
+                     e.PropertyName == VisualElement.RotationProperty.PropertyName || 
+                     e.PropertyName == VisualElement.RotationXProperty.PropertyName || 
+                     e.PropertyName == VisualElement.RotationYProperty.PropertyName)
             {
                 UpdateRotation(Element, Container);
             }
@@ -266,6 +275,10 @@ namespace Xamarin.Forms.Platform.GTK
         {
             if (Element.IsInNativeLayout)
                 return;
+
+            var parent = Container.Parent;
+            parent?.QueueDraw();
+            Container.QueueDraw();
         }
 
         // TODO: Implement Scale
@@ -274,11 +287,16 @@ namespace Xamarin.Forms.Platform.GTK
             double anchorX = view.AnchorX;
             double anchorY = view.AnchorY;
             double scale = view.Scale;
+
+            UpdateRotation(view, eventBox);
         }
 
         // TODO: Implement Rotation
         private static void UpdateRotation(VisualElement view, EventBox eventBox)
         {
+            if (view == null)
+                return;
+
             double anchorX = view.AnchorX;
             double anchorY = view.AnchorY;
             double rotationX = view.RotationX;
@@ -287,6 +305,27 @@ namespace Xamarin.Forms.Platform.GTK
             double translationX = view.TranslationX;
             double translationY = view.TranslationY;
             double scale = view.Scale;
+
+            var viewRenderer = Platform.GetRenderer(view) as Widget;
+
+            if (viewRenderer == null)
+                return;
+
+            if (rotationX % 360 == 0 &&
+                rotationY % 360 == 0 &&
+                rotation % 360 == 0 &&
+                translationX == 0 &&
+                translationY == 0 &&
+                scale == 1)
+            {
+                return;
+            }
+            else
+            {
+                viewRenderer.MoveTo(
+                    scale == 0 ? 0 : translationX / scale,
+                    scale == 0 ? 0 : translationY / scale);
+            }
         }
 
         private static void UpdateVisibility(VisualElement view, EventBox eventBox)
