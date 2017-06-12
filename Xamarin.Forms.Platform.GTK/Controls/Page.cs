@@ -15,6 +15,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private HBox _toolbar;
         private EventBox _content;
         private ImageControl _image;
+        private Gdk.Color _defaultBackgroundColor;
 
         public HBox Toolbar
         {
@@ -51,9 +52,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             BuildPage();
         }
 
-        public void SetToolbarColor(Gdk.Color backgroundColor)
+        public void SetToolbarColor(Gdk.Color? backgroundColor)
         {
-            _headerContainer.ModifyBg(StateType.Normal, backgroundColor);
+            if (backgroundColor.HasValue)
+            {
+                _headerContainer.ModifyBg(StateType.Normal, backgroundColor.Value);
+            }
+            else
+            {
+                _headerContainer.ModifyBg(StateType.Normal, _defaultBackgroundColor);
+            }
         }
 
         public void SetBackgroundColor(Gdk.Color? backgroundColor)
@@ -106,6 +114,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void BuildPage()
         {
+            _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
+
             _toolbar = new HBox();
             _content = new EventBox();
 

@@ -130,13 +130,16 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateBarBackgroundColor(Controls.Page page)
         {
-            if (Navigation != null && Navigation.BarBackgroundColor != Color.Default)
+            if (Navigation != null)
             {
-                var backgroundColor = Navigation.BarBackgroundColor.ToGtkColor();
-
-                if (_toolbar != null && page != null)
+                if (Navigation.BarBackgroundColor.IsDefaultOrTransparent())
                 {
-                    page.SetToolbarColor(backgroundColor);
+                    page?.SetToolbarColor(null);
+                }
+                else
+                {
+                    var backgroundColor = Navigation.BarBackgroundColor.ToGtkColor();
+                    page?.SetToolbarColor(backgroundColor);
                 }
             }
         }
