@@ -117,6 +117,11 @@ namespace Xamarin.Forms.Platform.GTK
         {
             base.OnExposeEvent(evnt);
 
+            if (IsAnimationRunning(Element))
+            {
+                return false;
+            }
+
             Rectangle bounds = Element.Bounds;
             Container.MoveTo(bounds.X, bounds.Y);
 
@@ -132,7 +137,11 @@ namespace Xamarin.Forms.Platform.GTK
                 {
                     var renderer = Platform.GetRenderer(child);
                     renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+
+                    if (!IsAnimationRunning(child))
+                    {
+                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                    }
                 }
             }
 
@@ -282,6 +291,21 @@ namespace Xamarin.Forms.Platform.GTK
             _tracker.Control = Control;
             _tracker.Element = Element;
             _tracker.Container = Container;
+        }
+
+        private bool IsAnimationRunning(VisualElement element)
+        {
+            bool isAnimationRunning = false;
+
+            if (element.TranslationX != 0 ||
+                element.TranslationY != 0 ||
+                element.Rotation != 0 ||
+                element.RotationX != 0 ||
+                element.RotationY != 0 ||
+                element.Scale != 1)
+                isAnimationRunning = true;
+
+            return isAnimationRunning;
         }
     }
 }

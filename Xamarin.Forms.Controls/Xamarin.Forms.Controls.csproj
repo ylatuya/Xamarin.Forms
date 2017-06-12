@@ -89,6 +89,7 @@
     <Compile Include="Accesibility\AccesibilityPage.xaml.cs">
       <DependentUpon>AccesibilityPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Animations\TransformAnimationPageCS.cs" />
     <Compile Include="App.cs" />
     <Compile Include="AppLifeCycle.cs" />
     <Compile Include="Bugzilla44596SplashPage.cs" />

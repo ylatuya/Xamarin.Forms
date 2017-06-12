@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Timers;
 using System.Windows.Forms.Markers;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK;
 
 namespace Xamarin.Forms.Maps.GTK
@@ -334,8 +335,10 @@ namespace Xamarin.Forms.Maps.GTK
                 var center = new Position(Control.Position.Lat, Control.Position.Lng);
                 Element.VisibleRegion = new MapSpan(center, 0, 0);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("MoveToRegion exception: " + ex);
+                Log.Warning("Xamarin.Forms MapRenderer", $"MoveToRegion exception: {ex}");
                 return;
             }
         }
