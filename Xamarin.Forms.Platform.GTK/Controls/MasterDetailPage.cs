@@ -20,6 +20,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private bool _isPresented;
         private MasterDetailMasterTitleContainer _titleContainer;
+        private EventBox _masterContainerWrapper;
         private VBox _masterContainer;
         private Widget _master;
         private Widget _detail;
@@ -33,6 +34,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _masterBehaviorType = MasterBehaviorType.Default;
 
             // Master Stuff
+            _masterContainerWrapper = new EventBox();
             _masterContainer = new VBox();
             _titleContainer = new MasterDetailMasterTitleContainer();
             _titleContainer.HamburguerClicked += OnHamburgerClicked;
@@ -41,12 +43,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _master = new EventBox();
             _masterContainer.PackEnd(_master, false, true, 0);
+            _masterContainerWrapper.Add(_masterContainer);
 
             // Detail Stuff
             _detail = new EventBox();
 
             Add(_detail);
-            Add(_masterContainer);
+            Add(_masterContainerWrapper);
         }
 
         public MasterBehaviorType MasterBehaviorType
@@ -194,14 +197,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 this.RemoveFromContainer(_detail);
             }
 
-            Remove(_masterContainer);
-
             _detail = newDetail;
 
             Add(_detail);
-            Add(_masterContainer);
+
+            Remove(_masterContainerWrapper);
+            Add(_masterContainerWrapper);
 
             _detail.ShowAll();
+            _masterContainerWrapper.GdkWindow?.Raise(); // Forcing Master to be on top
         }
 
         private async void RefreshPresented(bool isPresented)
@@ -219,13 +223,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     Gtk.Application.Invoke(delegate
                     {
-                        _masterContainer.MoveTo(f, 0);
+                        _masterContainerWrapper.MoveTo(f, 0);
                     });
                 }).Run();
             }
             else
             {
-                _masterContainer.MoveTo(_isPresented ? 0 : -DefaultMasterWidth, 0);
+                _masterContainerWrapper.MoveTo(_isPresented ? 0 : -DefaultMasterWidth, 0);
             }
         }
 
