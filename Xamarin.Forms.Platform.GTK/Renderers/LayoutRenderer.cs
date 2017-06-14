@@ -1,6 +1,4 @@
-﻿using Gdk;
-using Gtk;
-using System.Diagnostics;
+﻿using Gtk;
 using Xamarin.Forms.Platform.GTK.Packagers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers

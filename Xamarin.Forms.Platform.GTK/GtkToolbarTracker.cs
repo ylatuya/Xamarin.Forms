@@ -1,9 +1,11 @@
-﻿using Gtk;
+﻿using Gdk;
+using Gtk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK
@@ -15,9 +17,11 @@ namespace Xamarin.Forms.Platform.GTK
         private readonly ToolbarTracker _toolbarTracker;
         private HBox _toolbar;
         private HBox _toolbarNavigationSection;
+        private Alignment _toolbarTitleSectionWrapper;
         private HBox _toolbarTitleSection;
         private HBox _toolbarSection;
         private Gtk.Label _toolbarTitle;
+        private ImageControl _toolbarIcon;
         private NavigationPage _navigation;
 
         private MasterDetailPage _parentMasterDetailPage;
@@ -66,7 +70,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         public Gdk.Size GetCurrentToolbarSize()
         {
-            if (!Toolbar.Visible)
+            if (Toolbar?.Visible != true)
             {
                 return Gdk.Size.Empty;
             }
@@ -82,8 +86,10 @@ namespace Xamarin.Forms.Platform.GTK
             _toolbarNavigationSection = new HBox();
             toolbar.PackStart(_toolbarNavigationSection, false, true, 0);
 
+            _toolbarTitleSectionWrapper = new Alignment(0f, 0.5f, 0, 0);
             _toolbarTitleSection = new HBox();
-            toolbar.PackStart(_toolbarTitleSection, true, true, 0);
+            _toolbarTitleSectionWrapper.Add(_toolbarTitleSection);
+            toolbar.PackStart(_toolbarTitleSectionWrapper, true, true, 0);
 
             _toolbarSection = new HBox();
             toolbar.PackStart(_toolbarSection, false, true, 0);
@@ -108,7 +114,9 @@ namespace Xamarin.Forms.Platform.GTK
         private void NavigationPagePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(NavigationPage.BarTextColorProperty.PropertyName) ||
-                e.PropertyName.Equals(NavigationPage.BarBackgroundColorProperty.PropertyName))
+                e.PropertyName.Equals(NavigationPage.BarBackgroundColorProperty.PropertyName) ||
+                e.PropertyName.Equals(Page.TitleProperty.PropertyName) ||
+                e.PropertyName.Equals(Page.IconProperty.PropertyName))
                 UpdateToolBar();
         }
 
@@ -136,6 +144,31 @@ namespace Xamarin.Forms.Platform.GTK
             if (_navigation == null)
                 return string.Empty;
             return _navigation.Peek(0).Title ?? string.Empty;
+        }
+
+        private void UpdateIcon()
+        {
+            if (_toolbar == null || _navigation == null)
+                return;
+
+            var iconPath = GetCurrentPageIconPath();
+
+            if (!string.IsNullOrEmpty(iconPath))
+            {
+                _toolbarIcon.Pixbuf = new Pixbuf(iconPath);
+                _toolbarIcon.SetSizeRequest(GtkToolbarConstants.ToolbarIconWidth, GtkToolbarConstants.ToolbarIconHeight);
+            }
+            else
+            {
+                _toolbarIcon.WidthRequest = 1;
+            }
+        }
+
+        private string GetCurrentPageIconPath()
+        {
+            if (_navigation == null)
+                return string.Empty;
+            return _navigation.Peek(0).Icon ?? string.Empty;
         }
 
         private void UpdateBarBackgroundColor(Controls.Page page)
@@ -349,15 +382,19 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 _toolbar = ConfigureToolbar();
 
-                _toolbarTitle = new Gtk.Label
+                _toolbarIcon = new ImageControl
                 {
-                    WidthRequest = GtkToolbarConstants.NavigationTitleMinSize
+                    WidthRequest = 1,
+                    Aspect = ImageAspect.AspectFit
                 };
+                _toolbarTitleSection.PackStart(_toolbarIcon, false, false, 8);
 
-                _toolbarTitleSection.Add(_toolbarTitle);
-
+                _toolbarTitle = new Gtk.Label();
+                _toolbarTitleSection.PackEnd(_toolbarTitle, true, true, 0);
+                
                 UpdateNavigationItems();
                 UpdateTitle();
+                UpdateIcon();
                 UpdateToolbarItems();
                 UpdateBarTextColor();
                 UpdateBarBackgroundColor();
