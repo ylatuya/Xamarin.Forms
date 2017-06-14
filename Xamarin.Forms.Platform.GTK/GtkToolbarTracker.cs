@@ -66,7 +66,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         public Gdk.Size GetCurrentToolbarSize()
         {
-            if (!Toolbar.Visible)
+            if (Toolbar == null || !Toolbar.Visible)
             {
                 return Gdk.Size.Empty;
             }
