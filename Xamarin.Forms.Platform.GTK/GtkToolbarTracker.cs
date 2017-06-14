@@ -64,6 +64,16 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
+        public Gdk.Size GetCurrentToolbarSize()
+        {
+            if (!Toolbar.Visible)
+            {
+                return Gdk.Size.Empty;
+            }
+
+            return Toolbar.Allocation.Size;
+        }
+
         protected virtual HBox ConfigureToolbar()
         {
             var toolbar = new HBox();

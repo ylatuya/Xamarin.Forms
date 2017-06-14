@@ -132,7 +132,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _contentContainer.Add(_image);
             _contentContainerWrapper.Add(_contentContainer);
 
-            root.PackStart(_contentContainerWrapper, true, true, 0);
+            root.PackStart(_contentContainerWrapper, false, false, 0);
 
             Attach(root, 0, 1, 0, 1);
 

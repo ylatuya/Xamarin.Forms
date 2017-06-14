@@ -120,7 +120,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            SetElementSize(allocation.ToSize());
+            var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
+            var pageContentSize = new Gdk.Rectangle(0, 0, allocation.Width, allocation.Height - toolbarSize.Height);
+
+            SetElementSize(pageContentSize.ToSize());
         }
 
         protected virtual void Dispose(bool disposing)
