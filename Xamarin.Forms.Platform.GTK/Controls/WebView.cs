@@ -1,5 +1,4 @@
 ﻿using Gtk;
-using WebKit;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -25,7 +24,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void LoadString(string html, string baseUrl)
         {
-            _webview.LoadString(html, string.Empty, string.Empty, baseUrl);
+            _webview.LoadHtmlString(html, baseUrl);
         }
 
         private void BuildWebView()
