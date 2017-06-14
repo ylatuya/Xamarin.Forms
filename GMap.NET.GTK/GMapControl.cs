@@ -37,6 +37,9 @@
         private bool _isMouseOverRoute;
         private bool _isMouseOverPolygon;
         private bool _isMouseOverMarker;
+        private PointLatLng _selectionStart;
+        private PointLatLng _selectionEnd;
+        private float? _mapRenderTransform = null;
 
         public event SelectionChange OnSelectionChange;
         public event MarkerEnter OnMarkerEnter;
@@ -108,10 +111,10 @@
         public Pen EmptyTileBorders = new Pen(Brushes.White, 1);
         public Pen ScalePen = new Pen(Brushes.Blue, 1);
         public Pen CenterPen = new Pen(Brushes.Red, 1);
-        public Pen SelectionPen = new Pen(Brushes.Blue, 2);
+        public Pen SelectionPen = new Pen(Brushes.Black, 2);
 
-        Brush SelectedAreaFill = new SolidBrush(Color.FromArgb(33, Color.RoyalBlue));
-        Color selectedAreaFillColor = Color.FromArgb(33, Color.RoyalBlue);
+        Brush SelectedAreaFill = new SolidBrush(Color.Transparent);
+        Color selectedAreaFillColor = Color.Transparent;
 
         [Category("GMap.NET")]
         [Description("background color od the selected area")]
@@ -132,6 +135,7 @@
                         SelectedAreaFill.Dispose();
                         SelectedAreaFill = null;
                     }
+
                     SelectedAreaFill = new SolidBrush(selectedAreaFillColor);
                 }
             }
@@ -385,7 +389,7 @@
         {
 #if DEBUG
             GuiThread = Thread.CurrentThread;
-            Console.WriteLine(String.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(string.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
 #endif
             if (!IsDesignerHosted)
             {
@@ -451,9 +455,9 @@
             }
         }
 
-        void invalidatorEngage(object sender, ProgressChangedEventArgs e)
+        void InvalidatorEngage(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine(String.Format("Get invaladation from Tread: {0}", System.Threading.Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(string.Format("Get invaladation from Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             Gtk.Application.Invoke(delegate
             {
                 base.QueueDraw();
@@ -462,7 +466,7 @@
 
         internal void ForceUpdateOverlays()
         {
-            Console.WriteLine(String.Format("Tread: {0}", System.Threading.Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(string.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             try
             {
                 HoldInvalidation = true;
@@ -657,8 +661,8 @@
             {
                 Point[] p = new Point[] { new Point(x, y) };
                 rotationMatrixInvert.TransformVectors(p);
-                x = (int)p[0].X;
-                y = (int)p[0].Y;
+                x = p[0].X;
+                y = p[0].Y;
             }
 
             Core.DragOffset(new GPoint(x, y));
@@ -684,7 +688,8 @@
                         _lazySetZoomToFitRect = null;
                     }
                 }
-                Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(invalidatorEngage);
+
+                Core.OnMapOpen().ProgressChanged += new ProgressChangedEventHandler(InvalidatorEngage);
                 ForceUpdateOverlays();
             }
         }
@@ -699,6 +704,7 @@
             {
                 o.Dispose();
             }
+
             Overlays.Clear();
 
             ScaleFont.Dispose();
@@ -709,18 +715,12 @@
             CopyrightFont.Dispose();
             EmptyTileBorders.Dispose();
             EmptytileBrush.Dispose();
-
             SelectedAreaFill.Dispose();
             SelectionPen.Dispose();
             ClearBackBuffer();
 
             base.Destroy();
         }
-
-        PointLatLng selectionStart;
-        PointLatLng selectionEnd;
-
-        float? MapRenderTransform = null;
 
         public Color EmptyMapBackground = Color.WhiteSmoke;
 
@@ -760,7 +760,7 @@
         {
             g.Clear(EmptyMapBackground);
 
-            if (MapRenderTransform.HasValue)
+            if (_mapRenderTransform.HasValue)
             {
                 if (!MobileMode)
                 {
@@ -770,7 +770,7 @@
                     var pos = center;
                     pos.OffsetNegative(delta);
 
-                    g.ScaleTransform(MapRenderTransform.Value, MapRenderTransform.Value, MatrixOrder.Append);
+                    g.ScaleTransform(_mapRenderTransform.Value, _mapRenderTransform.Value, MatrixOrder.Append);
                     g.TranslateTransform(pos.X, pos.Y, MatrixOrder.Append);
 
                     DrawMap(g);
@@ -860,7 +860,7 @@
 
                                             if (!img.IsParent)
                                             {
-                                                if (!MapRenderTransform.HasValue && !IsRotated)
+                                                if (!_mapRenderTransform.HasValue && !IsRotated)
                                                 {
                                                     g.DrawImage(img.Img, Core.tileRect.X, Core.tileRect.Y, Core.tileRect.Width, Core.tileRect.Height);
                                                 }
@@ -1218,8 +1218,8 @@
                 {
                     _isSelected = true;
                     SelectedArea = RectLatLng.Empty;
-                    selectionEnd = PointLatLng.Empty;
-                    selectionStart = FromLocalToLatLng((int)e.X, (int)e.Y);
+                    _selectionEnd = PointLatLng.Empty;
+                    _selectionStart = FromLocalToLatLng((int)e.X, (int)e.Y);
                 }
             }
             return base.OnButtonPressEvent(e);
@@ -1259,7 +1259,7 @@
                     Core.mouseDown = GPoint.Empty;
                 }
 
-                if (!selectionEnd.IsEmpty && !selectionStart.IsEmpty)
+                if (!_selectionEnd.IsEmpty && !_selectionStart.IsEmpty)
                 {
                     bool zoomtofit = false;
 
@@ -1356,10 +1356,10 @@
             {
                 if (_isSelected || DisableAltForSelection)
                 {
-                    selectionEnd = FromLocalToLatLng((int)e.X, (int)e.Y);
+                    _selectionEnd = FromLocalToLatLng((int)e.X, (int)e.Y);
                     {
-                        PointLatLng p1 = selectionStart;
-                        PointLatLng p2 = selectionEnd;
+                        PointLatLng p1 = _selectionStart;
+                        PointLatLng p2 = _selectionEnd;
 
                         double x1 = Math.Min(p1.Lng, p2.Lng);
                         double y1 = Math.Max(p1.Lat, p2.Lat);
@@ -1554,10 +1554,10 @@
 
         public PointLatLng FromLocalToLatLng(int x, int y)
         {
-            if (MapRenderTransform.HasValue)
+            if (_mapRenderTransform.HasValue)
             {
-                x = (int)(Core.renderOffset.X + ((x - Core.renderOffset.X) / MapRenderTransform.Value));
-                y = (int)(Core.renderOffset.Y + ((y - Core.renderOffset.Y) / MapRenderTransform.Value));
+                x = (int)(Core.renderOffset.X + ((x - Core.renderOffset.X) / _mapRenderTransform.Value));
+                y = (int)(Core.renderOffset.Y + ((y - Core.renderOffset.Y) / _mapRenderTransform.Value));
             }
 
             if (IsRotated)
@@ -1582,10 +1582,10 @@
         {
             GPoint ret = Core.FromLatLngToLocal(point);
 
-            if (MapRenderTransform.HasValue)
+            if (_mapRenderTransform.HasValue)
             {
-                ret.X = (int)(Core.renderOffset.X + ((Core.renderOffset.X - ret.X) * -MapRenderTransform.Value));
-                ret.Y = (int)(Core.renderOffset.Y + ((Core.renderOffset.Y - ret.Y) * -MapRenderTransform.Value));
+                ret.X = (int)(Core.renderOffset.X + ((Core.renderOffset.X - ret.X) * -_mapRenderTransform.Value));
+                ret.Y = (int)(Core.renderOffset.Y + ((Core.renderOffset.Y - ret.Y) * -_mapRenderTransform.Value));
             }
 
             if (IsRotated)
@@ -1660,14 +1660,14 @@
                     {
                         float scaleValue = (float)Math.Pow(2d, remainder);
                         {
-                            MapRenderTransform = scaleValue;
+                            _mapRenderTransform = scaleValue;
                         }
 
                         ZoomStep = Convert.ToInt32(value - remainder);
                     }
                     else
                     {
-                        MapRenderTransform = null;
+                        _mapRenderTransform = null;
                         ZoomStep = (int)Math.Floor(value);
                     }
 

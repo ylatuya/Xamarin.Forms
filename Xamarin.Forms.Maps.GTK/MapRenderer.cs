@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -44,17 +45,19 @@ namespace Xamarin.Forms.Maps.GTK
                     GMapProviders.GoogleMap.ApiKey = FormsMaps.AuthenticationToken;
                     gMapControl.MinZoom = MinZoom;
                     gMapControl.MaxZoom = MaxZoom;
+                    gMapControl.SelectedAreaFillColor = System.Drawing.Color.Transparent;
+
                     gMapControl.Overlays.Add(new GMapOverlay(OverlayId));
- 
+
                     SetNativeControl(gMapControl);
 
-                    Control.OnSelectionChange += Control_OnSelectionChange;
                     Control.SizeAllocated += OnSizeAllocated;
                     Control.OnPositionChanged += OnPositionChanged;
                     Control.OnMapZoomChanged += OnMapZoomChanged;
+                    Control.ButtonPressEvent += OnButtonPressEvent;
                 }
 
-                MessagingCenter.Subscribe<Map, MapSpan>(this, "MapMoveToRegion", (s, a) =>
+                MessagingCenter.Subscribe<Maps.Map, MapSpan>(this, "MapMoveToRegion", (s, a) =>
                 MoveToRegion(a), mapModel);
 
                 UpdateMapType();
@@ -76,17 +79,12 @@ namespace Xamarin.Forms.Maps.GTK
             base.OnElementChanged(e);
         }
 
-        private void Control_OnSelectionChange(RectLatLng Selection, bool ZoomToFit)
-        {
-            var test = Selection;
-        }
-
         private void OnSizeAllocated(object o, Gtk.SizeAllocatedArgs args)
         {
             UpdateVisibleRegion();
         }
 
-        private void OnPositionChanged(GMap.NET.PointLatLng point)
+        private void OnPositionChanged(PointLatLng point)
         {
             UpdateVisibleRegion();
         }
@@ -94,6 +92,11 @@ namespace Xamarin.Forms.Maps.GTK
         private void OnMapZoomChanged()
         {
             UpdateVisibleRegion();
+        }
+
+        private void OnButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
+        {
+            Control.SelectionPen = new Pen(Brushes.Black, 2);
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -116,13 +119,14 @@ namespace Xamarin.Forms.Maps.GTK
             {
                 _disposed = true;
 
-                MessagingCenter.Unsubscribe<Map, MapSpan>(this, "MapMoveToRegion");
+                MessagingCenter.Unsubscribe<Maps.Map, MapSpan>(this, "MapMoveToRegion");
 
                 if (Control != null)
                 {
                     Control.SizeAllocated -= OnSizeAllocated;
                     Control.OnPositionChanged -= OnPositionChanged;
                     Control.OnMapZoomChanged -= OnMapZoomChanged;
+                    Control.ButtonPressEvent -= OnButtonPressEvent;
                 }
 
                 if (Element != null)
@@ -361,6 +365,8 @@ namespace Xamarin.Forms.Maps.GTK
 
                 var region = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
 
+                Control.SelectionPen = new Pen(Brushes.Transparent, 2);
+                Control.SelectedArea = region;
                 Control.SetZoomToFitRect(region);
             }
             catch (Exception ex)
@@ -381,7 +387,7 @@ namespace Xamarin.Forms.Maps.GTK
                 var topLeft = region.LocationTopLeft;
                 var center = region.LocationMiddle;
                 var rightBottom = region.LocationRightBottom;
-           
+
                 var latitudeDelta = Math.Abs(topLeft.Lat - rightBottom.Lat);
                 var longitudeDelta = Math.Abs(topLeft.Lng - rightBottom.Lng);
 

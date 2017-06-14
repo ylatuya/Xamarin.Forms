@@ -491,7 +491,5 @@
   </PropertyGroup>
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Xaml\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.GTK;
 
 [assembly: AssemblyTitle("Xamarin.Forms.Maps.GTK")]
@@ -17,4 +16,4 @@ using Xamarin.Forms.Maps.GTK;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-[assembly: ExportRenderer(typeof(Map), typeof(MapRenderer))]
+[assembly: ExportRenderer(typeof(Xamarin.Forms.Maps.Map), typeof(MapRenderer))]
