@@ -1,5 +1,6 @@
-﻿using Gtk;
-using Xamarin.Forms.Platform.GTK.Extensions;
+﻿using Gdk;
+using Gtk;
+using System.Diagnostics;
 using Xamarin.Forms.Platform.GTK.Packagers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -7,13 +8,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     public class LayoutRenderer : ViewRenderer<Layout, Fixed>
     {
         private LayoutElementPackager _packager;
-
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            base.OnSizeAllocated(allocation);
-
-            SetElementSize(allocation.ToSize());
-        }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Layout> e)
         {

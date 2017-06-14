@@ -65,7 +65,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             else if (e.PropertyName == ScrollView.OrientationProperty.PropertyName)
                 UpdateOrientation();
         }
-
+        
         protected override void Dispose(bool disposing)
         {
             if (Control != null)
@@ -76,14 +76,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             base.Dispose(disposing);
-        }
-
-        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            SizeRequest result = base.GetDesiredSize(widthConstraint, heightConstraint);
-            result.Minimum = new Size(40, 40);
-
-            return result;
         }
 
         protected override void UpdateBackgroundColor()
