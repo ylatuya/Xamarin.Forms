@@ -1,8 +1,10 @@
-﻿using GMap.NET.GTK;
+﻿using GMap.NET;
+using GMap.NET.GTK;
 using GMap.NET.MapProviders;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -15,9 +17,9 @@ namespace Xamarin.Forms.Maps.GTK
 {
     public class MapRenderer : ViewRenderer<Map, GMapControl>
     {
+        private const string OverlayId = "overlayId";
         private const int MinZoom = 0;
         private const int MaxZoom = 24;
-        private const int Zoom = 6;
 
         private GMapImageMarker _userPosition;
         private bool _disposed;
@@ -42,10 +44,13 @@ namespace Xamarin.Forms.Maps.GTK
                     GMapProviders.GoogleMap.ApiKey = FormsMaps.AuthenticationToken;
                     gMapControl.MinZoom = MinZoom;
                     gMapControl.MaxZoom = MaxZoom;
-                    gMapControl.Zoom = Zoom;
-                    gMapControl.Overlays.Add(new GMapOverlay());
+                    gMapControl.Overlays.Add(new GMapOverlay(OverlayId));
+ 
                     SetNativeControl(gMapControl);
 
+                    Control.OnSelectionChange += Control_OnSelectionChange;
+                    Control.SizeAllocated += OnSizeAllocated;
+                    Control.OnPositionChanged += OnPositionChanged;
                     Control.OnMapZoomChanged += OnMapZoomChanged;
                 }
 
@@ -64,11 +69,26 @@ namespace Xamarin.Forms.Maps.GTK
                 if (Control == null)
                     return;
 
-                MoveToRegion(mapModel.VisibleRegion);
+                MoveToRegion(mapModel.LastMoveToRegion);
                 UpdateIsShowingUser();
             }
 
             base.OnElementChanged(e);
+        }
+
+        private void Control_OnSelectionChange(RectLatLng Selection, bool ZoomToFit)
+        {
+            var test = Selection;
+        }
+
+        private void OnSizeAllocated(object o, Gtk.SizeAllocatedArgs args)
+        {
+            UpdateVisibleRegion();
+        }
+
+        private void OnPositionChanged(GMap.NET.PointLatLng point)
+        {
+            UpdateVisibleRegion();
         }
 
         private void OnMapZoomChanged()
@@ -100,6 +120,8 @@ namespace Xamarin.Forms.Maps.GTK
 
                 if (Control != null)
                 {
+                    Control.SizeAllocated -= OnSizeAllocated;
+                    Control.OnPositionChanged -= OnPositionChanged;
                     Control.OnMapZoomChanged -= OnMapZoomChanged;
                 }
 
@@ -150,7 +172,7 @@ namespace Xamarin.Forms.Maps.GTK
             if (overlay != null)
             {
                 overlay.Markers.Add(new GMapImageMarker(
-                    new GMap.NET.PointLatLng(
+                    new PointLatLng(
                         pin.Position.Latitude,
                         pin.Position.Longitude),
                     GMapImageMarkerType.RedDot));
@@ -226,7 +248,7 @@ namespace Xamarin.Forms.Maps.GTK
                 {
                     _timer = new Timer();
                     _timer.Elapsed += (s, o) => UpdateIsShowingUser();
-                    _timer.Interval = 1000 / 60.0;
+                    _timer.Interval = 1000;
                 }
 
                 if (!_timer.Enabled)
@@ -239,7 +261,7 @@ namespace Xamarin.Forms.Maps.GTK
             }
         }
 
-        private void LoadUserPosition(GMap.NET.PointLatLng userCoordinate, bool center)
+        private void LoadUserPosition(PointLatLng userCoordinate, bool center)
         {
             if (Control == null || Element == null) return;
 
@@ -250,10 +272,10 @@ namespace Xamarin.Forms.Maps.GTK
 
             var overlay = Control.Overlays.FirstOrDefault();
 
-            if (overlay.Markers.Contains(_userPosition))
-                overlay.Markers.Remove(_userPosition);
-
-            overlay.Markers.Add(_userPosition);
+            if (overlay != null)
+            {
+                overlay.Markers.Add(_userPosition);
+            }
 
             if (center)
             {
@@ -261,7 +283,7 @@ namespace Xamarin.Forms.Maps.GTK
             }
         }
 
-        private GMap.NET.PointLatLng? GetUserPosition()
+        private PointLatLng? GetUserPosition()
         {
             try
             {
@@ -271,7 +293,7 @@ namespace Xamarin.Forms.Maps.GTK
                 var result = webClient.DownloadString(uri);
                 var location = JsonConvert.DeserializeObject<Location>(result);
 
-                return new GMap.NET.PointLatLng(
+                return new PointLatLng(
                     location.Latitude,
                     location.Longitude);
             }
@@ -313,16 +335,39 @@ namespace Xamarin.Forms.Maps.GTK
 
         private void MoveToRegion(MapSpan span)
         {
-            if (span == null)
+            try
             {
-                return;
+                if (span == null)
+                {
+                    return;
+                }
+
+                var p1 = new PointLatLng
+                {
+                    Lat = span.Center.Latitude + span.LatitudeDegrees / 2,
+                    Lng = span.Center.Longitude - span.LongitudeDegrees / 2
+                };
+
+                var p2 = new PointLatLng
+                {
+                    Lat = span.Center.Latitude - span.LatitudeDegrees / 2,
+                    Lng = span.Center.Longitude + span.LongitudeDegrees / 2
+                };
+
+                double x1 = Math.Min(p1.Lng, p2.Lng);
+                double y1 = Math.Max(p1.Lat, p2.Lat);
+                double x2 = Math.Max(p1.Lng, p2.Lng);
+                double y2 = Math.Min(p1.Lat, p2.Lat);
+
+                var region = new RectLatLng(y1, x1, x2 - x1, y1 - y2);
+
+                Control.SetZoomToFitRect(region);
             }
-
-            var region = new GMap.NET.PointLatLng(
-                 span.Center.Latitude + span.LatitudeDegrees / 2,
-                 span.Center.Longitude - span.LongitudeDegrees / 2);
-
-            Control.Position = region;
+            catch (Exception ex)
+            {
+                Debug.WriteLine("MoveToRegion exception: " + ex);
+                Log.Warning("Xamarin.Forms MapRenderer", $"MoveToRegion exception: {ex}");
+            }
         }
 
         private void UpdateVisibleRegion()
@@ -332,13 +377,24 @@ namespace Xamarin.Forms.Maps.GTK
 
             try
             {
-                var center = new Position(Control.Position.Lat, Control.Position.Lng);
-                Element.VisibleRegion = new MapSpan(center, 0, 0);
+                var region = Control.SelectedArea;
+                var topLeft = region.LocationTopLeft;
+                var center = region.LocationMiddle;
+                var rightBottom = region.LocationRightBottom;
+           
+                var latitudeDelta = Math.Abs(topLeft.Lat - rightBottom.Lat);
+                var longitudeDelta = Math.Abs(topLeft.Lng - rightBottom.Lng);
+
+                Element.VisibleRegion = new MapSpan(
+                    new Position(center.Lat, center.Lng),
+                    latitudeDelta,
+                    longitudeDelta);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("MoveToRegion exception: " + ex);
-                Log.Warning("Xamarin.Forms MapRenderer", $"MoveToRegion exception: {ex}");
+                Debug.WriteLine("UpdateVisibleRegion exception: " + ex);
+                Log.Warning("Xamarin.Forms MapRenderer", $"UpdateVisibleRegion exception: {ex}");
+
                 return;
             }
         }
