@@ -32,9 +32,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             CreateWebView();
 
             ScrolledWindow scroll = new ScrolledWindow();
-            scroll.Add(_webview);
+            scroll.AddWithViewport(_webview);
+
             _vbox = new VBox(false, 1);
-            _vbox.PackStart(scroll);
+            _vbox.PackStart(scroll, true, true, 0);
 
             Add(_vbox);
             ShowAll();
