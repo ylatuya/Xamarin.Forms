@@ -123,12 +123,18 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _currentView = Element.Content;
 
             IVisualElementRenderer renderer = null;
+
             if (_currentView != null)
             {
                 renderer = _currentView.GetOrCreateRenderer();
             }
 
-            _viewPort.Add(renderer != null ? renderer.Container : null);
+            if (renderer != null)
+            {
+                var content = renderer.Container;
+                content.VisibleWindow = false;
+                _viewPort.Add(content);
+            }
         }
 
         private void UpdateOrientation()

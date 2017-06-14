@@ -1241,6 +1241,7 @@
                     _currentCursorType = Gdk.CursorType.LeftPtr;
                     this.GdkWindow.Cursor = new Gdk.Cursor(_currentCursorType);
                 }
+
                 Core.EndDrag();
 
                 if (BoundsOfMap.HasValue && !BoundsOfMap.Value.Contains(Position))

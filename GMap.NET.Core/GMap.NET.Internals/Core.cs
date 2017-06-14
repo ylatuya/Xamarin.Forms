@@ -165,7 +165,6 @@ namespace GMap.NET.Internals
         {
             get
             {
-
                 return position;
             }
             set
@@ -173,15 +172,15 @@ namespace GMap.NET.Internals
                 position = value;
                 positionPixel = Provider.Projection.FromLatLngToPixel(value, Zoom);
 
+                if (OnCurrentPositionChanged != null)
+                    OnCurrentPositionChanged(position);
+
                 if (IsStarted)
                 {
                     if (!IsDragging)
                     {
                         GoToCurrentPosition();
                     }
-
-                    if (OnCurrentPositionChanged != null)
-                        OnCurrentPositionChanged(position);
                 }
             }
         }
