@@ -12,6 +12,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class TabbedPageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
     {
+        private const int DefaultIconWidth = 24;
+        private const int DefaultIconHeight = 24;
+
         private bool _disposed;
         private VisualElementTracker<Page, Container> _tracker;
 
@@ -212,7 +215,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control.InsertPage(
                         pageRenderer.Container,
                         page.Title,
-                        page.Icon?.ToPixbuf(),
+                        page.Icon?.ToPixbuf(new Size(DefaultIconWidth, DefaultIconHeight)),
                         i);
                 }
             }
