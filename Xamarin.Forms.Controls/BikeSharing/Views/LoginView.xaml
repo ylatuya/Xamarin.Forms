@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.LoginView"
+             xmlns:local="clr-namespace:Xamarin.Forms.Controls"
+             Title="Sign In">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style x:Key="SignUpLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="FontSize"
+                        Value="Small" />
+                <Setter Property="TextColor"
+                        Value="Yellow" />
+                <Setter Property="FontAttributes"
+                        Value="Bold" />
+            </Style>
+            
+            <Style x:Key="SignInButtonStyle"
+                   TargetType="{x:Type Button}">
+                <Setter Property="FontAttributes"
+                        Value="Bold" />
+                <Setter Property="TextColor"
+                        Value="Blue" />
+                <Setter Property="BackgroundColor"
+                        Value="White" />
+                <Setter Property="HeightRequest"
+                        Value="54" />
+            </Style>
+
+            <Style x:Key="HaveAccountLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="FontSize"
+                        Value="Small" />
+                <Setter Property="TextColor"
+                        Value="White" />
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Image
+            Source="bike_background.png"
+            Aspect="AspectFill" />
+        <Grid
+            Padding="40, 150, 40, 30">
+            <StackLayout>
+                <Entry 
+                    x:Name="EntryUserName"
+                    Text="{Binding UserName, Mode=TwoWay}"
+                    AutomationId="username"
+                    Placeholder="Username">
+                </Entry>
+                <Entry 
+                    x:Name="EntryPassword"
+                    Text="{Binding Password, Mode=TwoWay}"
+                    Placeholder="Password"
+                    AutomationId="password"
+                    IsPassword="true">
+                </Entry>
+                <Label 
+                    Text="Forgot Password?"
+                    HorizontalOptions="End">
+                </Label>
+                <Button
+                    Command="{Binding SignInCommand}"
+                    Text="Sign in"
+                    AutomationId="signin"
+                    Style="{StaticResource SignInButtonStyle}" />
+                <StackLayout 
+                    Orientation="Horizontal"
+                    HorizontalOptions="Center">
+                    <Label  
+                        Text="Don't have an account?"
+                        VerticalOptions="Center"
+                        Style="{StaticResource HaveAccountLabelStyle}"/>
+                    <Grid
+                        HeightRequest="40">
+                        <Label 
+                            Text="Sign up"
+                            VerticalOptions="Center"  
+                            Style="{StaticResource SignUpLabelStyle}"/>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

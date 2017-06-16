@@ -47,13 +47,8 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
-			return new MasterDetailPage
-			{
-				AutomationId = DefaultMainPageId,
-				Master = new ContentPage { Title = "Master", Content = new View { BackgroundColor = Color.Red } },
-				Detail = CoreGallery.GetMainPage()
-			};
-		}
+            return new CustomNavigationPage(new LoginView());
+        }
 
         protected override void OnAppLinkRequestReceived(Uri uri)
         {

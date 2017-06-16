@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.MainView"    
+             xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+             Title="Bike Sharing">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            
+            <Style x:Key="HeaderLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"  
+                        Value="White" />
+                <Setter Property="FontSize"
+                        Value="Medium" />
+            </Style>
+            
+            <Style x:Key="SectionLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"
+                        Value="Gray" />
+                <Setter Property="FontSize"
+                        Value="Large" />
+                <Setter Property="Margin"
+                        Value="15, 10, 0, 0" />
+            </Style>
+
+            <Style x:Key="EventTitleLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"
+                        Value=" White" />
+                <Setter Property="FontSize"
+                        Value="Large" />
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView>
+        <StackLayout     
+            Orientation="Vertical">
+            <Grid>
+                <Image
+                    Source="bike_header.png"
+                    Aspect="AspectFill" />
+                <StackLayout   
+                    Opacity="0"
+                    AnchorX="0"
+                    AnchorY="1"
+                    VerticalOptions="End"
+                    HeightRequest="120"
+                    Margin="12, 12, 0, 0">
+                    <Label
+                        Text="15/10/17"
+                        Style="{StaticResource HeaderLabelStyle}"
+                        FontSize="Small"/>
+                    <Label 
+                        Text="Seville"
+                        Style="{StaticResource HeaderLabelStyle}"  
+                        FontSize="Small"/>
+                    <Label 
+                        Text="30 °F"                            
+                        Style="{StaticResource HeaderLabelStyle}" />
+                </StackLayout>
+            </Grid>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="150" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label 
+                    Grid.Row="0"
+                    Text="Events"
+                    VerticalOptions="Center"
+                    Style="{StaticResource SectionLabelStyle}" />
+                <controls:StackedList 
+                    Grid.Row="1"
+                    Margin="5, 0"
+                    Spacing="5"
+                    ItemsSource="{Binding Events}"
+                    ListOrientation="Horizontal">
+                    <controls:StackedList.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                WidthRequest="300">
+                                <AbsoluteLayout>
+                                    <Image       
+                                        Source="{Binding ImagePath}" 
+                                        Aspect="AspectFill" 
+                                        AbsoluteLayout.LayoutFlags="All" 
+                                        AbsoluteLayout.LayoutBounds="0, 0, 1.0, 1.0">
+                                    </Image>
+                                </AbsoluteLayout>
+                                <StackLayout 
+                                    Padding="15, 15, 40, 15">
+                                    <Label 
+                                        Text="{Binding Name}"
+                                        Style="{StaticResource EventTitleLabelStyle}" />
+                                </StackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </controls:StackedList.ItemTemplate>
+                </controls:StackedList>
+                <BoxView 
+                    Grid.Row="2"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="Center"
+                    Color="Gray"
+                    Opacity="0.22"
+                    HeightRequest="1" />
+                <Label 
+                    Grid.Row="3" 
+                    Text="Recommended"
+                    VerticalOptions="Center"
+                    Style="{StaticResource SectionLabelStyle}" />
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
