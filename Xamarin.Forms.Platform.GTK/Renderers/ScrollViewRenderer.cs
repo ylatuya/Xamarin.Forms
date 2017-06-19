@@ -38,6 +38,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     };
 
                     _viewPort = new Viewport();
+                    _viewPort.ShadowType = ShadowType.None;
+                    _viewPort.BorderWidth = 0;
                     Control.Add(_viewPort);
 
                     SetNativeControl(Control);
