@@ -166,11 +166,11 @@ namespace Xamarin.Forms.Platform.GTK
 
             var modalPage = GetRenderer(modal) as Container;
 
-            var pageRenderer = PlatformRenderer.Child as PageRenderer;
+            var pageControl = PlatformRenderer.Child as IPageControl;
 
-            if (pageRenderer != null)
+            if (pageControl != null)
             {
-                var page = pageRenderer.Container.Child as Controls.Page;
+                var page = pageControl.Control;
 
                 if (page != null)
                 {
@@ -233,11 +233,11 @@ namespace Xamarin.Forms.Platform.GTK
                 SetRenderer(modal, modalRenderer);
             }
 
-            var pageRenderer = PlatformRenderer.Child as PageRenderer;
+            var pageControl = PlatformRenderer.Child as IPageControl;
 
-            if (pageRenderer != null)
+            if (pageControl != null)
             {
-                var page = pageRenderer.Container.Child as Controls.Page;
+                var page = pageControl.Control;
 
                 if (page != null)
                 {

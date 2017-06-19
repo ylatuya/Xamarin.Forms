@@ -340,16 +340,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Control.RemoveFromContainer(target.Container);
             }
 
-            if (Control.Children != null)
-            {
-                foreach (var children in Control.Children)
-                {
-                    children.ShowAll();
-                }
-
-                Control.ShowAll();
-            }
-
             target?.Dispose();
 
             if (removeFromStack)

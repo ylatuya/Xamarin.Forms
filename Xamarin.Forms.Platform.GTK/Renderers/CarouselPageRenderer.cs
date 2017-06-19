@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -6,27 +7,13 @@ using System.Linq;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class CarouselPageRenderer : Container, IVisualElementRenderer
+    public class CarouselPageRenderer : AbstractPageRenderer<Carousel, CarouselPage>
     {
-        private Carousel _carousel;
         private List<PageContainer> _pages;
         private int _selectedIndex;
-        private bool _appeared;
-        private bool _disposed;
-
-        public Container Container => this;
-
-        public VisualElement Element { get; private set; }
-
-        public Page Page => (Page)Element;
-
-        CarouselPage Carousel => Element as CarouselPage;
-
-        public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
         public int SelectedIndex
         {
@@ -38,77 +25,45 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 _selectedIndex = value;
 
-                if (Carousel != null)
-                    Carousel.CurrentPage = (ContentPage)Element.LogicalChildren[(int)SelectedIndex];
+                if (Page != null)
+                    Page.CurrentPage = (ContentPage)Element.LogicalChildren[(int)SelectedIndex];
             }
         }
 
-        public bool Disposed { get { return _disposed; } }
-
-        protected override void OnShown()
+        protected override void Dispose(bool disposing)
         {
-            base.OnShown();
+            base.Dispose(disposing);
 
-            if (_appeared || _disposed)
-                return;
-
-            _appeared = true;
-            Page.SendAppearing();
-        }
-
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            base.OnSizeAllocated(allocation);
-
-            SetElementSize(allocation.ToSize());
-        }
-
-        protected override void OnDestroyed()
-        {
-            base.OnDestroyed();
-
-            if (!_appeared || _disposed)
-                return;
-
-            _pages = null;
-            _appeared = false;
-            Page.SendDisappearing();
-        }
-
-        public override void Dispose()
-        {
-            if (!_disposed)
+            if (Page != null)
             {
-                if (Carousel != null)
-                {
-                    Carousel.PropertyChanged -= OnPropertyChanged;
-                    Carousel.PagesChanged -= OnPagesChanged;
-                }
-
-                Platform.SetRenderer(Element, null);
-
-                Element = null;
-                _disposed = true;
-                Page.SendDisappearing();
+                Page.PagesChanged -= OnPagesChanged;
             }
-
-            base.Dispose();
         }
 
-        public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            var result = new Size(
-              widthConstraint,
-              heightConstraint);
-
-            return new SizeRequest(result);
-        }
-
-        public void SetElement(VisualElement element)
+        public override void SetElement(VisualElement element)
         {
             var newPage = element as CarouselPage;
             if (element != null && newPage == null)
                 throw new ArgumentException("element must be a CarouselPage");
+
+            if (element != null)
+            {
+                if (Control == null)
+                {
+                    Control = new Controls.Page();
+                    Add(Control);
+                }
+
+                if (Widget == null)
+                {
+                    Widget = new Carousel();
+                    Widget.Animated = true;
+
+                    var eventBox = new EventBox();
+                    eventBox.Add(Widget);
+                    Control.Content = eventBox;
+                }
+            }
 
             VisualElement oldElement = Element;
             Element = element;
@@ -124,38 +79,37 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
         }
 
-        public void SetElementSize(Size size)
-        {
-            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
-        }
-
         private void Init()
         {
-            InitializeCarousel();
-            UpdateBackground();
             UpdateSource();
+            UpdateBackgroundColor();
             UpdateBackgroundImage();
 
-            Carousel.PropertyChanged += OnPropertyChanged;
-            Carousel.PagesChanged += OnPagesChanged;
+            Page.PagesChanged += OnPagesChanged;
         }
 
-        private void InitializeCarousel()
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            _carousel = new Carousel();
-            _carousel.Animated = true;
+            base.OnElementPropertyChanged(sender, e);
 
-            Add(_carousel);
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
             if (e.PropertyName == nameof(TabbedPage.CurrentPage))
                 UpdateCurrentPage();
-            else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-                UpdateBackground();
-            else if (e.PropertyName == Page.BackgroundImageProperty.PropertyName)
-                UpdateBackgroundImage();
+        }
+
+        protected override void UpdateBackgroundColor()
+        {
+            if (Element.BackgroundColor.IsDefault)
+            {
+                return;
+            }
+
+            var backgroundColor = Element.BackgroundColor.ToGtkColor();
+            Widget?.SetBackground(backgroundColor);
+        }
+
+        protected override void UpdateBackgroundImage()
+        {
+            Widget?.SetBackgroundImage(Page.BackgroundImage);
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -168,7 +122,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     for (int i = 0; i < e.NewItems.Count; i++)
                     {
                         var page = e.NewItems[i] as Page;
-                        _carousel.AddPage(index, page);
+                        Widget.AddPage(index, page);
                         _pages.Add(new PageContainer(page, i));
                         index++;
                     }
@@ -179,7 +133,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         newPages.Add(pc.Page);
                     }
 
-                    e.Apply(Carousel.Children, newPages);
+                    e.Apply(Page.Children, newPages);
 
                     break;
                 case NotifyCollectionChangedAction.Remove:
@@ -187,7 +141,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     for (int i = 0; i < e.OldItems.Count; i++)
                     {
                         var page = e.OldItems[i];
-                        _carousel.RemovePage(page);
+                        Widget.RemovePage(page);
                         var pageContainer = _pages.FirstOrDefault(p => p.Page == page);
                         _pages.Remove(pageContainer);
                     }
@@ -198,53 +152,29 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         oldPages.Add(pc.Page);
                     }
 
-                    e.Apply(Carousel.Children, oldPages);
+                    e.Apply(Page.Children, oldPages);
                     UpdateCurrentPage();
                     break;
                 case NotifyCollectionChangedAction.Reset:
-
-                    if (_carousel != null)
-                    {
-                        _carousel.Reset();
-                        UpdateSource();
-                    }
-
+                    Widget?.Reset();
+                    UpdateSource();
                     break;
             }
         }
 
         private void UpdateCurrentPage()
         {
-            ContentPage current = Carousel.CurrentPage;
+            ContentPage current = Page.CurrentPage;
 
             if (current != null)
             {
-                int index = Carousel.CurrentPage != null ? CarouselPage.GetIndex(Carousel.CurrentPage) : 0;
+                int index = Page.CurrentPage != null ? CarouselPage.GetIndex(Page.CurrentPage) : 0;
 
                 if (index < 0)
                     index = 0;
 
                 SelectedIndex = index;
-
-                if (_carousel != null)
-                {
-                    _carousel.SetCurrentPage(SelectedIndex);
-                }
-            }
-        }
-
-        private void UpdateBackground()
-        {
-            if(Element.BackgroundColor.IsDefault)
-            {
-                return;
-            }
-
-            var backgroundColor = Element.BackgroundColor.ToGtkColor();
-
-            if(_carousel != null)
-            {
-                _carousel.SetBackground(backgroundColor);
+                Widget?.SetCurrentPage(SelectedIndex);
             }
         }
 
@@ -263,22 +193,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
             }
 
-            if (_carousel != null)
+            if (Widget != null)
             {
-                _carousel.ItemsSource = _pages;
+                Widget.ItemsSource = _pages;
             }
 
             UpdateCurrentPage();
-        }
-
-        private void UpdateBackgroundImage()
-        {
-            _carousel.SetBackgroundImage(Page.BackgroundImage);
-        }
-
-        private void OnElementChanged(VisualElementChangedEventArgs e)
-        {
-            ElementChanged?.Invoke(this, e);
         }
     }
 }
