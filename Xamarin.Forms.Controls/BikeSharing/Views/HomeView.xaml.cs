@@ -1,8 +1,8 @@
 ﻿namespace Xamarin.Forms.Controls
 {
-    public partial class MainView : MasterDetailPage
+    public partial class HomeView : ContentPage
     {
-        public MainView(object parameter)
+        public HomeView()
         {
             InitializeComponent();
 

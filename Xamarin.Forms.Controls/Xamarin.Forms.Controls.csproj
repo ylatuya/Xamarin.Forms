@@ -94,17 +94,25 @@
     <Compile Include="AppLifeCycle.cs" />
     <Compile Include="BikeSharing\Controls\StackedList.cs" />
     <Compile Include="BikeSharing\Models\Event.cs" />
+    <Compile Include="BikeSharing\Models\BikeMenuItem.cs" />
     <Compile Include="BikeSharing\Models\Suggestion.cs" />
     <Compile Include="BikeSharing\Services\EventsService.cs" />
     <Compile Include="BikeSharing\Services\AuthenticationService.cs" />
     <Compile Include="BikeSharing\Services\NavigationService.cs" />
     <Compile Include="BikeSharing\ViewModels\LoginViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\MainViewModel.cs" />
+    <Compile Include="BikeSharing\ViewModels\MenuViewModel.cs" />
     <Compile Include="BikeSharing\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BikeSharing\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BikeSharing\Views\MenuView.xaml.cs">
+      <DependentUpon>MenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BikeSharing\Views\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BikeSharing\Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
@@ -441,7 +449,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BikeSharing\Views\MainView.xaml">
+    <EmbeddedResource Include="BikeSharing\Views\HomeView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -454,6 +462,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BikeSharing\Views\CustomNavigationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BikeSharing\Views\MenuView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BikeSharing\Views\MainView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

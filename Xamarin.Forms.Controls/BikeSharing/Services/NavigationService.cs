@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Xamarin.Forms;
 
 namespace Xamarin.Forms.Controls
 {
@@ -32,8 +33,14 @@ namespace Xamarin.Forms.Controls
             Type pageType = viewModelRouting[typeof(TDestinationViewModel)];
             var page = Activator.CreateInstance(pageType, navigationContext) as Page;
 
-            if (page != null)
+            if (page is MainView)
+            {
+                Application.Current.MainPage = page;
+            }
+            else if (page != null)
+            {
                 Application.Current.MainPage.Navigation.PushAsync(page);
+            }
         }
 
         public void NavigateBack()

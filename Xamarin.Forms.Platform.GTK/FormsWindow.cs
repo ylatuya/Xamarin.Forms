@@ -66,10 +66,24 @@ namespace Xamarin.Forms.Platform.GTK
             var platform = new Platform();
             platform.PlatformRenderer.SetSizeRequest(WidthRequest, HeightRequest);
 
+            RemovePageIfExists();
             Add(platform.PlatformRenderer);
             platform.SetPage(_application.MainPage);
 
             Child.ShowAll();
+        }
+
+        private void RemovePageIfExists()
+        {
+            foreach(var children in AllChildren)
+            {
+                var widget = children as Widget;
+
+                if(widget != null)
+                {
+                    Remove(widget);
+                }
+            }
         }
 
         private void Dispose(bool disposing)
