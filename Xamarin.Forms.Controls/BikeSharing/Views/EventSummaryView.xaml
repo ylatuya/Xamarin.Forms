@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.EventSummaryView"
+             xmlns:local="clr-namespace:Xamarin.Forms.Controls"
+             Title="{Binding Event.Name}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style x:Key="BuyTicketStyle"
+                   TargetType="{x:Type Button}">
+                <Setter Property="BackgroundColor"
+                        Value="Blue" />
+                <Setter Property="TextColor"
+                        Value="White" />
+                <Setter Property="HeightRequest"
+                        Value="48" />
+                <Setter Property="WidthRequest"
+                        Value="92" />
+                <Setter Property="HorizontalOptions"
+                        Value="Start" />
+                <Setter Property="VerticalOptions"
+                        Value="End" />
+                <Setter Property="FontSize"
+                        Value="Small" />
+                <Setter Property="Margin"
+                        Value="12" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Image 
+            x:Name="EventBackground"
+            Source="{Binding Event.ImagePath}"
+            Aspect="AspectFill"  />
+        <Grid>
+            <Button 
+                x:Name="BuyTicketButton"
+                Text="Buy Ticket"	            
+                BorderRadius="0"
+                Style="{StaticResource BuyTicketStyle}">
+            </Button>
+        </Grid>
+    </Grid>
+</ContentPage>

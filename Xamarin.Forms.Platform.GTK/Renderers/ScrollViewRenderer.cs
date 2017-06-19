@@ -38,8 +38,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     };
 
                     _viewPort = new Viewport();
-                    Control.Add(_viewPort);
+                    _viewPort.ShadowType = ShadowType.None;
+                    _viewPort.BorderWidth = 0;
 
+                    Control.Add(_viewPort);
                     SetNativeControl(Control);
 
                     Control.Hadjustment.ValueChanged += OnScrollEvent;
@@ -60,12 +62,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == ScrollView.ContentSizeProperty.PropertyName)
                 UpdateContentSize();
-            else if(e.PropertyName == nameof(ScrollView.Content))
+            else if (e.PropertyName == nameof(ScrollView.Content))
                 LoadContent();
             else if (e.PropertyName == ScrollView.OrientationProperty.PropertyName)
                 UpdateOrientation();
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             if (Control != null)

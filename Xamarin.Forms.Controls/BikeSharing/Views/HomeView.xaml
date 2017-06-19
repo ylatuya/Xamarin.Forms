@@ -88,6 +88,7 @@
                     Margin="5, 0"
                     Spacing="5"
                     ItemsSource="{Binding Events}"
+                    SelectedCommand="{Binding ShowEventCommand}"
                     ListOrientation="Horizontal">
                     <controls:StackedList.ItemTemplate>
                         <DataTemplate>

@@ -99,6 +99,7 @@
     <Compile Include="BikeSharing\Services\EventsService.cs" />
     <Compile Include="BikeSharing\Services\AuthenticationService.cs" />
     <Compile Include="BikeSharing\Services\NavigationService.cs" />
+    <Compile Include="BikeSharing\ViewModels\EventSummaryViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\LoginViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\MainViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\MenuViewModel.cs" />
@@ -107,6 +108,9 @@
     </Compile>
     <Compile Include="BikeSharing\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BikeSharing\Views\EventSummaryView.xaml.cs">
+      <DependentUpon>EventSummaryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BikeSharing\Views\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
@@ -474,6 +478,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BikeSharing\Views\MainView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BikeSharing\Views\EventSummaryView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

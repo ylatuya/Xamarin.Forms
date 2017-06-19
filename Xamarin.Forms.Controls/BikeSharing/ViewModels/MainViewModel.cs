@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Xamarin.Forms.Controls
 {
@@ -30,6 +31,8 @@ namespace Xamarin.Forms.Controls
             }
         }
 
+        public ICommand ShowEventCommand => new Command<Event>(ShowEvent);
+
         public ObservableCollection<Suggestion> Suggestions
         {
             get
@@ -41,6 +44,14 @@ namespace Xamarin.Forms.Controls
             {
                 _suggestions = value;
                 OnPropertyChanged();
+            }
+        }
+
+        private void ShowEvent(Event @event)
+        {
+            if (@event != null)
+            {
+                 NavigationService.Instance.NavigateTo<EventSummaryViewModel>(@event);
             }
         }
     }
