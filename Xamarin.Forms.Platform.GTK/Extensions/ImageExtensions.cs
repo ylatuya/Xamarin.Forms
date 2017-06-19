@@ -8,6 +8,16 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
     {
         public static Pixbuf ToPixbuf(this ImageSource imagesource)
         {
+            return ToPixbufAux(imagesource, null);
+        }
+
+        public static Pixbuf ToPixbuf(this ImageSource imagesource, Size size)
+        {
+            return ToPixbufAux(imagesource, size);
+        }
+
+        private static Pixbuf ToPixbufAux(this ImageSource imagesource, Size? size)
+        {
             try
             {
                 Pixbuf image = null;
@@ -21,7 +31,10 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                     if (!string.IsNullOrEmpty(file))
                     {
                         var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file);
-                        image = new Pixbuf(imagePath);
+
+                        image = size.HasValue
+                            ? new Pixbuf(imagePath, (int)size.Value.Width, (int)size.Value.Height)
+                            : new Pixbuf(imagePath);
                     }
                 }
 
