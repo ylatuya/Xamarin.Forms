@@ -33,6 +33,14 @@
                         Value="Large" />
             </Style>
             
+            <Style x:Key="EventLabelStyle"
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"
+                        Value="White" />
+                <Setter Property="FontSize"
+                        Value="Medium" />
+            </Style>
+            
         </ResourceDictionary>
     </ContentPage.Resources>
     <ScrollView>
@@ -115,6 +123,76 @@
                     Text="Recommended"
                     VerticalOptions="Center"
                     Style="{StaticResource SectionLabelStyle}" />
+                <controls:StackedList 
+                    x:Name="SuggestionsList"         
+                    Grid.Row="4"
+                    Spacing="15"
+                    ItemsSource="{Binding Suggestions}"
+                    Padding="5, 0, 5, 10">
+                    <controls:StackedList.ItemTemplate>
+                        <DataTemplate>
+                            <Grid 
+                                HeightRequest="200"
+                                WidthRequest="350">
+                                <AbsoluteLayout>
+                                    <Image 
+                                        Source="{Binding ImagePath}" 
+                                        Aspect="AspectFill"
+                                        AbsoluteLayout.LayoutFlags="All" 
+                                        AbsoluteLayout.LayoutBounds="0, 0, 1.0, 1.0">
+                                    </Image>
+                                </AbsoluteLayout>
+                                <Grid 
+                                    Padding="15, 10"
+                                    VerticalOptions="EndAndExpand">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid
+                                        Grid.Row="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Label
+                                            Grid.Row="0"
+                                            Text="Ride in"
+                                            Style="{StaticResource EventTitleLabelStyle}" />
+                                        <Label 
+                                            Grid.Row="1"
+                                            Text="{Binding Name}"
+                                            FontSize="Large"
+                                            Style="{StaticResource EventTitleLabelStyle}"
+                                            LineBreakMode="TailTruncation"/>
+                                    </Grid>
+                                    <StackLayout 
+                                        Grid.Row="1">
+                                        <BoxView 
+                                            HorizontalOptions="FillAndExpand"
+                                            HeightRequest="1"
+                                            Margin="0, 8"
+                                            BackgroundColor="White" />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="30"/>
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Image 
+                                                Grid.Column="0" 
+                                                Source="ic_distance_white.png" 
+                                                Aspect="AspectFit" />
+                                            <Label
+                                                Grid.Column="1" 
+                                                Text="{Binding Distance, StringFormat='{0:N2} miles'}"
+                                                Style="{StaticResource EventLabelStyle}" />
+                                        </Grid>
+                                    </StackLayout>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </controls:StackedList.ItemTemplate>
+                </controls:StackedList>
             </Grid>
         </StackLayout>
     </ScrollView>

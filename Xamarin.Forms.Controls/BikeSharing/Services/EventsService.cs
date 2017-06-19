@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.Controls
@@ -24,6 +23,34 @@ namespace Xamarin.Forms.Controls
             }
         };
 
+        private static ObservableCollection<Suggestion> suggestions = new ObservableCollection<Suggestion>
+        {
+            new Suggestion
+            {
+                Name = "Central Park",
+                Distance = 1900,
+                ImagePath = "suggestion_central_park.png",
+                Latitude = 40.7828687f,
+                Longitude = -73.9675438f
+            },
+            new Suggestion
+            {
+                Name = "Flushing Meadows Corona Park",
+                Distance = 2200,
+                ImagePath = "suggestion_corona_park.png",
+                Latitude = 40.7397176f,
+                Longitude = -73.8429737f
+            },
+            new Suggestion
+            {
+                Name = "Liberty State Park",
+                Distance = 3500,
+                ImagePath = "suggestion_liberty_state_park.png",
+                Latitude = 40.703336f,
+                Longitude = -73.8429737f
+            }
+        };
+
         public static EventsService Instance
         {
             get
@@ -40,6 +67,11 @@ namespace Xamarin.Forms.Controls
         public ObservableCollection<Event> GetEvents()
         {
             return events;
+        }
+
+        public ObservableCollection<Suggestion> GetSuggestions()
+        {
+            return suggestions;
         }
     }
 }

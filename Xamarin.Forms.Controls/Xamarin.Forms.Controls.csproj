@@ -94,6 +94,7 @@
     <Compile Include="AppLifeCycle.cs" />
     <Compile Include="BikeSharing\Controls\StackedList.cs" />
     <Compile Include="BikeSharing\Models\Event.cs" />
+    <Compile Include="BikeSharing\Models\Suggestion.cs" />
     <Compile Include="BikeSharing\Services\EventsService.cs" />
     <Compile Include="BikeSharing\Services\AuthenticationService.cs" />
     <Compile Include="BikeSharing\Services\NavigationService.cs" />

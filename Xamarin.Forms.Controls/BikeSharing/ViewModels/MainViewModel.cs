@@ -1,13 +1,11 @@
-﻿using Xamarin.Forms;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.Controls
 {
     public class MainViewModel : BindableObject
     {
         private ObservableCollection<Event> _events;
-
+        private ObservableCollection<Suggestion> _suggestions;
         private EventsService _eventsService;
 
         public MainViewModel()
@@ -15,6 +13,7 @@ namespace Xamarin.Forms.Controls
             _eventsService = EventsService.Instance;
 
             Events = _eventsService.GetEvents();
+            Suggestions = _eventsService.GetSuggestions();
         }
 
         public ObservableCollection<Event> Events
@@ -27,6 +26,20 @@ namespace Xamarin.Forms.Controls
             set
             {
                 _events = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<Suggestion> Suggestions
+        {
+            get
+            {
+                return _suggestions;
+            }
+
+            set
+            {
+                _suggestions = value;
                 OnPropertyChanged();
             }
         }
