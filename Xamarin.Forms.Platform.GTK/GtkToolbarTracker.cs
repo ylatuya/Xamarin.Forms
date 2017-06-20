@@ -288,17 +288,17 @@ namespace Xamarin.Forms.Platform.GTK
             if (_toolbar == null || _navigation == null)
                 return;
 
-            var navigationItems = new List<ToolbarItem>();
-
             if (ShowBackButton())
             {
-                var backButtonItem = new ToolbarItem
-                {
-                    Text = GetPreviousPageTitle(),
-                    Command = new Command(async () => await NavigateBackFromBackButton())
-                };
+                ToolButton navigationButton = new ToolButton(Stock.GoBack);
+                navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
+                _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
 
-                navigationItems.Add(backButtonItem);
+                navigationButton.Clicked += async (sender, args) =>
+                {
+                    await NavigateBackFromBackButton();
+                };
             }
             else if (_parentMasterDetailPage != null && _parentMasterDetailPage.ShouldShowToolbarButton())
             {
@@ -319,22 +319,6 @@ namespace Xamarin.Forms.Platform.GTK
                 {
                     _parentMasterDetailPage.IsPresented = !_parentMasterDetailPage.IsPresented;
                 };
-            }
-
-            if (navigationItems.Any())
-            {
-                foreach(var navigationItem in navigationItems)
-                {
-                    ToolButton navigationButton = new ToolButton(Stock.GoBack);
-                    navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                    navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
-                    _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
-
-                    navigationButton.Clicked += (sender, args) =>
-                    {
-                        navigationItem.Command?.Execute(navigationItem.CommandParameter);
-                    };
-                }
             }
         }
 

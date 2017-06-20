@@ -235,9 +235,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             NavigationController.RemovePageRequested += OnRemovedPageRequested;
             NavigationController.InsertPageBeforeRequested += OnInsertPageBeforeRequested;
 
-            navPage.Popped += (sender, e) => Platform.NativeToolbarTracker.UpdateToolBar();
-            navPage.PoppedToRoot += (sender, e) => Platform.NativeToolbarTracker.UpdateToolBar();
-
             UpdateBarBackgroundColor();
             UpdateBarTextColor();
 
@@ -335,12 +332,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }).Run();
             }
 
-            if (Control.Children.Length > 0)
-            {
-                Control.RemoveFromContainer(target.Container);
-            }
-
-            target?.Dispose();
+            Control.RemoveFromContainer(target.Container);
+            target.Dispose();
 
             if (removeFromStack)
             {

@@ -131,6 +131,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 Platform.SetRenderer(Element, null);
 
+                this.RemoveFromContainer(Control);
+                Control = null;
                 Element = null;
             }
         }
