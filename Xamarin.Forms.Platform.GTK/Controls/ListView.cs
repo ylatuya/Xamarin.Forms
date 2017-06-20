@@ -60,6 +60,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private EventBox _header;
         private VBox _list;
         private EventBox _footer;
+        private Viewport _viewPort;
         private IEnumerable<Widget> _cells;
         private List<ListViewSeparator> _separators;
         private object _selectedItem;
@@ -158,6 +159,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_root != null)
             {
                 _root.ModifyBg(StateType.Normal, backgroundColor);
+                _viewPort.ModifyBg(StateType.Normal, backgroundColor);
             }
         }
 
@@ -273,12 +275,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _footer = new EventBox();
             _root.PackStart(_footer, false, false, 0);
 
-            Viewport viewPort = new Viewport();
-            viewPort.ShadowType = ShadowType.None;
-            viewPort.BorderWidth = 0;
-            viewPort.Add(_root);
+            _viewPort = new Viewport();
+            _viewPort.ShadowType = ShadowType.None;
+            _viewPort.BorderWidth = 0;
+            _viewPort.Add(_root);
 
-            Add(viewPort);
+            Add(_viewPort);
 
             ShowAll(); 
         }
@@ -313,6 +315,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                             OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
                         }
                     };
+
+                    var itemContainer = item as EventBox;
+
+                    if(itemContainer != null)
+                    {
+                        itemContainer.VisibleWindow = false;
+                    }
 
                     _list.PackStart(item, false, false, 0);
 

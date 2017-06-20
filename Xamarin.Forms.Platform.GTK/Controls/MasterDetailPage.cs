@@ -148,6 +148,22 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public void UpdateBarTextColor(Gdk.Color barTextColor)
+        {
+            if (_titleContainer != null)
+            {
+                _titleContainer.UpdateTitleColor(barTextColor);
+            }
+        }
+
+        public void UpdateBarBackgroundColor(Gdk.Color barBackgroundColor)
+        {
+            if (_titleContainer != null)
+            {
+                _titleContainer.ModifyBg(StateType.Normal, barBackgroundColor);
+            }
+        }
+
         public event EventHandler IsPresentedChanged;
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
@@ -299,6 +315,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 set
                 {
                     _titleLabel.Text = value ?? string.Empty;
+                }
+            }
+
+            public void UpdateTitleColor(Gdk.Color titleColor)
+            {
+                if (_titleLabel != null)
+                {
+                    _titleLabel.ModifyFg(StateType.Normal, titleColor);
                 }
             }
 
