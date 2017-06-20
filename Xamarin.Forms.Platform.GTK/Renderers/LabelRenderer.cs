@@ -8,13 +8,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class LabelRenderer : ViewRenderer<Label, NativeLabel>
     {
-        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            Control.SetSizeRequest(-1, -1); // Force widget to calculate its desired size
-
-            return base.GetDesiredSize(widthConstraint, heightConstraint);
-        }
-
         protected override void OnElementChanged(ElementChangedEventArgs<Label> e)
         {
             if (e.NewElement != null)
