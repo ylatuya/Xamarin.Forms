@@ -3,7 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Controls.MenuView"
              xmlns:local="clr-namespace:Xamarin.Forms.Controls"
-             Title="Menu">
+             Title=" ">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <local:MenuItemTypeConverter x:Key="MenuItemTypeConverter" />
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <Grid>
         <!-- MENU -->
         <Grid>
@@ -23,18 +30,19 @@
             <!-- MENU -->
             <ListView 
                 Grid.Row="0"
-                Grid.RowSpan="5" 
+                Grid.RowSpan="5"  
                 CachingStrategy="RecycleElement"
                 ItemsSource="{Binding MenuItems, Mode=OneWay}"
                 SeparatorVisibility="None"
-                VerticalOptions="StartAndExpand"
-                Margin="0,5,0,0">
+                VerticalOptions="StartAndExpand">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout
-                                Orientation="Horizontal">
-                                <Image 
+                                Orientation="Horizontal"
+                                Margin="12, 0">
+                                <Image                 
+                                    Source="{Binding MenuItemType, Converter={StaticResource MenuItemTypeConverter}}"
                                     Aspect="AspectFit"
                                     WidthRequest="22"
                                     HeightRequest="22"

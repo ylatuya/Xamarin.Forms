@@ -93,6 +93,7 @@
     <Compile Include="App.cs" />
     <Compile Include="AppLifeCycle.cs" />
     <Compile Include="BikeSharing\Controls\StackedList.cs" />
+    <Compile Include="BikeSharing\Converters\MenuItemTypeConverter.cs" />
     <Compile Include="BikeSharing\Models\Event.cs" />
     <Compile Include="BikeSharing\Models\BikeMenuItem.cs" />
     <Compile Include="BikeSharing\Models\Suggestion.cs" />
