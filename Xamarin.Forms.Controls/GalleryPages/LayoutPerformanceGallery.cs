@@ -79,7 +79,7 @@ namespace Xamarin.Forms.Controls.GalleryPages
 		{
 			base.OnAppearing ();
 			_repeat = true;
-			Device.StartTimer (TimeSpan.FromMilliseconds (150), () => {
+			Device.StartTimer (TimeSpan.FromMilliseconds (10), () => {
 				_sw.Start ();
 				foreach (var label in _labelList) {
 					if (_flip) {

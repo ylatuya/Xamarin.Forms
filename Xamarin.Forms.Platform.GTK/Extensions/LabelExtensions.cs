@@ -8,20 +8,14 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
     {
         internal static void SetTextFromFormatted(this Gtk.Label self, FormattedString formatted)
         {
-            Gtk.Application.Invoke(delegate
-            {
-                string markupText = GenerateMarkupText(formatted);
-                self.Markup = markupText;
-            });
+            string markupText = GenerateMarkupText(formatted);
+            self.Markup = markupText;
         }
 
         internal static void SetTextFromSpan(this Gtk.Label self, Span span)
         {
-            Gtk.Application.Invoke(delegate
-            {
-                string markupText = GenerateMarkupText(span);
-                self.Markup = markupText;
-            });
+            string markupText = GenerateMarkupText(span);
+            self.Markup = markupText;
         }
 
         private static string GenerateMarkupText(FormattedString formatted)

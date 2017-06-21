@@ -123,7 +123,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            if (!_lastAllocation.Equals(allocation))
+            if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
 
@@ -174,7 +174,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
-            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
+            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+
+            if (Element.Bounds != bounds)
+            {
+                Element.Layout(bounds);
+            }
         }
 
         public Task<bool> PopToRootAsync(Page page, bool animated = true)
