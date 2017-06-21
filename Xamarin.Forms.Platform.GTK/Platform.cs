@@ -121,6 +121,7 @@ namespace Xamarin.Forms.Platform.GTK
 
             Page = newRoot;
             Page.Platform = this;
+
             AddChild(Page);
 
             Application.Current.NavigationProxy.Inner = this;

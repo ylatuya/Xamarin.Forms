@@ -98,7 +98,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             base.OnSizeAllocated(allocation);
 
-            if (!_lastAllocation.Equals(allocation))
+            if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
 

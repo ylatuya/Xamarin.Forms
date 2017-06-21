@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
+using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -73,6 +74,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     UpdateMasterDetail();
                     UpdateMasterBehavior();
                     UpdateIsPresented();
+                    UpdateBarTextColor();
+                    UpdateBarBackgroundColor();
                 }
 
                 e.NewElement.PropertyChanged += OnElementPropertyChanged;
@@ -101,6 +104,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Widget.Master = Platform.GetRenderer(Page.Master).Container;
             Widget.Detail = Platform.GetRenderer(Page.Detail).Container;
             Widget.MasterTitle = Page.Master?.Title ?? string.Empty;
+
+            UpdateBarTextColor();
+            UpdateBarBackgroundColor();
         }
 
         private void UpdateIsPresented()
@@ -122,6 +128,20 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             Widget.DisplayTitle = Widget.MasterBehaviorType != MasterBehaviorType.Split;
+        }
+
+        private void UpdateBarTextColor()
+        {
+            var barTextColor = Platform.NativeToolbarTracker.Navigation.BarTextColor;
+
+            Widget.UpdateBarTextColor(barTextColor.ToGtkColor());
+        }
+
+        private void UpdateBarBackgroundColor()
+        {
+            var barBackgroundColor = Platform.NativeToolbarTracker.Navigation.BarBackgroundColor;
+
+            Widget.UpdateBarBackgroundColor(barBackgroundColor.ToGtkColor());
         }
 
         private MasterBehaviorType GetMasterBehavior(MasterBehavior masterBehavior)

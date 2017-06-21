@@ -54,12 +54,26 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                 var calcX = (int)Math.Round(x);
                 var calcY = (int)Math.Round(y);
 
-                var containerChild = container[self] as Fixed.FixedChild;
+                int containerChildX, containerChildY;
+                GetContainerChildXY(container, self, out containerChildX, out containerChildY);
 
-                if (containerChild.X != calcX || containerChild.Y != calcY)
+                if (containerChildX != calcX || containerChildY != calcY)
                 {
                     container.Move(self, calcX, calcY);
                 }
+            }
+        }
+
+        static void GetContainerChildXY (Fixed parent, Widget child, out int x, out int y)
+        {
+            using (GLib.Value val = parent.ChildGetProperty(child, "x"))
+            {
+                x = (int)val;
+            }
+
+            using (GLib.Value val = parent.ChildGetProperty(child, "y"))
+            {
+                y = (int)val;
             }
         }
 
