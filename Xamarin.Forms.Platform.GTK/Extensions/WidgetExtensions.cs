@@ -71,7 +71,7 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                 x = (int)val;
             }
 
-            using (GLib.Value val = parent.ChildGetProperty(child, "x"))
+            using (GLib.Value val = parent.ChildGetProperty(child, "y"))
             {
                 y = (int)val;
             }
