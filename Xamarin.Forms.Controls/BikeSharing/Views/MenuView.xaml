@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.MenuView"
+             xmlns:local="clr-namespace:Xamarin.Forms.Controls"
+             Title=" ">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <local:MenuItemTypeConverter x:Key="MenuItemTypeConverter" />
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <!-- MENU -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!-- BACKGROUND -->
+            <Image
+                Grid.Row="0"
+                Grid.RowSpan="5" 
+                Source="bike_menu_background.png"
+                Aspect="AspectFill"/>
+            <!-- MENU -->
+            <ListView 
+                Grid.Row="0"
+                Grid.RowSpan="5"  
+                CachingStrategy="RecycleElement"
+                ItemsSource="{Binding MenuItems, Mode=OneWay}"
+                SeparatorVisibility="None"
+                VerticalOptions="StartAndExpand">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout
+                                Orientation="Horizontal"
+                                Margin="12, 0">
+                                <Image                 
+                                    Source="{Binding MenuItemType, Converter={StaticResource MenuItemTypeConverter}}"
+                                    Aspect="AspectFit"
+                                    WidthRequest="22"
+                                    HeightRequest="22"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center" />
+                                <Label 
+                                    Text="{Binding Title}"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                </Label>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</ContentPage>
