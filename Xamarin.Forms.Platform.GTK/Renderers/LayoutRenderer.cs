@@ -1,4 +1,5 @@
 ﻿using Gtk;
+using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Packagers;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -27,6 +28,39 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             base.OnElementChanged(e);
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            if (IsAnimationRunning(Element))
+            {
+                return;
+            }
+
+            Rectangle bounds = Element.Bounds;
+
+            var x = (int)bounds.X;
+            var y = (int)bounds.Y;
+
+            Container.MoveTo((int)bounds.X, (int)bounds.Y);
+
+            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+            {
+                var child = ElementController.LogicalChildren[i] as VisualElement;
+
+                if (child != null)
+                {
+                    var renderer = Platform.GetRenderer(child);
+                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
+
+                    if (!IsAnimationRunning(renderer.Element))
+                    {
+                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                    }
+                }
+            }
         }
     }
 }
