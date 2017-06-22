@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
@@ -137,9 +138,11 @@ namespace Xamarin.Forms.Platform.GTK
                 SetRenderer(mainPage, viewRenderer);
 
                 PlatformRenderer.Add(viewRenderer.Container);
+                viewRenderer.SetElementSize(PlatformRenderer.Allocation.ToSize());
                 PlatformRenderer.ShowAll();
             }
         }
+
         void INavigation.InsertPageBefore(Page page, Page before)
         {
             throw new InvalidOperationException("InsertPageBefore is not supported globally on GTK, please use a NavigationPage.");

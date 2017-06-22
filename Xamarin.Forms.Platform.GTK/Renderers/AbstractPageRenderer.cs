@@ -11,6 +11,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         where TWidget : Widget
         where TPage : Page
     {
+        private Gdk.Rectangle _lastAllocation;
         protected bool _disposed;
         protected bool _appeared;
         protected readonly PropertyChangedEventHandler _propertyChangedHandler;
@@ -62,7 +63,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
-            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
+            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+
+            if (Element.Bounds != bounds)
+            {
+                Element.Layout(bounds);
+            }
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -114,10 +120,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
-            var pageContentSize = new Gdk.Rectangle(0, 0, allocation.Width, allocation.Height - toolbarSize.Height);
-
-            SetElementSize(pageContentSize.ToSize());
+            if (_lastAllocation != allocation)
+            {
+                _lastAllocation = allocation;
+                SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -179,6 +186,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBackgroundColor();
             else if (e.PropertyName == Xamarin.Forms.Page.BackgroundImageProperty.PropertyName)
                 UpdateBackgroundImage();
+        }
+
+        private void SetPageSize(int width, int height)
+        {
+            var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
+            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - toolbarSize.Height);
+            SetElementSize(pageContentSize.ToSize());
         }
     }
 }

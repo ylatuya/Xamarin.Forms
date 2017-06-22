@@ -23,6 +23,7 @@ namespace Xamarin.Forms.Platform.GTK
         private Gtk.Label _toolbarTitle;
         private ImageControl _toolbarIcon;
         private NavigationPage _navigation;
+        private string _backButton;
 
         private MasterDetailPage _parentMasterDetailPage;
 
@@ -290,7 +291,21 @@ namespace Xamarin.Forms.Platform.GTK
 
             if (ShowBackButton())
             {
-                ToolButton navigationButton = new ToolButton(Stock.GoBack);
+                ToolButton navigationButton;
+
+                if (string.IsNullOrEmpty(_backButton))
+                {
+                    navigationButton = new ToolButton(Stock.GoBack);
+                }
+                else
+                {
+                    var pixBuf = new Pixbuf(_backButton);
+                    var image = new Gtk.Image(pixBuf);
+                    image.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                    image.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
+                    navigationButton = new ToolButton(image, string.Empty);
+                }
+
                 navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
                 _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
@@ -346,6 +361,11 @@ namespace Xamarin.Forms.Platform.GTK
                                           .FirstOrDefault();
 
             _parentMasterDetailPage = masterDetailPage;
+        }
+
+        internal void UpdateBackButton(string backButton)
+        {
+            _backButton = backButton;
         }
 
         internal void UpdateToolBar()

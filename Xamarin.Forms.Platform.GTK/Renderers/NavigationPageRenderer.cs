@@ -7,6 +7,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Animations;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
 using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -123,7 +124,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            if (!_lastAllocation.Equals(allocation))
+            if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
 
@@ -174,7 +175,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
-            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
+            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+
+            if (Element.Bounds != bounds)
+            {
+                Element.Layout(bounds);
+            }
         }
 
         public Task<bool> PopToRootAsync(Page page, bool animated = true)
@@ -241,6 +247,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             ((INavigationPageController)navPage).Pages.ForEach(async p => await PushPageAsync(p, false));
 
             UpdateBackgroundColor();
+            UpdateBackButtonIcon();
         }
 
         private void OnPushRequested(object sender, NavigationRequestedEventArgs e)
@@ -414,6 +421,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Platform.NativeToolbarTracker.UpdateToolBar();
         }
 
+        private void UpdateBackButtonIcon()
+        {
+            var backButton = Element.OnThisPlatform().GetBackButtonIcon();
+            Platform.NativeToolbarTracker.UpdateBackButton(backButton);
+            Platform.NativeToolbarTracker.UpdateToolBar();
+        }
+
         private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
@@ -422,6 +436,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBarTextColor();
             else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
                 UpdateBackgroundColor();
+            else if (e.PropertyName ==
+                PlatformConfiguration.GTKSpecific.NavigationPage.BackButtonIconProperty.PropertyName)
+                UpdateBackButtonIcon();
         }
     }
 }
