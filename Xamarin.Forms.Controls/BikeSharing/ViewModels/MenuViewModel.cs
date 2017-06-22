@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Xamarin.Forms.Controls
 {
@@ -24,6 +25,9 @@ namespace Xamarin.Forms.Controls
                 OnPropertyChanged();
             }
         }
+
+        public ICommand ItemSelectedCommand => new Command<BikeMenuItem>(OnSelectItem);
+
         private void InitMenuItems()
         {
             MenuItems.Add(new BikeMenuItem
@@ -38,6 +42,7 @@ namespace Xamarin.Forms.Controls
             {
                 Title = "New Ride",
                 MenuItemType = MenuItemType.NewRide,
+                ViewModelType = typeof(CustomRideViewModel),
                 IsEnabled = true
             });
 
@@ -68,6 +73,16 @@ namespace Xamarin.Forms.Controls
                 MenuItemType = MenuItemType.Profile,
                 IsEnabled = true
             });
+        }
+
+        private void OnSelectItem(BikeMenuItem item)
+        {
+            if (item.IsEnabled)
+            {
+                object parameter = null;
+
+                NavigationService.Instance.NavigateTo(item.ViewModelType, parameter);
+            }
         }
     }
 }

@@ -33,6 +33,7 @@
                 Grid.RowSpan="5"  
                 CachingStrategy="RecycleElement"
                 ItemsSource="{Binding MenuItems, Mode=OneWay}"
+                local:ItemTappedCommandListView.ItemTappedCommand="{Binding ItemSelectedCommand}"
                 SeparatorVisibility="None"
                 VerticalOptions="StartAndExpand">
                 <ListView.ItemTemplate>
@@ -49,7 +50,9 @@
                                     HorizontalOptions="Center"
                                     VerticalOptions="Center" />
                                 <Label 
-                                    Text="{Binding Title}"
+                                    Text="{Binding Title}" 
+                                    WidthRequest="200"
+                                    TextColor="Black"
                                     HorizontalOptions="Center"
                                     VerticalOptions="Center">
                                 </Label>

@@ -54,6 +54,7 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             }
 
             builder.Append(">"); // Complete opening span tag
+
             // Text
             builder.Append(span.Text);
             builder.Append("</span>");

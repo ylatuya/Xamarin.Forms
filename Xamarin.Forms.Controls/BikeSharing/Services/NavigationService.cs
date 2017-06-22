@@ -13,7 +13,8 @@ namespace Xamarin.Forms.Controls
         {
             { typeof(LoginViewModel), typeof(LoginView) },
             { typeof(MainViewModel), typeof(MainView) },
-            { typeof(EventSummaryViewModel), typeof(EventSummaryView) }
+            { typeof(EventSummaryViewModel), typeof(EventSummaryView) },
+            { typeof(CustomRideViewModel), typeof(CustomRideView) }
         };
 
         public static NavigationService Instance
@@ -29,10 +30,21 @@ namespace Xamarin.Forms.Controls
             }
         }
 
-        public void NavigateTo<TDestinationViewModel>(object navigationContext = null)
+        public void NavigateTo(Type viewModelType, object parameter = null)
+        {
+            Type pageType = viewModelRouting[viewModelType];
+            InternalNavigation(pageType, parameter);
+        }
+
+        public void NavigateTo<TDestinationViewModel>(object parameter = null)
         {
             Type pageType = viewModelRouting[typeof(TDestinationViewModel)];
-            var page = Activator.CreateInstance(pageType, navigationContext) as Page;
+            InternalNavigation(pageType, parameter);
+        }
+
+        private void InternalNavigation(Type pageType, object parameter = null)
+        {
+            var page = Activator.CreateInstance(pageType, parameter) as Page;
 
             if (page is LoginView)
             {
@@ -42,7 +54,7 @@ namespace Xamarin.Forms.Controls
             {
                 Application.Current.MainPage = page;
             }
-            else 
+            else
             {
                 var mainPage = Application.Current.MainPage as MainView;
                 var navigationPage = mainPage.Detail as CustomNavigationPage;

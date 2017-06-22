@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.CustomRideView"
+             xmlns:local="clr-namespace:Xamarin.Forms.Controls" 
+             xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
+             Title="New Ride">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            
+            <Style x:Key="NewRideHeaderStyle" TargetType="{x:Type Label}">
+                <Setter Property="FontSize"
+                        Value="Small" />
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <AbsoluteLayout>
+        <!-- MAP -->
+        <maps:Map   
+            x:Name="Map"
+            AbsoluteLayout.LayoutFlags="All"
+            AbsoluteLayout.LayoutBounds="0, 0, 1.0, 1.0" />
+        <!-- ROUTE SELECTOR -->
+        <Grid
+            x:Name="RouteSelector"
+            Margin="12"
+            BackgroundColor="White"
+            AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional"
+            AbsoluteLayout.LayoutBounds="0.1, 0, 1.0, 230">
+            <StackLayout 
+                    x:Name="Menu"
+                    Padding="12">
+                <Label             
+                    Text="From"
+                    TextColor="#3063F5"
+                    Style="{StaticResource NewRideHeaderStyle}"/>
+                <Picker />
+                <Label    
+                    Text="To" 
+                    TextColor="#FF5E4D"
+                    Style="{StaticResource NewRideHeaderStyle}"/>
+                <Picker />
+                <Label  
+                    TextColor="#3063F5"
+                    Text="GO"
+                    FontSize="Large"
+                    HorizontalOptions="End"
+                    Margin="12"/>
+            </StackLayout>
+        </Grid>
+    </AbsoluteLayout>
+</ContentPage>
