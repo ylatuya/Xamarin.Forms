@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private Fixed _fixed;
         private LayoutElementPackager _packager;
+        private Gdk.Rectangle _lastAllocation;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Layout> e)
         {
@@ -39,25 +40,26 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            Rectangle bounds = Element.Bounds;
-
-            var x = (int)bounds.X;
-            var y = (int)bounds.Y;
-
-            Container.MoveTo((int)bounds.X, (int)bounds.Y);
-
-            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+            if (_lastAllocation != allocation)
             {
-                var child = ElementController.LogicalChildren[i] as VisualElement;
+                _lastAllocation = allocation;
 
-                if (child != null)
+                Rectangle bounds = Element.Bounds;
+                Container.MoveTo((int)bounds.X, (int)bounds.Y);
+
+                for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
                 {
-                    var renderer = Platform.GetRenderer(child);
-                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
+                    var child = ElementController.LogicalChildren[i] as VisualElement;
 
-                    if (!IsAnimationRunning(renderer.Element))
+                    if (child != null)
                     {
-                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                        var renderer = Platform.GetRenderer(child);
+                        renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
+
+                        if (!IsAnimationRunning(renderer.Element))
+                        {
+                            renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                        }
                     }
                 }
             }
