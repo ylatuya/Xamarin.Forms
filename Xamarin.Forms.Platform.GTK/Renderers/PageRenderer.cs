@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private bool _disposed;
         private bool _appeared;
         private PageElementPackager _packager;
+        private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
         public PageRenderer()
@@ -57,7 +58,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
-            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
+            if (Element == null)
+            {
+                return;
+            }
+
+            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+
+            if (Element.Bounds != bounds)
+            {
+                Element.Layout(bounds);
+            }
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -120,10 +131,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
-            var pageContentSize = new Gdk.Rectangle(0, 0, allocation.Width, allocation.Height - toolbarSize.Height);
+            if (_lastAllocation != allocation)
+            {
+                _lastAllocation = allocation;
 
-            SetElementSize(pageContentSize.ToSize());
+                SetPageSize(_lastAllocation.Width, _lastAllocation.Height);               
+            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -189,6 +202,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateBackgroundImage()
         {
             Control.SetBackgroundImage(Page.BackgroundImage);
+        }
+
+        private void SetPageSize(int width, int height)
+        {
+            var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
+            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - toolbarSize.Height);
+            SetElementSize(pageContentSize.ToSize());
         }
     }
 }
