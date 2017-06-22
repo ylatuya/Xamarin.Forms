@@ -306,6 +306,7 @@ namespace Xamarin.Forms.Platform.GTK
                     navigationButton = new ToolButton(image, string.Empty);
                 }
 
+                navigationButton.TooltipText = GetPreviousPageTitle() ?? string.Empty;
                 navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
                 _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
