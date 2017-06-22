@@ -124,8 +124,8 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             self.SetSizeRequest((int)widthConstraint - 1, -1);
             var desiredSize = self.GetDesiredSize(widthConstraint, heightConstraint);
 
-            return childReq.Height > desiredSize.Request.Height 
-                ? childReq 
+            return childReq.Height > desiredSize.Request.Height
+                ? childReq
                 : desiredSize.Request;
         }
 

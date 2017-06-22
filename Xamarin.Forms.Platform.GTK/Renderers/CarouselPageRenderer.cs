@@ -126,7 +126,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
-            Element.Layout(new Rectangle(Element.X, Element.Y, size.Width, size.Height));
+            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+
+            if (Element.Bounds != bounds)
+            {
+                Element.Layout(bounds);
+            }
         }
 
         private void Init()
