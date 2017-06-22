@@ -67,7 +67,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             base.OnSizeAllocated(allocation);
 
-            if (_image.Pixbuf != null && !_lastAllocation.Equals(allocation))
+            if (_image.Pixbuf != null && _lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
 

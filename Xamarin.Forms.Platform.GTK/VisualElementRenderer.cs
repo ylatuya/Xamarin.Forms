@@ -110,7 +110,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         public void SetElementSize(Size size)
         {
-            Layout.LayoutChildIntoBoundingRegion(Element, 
+            Layout.LayoutChildIntoBoundingRegion(Element,
                 new Rectangle(Element.X, Element.Y, size.Width, size.Height));
         }
 
@@ -128,12 +128,12 @@ namespace Xamarin.Forms.Platform.GTK
             var x = (int)bounds.X;
             var y = (int)bounds.Y;
 
-            Container.MoveTo(Math.Max(0, x), Math.Max(0, y));
+            Container.MoveTo(x, y);
 
             var width = (int)bounds.Width;
             var height = (int)bounds.Height;
 
-            Container.SetSize(Math.Max(0, width), Math.Max(0, height));
+            Container.SetSize(width, height);
 
             for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
             {
