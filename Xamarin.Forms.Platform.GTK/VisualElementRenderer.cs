@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Gdk;
-using Gtk;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 using Control = Gtk.Widget;
@@ -112,46 +111,6 @@ namespace Xamarin.Forms.Platform.GTK
         {
             Layout.LayoutChildIntoBoundingRegion(Element,
                 new Rectangle(Element.X, Element.Y, size.Width, size.Height));
-        }
-
-        protected override bool OnExposeEvent(EventExpose evnt)
-        {
-            base.OnExposeEvent(evnt);
-
-            if (IsAnimationRunning(Element))
-            {
-                return false;
-            }
-
-            Rectangle bounds = Element.Bounds;
-
-            var x = (int)bounds.X;
-            var y = (int)bounds.Y;
-
-            Container.MoveTo(x, y);
-
-            var width = (int)bounds.Width;
-            var height = (int)bounds.Height;
-
-            Container.SetSize(width, height);
-
-            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
-            {
-                var child = ElementController.LogicalChildren[i] as VisualElement;
-
-                if (child != null)
-                {
-                    var renderer = Platform.GetRenderer(child);
-                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-
-                    if (!IsAnimationRunning(child))
-                    {
-                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
-                    }
-                }
-            }
-
-            return true;
         }
 
         public virtual SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -268,6 +227,21 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateSensitive();
         }
 
+        protected bool IsAnimationRunning(VisualElement element)
+        {
+            bool isAnimationRunning = false;
+
+            if (element.TranslationX != 0 ||
+                element.TranslationY != 0 ||
+                element.Rotation != 0 ||
+                element.RotationX != 0 ||
+                element.RotationY != 0 ||
+                element.Scale != 1)
+                isAnimationRunning = true;
+
+            return isAnimationRunning;
+        }
+
         private void UpdateIsVisible()
         {
             Container.Visible = Element.IsVisible;
@@ -297,21 +271,6 @@ namespace Xamarin.Forms.Platform.GTK
             _tracker.Control = Control;
             _tracker.Element = Element;
             _tracker.Container = Container;
-        }
-
-        private bool IsAnimationRunning(VisualElement element)
-        {
-            bool isAnimationRunning = false;
-
-            if (element.TranslationX != 0 ||
-                element.TranslationY != 0 ||
-                element.Rotation != 0 ||
-                element.RotationX != 0 ||
-                element.RotationY != 0 ||
-                element.Scale != 1)
-                isAnimationRunning = true;
-
-            return isAnimationRunning;
         }
     }
 }

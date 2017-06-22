@@ -158,6 +158,7 @@
     <Compile Include="PlatformRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RendererFactory.cs" />
+    <Compile Include="Renderers\AbstractPageRenderer.cs" />
     <Compile Include="Renderers\ActivityIndicatorRenderer.cs" />
     <Compile Include="Renderers\BoxViewRenderer.cs" />
     <Compile Include="Renderers\ButtonRenderer.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="Renderers\EntryRenderer.cs" />
     <Compile Include="Renderers\FrameRenderer.cs" />
     <Compile Include="Renderers\ImageRenderer.cs" />
+    <Compile Include="Renderers\IPageControl.cs" />
     <Compile Include="Renderers\LabelRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="Renderers\ListViewRenderer.cs" />
