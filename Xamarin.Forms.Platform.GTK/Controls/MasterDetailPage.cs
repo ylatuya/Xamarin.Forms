@@ -376,11 +376,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (backgroundColor.HasValue)
                 {
-                    ModifyFg(StateType.Normal, backgroundColor.Value);
+                    ModifyBg(StateType.Normal, backgroundColor.Value);
                 }
                 else
                 {
-                    ModifyFg(StateType.Normal, _defaultTextColor);
+                    ModifyBg(StateType.Normal, _defaultTextColor);
                 }
             }
 
