@@ -27,6 +27,23 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateMainPage();
         }
 
+        public void SetApplicationTitle(string title)
+        {
+            if (string.IsNullOrEmpty(title))
+                return;
+
+            Title = title;
+        }
+
+        public void SetApplicationIcon(string icon)
+        {
+            if (string.IsNullOrEmpty(icon))
+                return;
+
+            var appliccationIconPixbuf = new Gdk.Pixbuf(icon);
+            Icon = appliccationIconPixbuf;
+        }
+
         public sealed override void Dispose()
         {
             base.Dispose();

@@ -67,7 +67,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public void SetBackgroundColor(Gdk.Color? backgroundColor)
         {
             if (backgroundColor != null)
-            { 
+            {
                 _contentContainerWrapper.VisibleWindow = true;
                 _contentContainerWrapper.ModifyBg(StateType.Normal, backgroundColor.Value);
             }
