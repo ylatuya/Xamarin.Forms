@@ -59,12 +59,12 @@
 	</Target>
   
 	<Target Name="XamlC">
-		<!--<XamlCTask
+		<XamlCTask
 			Assembly = "$(IntermediateOutputPath)$(TargetFileName)"
 			ReferencePath = "@(ReferencePath)"
 			Verbosity = "2"
 			OptimizeIL = "true"
 			DebugSymbols = "$(DebugSymbols)"
-			DebugType = "$(DebugType)"/>-->
+			DebugType = "$(DebugType)"/>
 	</Target>
 </Project>
