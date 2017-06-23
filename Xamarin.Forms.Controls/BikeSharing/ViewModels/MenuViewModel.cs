@@ -50,6 +50,7 @@ namespace Xamarin.Forms.Controls
             {
                 Title = "My Rides",
                 MenuItemType = MenuItemType.MyRides,
+                ViewModelType = typeof(MainViewModel),
                 IsEnabled = true
             });
 
@@ -64,6 +65,7 @@ namespace Xamarin.Forms.Controls
             {
                 Title = "Report",
                 MenuItemType = MenuItemType.ReportIncident,
+                ViewModelType = typeof(ReportIncidentViewModel),
                 IsEnabled = true
             });
 
@@ -71,6 +73,7 @@ namespace Xamarin.Forms.Controls
             {
                 Title = "Profile",
                 MenuItemType = MenuItemType.Profile,
+                ViewModelType = typeof(MainViewModel),
                 IsEnabled = true
             });
         }

@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.ReportIncidentView"
+             xmlns:controls="clr-namespace:Xamarin.Forms.Controls"
+             Title="Report Incident">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Style x:Key="ReportFieldStyle" TargetType="Label">
+                <Setter Property="TextColor" 
+                        Value="#474e62" />
+                <Setter Property="FontSize" 
+                        Value="12" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="ReportIncidentButtonStyle"
+                   TargetType="{x:Type Button}">
+                <Setter Property="FontAttributes"
+                        Value="Bold" />
+                <Setter Property="TextColor"
+                        Value="White" />
+                <Setter Property="BackgroundColor"
+                        Value="Blue" />
+                <Setter Property="HeightRequest"
+                        Value="48" />
+                <Setter Property="FontSize"
+                        Value="Large" />
+                <Setter Property="BorderRadius"
+                        Value="0" />
+                <Setter Property="Margin"
+                        Value="36, 6, 36, 12" />
+            </Style>
+            
+            <Style x:Key="HeaderFieldStyle" TargetType="Label">
+                <Setter Property="TextColor" 
+                        Value="Blue" />
+                <Setter Property="FontSize" 
+                        Value="14" />
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView BackgroundColor="#F4F6FA">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="GridRow0" 
+                           Height="Auto" />
+                <RowDefinition x:Name="GridRow1"
+                           Height="Auto" />
+                <RowDefinition x:Name="GridRow2"
+                           Height="Auto" />
+                <RowDefinition x:Name="GridRow3"
+                           Height="Auto" />
+            </Grid.RowDefinitions>
+            <!-- BOT BUTTON -->
+            <Grid
+                x:Name="BotButtonContainer"
+                Grid.Row="0">
+                <Button Text="Customer service"
+                    VerticalOptions="Center"
+                    Margin="30, 15"
+                    HeightRequest="60"
+                    HorizontalOptions="Fill"
+                    FontSize="Large"
+                    TextColor="White"
+                    BackgroundColor="Blue"
+                    Image="report_open_bot.png">
+                </Button>
+                <BoxView 
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="End"
+                    Color="Gray"
+                    Opacity="0.22"
+                    HeightRequest="1" />
+            </Grid>
+            <!-- INCIDENT SELECTOR -->
+            <Grid
+                x:Name="IncidentSelector"
+                Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackLayout 
+                    Grid.Column="0" 
+                    Grid.Row="0">
+                    <controls:ToggleButton
+                        Animate="True"
+                        CheckedImage="ic_report_handlebar_selec.png"
+                        UnCheckedImage="ic_report_handlebar.png">
+                    </controls:ToggleButton>
+                    <Label 
+                        Text="Handlebar"
+                        Style="{StaticResource ReportFieldStyle}"/>
+                </StackLayout>
+                <StackLayout 
+                    Grid.Column="1"
+                    Grid.Row="0">
+                    <controls:ToggleButton
+                        Animate="True"
+                        CheckedImage="ic_report_fork_selec.png"
+                        UnCheckedImage="ic_report_fork.png">
+                    </controls:ToggleButton>
+                    <Label 
+                        Text="Fork"
+                        Style="{StaticResource ReportFieldStyle}"/>
+                </StackLayout>
+                <StackLayout 
+                    Grid.Column="2"
+                    Grid.Row="0">
+                    <controls:ToggleButton
+                        Animate="True"
+                        CheckedImage="ic_report_pedals_selec.png"
+                        UnCheckedImage="ic_report_pedals.png">
+                    </controls:ToggleButton>
+                    <Label 
+                        Text="Pedals"
+                        Style="{StaticResource ReportFieldStyle}"/>
+                </StackLayout>
+                <StackLayout                   
+                    Grid.Column="0"
+                    Grid.Row="1">
+                    <controls:ToggleButton
+                        Animate="True"
+                        CheckedImage="ic_report_flat_tire_selec.png"
+                        UnCheckedImage="ic_report_flat_tire.png">
+                    </controls:ToggleButton>
+                    <Label 
+                        Text="Flat tire"
+                        Style="{StaticResource ReportFieldStyle}"/>
+                </StackLayout>
+                <StackLayout                   
+                    Grid.Column="1"
+                    Grid.Row="1">
+                    <controls:ToggleButton
+                        Animate="True"
+                        CheckedImage="ic_report_chain_selec.png"
+                        UnCheckedImage="ic_report_chain.png">
+                    </controls:ToggleButton>
+                    <Label 
+                        Text="Chain"
+                        Style="{StaticResource ReportFieldStyle}"/>
+                </StackLayout>
+                <StackLayout
+                    Grid.Column="2"
+                    Grid.Row="1">
+                    <controls:ToggleButton
+                        Animate="True" 
+                        CheckedImage="ic_report_loss_selec.png"
+                        UnCheckedImage="ic_report_loss.png">
+                    </controls:ToggleButton>
+                </StackLayout>
+            </Grid>
+            <!-- INCIDENT INFORMATION -->
+            <StackLayout
+                x:Name="IncidentInformation"
+                Grid.Row="2"
+                Margin="12, 0">
+                <Label 
+                    x:Name="LabelTitle"
+                    Text="Title"
+                    Style="{StaticResource HeaderFieldStyle}">
+                </Label>
+                <Entry />
+                <Label
+                    x:Name="LabelDescription"
+                    Text="Description"
+                    Style="{StaticResource HeaderFieldStyle}">
+                </Label>
+                <Entry />
+            </StackLayout>
+                <!-- SEND INCIDENT -->
+            <Button
+                x:Name="SendIncident"
+                Grid.Row="3"
+                Text="Report" 
+                Style="{StaticResource ReportIncidentButtonStyle}">
+            </Button>
+        </Grid>
+    </ScrollView>
+</ContentPage>

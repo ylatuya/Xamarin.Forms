@@ -94,6 +94,7 @@
     <Compile Include="AppLifeCycle.cs" />
     <Compile Include="BikeSharing\Behaviors\ItemTappedCommandListView.cs" />
     <Compile Include="BikeSharing\Controls\StackedList.cs" />
+    <Compile Include="BikeSharing\Controls\ToggleButton.cs" />
     <Compile Include="BikeSharing\Converters\MenuItemTypeConverter.cs" />
     <Compile Include="BikeSharing\Models\BikeMenuItem.cs" />
     <Compile Include="BikeSharing\Models\Event.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="BikeSharing\ViewModels\MainViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\MenuViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\CustomRideViewModel.cs" />
+    <Compile Include="BikeSharing\ViewModels\ReportIncidentViewModel.cs" />
     <Compile Include="BikeSharing\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
     </Compile>
@@ -123,6 +125,9 @@
     </Compile>
     <Compile Include="BikeSharing\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BikeSharing\Views\ReportIncidentView.xaml.cs">
+      <DependentUpon>ReportIncidentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BikeSharing\Views\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
@@ -487,6 +492,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BikeSharing\Views\CustomRideView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BikeSharing\Views\ReportIncidentView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

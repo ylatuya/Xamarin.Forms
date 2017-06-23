@@ -8,14 +8,15 @@ namespace Xamarin.Forms.Controls
     {
         private static NavigationService _instance;
 
-        private IDictionary<Type, Type> viewModelRouting = 
+        private IDictionary<Type, Type> viewModelRouting =
             new Dictionary<Type, Type>()
         {
             { typeof(LoginViewModel), typeof(LoginView) },
             { typeof(MainViewModel), typeof(MainView) },
             { typeof(EventSummaryViewModel), typeof(EventSummaryView) },
-            { typeof(CustomRideViewModel), typeof(CustomRideView) }
-        };
+            { typeof(CustomRideViewModel), typeof(CustomRideView) },
+            { typeof(ReportIncidentViewModel), typeof(ReportIncidentView) }
+         };
 
         public static NavigationService Instance
         {
