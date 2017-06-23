@@ -50,7 +50,7 @@ namespace Xamarin.Forms.Controls
             {
                 Title = "My Rides",
                 MenuItemType = MenuItemType.MyRides,
-                ViewModelType = typeof(MainViewModel),
+                ViewModelType = typeof(MyRidesViewModel),
                 IsEnabled = true
             });
 

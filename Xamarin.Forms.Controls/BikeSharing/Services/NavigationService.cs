@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Controls
         {
             { typeof(LoginViewModel), typeof(LoginView) },
             { typeof(MainViewModel), typeof(MainView) },
+            { typeof(MyRidesViewModel), typeof(MyRidesView) },
             { typeof(EventSummaryViewModel), typeof(EventSummaryView) },
             { typeof(CustomRideViewModel), typeof(CustomRideView) },
             { typeof(ReportIncidentViewModel), typeof(ReportIncidentView) }

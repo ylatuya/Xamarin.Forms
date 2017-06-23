@@ -102,11 +102,13 @@
     <Compile Include="BikeSharing\Services\AuthenticationService.cs" />
     <Compile Include="BikeSharing\Services\EventsService.cs" />
     <Compile Include="BikeSharing\Services\NavigationService.cs" />
+    <Compile Include="BikeSharing\Services\RidesService.cs" />
     <Compile Include="BikeSharing\ViewModels\EventSummaryViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\LoginViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\MainViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\MenuViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\CustomRideViewModel.cs" />
+    <Compile Include="BikeSharing\ViewModels\MyRidesViewModel.cs" />
     <Compile Include="BikeSharing\ViewModels\ReportIncidentViewModel.cs" />
     <Compile Include="BikeSharing\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
@@ -125,6 +127,9 @@
     </Compile>
     <Compile Include="BikeSharing\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BikeSharing\Views\MyRidesView.xaml.cs">
+      <DependentUpon>MyRidesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="BikeSharing\Views\ReportIncidentView.xaml.cs">
       <DependentUpon>ReportIncidentView.xaml</DependentUpon>
@@ -498,6 +503,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BikeSharing\Views\ReportIncidentView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BikeSharing\Views\MyRidesView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
