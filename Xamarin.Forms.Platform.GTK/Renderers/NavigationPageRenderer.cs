@@ -414,11 +414,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateBarBackgroundColor()
         {
             Platform.NativeToolbarTracker.UpdateToolBar();
+            MessagingCenter.Send(Element, Forms.BarBackgroundColor, Element.BarBackgroundColor);
         }
 
         private void UpdateBarTextColor()
         {
             Platform.NativeToolbarTracker.UpdateToolBar();
+            MessagingCenter.Send(Element, Forms.BarTextColor, Element.BarTextColor);
         }
 
         private void UpdateBackButtonIcon()
