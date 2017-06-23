@@ -17,7 +17,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
             var app = new Controls.App();
             var window = new FormsWindow();
             window.LoadApplication(app);
-            window.SetApplicationTitle("BikeSharing");
+            window.SetApplicationTitle("Bike Sharing");
             window.SetApplicationIcon("bike_icon.png");
             window.Show();
             Gtk.Application.Run();
