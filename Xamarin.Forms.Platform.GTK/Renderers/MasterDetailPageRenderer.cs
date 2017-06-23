@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -12,6 +14,41 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private bool _disposed;
         private MasterDetailPage _masterDetailPage;
         private VisualElementTracker<Page, Container> _tracker;
+        private Gdk.Color _defaultBackgroundColor;
+
+        public MasterDetailPageRenderer()
+        {
+            _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
+
+            MessagingCenter.Subscribe(this, Forms.BarTextColor, (NavigationPage sender, Color color) =>
+            {
+                var barTextColor = color;
+
+                if (barTextColor.IsDefaultOrTransparent())
+                {
+
+                    Control.UpdateBarTextColor(_defaultBackgroundColor);
+                }
+                else
+                {
+                    Control.UpdateBarTextColor(color.ToGtkColor());
+                }
+            });
+
+            MessagingCenter.Subscribe(this, Forms.BarBackgroundColor, (NavigationPage sender, Color color) =>
+            {
+                var barBackgroundColor = color;
+
+                if (barBackgroundColor.IsDefaultOrTransparent())
+                {
+                    Control.UpdateBarBackgroundColor(_defaultBackgroundColor);
+                }
+                else
+                {
+                    Control.UpdateBarBackgroundColor(color.ToGtkColor());
+                }
+            });
+        }
 
         IPageController PageController => Element as IPageController;
 
@@ -98,13 +135,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Control.IsPresentedChanged -= OnIsPresentedChanged;
                 }
 
+                MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarTextColor);
+                MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarBackgroundColor);
+
                 _disposed = true;
             }
 
             base.Dispose();
         }
 
-        protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
+        protected virtual async void OnElementChanged(VisualElementChangedEventArgs e)
         {
             if (e.OldElement != null)
                 e.OldElement.PropertyChanged -= HandlePropertyChanged;
@@ -118,7 +158,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     Control.IsPresentedChanged += OnIsPresentedChanged;
 
-                    UpdateMasterDetail();
+                    await UpdateMasterDetail();
                     UpdateMasterBehavior();
                     UpdateIsPresented();
                     UpdateBarTextColor();
@@ -131,18 +171,20 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             ElementChanged?.Invoke(this, e);
         }
 
-        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals("Master", StringComparison.CurrentCultureIgnoreCase) || e.PropertyName.Equals("Detail", StringComparison.CurrentCultureIgnoreCase))
-                UpdateMasterDetail();
+                await UpdateMasterDetail();
             else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName)
                 UpdateIsPresented();
             else if (e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
                 UpdateMasterBehavior();
         }
 
-        private void UpdateMasterDetail()
+        private async Task UpdateMasterDetail()
         {
+            await UpdateHamburguerIconAsync();
+
             if (Platform.GetRenderer(MasterDetailPage.Master) == null)
                 Platform.SetRenderer(MasterDetailPage.Master, Platform.CreateRenderer(MasterDetailPage.Master));
             if (Platform.GetRenderer(MasterDetailPage.Detail) == null)
@@ -189,6 +231,20 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var barBackgroundColor = Platform.NativeToolbarTracker.Navigation.BarBackgroundColor;
 
             Control.UpdateBarBackgroundColor(barBackgroundColor.ToGtkColor());
+        }
+
+        private async Task UpdateHamburguerIconAsync()
+        {
+            var hamburguerIcon = MasterDetailPage.Master.Icon;
+
+            if (hamburguerIcon != null)
+            {
+                IImageSourceHandler handler =
+                    Registrar.Registered.GetHandler<IImageSourceHandler>(hamburguerIcon.GetType());
+
+                var image = await handler.LoadImageAsync(hamburguerIcon);
+                Control.UpdateHamburguerIcon(image);
+            }
         }
 
         private MasterBehaviorType GetMasterBehavior(MasterBehavior masterBehavior)

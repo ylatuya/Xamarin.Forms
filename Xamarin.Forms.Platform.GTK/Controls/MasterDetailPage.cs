@@ -25,6 +25,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Widget _master;
         private Widget _detail;
         private MasterBehaviorType _masterBehaviorType;
+        private static Pixbuf _hamburgerPixBuf;
         private bool _displayTitle;
         private bool _animationsEnabled;
 
@@ -134,17 +135,27 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public static Pixbuf GetHamburgerPixBuf()
+        public static Pixbuf HamburgerPixBuf
         {
-            try
+            get
             {
-                var hamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
+                try
+                {
+                    if (_hamburgerPixBuf == null)
+                    {
+                        _hamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
+                    }
 
-                return hamburgerPixBuf;
+                    return _hamburgerPixBuf;
+                }
+                catch
+                {
+                    return null;
+                }
             }
-            catch
+            set
             {
-                return null;
+                _hamburgerPixBuf = value;
             }
         }
 
@@ -161,6 +172,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_titleContainer != null)
             {
                 _titleContainer.ModifyBg(StateType.Normal, barBackgroundColor);
+            }
+        }
+
+        public void UpdateHamburguerIcon(Pixbuf hamburguerIcon)
+        {
+            HamburgerPixBuf = hamburguerIcon;
+
+            if (_titleContainer != null)
+            {
+                _titleContainer.HamburgerPixBuf = HamburgerPixBuf;
             }
         }
 
@@ -249,7 +270,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        private void RefreshDisplayTitle(bool value)
+        private void RefreshDisplayTitle(bool value = true)
         {
             _displayTitle = value;
 
@@ -276,23 +297,23 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             private HBox _root;
             private ToolButton _hamburguerButton;
             private Gtk.Label _titleLabel;
+            private Gtk.Image _hamburguerIcon;
 
             public MasterDetailMasterTitleContainer()
             {
                 _root = new HBox();
-                var hamburguerIcon = new Gtk.Image();
+                _hamburguerIcon = new Gtk.Image();
 
                 try
                 {
-                    var hamburgerPixBuf = GetHamburgerPixBuf();
-                    hamburguerIcon = new Gtk.Image(hamburgerPixBuf);
+                    _hamburguerIcon = new Gtk.Image(HamburgerPixBuf);
                 }
                 catch (Exception ex)
                 {
                     Internals.Log.Warning("MasterDetailPage HamburguerIcon", "Could not load hamburguer icon: {0}", ex);
                 }
 
-                _hamburguerButton = new ToolButton(hamburguerIcon, string.Empty);
+                _hamburguerButton = new ToolButton(_hamburguerIcon, string.Empty);
                 _hamburguerButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 _hamburguerButton.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
                 _hamburguerButton.Clicked += OnHamburguerButtonClicked;
@@ -315,6 +336,19 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 set
                 {
                     _titleLabel.Text = value ?? string.Empty;
+                }
+            }
+
+            public Pixbuf HamburgerPixBuf
+            {
+                get
+                {
+                    return _hamburguerIcon.Pixbuf;
+                }
+
+                set
+                {
+                    _hamburguerIcon.Pixbuf = value ?? null;
                 }
             }
 

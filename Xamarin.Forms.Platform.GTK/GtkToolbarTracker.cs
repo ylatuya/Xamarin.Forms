@@ -305,7 +305,7 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 ToolButton hamburguerButton = new ToolButton(null, string.Empty);
 
-                var hamburgerPixBuf = Controls.MasterDetailPage.GetHamburgerPixBuf();
+                var hamburgerPixBuf = Controls.MasterDetailPage.HamburgerPixBuf;
                 if (hamburgerPixBuf != null)
                 {
                     var image = new Gtk.Image(hamburgerPixBuf);
