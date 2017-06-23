@@ -289,17 +289,32 @@ namespace Xamarin.Forms.Platform.GTK
             if (_toolbar == null || _navigation == null)
                 return;
 
-            var navigationItems = new List<ToolbarItem>();
-
             if (ShowBackButton())
             {
-                var backButtonItem = new ToolbarItem
-                {
-                    Text = GetPreviousPageTitle(),
-                    Command = new Command(async () => await NavigateBackFromBackButton())
-                };
+                ToolButton navigationButton;
 
-                navigationItems.Add(backButtonItem);
+                if (string.IsNullOrEmpty(_backButton))
+                {
+                    navigationButton = new ToolButton(Stock.GoBack);
+                }
+                else
+                {
+                    var pixBuf = new Pixbuf(_backButton);
+                    var image = new Gtk.Image(pixBuf);
+                    image.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                    image.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
+                    navigationButton = new ToolButton(image, string.Empty);
+                }
+
+                navigationButton.TooltipText = GetPreviousPageTitle() ?? string.Empty;
+                navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
+                _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
+
+                navigationButton.Clicked += async (sender, args) =>
+                {
+                    await NavigateBackFromBackButton();
+                };
             }
             else if (_parentMasterDetailPage != null && _parentMasterDetailPage.ShouldShowToolbarButton())
             {
@@ -320,32 +335,6 @@ namespace Xamarin.Forms.Platform.GTK
                 {
                     _parentMasterDetailPage.IsPresented = !_parentMasterDetailPage.IsPresented;
                 };
-            }
-
-            if (navigationItems.Any())
-            {
-                foreach(var navigationItem in navigationItems)
-                {
-                    ToolButton navigationButton = new ToolButton(Stock.GoBack);
-
-                    if (!string.IsNullOrEmpty(_backButton))
-                    {
-                        var pixBuf = new Pixbuf(_backButton);
-                        var image = new Gtk.Image(pixBuf);
-                        image.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                        image.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
-                        navigationButton = new ToolButton(image, string.Empty);
-                    }
-
-                    navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                    navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
-                    _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
-
-                    navigationButton.Clicked += (sender, args) =>
-                    {
-                        navigationItem.Command?.Execute(navigationItem.CommandParameter);
-                    };
-                }
             }
         }
 

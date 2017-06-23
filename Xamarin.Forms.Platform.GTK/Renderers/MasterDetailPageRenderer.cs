@@ -9,10 +9,8 @@ using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class MasterDetailPageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
+    public class MasterDetailPageRenderer : AbstractPageRenderer<Controls.MasterDetailPage, MasterDetailPage>
     {
-        private bool _disposed;
-        private MasterDetailPage _masterDetailPage;
         private VisualElementTracker<Page, Container> _tracker;
         private Gdk.Color _defaultBackgroundColor;
 
@@ -50,29 +48,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             });
         }
 
-        IPageController PageController => Element as IPageController;
-
-        IElementController ElementController => Element as IElementController;
-
-        public Controls.MasterDetailPage Control { get; private set; }
-
-        public Container Container => this;
-
-        public VisualElement Element { get; private set; }
-
-        public bool Disposed { get { return _disposed; } }
-
-        public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
-
-        protected MasterDetailPage MasterDetailPage => _masterDetailPage ?? (_masterDetailPage = (MasterDetailPage)Element);
-
-        void IEffectControlProvider.RegisterEffect(Effect effect)
-        {
-            var platformEffect = effect as PlatformEffect;
-            if (platformEffect != null)
-                platformEffect.SetContainer(Container);
-        }
-
         protected VisualElementTracker<Page, Container> Tracker
         {
             get { return _tracker; }
@@ -88,16 +63,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            var result = new Size(
-                 widthConstraint,
-                heightConstraint);
-
-            return new SizeRequest(result);
-        }
-
-        public void SetElement(VisualElement element)
+        public override void SetElement(VisualElement element)
         {
             var oldElement = Element;
 
@@ -108,27 +74,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
-        public void SetElementSize(Size size)
+        protected override void Dispose(bool disposing)
         {
-            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
-
-            if (Element.Bounds != bounds)
+            if (Widget != null)
             {
-                Element.Layout(bounds);
+                Widget.IsPresentedChanged -= OnIsPresentedChanged;
             }
+
+            base.Dispose(disposing);
         }
-
-        public override void Dispose()
-        {
-            if (!_disposed)
-            {
-                PageController?.SendDisappearing();
-
-                if (Element != null)
-                {
-                    Element.PropertyChanged -= HandlePropertyChanged;
-                    Element = null;
-                }
 
                 if (Control != null)
                 {
@@ -147,34 +101,43 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected virtual async void OnElementChanged(VisualElementChangedEventArgs e)
         {
             if (e.OldElement != null)
-                e.OldElement.PropertyChanged -= HandlePropertyChanged;
+                e.OldElement.PropertyChanged -= OnElementPropertyChanged;
 
             if (e.NewElement != null)
             {
                 if (Control == null)
                 {
-                    Control = new Controls.MasterDetailPage();
+                    Control = new Controls.Page();
                     Add(Control);
+                }
 
-                    Control.IsPresentedChanged += OnIsPresentedChanged;
+                if (Widget == null)
+                {
+                    Widget = new Controls.MasterDetailPage();
+                    var eventBox = new EventBox();
+                    eventBox.Add(Widget);
 
-                    await UpdateMasterDetail();
+                    Control.Content = eventBox;
+
+                    Widget.IsPresentedChanged += OnIsPresentedChanged;
+
+                    UpdateMasterDetail();
                     UpdateMasterBehavior();
                     UpdateIsPresented();
                     UpdateBarTextColor();
                     UpdateBarBackgroundColor();
                 }
 
-                e.NewElement.PropertyChanged += HandlePropertyChanged;
+                e.NewElement.PropertyChanged += OnElementPropertyChanged;
             }
-
-            ElementChanged?.Invoke(this, e);
         }
 
-        private async void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("Master", StringComparison.CurrentCultureIgnoreCase) || e.PropertyName.Equals("Detail", StringComparison.CurrentCultureIgnoreCase))
-                await UpdateMasterDetail();
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName.Equals(nameof(MasterDetailPage.Master)) || e.PropertyName.Equals(nameof(MasterDetailPage.Detail)))
+                UpdateMasterDetail();
             else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName)
                 UpdateIsPresented();
             else if (e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
@@ -185,14 +148,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             await UpdateHamburguerIconAsync();
 
-            if (Platform.GetRenderer(MasterDetailPage.Master) == null)
-                Platform.SetRenderer(MasterDetailPage.Master, Platform.CreateRenderer(MasterDetailPage.Master));
-            if (Platform.GetRenderer(MasterDetailPage.Detail) == null)
-                Platform.SetRenderer(MasterDetailPage.Detail, Platform.CreateRenderer(MasterDetailPage.Detail));
+            if (Platform.GetRenderer(Page.Master) == null)
+                Platform.SetRenderer(Page.Master, Platform.CreateRenderer(Page.Master));
+            if (Platform.GetRenderer(Page.Detail) == null)
+                Platform.SetRenderer(Page.Detail, Platform.CreateRenderer(Page.Detail));
 
-            Control.Master = Platform.GetRenderer(MasterDetailPage.Master).Container;
-            Control.Detail = Platform.GetRenderer(MasterDetailPage.Detail).Container;
-            Control.MasterTitle = MasterDetailPage.Master.Title;
+            Widget.Master = Platform.GetRenderer(Page.Master).Container;
+            Widget.Detail = Platform.GetRenderer(Page.Detail).Container;
+            Widget.MasterTitle = Page.Master?.Title ?? string.Empty;
 
             UpdateBarTextColor();
             UpdateBarBackgroundColor();
@@ -200,37 +163,37 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateIsPresented()
         {
-            Control.IsPresented = MasterDetailPage.IsPresented;
+            Widget.IsPresented = Page.IsPresented;
         }
 
         private void UpdateMasterBehavior()
         {
-            if (MasterDetailPage.Detail is NavigationPage)
+            if (Page.Detail is NavigationPage)
             {
-                Control.MasterBehaviorType = GetMasterBehavior(MasterDetailPage.MasterBehavior);
+                Widget.MasterBehaviorType = GetMasterBehavior(Page.MasterBehavior);
             }
             else
             {
                 // The only way to display Master page is from a toolbar. If we have not access to one,
                 // we should force split mode to display menu (as no gestures are implemented).
-                Control.MasterBehaviorType = MasterBehaviorType.Split;
+                Widget.MasterBehaviorType = MasterBehaviorType.Split;
             }
 
-            Control.DisplayTitle = Control.MasterBehaviorType != MasterBehaviorType.Split;
+            Widget.DisplayTitle = Widget.MasterBehaviorType != MasterBehaviorType.Split;
         }
 
         private void UpdateBarTextColor()
         {
             var barTextColor = Platform.NativeToolbarTracker.Navigation.BarTextColor;
 
-            Control.UpdateBarTextColor(barTextColor.ToGtkColor());
+            Widget.UpdateBarTextColor(barTextColor.ToGtkColor());
         }
 
         private void UpdateBarBackgroundColor()
         {
             var barBackgroundColor = Platform.NativeToolbarTracker.Navigation.BarBackgroundColor;
 
-            Control.UpdateBarBackgroundColor(barBackgroundColor.ToGtkColor());
+            Widget.UpdateBarBackgroundColor(barBackgroundColor.ToGtkColor());
         }
 
         private async Task UpdateHamburguerIconAsync()
@@ -266,7 +229,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnIsPresentedChanged(object sender, EventArgs e)
         {
-            ElementController.SetValueFromRenderer(MasterDetailPage.IsPresentedProperty, Control.IsPresented);
+            ElementController.SetValueFromRenderer(MasterDetailPage.IsPresentedProperty, Widget.IsPresented);
         }
     }
 }

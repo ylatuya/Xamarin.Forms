@@ -150,7 +150,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _toolbar = newToolbar;
             _headerContainer.Add(_toolbar);
-            _toolbar.ShowAll();
+
+            if (_toolbar.IsRealized)
+            {
+                _toolbar.ShowAll();
+            }
         }
 
         private void RefreshContent(EventBox newContent)
