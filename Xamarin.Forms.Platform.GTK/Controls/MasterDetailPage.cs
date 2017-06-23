@@ -159,7 +159,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public void UpdateBarTextColor(Gdk.Color barTextColor)
+        public void UpdateBarTextColor(Gdk.Color? barTextColor)
         {
             if (_titleContainer != null)
             {
@@ -167,11 +167,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public void UpdateBarBackgroundColor(Gdk.Color barBackgroundColor)
+        public void UpdateBarBackgroundColor(Gdk.Color? barBackgroundColor)
         {
             if (_titleContainer != null)
             {
-                _titleContainer.ModifyBg(StateType.Normal, barBackgroundColor);
+                _titleContainer.UpdateBackgroundColor(barBackgroundColor);
             }
         }
 
@@ -298,9 +298,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             private ToolButton _hamburguerButton;
             private Gtk.Label _titleLabel;
             private Gtk.Image _hamburguerIcon;
+            private Gdk.Color _defaultTextColor;
+            private Gdk.Color _defaultBackgroundColor;
 
             public MasterDetailMasterTitleContainer()
             {
+                _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
+
                 _root = new HBox();
                 _hamburguerIcon = new Gtk.Image();
 
@@ -319,6 +323,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _hamburguerButton.Clicked += OnHamburguerButtonClicked;
 
                 _titleLabel = new Gtk.Label();
+                _defaultTextColor = _titleLabel.Style.Foregrounds[(int)StateType.Normal];
 
                 _root.PackStart(_hamburguerButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
                 _root.PackStart(_titleLabel, false, false, 25);
@@ -352,11 +357,33 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
             }
 
-            public void UpdateTitleColor(Gdk.Color titleColor)
+            public void UpdateTitleColor(Gdk.Color? titleColor)
             {
                 if (_titleLabel != null)
                 {
-                    _titleLabel.ModifyFg(StateType.Normal, titleColor);
+                    if (titleColor.HasValue)
+                    {
+                        _titleLabel.ModifyFg(StateType.Normal, titleColor.Value);
+                    }
+                    else
+                    {
+                        _titleLabel.ModifyFg(StateType.Normal, _defaultTextColor);
+                    }
+                }
+            }
+
+            public void UpdateBackgroundColor(Gdk.Color? backgroundColor)
+            {
+                if (this != null)
+                {
+                    if (backgroundColor.HasValue)
+                    {
+                        ModifyFg(StateType.Normal, backgroundColor.Value);
+                    }
+                    else
+                    {
+                        ModifyFg(StateType.Normal, _defaultTextColor);
+                    }
                 }
             }
 
