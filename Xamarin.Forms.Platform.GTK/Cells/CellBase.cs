@@ -1,20 +1,22 @@
 ﻿using Gtk;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
-    public class CellBase : EventBox
+    public abstract class CellBase : EventBox
     {
         private Cell _cell;
         private IList<MenuItem> _contextActions;
-        private Menu _menu;
 
         public Action<object, PropertyChangedEventArgs> PropertyChanged;
+
+        protected CellBase()
+        {
+            ButtonReleaseEvent += OnClick;
+        }
 
         public Cell Cell
         {
@@ -31,11 +33,6 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 UpdateCell();
                 _contextActions = Cell.ContextActions;
 
-                if (_contextActions.Any())
-                {
-                    AddMenu();
-                }
-
                 if (_cell != null)
                     Device.BeginInvokeOnMainThread(_cell.SendAppearing);
             }
@@ -45,44 +42,16 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             PropertyChanged?.Invoke(this, e);
         }
-        
+
+        protected override void OnDestroyed()
+        {
+            base.OnDestroyed();
+
+            ButtonReleaseEvent -= OnClick;
+        }
+
         protected virtual void UpdateCell()
         {
-        }
-
-        private void AddMenu()
-        {
-            _menu = new Menu();
-            Add(_menu);
-            SetupContextMenu();
-        }
-
-        private void SetupContextMenu()
-        {
-            if (Cell == null)
-                return;
-
-            if (!Cell.HasContextActions)
-            {
-                ButtonReleaseEvent -= OnClick;
-
-                if (_contextActions != null)
-                {
-                    ((INotifyCollectionChanged)_contextActions).CollectionChanged -= OnContextActionsChanged;
-                    _contextActions = null;
-                }
-
-                RemoveMenu();
-
-                return;
-            }
-
-            ButtonReleaseEvent += OnClick;
-        }
-
-        private void RemoveMenu()
-        {
-            this.RemoveFromContainer(_menu);
         }
 
         private void OnClick(object o, ButtonReleaseEventArgs args)
@@ -92,47 +61,40 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 return;
             }
 
-            OpenContextMenu();
+            if (_contextActions.Any())
+            {
+                OpenContextMenu();
+            }
         }
 
         private void OpenContextMenu()
         {
-            if (_menu.Children.Count() == 0)
-            {
-                SetupMenuItems(_menu);
+            var menu = new Menu();
 
-                ((INotifyCollectionChanged)Cell.ContextActions).CollectionChanged += OnContextActionsChanged;
-            }
-
-            _menu.ShowAll();
-            _menu.Popup();
+            SetupMenuItems(menu);
+            menu.ShowAll();
+            menu.Popup();
         }
 
         private void SetupMenuItems(Menu menu)
         {
             foreach (MenuItem item in Cell.ContextActions)
             {
-                var menuItem = new Gtk.MenuItem(item.Text);
+                var menuItem = new Gtk.ImageMenuItem(item.Text);
+
+                string icon = item.Icon;
+
+                if (!string.IsNullOrEmpty(icon))
+                {
+                    menuItem.Image = new Gtk.Image(icon);
+                }
 
                 menuItem.ButtonPressEvent += (sender, args) =>
                 {
-                    item.Command?.Execute(item.CommandParameter);
+                    item.Activate();
                 };
 
                 menu.Add(menuItem);
-            }
-        }
-
-        private void OnContextActionsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (_menu != null)
-            {
-                foreach (var menuItem in _menu.Children)
-                {
-                    menuItem.RemoveFromContainer(_menu);
-                }
-
-                SetupMenuItems(_menu);
             }
         }
     }
