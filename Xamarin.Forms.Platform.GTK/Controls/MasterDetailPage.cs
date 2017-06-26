@@ -222,6 +222,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _masterContainer.RemoveFromContainer(_master);
             }
 
+            UpdateHamburguerIcon(HamburgerPixBuf);
             _master = newMaster;
             _masterContainer.PackEnd(newMaster, false, true, 0);
             _master.ShowAll();
