@@ -98,6 +98,8 @@
     <Compile Include="BikeSharing\Converters\MenuItemTypeConverter.cs" />
     <Compile Include="BikeSharing\Models\BikeMenuItem.cs" />
     <Compile Include="BikeSharing\Models\Event.cs" />
+    <Compile Include="BikeSharing\Models\Ride.cs" />
+    <Compile Include="BikeSharing\Models\Station.cs" />
     <Compile Include="BikeSharing\Models\Suggestion.cs" />
     <Compile Include="BikeSharing\Services\AuthenticationService.cs" />
     <Compile Include="BikeSharing\Services\EventsService.cs" />

@@ -7,12 +7,133 @@
     <ContentPage.Resources>
         <ResourceDictionary>
 
-      
+            <Style x:Key="EventNameLabelStyle"  
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"
+                        Value="Blue" />
+                <Setter Property="FontSize" 
+                        Value="Small" />
+            </Style>
+
+            <Style x:Key="EventTypeLabelStyle"   
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor" 
+                        Value="Gray" />
+                <Setter Property="FontSize"
+                        Value="Small" />
+            </Style>
+            
+            <Style x:Key="LocationAndDateLabelStyle"   
+                   TargetType="{x:Type Label}">
+                <Setter Property="TextColor"
+                        Value="Gray" />
+                <Setter Property="FontSize"   
+                        Value="Small" />
+                <Setter Property="Opacity"
+                        Value="0.4" />
+            </Style>
+            
         </ResourceDictionary>
     </ContentPage.Resources>
     <Grid
         BackgroundColor="Gray">
-        <ListView>
+        <ListView 
+            ItemsSource="{Binding MyRides, Mode=OneWay}" 
+            HasUnevenRows="True"
+            SeparatorVisibility="None" 
+            CachingStrategy="RecycleElement">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid
+                            BackgroundColor="White">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid 
+                                Grid.Column="1"
+                                Grid.Row="0">
+                                <Grid.Resources>
+                                    <ResourceDictionary>
+                                        <Style x:Key="EventToLabelStyle" TargetType="{x:Type Label}">
+                                            <Setter Property="TextColor" Value="Orange" />
+                                            <Setter Property="FontSize" Value="Medium" />
+                                        </Style>
+                                    </ResourceDictionary>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid 
+                                    Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image 
+                                        Grid.Column="0"
+                                        Margin="16"
+                                        HeightRequest="42"
+                                        WidthRequest="42"
+                                        VerticalOptions="Start"
+                                        Source="myrides_ic_custom_ride.png">
+                                    </Image>
+                                    <StackLayout 
+                                        Grid.Column="1"
+                                        Margin="0,16,0,0"
+                                        Orientation="Vertical"
+                                        Spacing="0"
+                                        VerticalOptions="Start">
+                                        <Label
+                                            Text="From"
+                                            Style="{StaticResource EventTypeLabelStyle}"
+                                            Margin="0,0,0,3" />
+                                        <Label 
+                                            Text="{Binding From}"
+                                            Style="{StaticResource EventNameLabelStyle}"
+                                            Margin="0,0,0,3" />
+                                        <Label
+                                            Text="To"
+                                            Style="{StaticResource EventTypeLabelStyle}"
+                                            Margin="0,0,0,3" />
+                                        <Label
+                                            Text="{Binding To}"
+                                            Style="{StaticResource EventToLabelStyle}"
+                                            Margin="0,0,0,6" />
+                                        <StackLayout 
+                                            Orientation="Horizontal"
+                                            Spacing="0">
+                                            <Label 
+                                                Style="{StaticResource LocationAndDateLabelStyle}"
+                                                Text="{Binding Stop}" />
+                                            <Label
+                                                Style="{StaticResource LocationAndDateLabelStyle}"
+                                                Text=", " />
+                                            <Label
+                                                Style="{StaticResource LocationAndDateLabelStyle}"
+                                                Text="Seville" />
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Grid>
+                            </Grid>
+                            <!-- SEPARATOR -->
+                            <Grid
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Grid.Row="1"
+                                BackgroundColor="#dfdfe3"
+                                HeightRequest="1">
+                            </Grid>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
     </Grid>
 </ContentPage>
