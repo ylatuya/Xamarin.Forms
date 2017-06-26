@@ -381,7 +381,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
                 else
                 {
-                    ModifyBg(StateType.Normal, _defaultTextColor);
+                    ModifyBg(StateType.Normal, _defaultBackgroundColor);
                 }
             }
 
