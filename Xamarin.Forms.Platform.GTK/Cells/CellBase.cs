@@ -43,9 +43,9 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             PropertyChanged?.Invoke(this, e);
         }
 
-        public override void Dispose()
+        protected override void OnDestroyed()
         {
-            base.Dispose();
+            base.OnDestroyed();
 
             ButtonReleaseEvent -= OnClick;
         }
