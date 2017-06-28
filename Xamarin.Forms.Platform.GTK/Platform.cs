@@ -138,7 +138,6 @@ namespace Xamarin.Forms.Platform.GTK
                 SetRenderer(mainPage, viewRenderer);
 
                 PlatformRenderer.Add(viewRenderer.Container);
-                viewRenderer.SetElementSize(PlatformRenderer.Allocation.ToSize());
                 PlatformRenderer.ShowAll();
             }
         }
