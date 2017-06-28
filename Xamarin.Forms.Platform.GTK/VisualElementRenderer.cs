@@ -240,21 +240,6 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateSensitive();
         }
 
-        protected bool IsAnimationRunning(VisualElement element)
-        {
-            bool isAnimationRunning = false;
-
-            if (element.TranslationX != 0 ||
-                element.TranslationY != 0 ||
-                element.Rotation != 0 ||
-                element.RotationX != 0 ||
-                element.RotationY != 0 ||
-                element.Scale != 1)
-                isAnimationRunning = true;
-
-            return isAnimationRunning;
-        }
-
         private void UpdateIsVisible()
         {
             Container.Visible = Element.IsVisible;
