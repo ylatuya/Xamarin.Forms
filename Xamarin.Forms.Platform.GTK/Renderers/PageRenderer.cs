@@ -17,9 +17,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        protected override void OnRealized()
+        protected override void OnShown()
         {
-            base.OnRealized();
+            base.OnShown();
 
             if (_packager == null)
             {

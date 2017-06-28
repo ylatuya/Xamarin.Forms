@@ -24,7 +24,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(_fixed);
                 }
 
-                _packager = new LayoutElementPackager(this);
+                if (_packager == null)
+                {
+                    _packager = new LayoutElementPackager(this);
+                }
+
                 _packager.Load();
             }
 
