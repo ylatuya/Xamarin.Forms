@@ -35,11 +35,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            if (IsAnimationRunning(Element))
-            {
-                return;
-            }
-
             if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
@@ -55,11 +50,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     {
                         var renderer = Platform.GetRenderer(child);
                         renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-
-                        if (!IsAnimationRunning(renderer.Element))
-                        {
-                            renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
-                        }
+                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
                     }
                 }
             }

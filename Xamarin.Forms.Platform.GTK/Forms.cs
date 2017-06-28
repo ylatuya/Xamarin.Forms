@@ -30,6 +30,7 @@ namespace Xamarin.Forms
             Device.SetIdiom(TargetIdiom.Desktop);
             Device.PlatformServices = new GtkPlatformServices();
             Device.Info = new GtkDeviceInfo();
+            Color.SetAccent(Color.FromHex("#3498DB"));
             ExpressionSearch.Default = new GtkExpressionSearch();
 
             Registrar.RegisterAll(new[]
