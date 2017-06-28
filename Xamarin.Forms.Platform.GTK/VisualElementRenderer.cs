@@ -8,7 +8,7 @@ using Control = Gtk.Widget;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer
+    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IEffectControlProvider
         where TElement : VisualElement
         where TNativeElement : Control
     {
@@ -76,6 +76,13 @@ namespace Xamarin.Forms.Platform.GTK
 
         public event EventHandler<ElementChangedEventArgs<TElement>> ElementChanged;
 
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                OnRegisterEffect(platformEffect);
+        }
+
         void IVisualElementRenderer.SetElement(VisualElement element)
         {
             SetElement((TElement)element);
@@ -126,6 +133,12 @@ namespace Xamarin.Forms.Platform.GTK
             base.Dispose();
 
             Dispose(true);
+        }
+
+        protected virtual void OnRegisterEffect(PlatformEffect effect)
+        {
+            effect.SetContainer(this);
+            effect.SetControl(Container);
         }
 
         protected virtual void OnElementChanged(ElementChangedEventArgs<TElement> e)
