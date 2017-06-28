@@ -72,10 +72,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (formatted != null)
             {
-                Gtk.Application.Invoke(delegate
-                {
-                    Control.SetTextFromFormatted(formatted);
-                });
+                Control.SetTextFromFormatted(formatted);
             }
             else
             {
@@ -87,10 +84,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Text = Element.Text
                 };
 
-                Gtk.Application.Invoke(delegate
-                {
-                    Control.SetTextFromSpan(span);
-                });
+                Control.SetTextFromSpan(span);
             }
         }
 
