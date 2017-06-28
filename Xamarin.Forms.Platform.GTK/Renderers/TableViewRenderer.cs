@@ -7,6 +7,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private const int DefaultRowHeight = 44;
 
+        private bool _disposed;
+        private Controls.TableView _tableView;
+
         protected override void UpdateBackgroundColor()
         {
             base.UpdateBackgroundColor();
@@ -17,6 +20,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+
+            if (disposing && !_disposed)
+            {
+                _disposed = true;
+
+                if (_tableView != null)
+                {
+                    _tableView.OnItemTapped -= OnItemTapped;
+                }
+            }
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<TableView> e)
@@ -25,8 +38,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    var tableView = new Controls.TableView();
-                    SetNativeControl(tableView);
+                    _tableView = new Controls.TableView();
+                    _tableView.OnItemTapped += OnItemTapped;
+
+                    SetNativeControl(_tableView);
                 }
 
                 SetSource();
@@ -93,6 +108,22 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             var backgroundColor = Element.BackgroundColor.ToGtkColor();
             Control.SetBackgroundColor(backgroundColor);
+        }
+
+        private void OnItemTapped(object sender, Controls.ItemTappedEventArgs args)
+        {
+            if (Element == null)
+                return;
+
+            var cell = args.Item as Cell;
+
+            if (cell != null)
+            {
+                if (cell.IsEnabled)
+                {
+                    Element.Model.RowSelected(cell);
+                }
+            }
         }
     }
 }
