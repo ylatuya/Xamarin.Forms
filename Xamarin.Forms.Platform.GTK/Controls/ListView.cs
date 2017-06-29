@@ -338,6 +338,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                         }
                     };
 
+                    var itemContainer = item as EventBox;
+
+                    if (itemContainer != null)
+                    {
+                        itemContainer.VisibleWindow = false;
+                    }
+
                     _list.PackStart(item, false, false, 0);
 
                     var separator = new ListViewSeparator();
