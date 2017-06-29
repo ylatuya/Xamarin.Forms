@@ -338,13 +338,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                         }
                     };
 
-                    var itemContainer = item as EventBox;
-
-                    if(itemContainer != null)
-                    {
-                        itemContainer.VisibleWindow = false;
-                    }
-
                     _list.PackStart(item, false, false, 0);
 
                     var separator = new ListViewSeparator();
@@ -360,9 +353,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_list != null)
             {
-                foreach (var cell in _list.Children)
+                foreach (var children in _list.Children)
                 {
-                    cell.Destroy();
+                    _list.RemoveFromContainer(children);
                 }
             }
 
