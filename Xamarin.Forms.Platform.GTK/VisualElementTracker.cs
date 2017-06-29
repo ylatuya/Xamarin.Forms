@@ -347,6 +347,11 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void OnContainerButtonPressEvent(object o, ButtonPressEventArgs args)
         {
+            if (args.Event.Button != 1)
+            {
+                return;
+            }
+
             var view = Element as View;
 
             if (view == null)
