@@ -7,8 +7,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public sealed class ImageButton : Gtk.Button
     {
-        private HBox _centralRowContainer;
-        private Box _centralCellContainer;
+        private Alignment _container;
+        private Box _imageAndLabelContainer;
 
         private Gdk.Color _defaultBorderColor;
         private Gdk.Color _defaultBackgroundColor;
@@ -25,23 +25,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
             _defaultBorderColor = Style.BaseColors[(int)StateType.Active];
 
-            _image = new Gtk.Image();
-            _label = new Gtk.Label();
-
-            var cellsContainer = new VBox();
-            cellsContainer.PackStart(new HBox(), true, true, 0);
-            _centralRowContainer = new HBox();
-            _centralCellContainer = new HBox();
-            _centralRowContainer.PackStart(new HBox(), true, true, 0);
-            _centralRowContainer.PackStart(_centralCellContainer);
-            _centralRowContainer.PackStart(new HBox(), true, true, 0);
-            cellsContainer.PackStart(_centralRowContainer);
-            cellsContainer.PackStart(new HBox(), true, true, 0);
-
             Relief = ReliefStyle.None;
             CanFocus = false;
 
-            Add(cellsContainer);
+            _image = new Gtk.Image();
+            _label = new Gtk.Label();
+            _container = new Alignment(0.5f, 0.5f, 0, 0);
+
+            Add(_container);
 
             RecreateContainer();
         }
@@ -109,10 +100,17 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetImageFromFile(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                return;
+
             try
             {
                 var iconPixBuf = new Pixbuf(fileName);
-                ImageWidget.Pixbuf = iconPixBuf;
+
+                if (iconPixBuf != null)
+                {
+                    ImageWidget.Pixbuf = iconPixBuf;
+                }
             }
             catch (Exception ex)
             {
@@ -126,13 +124,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _label = null;
             _image = null;
-            _centralCellContainer = null;
-            _centralRowContainer = null;
-        }
-
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            base.OnSizeAllocated(allocation);
+            _imageAndLabelContainer = null;
+            _container = null;
         }
 
         protected override bool OnExposeEvent(EventExpose evnt)
@@ -165,49 +158,48 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RecreateContainer()
         {
-            if (_centralCellContainer != null)
+            if (_imageAndLabelContainer != null)
             {
-                _centralCellContainer.RemoveFromContainer(_image);
-                _centralCellContainer.RemoveFromContainer(_label);
-                _centralRowContainer.RemoveFromContainer(_centralCellContainer);
-                _centralCellContainer = null;
+                _imageAndLabelContainer.RemoveFromContainer(_image);
+                _imageAndLabelContainer.RemoveFromContainer(_label);
+                _container.RemoveFromContainer(_imageAndLabelContainer);
+                _imageAndLabelContainer = null;
             }
 
             switch (ImagePosition)
             {
                 case PositionType.Left:
-                    _centralCellContainer = new HBox();
-                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
-                    _centralCellContainer.PackStart(_label, false, false, 0);
+                    _imageAndLabelContainer = new HBox();
+                    _imageAndLabelContainer.PackStart(_image, false, false, _imageSpacing);
+                    _imageAndLabelContainer.PackStart(_label, false, false, 0);
                     break;
                 case PositionType.Top:
-                    _centralCellContainer = new VBox();
-                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
-                    _centralCellContainer.PackStart(_label, false, false, 0);
+                    _imageAndLabelContainer = new VBox();
+                    _imageAndLabelContainer.PackStart(_image, false, false, _imageSpacing);
+                    _imageAndLabelContainer.PackStart(_label, false, false, 0);
                     break;
                 case PositionType.Right:
-                    _centralCellContainer = new HBox();
-                    _centralCellContainer.PackStart(_label, false, false, 0);
-                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
+                    _imageAndLabelContainer = new HBox();
+                    _imageAndLabelContainer.PackStart(_label, false, false, 0);
+                    _imageAndLabelContainer.PackStart(_image, false, false, _imageSpacing);
                     break;
                 case PositionType.Bottom:
-                    _centralCellContainer = new VBox();
-                    _centralCellContainer.PackStart(_label, false, false, 0);
-                    _centralCellContainer.PackStart(_image, false, false, _imageSpacing);
+                    _imageAndLabelContainer = new VBox();
+                    _imageAndLabelContainer.PackStart(_label, false, false, 0);
+                    _imageAndLabelContainer.PackStart(_image, false, false, _imageSpacing);
                     break;
             }
 
-            if (_centralCellContainer != null)
+            if (_imageAndLabelContainer != null)
             {
-                _centralRowContainer.PackStart(_centralCellContainer, false, false, 0);
-                _centralRowContainer.ReorderChild(_centralCellContainer, 1);
-                _centralRowContainer.ShowAll();
+                _container.Add(_imageAndLabelContainer);
+                _container.ShowAll();
             }
         }
 
         private void UpdateImageSpacing()
         {
-            _centralCellContainer.SetChildPacking(_image, false, false, _imageSpacing, PackType.Start);
+            _imageAndLabelContainer.SetChildPacking(_image, false, false, _imageSpacing, PackType.Start);
         }
     }
 }

@@ -22,37 +22,51 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         void IWebViewDelegate.LoadHtml(string html, string baseUrl)
         {
-            if (string.IsNullOrEmpty(html))
+            try
             {
-                var urlWebViewSource = Element.Source as HtmlWebViewSource;
-
-                if (urlWebViewSource != null)
+                if (string.IsNullOrEmpty(html))
                 {
-                    html = urlWebViewSource.Html;
+                    var urlWebViewSource = Element.Source as HtmlWebViewSource;
+
+                    if (urlWebViewSource != null)
+                    {
+                        html = urlWebViewSource.Html;
+                    }
+                }
+
+                if (Control != null)
+                {
+                    Control.LoadString(html, baseUrl ?? string.Empty);
                 }
             }
-
-            if (Control != null)
+            catch (Exception ex)
             {
-                Control.LoadString(html, baseUrl);
+                Log.Warning("WebView load string", $"WebView load string failed: {ex}");
             }
         }
 
         void IWebViewDelegate.LoadUrl(string url)
         {
-            if (string.IsNullOrEmpty(url))
+            try
             {
-                var urlWebViewSource = Element.Source as UrlWebViewSource;
-
-                if (urlWebViewSource != null)
+                if (string.IsNullOrEmpty(url))
                 {
-                    url = urlWebViewSource.Url;
+                    var urlWebViewSource = Element.Source as UrlWebViewSource;
+
+                    if (urlWebViewSource != null)
+                    {
+                        url = urlWebViewSource.Url;
+                    }
+                }
+
+                if (Control != null)
+                {
+                    Control.Open(url);
                 }
             }
-
-            if (Control != null)
+            catch (Exception ex)
             {
-                Control.Open(url);
+                Log.Warning("WebView load url", $"WebView load url failed: {ex}");
             }
         }
 
@@ -77,9 +91,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     if (Control != null)
                     {
+                        Control.Browser.LoadStarted += OnLoadStarted;
                         Control.Browser.LoadFinished += OnLoadFinished;
                     }
 
+                    WebViewController.EvalRequested += OnEvalRequested;
                     WebViewController.GoBackRequested += OnGoBackRequested;
                     WebViewController.GoForwardRequested += OnGoForwardRequested;
                 }
@@ -104,7 +120,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 _disposed = true;
 
+                Control.Browser.LoadStarted -= OnLoadStarted;
                 Control.Browser.LoadFinished -= OnLoadFinished;
+
+                WebViewController.EvalRequested -= OnEvalRequested;
                 WebViewController.GoBackRequested -= OnGoBackRequested;
                 WebViewController.GoForwardRequested -= OnGoForwardRequested;
             }
@@ -134,6 +153,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
+        private void OnLoadStarted(object o, WebKit.LoadStartedArgs e)
+        {
+            var uri = e.Frame.Uri;
+
+            if (uri != null)
+            {
+                var args = new WebNavigatingEventArgs(_lastEvent, new UrlWebViewSource { Url = uri }, uri);
+
+                Element.SendNavigating(args);
+
+                if (args.Cancel)
+                    _lastEvent = WebNavigationEvent.NewPage;
+            }
+        }
+
         private void OnLoadFinished(object o, WebKit.LoadFinishedArgs args)
         {
             if (Control == null)
@@ -154,6 +188,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 WebNavigationResult.Success));
 
             UpdateCanGoBackForward();
+        }
+
+        private void OnEvalRequested(object sender, EvalRequested eventArg)
+        {
+            if (Control != null && Control.Browser != null)
+            {
+                Control.Browser.ExecuteScript(eventArg?.Script);
+            }
         }
 
         private void OnGoBackRequested(object sender, EventArgs eventArgs)

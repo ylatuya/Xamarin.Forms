@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Gdk;
-using Gtk;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 using Control = Gtk.Widget;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer
+    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IEffectControlProvider
         where TElement : VisualElement
         where TNativeElement : Control
     {
@@ -17,6 +16,9 @@ namespace Xamarin.Forms.Platform.GTK
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
         private readonly List<EventHandler<VisualElementChangedEventArgs>> _elementChangedHandlers = new List<EventHandler<VisualElementChangedEventArgs>>();
         private VisualElementTracker<TElement, TNativeElement> _tracker;
+        private string _defaultAccessibilityLabel;
+        private string _defaultAccessibilityHint;
+        private Gdk.Rectangle _lastAllocation;
 
         protected VisualElementRenderer()
         {
@@ -75,6 +77,13 @@ namespace Xamarin.Forms.Platform.GTK
 
         public event EventHandler<ElementChangedEventArgs<TElement>> ElementChanged;
 
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                OnRegisterEffect(platformEffect);
+        }
+
         void IVisualElementRenderer.SetElement(VisualElement element)
         {
             SetElement((TElement)element);
@@ -101,37 +110,15 @@ namespace Xamarin.Forms.Platform.GTK
             }
 
             OnElementChanged(new ElementChangedEventArgs<TElement>(oldElement, element));
+
+            SetAccessibilityLabel();
+            SetAccessibilityHint();
         }
 
         public void SetElementSize(Size size)
         {
-            Layout.LayoutChildIntoBoundingRegion(Element, new Rectangle(Element.X, Element.Y, size.Width, size.Height));
-        }
-
-        protected override bool OnExposeEvent(EventExpose evnt)
-        {
-            base.OnExposeEvent(evnt);
-
-            Rectangle bounds = Element.Bounds;
-            Container.MoveTo(bounds.X, bounds.Y);
-
-            var width = (int)bounds.Width;
-            var height = (int)bounds.Height;
-
-            Container.SetSize(width, height);
-
-            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
-            {
-                var child = ElementController.LogicalChildren[i] as VisualElement;
-                if (child != null)
-                {
-                    var renderer = Platform.GetRenderer(child);
-                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
-                }
-            }
-      
-            return true;
+            Layout.LayoutChildIntoBoundingRegion(Element,
+                new Rectangle(Element.X, Element.Y, size.Width, size.Height));
         }
 
         public virtual SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -147,6 +134,37 @@ namespace Xamarin.Forms.Platform.GTK
             base.Dispose();
 
             Dispose(true);
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            if (_lastAllocation != allocation)
+            {
+                _lastAllocation = allocation;
+
+                Rectangle bounds = Element.Bounds;
+                Container.MoveTo((int)bounds.X, (int)bounds.Y);
+
+                for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+                {
+                    var child = ElementController.LogicalChildren[i] as VisualElement;
+
+                    if (child != null)
+                    {
+                        var renderer = Platform.GetRenderer(child);
+                        renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
+                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                    }
+                }
+            }
+        }
+
+        protected virtual void OnRegisterEffect(PlatformEffect effect)
+        {
+            effect.SetContainer(this);
+            effect.SetControl(Container);
         }
 
         protected virtual void OnElementChanged(ElementChangedEventArgs<TElement> e)
@@ -191,6 +209,10 @@ namespace Xamarin.Forms.Platform.GTK
                 UpdateBackgroundColor();
             else if (e.PropertyName == VisualElement.IsEnabledProperty.PropertyName)
                 UpdateSensitive();
+            else if (e.PropertyName == AutomationProperties.HelpTextProperty.PropertyName)
+                SetAccessibilityHint();
+            else if (e.PropertyName == AutomationProperties.NameProperty.PropertyName)
+                SetAccessibilityLabel();
         }
 
         protected virtual void UpdateBackgroundColor()
@@ -207,6 +229,38 @@ namespace Xamarin.Forms.Platform.GTK
             Container.VisibleWindow = !isDefault;
         }
 
+        protected virtual void SetAccessibilityHint()
+        {
+            if (Element == null)
+                return;
+
+            if (_defaultAccessibilityHint == null)
+                _defaultAccessibilityHint = Accessible.Name;
+
+            var helpText = (string)Element.GetValue(AutomationProperties.HelpTextProperty) ?? _defaultAccessibilityHint;
+
+            if (!string.IsNullOrEmpty(helpText))
+            {
+                Accessible.Name = helpText;
+            }
+        }
+
+        protected virtual void SetAccessibilityLabel()
+        {
+            if (Element == null)
+                return;
+
+            if (_defaultAccessibilityLabel == null)
+                _defaultAccessibilityLabel = Accessible.Description;
+
+            var name = (string)Element.GetValue(AutomationProperties.NameProperty) ?? _defaultAccessibilityLabel;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                Accessible.Description = name;
+            }
+        }
+
         protected virtual void UpdateNativeControl()
         {
             UpdateSensitive();
@@ -219,7 +273,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateSensitive()
         {
-            if(Control == null)
+            if (Control == null)
             {
                 return;
             }

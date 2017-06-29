@@ -54,6 +54,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateLineBreakMode();
         }
 
+        protected override void SetAccessibilityLabel()
+        {
+            var elemValue = (string)Element?.GetValue(AutomationProperties.NameProperty);
+
+            if (string.IsNullOrWhiteSpace(elemValue) 
+                && Control?.Accessible.Description == Control?.Text)
+                return;
+
+            base.SetAccessibilityLabel();
+        }
+
         private void UpdateText()
         {
             string markupText = string.Empty;

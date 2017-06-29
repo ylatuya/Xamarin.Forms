@@ -232,6 +232,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private string _dateFormat;
 
         public event EventHandler DateChanged;
+        public event EventHandler GotFocus;
+        public event EventHandler LostFocus;
 
         public DatePicker()
         {
@@ -382,6 +384,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private void OnEntryFocused(object sender, EventArgs e)
         {
             ShowPickerWindow();
+            GotFocus?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnPickerClosed(object sender, EventArgs e)
@@ -391,6 +394,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (window != null)
             {
                 Remove(window);
+                LostFocus?.Invoke(this, EventArgs.Empty);
             }
         }
     }

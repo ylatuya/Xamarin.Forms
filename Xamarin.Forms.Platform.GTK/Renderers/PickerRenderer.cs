@@ -20,6 +20,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     comboBox.PackStart(text, true);
                     comboBox.AddAttribute(text, "text", 0);
 
+                    comboBox.Focused += OnFocused;
+                    comboBox.FocusOutEvent += OnFocusOutEvent;
                     comboBox.Changed += OnChanged;
 
                     SetNativeControl(comboBox);
@@ -57,6 +59,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     if (Control != null)
                     {
+                        Control.Focused -= OnFocused;
+                        Control.FocusOutEvent -= OnFocusOutEvent;
                         Control.Changed -= OnChanged;
                     }
 
@@ -119,6 +123,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     cellRenderer.ForegroundGdk = Element.TextColor.ToGtkColor();
                 }
             }
+        }
+
+        private void OnFocused(object o, FocusedArgs args)
+        {
+            ElementController?.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
+        }
+
+        private void OnFocusOutEvent(object o, FocusOutEventArgs args)
+        {
+            ElementController?.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
         }
 
         private void OnChanged(object sender, System.EventArgs e)

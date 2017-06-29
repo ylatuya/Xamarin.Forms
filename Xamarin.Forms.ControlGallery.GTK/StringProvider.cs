@@ -4,7 +4,7 @@ using Xamarin.Forms.ControlGallery.GTK;
 [assembly: Dependency(typeof(StringProvider))]
 namespace Xamarin.Forms.ControlGallery.GTK
 {
-    public class StringProvider : Xamarin.Forms.Controls.IStringProvider
+    public class StringProvider : Controls.IStringProvider
     {
         public string CoreGalleryTitle
         {

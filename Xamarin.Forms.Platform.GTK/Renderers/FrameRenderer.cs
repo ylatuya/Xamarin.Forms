@@ -64,6 +64,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             IVisualElementRenderer renderer = Element.Content.GetOrCreateRenderer();
             Control.Child = renderer.Container;
+            renderer.Container.ShowAll();
         }
     }
 }

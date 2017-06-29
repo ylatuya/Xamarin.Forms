@@ -20,10 +20,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private bool _isPresented;
         private MasterDetailMasterTitleContainer _titleContainer;
+        private EventBox _masterContainerWrapper;
         private VBox _masterContainer;
         private Widget _master;
         private Widget _detail;
         private MasterBehaviorType _masterBehaviorType;
+        private static Pixbuf _hamburgerPixBuf;
         private bool _displayTitle;
         private bool _animationsEnabled;
 
@@ -33,6 +35,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _masterBehaviorType = MasterBehaviorType.Default;
 
             // Master Stuff
+            _masterContainerWrapper = new EventBox();
             _masterContainer = new VBox();
             _titleContainer = new MasterDetailMasterTitleContainer();
             _titleContainer.HamburguerClicked += OnHamburgerClicked;
@@ -41,12 +44,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _master = new EventBox();
             _masterContainer.PackEnd(_master, false, true, 0);
+            _masterContainerWrapper.Add(_masterContainer);
 
             // Detail Stuff
             _detail = new EventBox();
 
             Add(_detail);
-            Add(_masterContainer);
+            Add(_masterContainerWrapper);
         }
 
         public MasterBehaviorType MasterBehaviorType
@@ -131,9 +135,57 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public event EventHandler IsPresentedChanged;
+        public static Pixbuf HamburgerPixBuf
+        {
+            get
+            {
+                try
+                {
+                    if (_hamburgerPixBuf == null)
+                    {
+                        _hamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
+                    }
 
-        public static Pixbuf HamburgerPixBuf = new Pixbuf("./Resources/hamburger.png");
+                    return _hamburgerPixBuf;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                _hamburgerPixBuf = value;
+            }
+        }
+
+        public void UpdateBarTextColor(Gdk.Color? barTextColor)
+        {
+            if (_titleContainer != null)
+            {
+                _titleContainer.UpdateTitleColor(barTextColor);
+            }
+        }
+
+        public void UpdateBarBackgroundColor(Gdk.Color? barBackgroundColor)
+        {
+            if (_titleContainer != null)
+            {
+                _titleContainer.UpdateBackgroundColor(barBackgroundColor);
+            }
+        }
+
+        public void UpdateHamburguerIcon(Pixbuf hamburguerIcon)
+        {
+            HamburgerPixBuf = hamburguerIcon;
+
+            if (_titleContainer != null)
+            {
+                _titleContainer.HamburgerPixBuf = HamburgerPixBuf;
+            }
+        }
+
+        public event EventHandler IsPresentedChanged;
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
@@ -170,6 +222,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _masterContainer.RemoveFromContainer(_master);
             }
 
+            UpdateHamburguerIcon(HamburgerPixBuf);
             _master = newMaster;
             _masterContainer.PackEnd(newMaster, false, true, 0);
             _master.ShowAll();
@@ -182,14 +235,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 this.RemoveFromContainer(_detail);
             }
 
-            Remove(_masterContainer);
-
             _detail = newDetail;
 
             Add(_detail);
-            Add(_masterContainer);
+
+            Remove(_masterContainerWrapper);
+            Add(_masterContainerWrapper);
 
             _detail.ShowAll();
+            _masterContainerWrapper.GdkWindow?.Raise(); // Forcing Master to be on top
         }
 
         private async void RefreshPresented(bool isPresented)
@@ -207,21 +261,21 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     Gtk.Application.Invoke(delegate
                     {
-                        _masterContainer.MoveTo(f, 0);
+                        _masterContainerWrapper.MoveTo(f, 0);
                     });
                 }).Run();
             }
             else
             {
-                _masterContainer.MoveTo(_isPresented ? 0 : -DefaultMasterWidth, 0);
+                _masterContainerWrapper.MoveTo(_isPresented ? 0 : -DefaultMasterWidth, 0);
             }
         }
 
-        private void RefreshDisplayTitle(bool value)
+        private void RefreshDisplayTitle(bool value = true)
         {
             _displayTitle = value;
 
-            _masterContainer.Remove(_titleContainer);
+            _masterContainer.RemoveFromContainer(_titleContainer);
 
             if (_displayTitle)
             {
@@ -244,18 +298,33 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             private HBox _root;
             private ToolButton _hamburguerButton;
             private Gtk.Label _titleLabel;
+            private Gtk.Image _hamburguerIcon;
+            private Gdk.Color _defaultTextColor;
+            private Gdk.Color _defaultBackgroundColor;
 
             public MasterDetailMasterTitleContainer()
             {
-                _root = new HBox();
+                _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
 
-                var hamburguerIcon = new Gtk.Image(Controls.MasterDetailPage.HamburgerPixBuf);
-                _hamburguerButton = new ToolButton(hamburguerIcon, string.Empty);
+                _root = new HBox();
+                _hamburguerIcon = new Gtk.Image();
+
+                try
+                {
+                    _hamburguerIcon = new Gtk.Image(HamburgerPixBuf);
+                }
+                catch (Exception ex)
+                {
+                    Internals.Log.Warning("MasterDetailPage HamburguerIcon", "Could not load hamburguer icon: {0}", ex);
+                }
+
+                _hamburguerButton = new ToolButton(_hamburguerIcon, string.Empty);
                 _hamburguerButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 _hamburguerButton.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
                 _hamburguerButton.Clicked += OnHamburguerButtonClicked;
 
                 _titleLabel = new Gtk.Label();
+                _defaultTextColor = _titleLabel.Style.Foregrounds[(int)StateType.Normal];
 
                 _root.PackStart(_hamburguerButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
                 _root.PackStart(_titleLabel, false, false, 25);
@@ -273,6 +342,46 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 set
                 {
                     _titleLabel.Text = value ?? string.Empty;
+                }
+            }
+
+            public Pixbuf HamburgerPixBuf
+            {
+                get
+                {
+                    return _hamburguerIcon.Pixbuf;
+                }
+
+                set
+                {
+                    _hamburguerIcon.Pixbuf = value ?? null;
+                }
+            }
+
+            public void UpdateTitleColor(Gdk.Color? titleColor)
+            {
+                if (_titleLabel != null)
+                {
+                    if (titleColor.HasValue)
+                    {
+                        _titleLabel.ModifyFg(StateType.Normal, titleColor.Value);
+                    }
+                    else
+                    {
+                        _titleLabel.ModifyFg(StateType.Normal, _defaultTextColor);
+                    }
+                }
+            }
+
+            public void UpdateBackgroundColor(Gdk.Color? backgroundColor)
+            {
+                if (backgroundColor.HasValue)
+                {
+                    ModifyBg(StateType.Normal, backgroundColor.Value);
+                }
+                else
+                {
+                    ModifyBg(StateType.Normal, _defaultBackgroundColor);
                 }
             }
 

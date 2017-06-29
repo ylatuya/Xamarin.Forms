@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Extensions
@@ -53,12 +54,26 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                 var calcX = (int)Math.Round(x);
                 var calcY = (int)Math.Round(y);
 
-                var containerChild = container[self] as Fixed.FixedChild;
+                int containerChildX, containerChildY;
+                GetContainerChildXY(container, self, out containerChildX, out containerChildY);
 
-                if (containerChild.X != calcX || containerChild.Y != calcY)
+                if (containerChildX != calcX || containerChildY != calcY)
                 {
                     container.Move(self, calcX, calcY);
                 }
+            }
+        }
+
+        static void GetContainerChildXY (Fixed parent, Widget child, out int x, out int y)
+        {
+            using (GLib.Value val = parent.ChildGetProperty(child, "x"))
+            {
+                x = (int)val;
+            }
+
+            using (GLib.Value val = parent.ChildGetProperty(child, "y"))
+            {
+                y = (int)val;
             }
         }
 
@@ -109,9 +124,26 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             self.SetSizeRequest((int)widthConstraint - 1, -1);
             var desiredSize = self.GetDesiredSize(widthConstraint, heightConstraint);
 
-            return childReq.Height > desiredSize.Request.Height 
-                ? childReq 
+            return childReq.Height > desiredSize.Request.Height
+                ? childReq
                 : desiredSize.Request;
+        }
+
+        public static IEnumerable<Widget> GetDescendants(this Widget self)
+        {
+            var descendants = new List<Widget>();
+            var container = self as Container;
+
+            if (container != null)
+            {
+                foreach (var child in container.Children)
+                {
+                    descendants.Add(child);
+                    descendants.AddRange(child.GetDescendants());
+                }
+            }
+
+            return descendants;
         }
 
         public static void PrintTree(this Widget widget)

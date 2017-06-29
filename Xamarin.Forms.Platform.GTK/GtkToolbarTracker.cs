@@ -1,9 +1,11 @@
-﻿using Gtk;
+﻿using Gdk;
+using Gtk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK
@@ -15,10 +17,13 @@ namespace Xamarin.Forms.Platform.GTK
         private readonly ToolbarTracker _toolbarTracker;
         private HBox _toolbar;
         private HBox _toolbarNavigationSection;
+        private Alignment _toolbarTitleSectionWrapper;
         private HBox _toolbarTitleSection;
         private HBox _toolbarSection;
         private Gtk.Label _toolbarTitle;
+        private ImageControl _toolbarIcon;
         private NavigationPage _navigation;
+        private string _backButton;
 
         private MasterDetailPage _parentMasterDetailPage;
 
@@ -64,6 +69,16 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
+        public Gdk.Size GetCurrentToolbarSize()
+        {
+            if (Toolbar?.Visible != true)
+            {
+                return Gdk.Size.Empty;
+            }
+
+            return Toolbar.Allocation.Size;
+        }
+
         protected virtual HBox ConfigureToolbar()
         {
             var toolbar = new HBox();
@@ -72,8 +87,10 @@ namespace Xamarin.Forms.Platform.GTK
             _toolbarNavigationSection = new HBox();
             toolbar.PackStart(_toolbarNavigationSection, false, true, 0);
 
+            _toolbarTitleSectionWrapper = new Alignment(0f, 0.5f, 0, 0);
             _toolbarTitleSection = new HBox();
-            toolbar.PackStart(_toolbarTitleSection, true, true, 0);
+            _toolbarTitleSectionWrapper.Add(_toolbarTitleSection);
+            toolbar.PackStart(_toolbarTitleSectionWrapper, true, true, 0);
 
             _toolbarSection = new HBox();
             toolbar.PackStart(_toolbarSection, false, true, 0);
@@ -98,7 +115,9 @@ namespace Xamarin.Forms.Platform.GTK
         private void NavigationPagePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(NavigationPage.BarTextColorProperty.PropertyName) ||
-                e.PropertyName.Equals(NavigationPage.BarBackgroundColorProperty.PropertyName))
+                e.PropertyName.Equals(NavigationPage.BarBackgroundColorProperty.PropertyName) ||
+                e.PropertyName.Equals(Page.TitleProperty.PropertyName) ||
+                e.PropertyName.Equals(Page.IconProperty.PropertyName))
                 UpdateToolBar();
         }
 
@@ -128,15 +147,43 @@ namespace Xamarin.Forms.Platform.GTK
             return _navigation.Peek(0).Title ?? string.Empty;
         }
 
+        private void UpdateIcon()
+        {
+            if (_toolbar == null || _navigation == null)
+                return;
+
+            var iconPath = GetCurrentPageIconPath();
+
+            if (!string.IsNullOrEmpty(iconPath))
+            {
+                _toolbarIcon.Pixbuf = new Pixbuf(iconPath);
+                _toolbarIcon.SetSizeRequest(GtkToolbarConstants.ToolbarIconWidth, GtkToolbarConstants.ToolbarIconHeight);
+            }
+            else
+            {
+                _toolbarIcon.WidthRequest = 1;
+            }
+        }
+
+        private string GetCurrentPageIconPath()
+        {
+            if (_navigation == null)
+                return string.Empty;
+            return _navigation.Peek(0).Icon ?? string.Empty;
+        }
+
         private void UpdateBarBackgroundColor(Controls.Page page)
         {
-            if (Navigation != null && Navigation.BarBackgroundColor != Color.Default)
+            if (Navigation != null)
             {
-                var backgroundColor = Navigation.BarBackgroundColor.ToGtkColor();
-
-                if (_toolbar != null && page != null)
+                if (Navigation.BarBackgroundColor.IsDefaultOrTransparent())
                 {
-                    page.SetToolbarColor(backgroundColor);
+                    page?.SetToolbarColor(null);
+                }
+                else
+                {
+                    var backgroundColor = Navigation.BarBackgroundColor.ToGtkColor();
+                    page?.SetToolbarColor(backgroundColor);
                 }
             }
         }
@@ -242,22 +289,44 @@ namespace Xamarin.Forms.Platform.GTK
             if (_toolbar == null || _navigation == null)
                 return;
 
-            var navigationItems = new List<ToolbarItem>();
-
             if (ShowBackButton())
             {
-                var backButtonItem = new ToolbarItem
-                {
-                    Text = GetPreviousPageTitle(),
-                    Command = new Command(async () => await NavigateBackFromBackButton())
-                };
+                ToolButton navigationButton;
 
-                navigationItems.Add(backButtonItem);
+                if (string.IsNullOrEmpty(_backButton))
+                {
+                    navigationButton = new ToolButton(Stock.GoBack);
+                }
+                else
+                {
+                    var pixBuf = new Pixbuf(_backButton);
+                    var image = new Gtk.Image(pixBuf);
+                    image.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                    image.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
+                    navigationButton = new ToolButton(image, string.Empty);
+                }
+
+                navigationButton.TooltipText = GetPreviousPageTitle() ?? string.Empty;
+                navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
+                _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
+
+                navigationButton.Clicked += async (sender, args) =>
+                {
+                    await NavigateBackFromBackButton();
+                };
             }
             else if (_parentMasterDetailPage != null && _parentMasterDetailPage.ShouldShowToolbarButton())
             {
-                var image = new Gtk.Image(Controls.MasterDetailPage.HamburgerPixBuf);
-                ToolButton hamburguerButton = new ToolButton(image, string.Empty);
+                ToolButton hamburguerButton = new ToolButton(null, string.Empty);
+
+                var hamburgerPixBuf = Controls.MasterDetailPage.HamburgerPixBuf;
+                if (hamburgerPixBuf != null)
+                {
+                    var image = new Gtk.Image(hamburgerPixBuf);
+                    hamburguerButton = new ToolButton(image, string.Empty);
+                }
+
                 hamburguerButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 hamburguerButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
                 _toolbarNavigationSection.PackStart(hamburguerButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
@@ -266,22 +335,6 @@ namespace Xamarin.Forms.Platform.GTK
                 {
                     _parentMasterDetailPage.IsPresented = !_parentMasterDetailPage.IsPresented;
                 };
-            }
-
-            if (navigationItems.Any())
-            {
-                foreach(var navigationItem in navigationItems)
-                {
-                    ToolButton navigationButton = new ToolButton(Stock.GoBack);
-                    navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                    navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
-                    _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
-
-                    navigationButton.Clicked += (sender, args) =>
-                    {
-                        navigationItem.Command?.Execute(navigationItem.CommandParameter);
-                    };
-                }
             }
         }
 
@@ -311,6 +364,11 @@ namespace Xamarin.Forms.Platform.GTK
             _parentMasterDetailPage = masterDetailPage;
         }
 
+        internal void UpdateBackButton(string backButton)
+        {
+            _backButton = backButton;
+        }
+
         internal void UpdateToolBar()
         {
             if (_navigation == null)
@@ -328,15 +386,20 @@ namespace Xamarin.Forms.Platform.GTK
             if (NavigationPage.GetHasNavigationBar(currentPage))
             {
                 _toolbar = ConfigureToolbar();
-                _toolbarTitle = new Gtk.Label
+
+                _toolbarIcon = new ImageControl
                 {
-                    WidthRequest = GtkToolbarConstants.NavigationTitleMinSize
+                    WidthRequest = 1,
+                    Aspect = ImageAspect.AspectFit
                 };
+                _toolbarTitleSection.PackStart(_toolbarIcon, false, false, 8);
 
-                _toolbarTitleSection.Add(_toolbarTitle);
-
+                _toolbarTitle = new Gtk.Label();
+                _toolbarTitleSection.PackEnd(_toolbarTitle, true, true, 0);
+                
                 UpdateNavigationItems();
                 UpdateTitle();
+                UpdateIcon();
                 UpdateToolbarItems();
                 UpdateBarTextColor();
                 UpdateBarBackgroundColor();

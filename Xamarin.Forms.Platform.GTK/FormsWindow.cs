@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gtk;
+using System;
 using System.ComponentModel;
-using Gtk;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -27,18 +27,28 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateMainPage();
         }
 
+        public void SetApplicationTitle(string title)
+        {
+            if (string.IsNullOrEmpty(title))
+                return;
+
+            Title = title;
+        }
+
+        public void SetApplicationIcon(string icon)
+        {
+            if (string.IsNullOrEmpty(icon))
+                return;
+
+            var appliccationIconPixbuf = new Gdk.Pixbuf(icon);
+            Icon = appliccationIconPixbuf;
+        }
+
         public sealed override void Dispose()
         {
             base.Dispose();
 
             Dispose(true);
-        }
-
-        protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
-        {
-            Child?.QueueDraw();
-
-            return base.OnConfigureEvent(evnt);
         }
 
         protected override bool OnDeleteEvent(Gdk.Event evnt)
@@ -67,16 +77,29 @@ namespace Xamarin.Forms.Platform.GTK
 
             if (platformRenderer != null)
             {
+                RemoveChildIfExists();
                 ((IDisposable)platformRenderer.Platform).Dispose();
             }
 
             var platform = new Platform();
             platform.PlatformRenderer.SetSizeRequest(WidthRequest, HeightRequest);
-
             Add(platform.PlatformRenderer);
             platform.SetPage(_application.MainPage);
 
             Child.ShowAll();
+        }
+
+        private void RemoveChildIfExists()
+        {
+            foreach (var children in Children)
+            {
+                var widget = children as Widget;
+
+                if (widget != null)
+                {
+                    Remove(widget);
+                }
+            }
         }
 
         private void Dispose(bool disposing)

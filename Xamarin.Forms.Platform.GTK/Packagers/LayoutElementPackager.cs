@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms.Platform.GTK.Renderers;
+﻿using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Renderers;
 
 namespace Xamarin.Forms.Platform.GTK.Packagers
 {
@@ -25,7 +26,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
             var viewRenderer = Platform.GetRenderer(view);
 
             var fixedControl = Renderer.Control;
-            fixedControl.Remove(viewRenderer.Container);
+            fixedControl.RemoveFromContainer(viewRenderer.Container);
         }
     }
 }

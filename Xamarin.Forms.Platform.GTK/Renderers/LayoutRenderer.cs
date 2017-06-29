@@ -5,6 +5,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class LayoutRenderer : ViewRenderer<Layout, Fixed>
     {
+        private Fixed _fixed;
         private LayoutElementPackager _packager;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Layout> e)
@@ -13,10 +14,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    SetNativeControl(new Fixed());
+                    if(_fixed == null)
+                    {
+                        _fixed = new Fixed();
+                    }
+
+                    SetNativeControl(_fixed);
                 }
 
-                _packager = new LayoutElementPackager(this);
+                if (_packager == null)
+                {
+                    _packager = new LayoutElementPackager(this);
+                }
+
                 _packager.Load();
             }
 

@@ -143,7 +143,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            if (Element.BackgroundColor.IsDefault)
+            if (Element.BackgroundColor.IsDefaultOrTransparent())
             {
                 return;
             }
@@ -182,6 +182,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
+            Performance.Start();
+
             foreach (var item in items)
             {
                 var cell = GetCell(item);
@@ -190,6 +192,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             _listView.Items = _cells;
+
+            Performance.Stop();
         }
 
         private void UpdateHeader()
@@ -281,9 +285,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 foreach (var cell in _cells)
                 {
-                    var height = GetUnevenRowCellHeight(cell);
+                    var cellHeight = GetUnevenRowCellHeight(cell);
 
-                    cell.HeightRequest = height;
+                    cell.HeightRequest = cellHeight > 0 ? cellHeight : DefaultRowHeight;
                 }
             }
             else
@@ -300,7 +304,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (formsCell != null)
             {
-                height = Convert.ToInt32(formsCell.Height);
+                height = Convert.ToInt32(formsCell.RenderHeight);
             }
 
             return height;
@@ -325,8 +329,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateSeparatorColor()
         {
-            if (Element.SeparatorColor.IsDefault)
+            if (Element.SeparatorColor.IsDefaultOrTransparent())
             {
+                if (_listView != null)
+                {
+                    _listView.SetSeparatorVisibility(false);
+                }
+
                 return;
             }
 
@@ -334,6 +343,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (_listView != null)
             {
+                _listView.SetSeparatorVisibility(true);
                 _listView.SetSeparatorColor(separatorColor);
             }
         }

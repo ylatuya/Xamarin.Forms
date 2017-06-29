@@ -1,6 +1,7 @@
 ﻿using System;
 using Gtk;
 using Pango;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -33,6 +34,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             Add(_container);
         }
 
+        public Gtk.Entry Entry
+        {
+            get
+            {
+                return _entryWrapper.Entry;
+            }
+        }
+
         public string SearchText
         {
             get
@@ -44,7 +53,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _entryWrapper.Entry.Text = value;
             }
         }
-
 
         public string PlaceholderText
         {
@@ -160,7 +168,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_clearButton.Parent != null)
             {
-                _container.Remove(_clearButton);
+                _container.RemoveFromContainer(_clearButton);
             }
         }
 

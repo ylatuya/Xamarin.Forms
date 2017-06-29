@@ -1,9 +1,11 @@
 ﻿using Gtk;
 using System;
-using Xamarin.Forms.Internals;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
+using Xamarin.Forms.Internals;
+using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
 namespace Xamarin.Forms.Platform.GTK
@@ -15,7 +17,7 @@ namespace Xamarin.Forms.Platform.GTK
         private readonly PlatformRenderer _renderer;
 
         internal static readonly BindableProperty RendererProperty =
-            BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer), 
+            BindableProperty.CreateAttached("Renderer", typeof(IVisualElementRenderer),
                 typeof(Platform), default(IVisualElementRenderer),
             propertyChanged: (bindable, oldvalue, newvalue) =>
             {
@@ -46,47 +48,8 @@ namespace Xamarin.Forms.Platform.GTK
             _modals = new List<Page>();
             Application.Current.NavigationProxy.Inner = this;
 
-            MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) =>
-            {
-                MessageDialog messageDialog = new MessageDialog(
-                    PlatformRenderer.Toplevel as Window,
-                    DialogFlags.DestroyWithParent,
-                    MessageType.Other,
-                    ButtonsType.Ok,
-                    arguments.Message);
-
-                messageDialog.Title = arguments.Title;
-
-                ResponseType result = (ResponseType)messageDialog.Run();
-
-                if(result == ResponseType.Ok)
-                {
-                    messageDialog.Destroy();
-                    arguments.SetResult(true);
-                }
-
-                arguments.SetResult(false);
-            });
-
-            MessagingCenter.Subscribe(this, Page.ActionSheetSignalName, (Page sender, ActionSheetArguments arguments) =>
-            {
-                MessageDialog messageDialog = new MessageDialog(
-                   PlatformRenderer.Toplevel as Window,
-                   DialogFlags.DestroyWithParent,
-                   MessageType.Other,
-                   ButtonsType.Ok,
-                   arguments.Title);
-
-                ResponseType result = (ResponseType)messageDialog.Run();
-
-                if (result == ResponseType.Ok)
-                {
-                    messageDialog.Destroy();
-                    arguments.SetResult(string.Empty);
-                }
-
-                arguments.SetResult(string.Empty);
-            });
+            MessagingCenter.Subscribe(this, Page.AlertSignalName, (Page sender, AlertArguments arguments) => DialogHelper.ShowAlert(PlatformRenderer, arguments));
+            MessagingCenter.Subscribe(this, Page.ActionSheetSignalName, (Page sender, ActionSheetArguments arguments) => DialogHelper.ShowActionSheet(PlatformRenderer, arguments));
         }
 
         internal static void DisposeModelAndChildrenRenderers(Element view)
@@ -159,6 +122,7 @@ namespace Xamarin.Forms.Platform.GTK
 
             Page = newRoot;
             Page.Platform = this;
+
             AddChild(Page);
 
             Application.Current.NavigationProxy.Inner = this;
@@ -177,6 +141,7 @@ namespace Xamarin.Forms.Platform.GTK
                 PlatformRenderer.ShowAll();
             }
         }
+
         void INavigation.InsertPageBefore(Page page, Page before)
         {
             throw new InvalidOperationException("InsertPageBefore is not supported globally on GTK, please use a NavigationPage.");
@@ -204,11 +169,11 @@ namespace Xamarin.Forms.Platform.GTK
 
             var modalPage = GetRenderer(modal) as Container;
 
-            var pageRenderer = PlatformRenderer.Child as PageRenderer;
+            var pageControl = PlatformRenderer.Child as IPageControl;
 
-            if (pageRenderer != null)
+            if (pageControl != null)
             {
-                var page = pageRenderer.Container.Child as Controls.Page;
+                var page = pageControl.Control;
 
                 if (page != null)
                 {
@@ -271,11 +236,11 @@ namespace Xamarin.Forms.Platform.GTK
                 SetRenderer(modal, modalRenderer);
             }
 
-            var pageRenderer = PlatformRenderer.Child as PageRenderer;
+            var pageControl = PlatformRenderer.Child as IPageControl;
 
-            if (pageRenderer != null)
+            if (pageControl != null)
             {
-                var page = pageRenderer.Container.Child as Controls.Page;
+                var page = pageControl.Control;
 
                 if (page != null)
                 {

@@ -51,7 +51,7 @@ namespace Xamarin.Forms.Controls
             return new MasterDetailPage
             {
                 AutomationId = DefaultMainPageId,
-                Master = new ContentPage { Title = "Master", BackgroundColor = Color.Red },
+                Master = new ContentPage { Icon = "gtk_hamburguer_button.png", Title = "Master", BackgroundColor = Color.Red },
                 Detail = CoreGallery.GetMainPage()
             };
             */

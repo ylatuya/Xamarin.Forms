@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     public class ScrollViewRenderer : ViewRenderer<ScrollView, ScrolledWindow>
     {
         private VisualElement _currentView;
+        private Viewport _viewPort;
 
         protected IScrollViewController Controller
         {
@@ -27,14 +28,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    SetNativeControl(new ScrolledWindow
+                    Control = new ScrolledWindow
                     {
                         CanFocus = true,
                         ShadowType = ShadowType.None,
                         BorderWidth = 0,
                         HscrollbarPolicy = PolicyType.Automatic,
                         VscrollbarPolicy = PolicyType.Automatic
-                    });
+                    };
+
+                    _viewPort = new Viewport();
+                    _viewPort.ShadowType = ShadowType.None;
+                    _viewPort.BorderWidth = 0;
+  
+                    Control.Add(_viewPort);
+                    SetNativeControl(Control);
 
                     Control.Hadjustment.ValueChanged += OnScrollEvent;
                     Control.Vadjustment.ValueChanged += OnScrollEvent;
@@ -54,7 +62,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.PropertyName == ScrollView.ContentSizeProperty.PropertyName)
                 UpdateContentSize();
-            else if(e.PropertyName == nameof(ScrollView.Content))
+            else if (e.PropertyName == nameof(ScrollView.Content))
                 LoadContent();
             else if (e.PropertyName == ScrollView.OrientationProperty.PropertyName)
                 UpdateOrientation();
@@ -72,12 +80,26 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.Dispose(disposing);
         }
 
-        public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
+        protected override void UpdateBackgroundColor()
         {
-            SizeRequest result = base.GetDesiredSize(widthConstraint, heightConstraint);
-            result.Minimum = new Size(40, 40);
+            if (Element.BackgroundColor.IsDefaultOrTransparent())
+            {
+                return;
+            }
 
-            return result;
+            var backgroundColor = Element.BackgroundColor;
+
+            if (Control != null)
+            {
+                Control.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
+            }
+
+            if (_viewPort != null)
+            {
+                _viewPort.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
+            }
+
+            base.UpdateBackgroundColor();
         }
 
         private void OnScrollEvent(object o, EventArgs args)
@@ -95,14 +117,18 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _currentView = Element.Content;
 
             IVisualElementRenderer renderer = null;
+
             if (_currentView != null)
             {
                 renderer = _currentView.GetOrCreateRenderer();
             }
 
-            Viewport viewPort = new Viewport();
-            viewPort.Add(renderer != null ? renderer.Container : null);
-            Control.Add(viewPort);
+            if (renderer != null)
+            {
+                var content = renderer.Container;
+                content.VisibleWindow = false;
+                _viewPort.Add(content);
+            }
         }
 
         private void UpdateOrientation()

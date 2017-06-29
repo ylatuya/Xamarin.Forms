@@ -89,6 +89,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
+        protected override void SetAccessibilityLabel()
+        {
+            var elemValue = (string)Element?.GetValue(AutomationProperties.NameProperty);
+
+            if (string.IsNullOrWhiteSpace(elemValue) 
+                && Control?.Accessible.Description == Control?.LabelWidget.Text)
+                return;
+
+            base.SetAccessibilityLabel();
+        }
+
         private void OnButtonPressEvent(object o, ButtonPressEventArgs args)
         {
             ((IButtonController)Element)?.SendPressed();

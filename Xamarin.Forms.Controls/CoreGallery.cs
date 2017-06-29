@@ -212,7 +212,7 @@ namespace Xamarin.Forms.Controls
 				}		
 			};
 #endif
-			SetValue(Accessibility.NameProperty, "SwapRoot");
+			SetValue(AutomationProperties.NameProperty, "SwapRoot");
 		}
 	}
 
@@ -245,7 +245,7 @@ namespace Xamarin.Forms.Controls
 		}
 
 		List<GalleryPageFactory> _pages = new List<GalleryPageFactory> {
-				new GalleryPageFactory(() => new AccessibilityGallery(), "Accessibility"),
+				new GalleryPageFactory(() => new AutomationPropertiesGallery(), "Accessibility"),
 				new GalleryPageFactory(() => new PlatformSpecificsGallery(), "Platform Specifics"),
 				new GalleryPageFactory(() => new NativeBindingGalleryPage(), "Native Binding Controls Gallery"),
 				new GalleryPageFactory(() => new XamlNativeViews(), "Xaml Native Views Gallery"),
@@ -377,7 +377,7 @@ namespace Xamarin.Forms.Controls
 				SelectedItem = null;
 			};
 
-			SetValue(Accessibility.NameProperty, "Core Pages");
+			SetValue(AutomationProperties.NameProperty, "Core Pages");
 		}
 
 		NavigationBehavior navigationBehavior;
@@ -415,7 +415,13 @@ namespace Xamarin.Forms.Controls
 
 			await PushPage (page);
 		}
-	}
+
+        internal void Filter(string text)
+        {
+            var culture = System.Globalization.CultureInfo.CurrentCulture;
+            ItemsSource = _pages.Where(p => culture.CompareInfo.IndexOf(p.Title, text, System.Globalization.CompareOptions.IgnoreCase) >= 0);
+        }
+    }
 
 	internal class CoreRootPage : ContentPage
 	{
@@ -427,11 +433,16 @@ namespace Xamarin.Forms.Controls
 
 			var corePageView = new CorePageView (rootPage, navigationBehavior);
 
-			var searchBar = new SearchBar () {
-				AutomationId = "SearchBar"
+            var searchBar = new SearchBar() {
+                AutomationId = "SearchBar"
 			};
 
-			var testCasesButton = new Button {
+            searchBar.TextChanged += (o, e) =>
+            {
+                corePageView.Filter(searchBar.Text);
+            };
+
+            var testCasesButton = new Button {
 				Text = "Go to Test Cases",
 				AutomationId = "GoToTestButton",
 				Command = new Command (async () => {

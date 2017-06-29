@@ -6,7 +6,8 @@
         public const int ToolbarItemWidth = 44;
         public const int ToolbarItemHeight = 44;
         public const int ToolbarItemSpacing = 6;
-        public const int NavigationTitleMinSize = 300;
         public const int ToolbarHeight = 72;
+        public const int ToolbarIconWidth = 32;
+        public const int ToolbarIconHeight = 32;
     }
 }

@@ -27,6 +27,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     var datePicker = new Controls.DatePicker();
+                    datePicker.GotFocus += GotFocus;
+                    datePicker.LostFocus += LostFocus;
                     datePicker.DateChanged += OnDateChanged;
                     SetNativeControl(datePicker);
                 }
@@ -62,7 +64,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (disposing && !_disposed)
             {
                 if (Control != null)
+                {
+                    Control.GotFocus -= GotFocus;
+                    Control.LostFocus -= LostFocus;
                     Control.DateChanged -= OnDateChanged;
+                }
 
                 _disposed = true;
             }
@@ -100,6 +106,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateIsEnabled()
         {
             Control.Sensitive = Element.IsEnabled;
+        }
+
+        private void GotFocus(object sender, EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, true);
+        }
+
+        private void LostFocus(object sender, EventArgs e)
+        {
+            ElementController.SetValueFromRenderer(VisualElement.IsFocusedPropertyKey, false);
         }
 
         private void OnDateChanged(object sender, EventArgs e)

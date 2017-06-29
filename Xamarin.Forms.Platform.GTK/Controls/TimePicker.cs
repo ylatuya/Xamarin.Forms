@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -31,24 +30,51 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Label _labelSec;
         private Gtk.SpinButton _txtSec;
 
-        public delegate void TimeEventHandler(object sender, TimeEventArgs args);
-
-        public event TimeEventHandler OnChange = null;
-
-        public TimePickerWindow(int x, int y, TimeSpan defTime, TimeEventHandler handler) : base(Gtk.WindowType.Popup)
+        public TimePickerWindow()
+            : base(Gtk.WindowType.Popup)
         {
             BuildTimePickerWindow();
-            Move(x, y);
-            OnChange = handler;
             Helpers.GrabHelper.GrabWindow(this);
-
-            _txtHour.Value = defTime.Hours;
-            _txtMin.Value = defTime.Minutes;
-            _txtSec.Value = defTime.Seconds;
 
             RefreshTime();
         }
-        
+
+        public TimeSpan CurrentTime
+        {
+            get
+            {
+                return new TimeSpan((int)_txtHour.Value, (int)_txtMin.Value, (int)_txtSec.Value);
+            }
+
+            set
+            {
+                _txtHour.Value = value.Hours;
+                _txtMin.Value = value.Minutes;
+                _txtSec.Value = value.Seconds;
+            }
+        }
+
+        public delegate void TimeEventHandler(object sender, TimeEventArgs args);
+
+        public event TimeEventHandler OnTimeChanged;
+
+        protected override bool OnExposeEvent(Gdk.EventExpose args)
+        {
+            base.OnExposeEvent(args);
+
+            int winWidth, winHeight;
+            GetSize(out winWidth, out winHeight);
+            GdkWindow.DrawRectangle(
+                Style.ForegroundGC(Gtk.StateType.Insensitive), false, 0, 0, winWidth - 1, winHeight - 1);
+
+            return false;
+        }
+
+        protected virtual void OnButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
+        {
+            Close();
+        }
+
         private void BuildTimePickerWindow()
         {
             Title = "TimePicker";
@@ -146,36 +172,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _txtSec.ButtonPressEvent += new Gtk.ButtonPressEventHandler(OnTxtSecButtonPressEvent);
         }
 
-        public TimeSpan CurrentTime
-        {
-            get
-            {
-                return new TimeSpan((int)_txtHour.Value, (int)_txtMin.Value, (int)_txtSec.Value);
-            }
-        }
-
-        public static void ShowMe(int x, int y, TimeSpan defTime, TimeEventHandler handler)
-        {
-            new TimePickerWindow(x, y, defTime, handler);
-        }
-
-        protected override bool OnExposeEvent(Gdk.EventExpose args)
-        {
-            base.OnExposeEvent(args);
-
-            int winWidth, winHeight;
-            GetSize(out winWidth, out winHeight);
-            GdkWindow.DrawRectangle(
-                Style.ForegroundGC(Gtk.StateType.Insensitive), false, 0, 0, winWidth - 1, winHeight - 1);
-
-            return false;
-        }
-
-        protected virtual void OnButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
-        {
-            Close();
-        }
-
         private void Close()
         {
             Helpers.GrabHelper.RemoveGrab(this);
@@ -184,7 +180,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RefreshTime()
         {
-            OnChange?.Invoke(this, new TimeEventArgs(CurrentTime));
+            OnTimeChanged?.Invoke(this, new TimeEventArgs(CurrentTime));
         }
 
         protected virtual void OnTxtHourValueChanged(object sender, EventArgs e)
@@ -237,6 +233,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private string _timeFormat;
 
         public event EventHandler TimeChanged;
+        public event EventHandler GotFocus;
+        public event EventHandler LostFocus;
 
         public TimePicker()
         {
@@ -306,16 +304,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             int x = 0;
             int y = 0;
 
-            var window = RootWindow.Children.FirstOrDefault(c => c.IsVisible);
-            if (window != null)
-            {
-                window.GetPosition(out x, out y);
-            }
+            GdkWindow.GetOrigin(out x, out y);
+            y += Allocation.Height;
 
-            x += Allocation.Left;
-            y += Allocation.Top + Allocation.Height;
-
-            TimePickerWindow.ShowMe(x, y, CurrentTime, OnPopupTimeChanged);
+            var picker = new TimePickerWindow();
+            picker.Move(x, y);
+            picker.CurrentTime = CurrentTime;
+            picker.OnTimeChanged += OnPopupTimeChanged;
+            picker.Destroyed += OnPickerClosed;
+            GotFocus?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnPopupTimeChanged(object sender, TimeEventArgs args)
@@ -340,7 +337,18 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             _comboBox.Entry.Text = string.IsNullOrEmpty(_timeFormat)
                 ? _currentTime.ToString(DefaultTimeFormat)
-                : DateTime.Now.Add(_currentTime).ToString(_timeFormat);
+                : DateTime.Today.Date.Add(_currentTime).ToString(_timeFormat);
+        }
+
+        private void OnPickerClosed(object sender, EventArgs e)
+        {
+            var window = sender as TimePickerWindow;
+
+            if (window != null)
+            {
+                Remove(window);
+                LostFocus?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

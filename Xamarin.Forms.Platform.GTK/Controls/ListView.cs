@@ -57,9 +57,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private const int RefreshHeight = 48;
 
         private VBox _root;
-        private EventBox _header;
+        private EventBox _headerContainer;
+        private Widget _header;
         private VBox _list;
-        private EventBox _footer;
+        private EventBox _footerContainer;
+        private Widget _footer;
+        private Viewport _viewPort;
         private IEnumerable<Widget> _cells;
         private List<ListViewSeparator> _separators;
         private object _selectedItem;
@@ -83,7 +86,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             BuildListView();
         }
 
-        public EventBox Header
+        public Widget Header
         {
             get
             {
@@ -112,7 +115,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public EventBox Footer
+        public Widget Footer
         {
             get
             {
@@ -158,6 +161,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_root != null)
             {
                 _root.ModifyBg(StateType.Normal, backgroundColor);
+                _viewPort.ModifyBg(StateType.Normal, backgroundColor);
             }
         }
 
@@ -189,13 +193,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             if (IsPullToRequestEnabled)
             {
-                _root.Remove(_refreshHeader);
+                _root.RemoveFromContainer(_refreshHeader);
                 _root.PackStart(_refreshHeader, false, false, 0);
                 _root.ReorderChild(_refreshHeader, 0);
             }
             else
             {
-                _root.Remove(_refreshHeader);
+                _root.RemoveFromContainer(_refreshHeader);
             }
         }
 
@@ -261,8 +265,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _root.PackStart(_refreshHeader, false, false, 0);
 
             // Header
-            _header = new EventBox();
-            _root.PackStart(_header, false, false, 0);
+            _headerContainer = new EventBox();
+            _root.PackStart(_headerContainer, false, false, 0);
 
             // List
             _list = new VBox();
@@ -270,29 +274,50 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _root.PackStart(_list, true, true, 0);
 
             // Footer
-            _footer = new EventBox();
-            _root.PackStart(_footer, false, false, 0);
+            _footerContainer = new EventBox();
+            _root.PackStart(_footerContainer, false, false, 0);
 
-            Viewport viewPort = new Viewport();
-            viewPort.ShadowType = ShadowType.None;
-            viewPort.BorderWidth = 0;
-            viewPort.Add(_root);
+            _viewPort = new Viewport();
+            _viewPort.ShadowType = ShadowType.None;
+            _viewPort.BorderWidth = 0;
+            _viewPort.Add(_root);
 
-            Add(viewPort);
+            Add(_viewPort);
 
             ShowAll(); 
         }
        
-        private void RefreshHeader(EventBox header)
+        private void RefreshHeader(Widget newHeader)
         {
-            _header = header;
-
-            if (_header != null)
+            if (_headerContainer != null)
             {
-                _header.ShowAll();
+                foreach(var children in _headerContainer.Children)
+                {
+                    _headerContainer.RemoveFromContainer(children);
+                }
             }
+
+            _header = newHeader;
+            _headerContainer.Add(_header);
+            _header.ShowAll();
         }
 
+        private void RefreshFooter(Widget newFooter)
+        {
+            if (_footerContainer != null)
+            {
+                foreach (var children in _footerContainer.Children)
+                {
+                    _footerContainer.RemoveFromContainer(children);
+                }
+            }
+
+            _footer = newFooter;
+            _footerContainer.Add(_footer);
+            _footer.ShowAll();
+        }
+
+        // TODO: Improve cell creation for the highest performance
         private void RefreshItems(IEnumerable<Widget> items)
         {
             ClearList();
@@ -312,6 +337,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                             OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
                         }
                     };
+
+                    var itemContainer = item as EventBox;
+
+                    if(itemContainer != null)
+                    {
+                        itemContainer.VisibleWindow = false;
+                    }
 
                     _list.PackStart(item, false, false, 0);
 
@@ -337,16 +369,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_separators != null)
             {
                 _separators.Clear();
-            }
-        }
-
-        private void RefreshFooter(EventBox footer)
-        {
-            _footer = footer;
-
-            if (_footer != null)
-            {
-                _footer.ShowAll();
             }
         }
     }

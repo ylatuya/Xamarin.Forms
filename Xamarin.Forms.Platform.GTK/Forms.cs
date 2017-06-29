@@ -9,6 +9,9 @@ namespace Xamarin.Forms
 {
     public static class Forms
     {
+        internal static string BarTextColor = "Xamarin.BarTextColor";
+        internal static string BarBackgroundColor = "Xamarin.BarBackgroundColor";
+
         const string LogFormat = "[{0}] {1}";
 
         public static bool IsInitialized { get; private set; }
@@ -27,6 +30,7 @@ namespace Xamarin.Forms
             Device.SetIdiom(TargetIdiom.Desktop);
             Device.PlatformServices = new GtkPlatformServices();
             Device.Info = new GtkDeviceInfo();
+            Color.SetAccent(Color.FromHex("#3498DB"));
             ExpressionSearch.Default = new GtkExpressionSearch();
 
             Registrar.RegisterAll(new[]
