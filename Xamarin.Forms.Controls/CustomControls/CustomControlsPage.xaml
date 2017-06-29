@@ -8,6 +8,7 @@
         <ScrollView>
             <StackLayout>
                 <Button x:Name="ColorPickerBtn" Text="ColorPicker" />
+                <Button x:Name="DataGridBtn" Text="DataGrid" />
                 <Button x:Name="DateTimePickerBtn" Text="DateTimePicker" />
                 <Button x:Name="ExpanderBtn" Text="Expander" />
                 <Button x:Name="GridSplitterBtn" Text="GridSplitter" />
