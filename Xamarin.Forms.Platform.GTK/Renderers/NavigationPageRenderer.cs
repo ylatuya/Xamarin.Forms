@@ -406,7 +406,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Element == null)
                 return;
 
-            var backgroundColor = Element.BackgroundColor == Color.Default ? Color.White : Element.BackgroundColor;
+            var backgroundColor = Element.BackgroundColor;
+
+            if (backgroundColor.IsDefaultOrTransparent())
+                return;
 
             Container.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
         }
