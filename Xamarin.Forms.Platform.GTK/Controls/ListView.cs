@@ -291,9 +291,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_headerContainer != null)
             {
-                foreach(var children in _headerContainer.Children)
+                foreach(var child in _headerContainer.Children)
                 {
-                    _headerContainer.RemoveFromContainer(children);
+                    _headerContainer.RemoveFromContainer(child);
                 }
             }
 
@@ -306,9 +306,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_footerContainer != null)
             {
-                foreach (var children in _footerContainer.Children)
+                foreach (var child in _footerContainer.Children)
                 {
-                    _footerContainer.RemoveFromContainer(children);
+                    _footerContainer.RemoveFromContainer(child);
                 }
             }
 
@@ -360,9 +360,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_list != null)
             {
-                foreach (var children in _list.Children)
+                foreach (var child in _list.Children)
                 {
-                    _list.RemoveFromContainer(children);
+                    _list.RemoveFromContainer(child);
                 }
             }
 
