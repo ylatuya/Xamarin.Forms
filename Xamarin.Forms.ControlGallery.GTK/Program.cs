@@ -20,6 +20,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
             });
          
             FormsMaps.Init(string.Empty);
+            OxyPlot.Xamarin.Forms.Platform.GTK.PlotViewRenderer.Init();
 
             var app = new Controls.App();
             var window = new FormsWindow();

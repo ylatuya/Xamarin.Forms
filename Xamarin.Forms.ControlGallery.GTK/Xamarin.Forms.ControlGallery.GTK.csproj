@@ -82,6 +82,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OxyPlot.Xamarin.Forms.Platform.GTK\OxyPlot.Xamarin.Forms.Platform.GTK.csproj">
+      <Project>{48a3c49a-0a2a-44c7-b91c-fd66e2a6a65d}</Project>
+      <Name>OxyPlot.Xamarin.Forms.Platform.GTK</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OxyPlot.Xamarin.Forms\OxyPlot.Xamarin.Forms.csproj">
+      <Project>{5152d7e8-e7c6-4530-b663-f18a211021fd}</Project>
+      <Name>OxyPlot.Xamarin.Forms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">
       <Project>{5344bcde-de03-4a0f-a53a-0c6f0ed6d860}</Project>
       <Name>GtkToolkit</Name>
