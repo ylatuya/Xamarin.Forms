@@ -291,9 +291,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_headerContainer != null)
             {
-                foreach(var children in _headerContainer.Children)
+                foreach(var child in _headerContainer.Children)
                 {
-                    _headerContainer.RemoveFromContainer(children);
+                    _headerContainer.RemoveFromContainer(child);
                 }
             }
 
@@ -306,9 +306,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_footerContainer != null)
             {
-                foreach (var children in _footerContainer.Children)
+                foreach (var child in _footerContainer.Children)
                 {
-                    _footerContainer.RemoveFromContainer(children);
+                    _footerContainer.RemoveFromContainer(child);
                 }
             }
 
@@ -340,7 +340,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                     var itemContainer = item as EventBox;
 
-                    if(itemContainer != null)
+                    if (itemContainer != null)
                     {
                         itemContainer.VisibleWindow = false;
                     }
@@ -360,9 +360,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_list != null)
             {
-                foreach (var cell in _list.Children)
+                foreach (var child in _list.Children)
                 {
-                    cell.Destroy();
+                    _list.RemoveFromContainer(child);
                 }
             }
 
