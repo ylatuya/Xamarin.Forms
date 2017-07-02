@@ -69,14 +69,17 @@
   <ItemGroup>
     <Compile Include="Controls\AnalogClock.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />
+    <Compile Include="Controls\ImageCheckBox.cs" />
     <Compile Include="Helpers\CairoUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\ColorPickerRenderer.cs" />
     <Compile Include="Renderers\DateTimePickerRenderer.cs" />
     <Compile Include="Renderers\ExpanderRenderer.cs" />
+    <Compile Include="Renderers\FileSelectorRenderer.cs" />
     <Compile Include="Renderers\GridSplitterRenderer.cs" />
     <Compile Include="Renderers\DataGridRenderer.cs" />
     <Compile Include="Renderers\HyperLinkRenderer.cs" />
+    <Compile Include="Renderers\ImageCheckBoxRenderer.cs" />
     <Compile Include="Renderers\SeparatorRenderer.cs" />
   </ItemGroup>
   <ItemGroup>

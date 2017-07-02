@@ -15,6 +15,7 @@ namespace Xamarin.Forms.Controls.CustomControls
             ExpanderBtn.Clicked += (sender, args) => Navigation.PushAsync(new ExpanderPage());
             GridSplitterBtn.Clicked += (sender, args) => Navigation.PushAsync(new GridSplitterPage());
             HyperLinkBtn.Clicked += (sender, args) => Navigation.PushAsync(new HyperLinkPage());
+            ImageCheckBoxBtn.Clicked += (sender, args) => Navigation.PushAsync(new ImageCheckBoxPage());
             SeparatorBtn.Clicked += (sender, args) => Navigation.PushAsync(new SeparatorPage());
         }
     }

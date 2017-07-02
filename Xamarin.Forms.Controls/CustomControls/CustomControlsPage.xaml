@@ -14,6 +14,7 @@
                 <Button x:Name="ExpanderBtn" Text="Expander" />
                 <Button x:Name="GridSplitterBtn" Text="GridSplitter" />
                 <Button x:Name="HyperLinkBtn" Text="HyperLink" />
+                <Button x:Name="ImageCheckBoxBtn" Text="ImageCheckBox" />
                 <Button x:Name="SeparatorBtn" Text="Separator" />
             </StackLayout>
         </ScrollView>
