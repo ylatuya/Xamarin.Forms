@@ -1,16 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Controls.CustomControls.ChartPage"
              xmlns:controls="clr-namespace:GtkToolkit.Controls;assembly=GtkToolkit"
              xmlns:oxyplot="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms"
              Title="OxyPlot Xamarin.Forms GTK# Backend">
-    <ContentPage.Content>
-        <AbsoluteLayout>
-            <oxyplot:PlotView
-                x:Name="GtkPlot"
-                AbsoluteLayout.LayoutFlags="All"
-                AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
-        </AbsoluteLayout>
-    </ContentPage.Content>
-</ContentPage>
+    <TabbedPage.Children>
+        <ContentPage Title="Area">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="AreaPlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Bar">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="BarPlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Column">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="ColumnPlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Function">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="FunctionPlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Line">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="LinePlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Pie">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="PiePlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Scatter">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="ScatterPlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="StackBar">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="StackBarPlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+        <ContentPage Title="Volume">
+            <AbsoluteLayout>
+                <oxyplot:PlotView
+                    x:Name="VolumePlot"
+                    AbsoluteLayout.LayoutFlags="All"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+            </AbsoluteLayout>
+        </ContentPage>
+    </TabbedPage.Children>
+</TabbedPage>
