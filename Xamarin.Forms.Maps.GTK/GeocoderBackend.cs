@@ -1,6 +1,7 @@
 ﻿using GMap.NET;
 using GMap.NET.MapProviders;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Xamarin.Forms.Maps.GTK
@@ -19,9 +20,12 @@ namespace Xamarin.Forms.Maps.GTK
             var positions = new List<Position>();
             GMapProviders.GoogleMap.GetPoints(address, out points);
 
-            foreach (var point in points)
+            if (points != null && points.Any())
             {
-                positions.Add(new Position(point.Lat, point.Lng));
+                foreach (var point in points)
+                {
+                    positions.Add(new Position(point.Lat, point.Lng));
+                }
             }
 
             return Task.FromResult<IEnumerable<Position>>(positions);
