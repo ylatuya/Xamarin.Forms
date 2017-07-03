@@ -32,7 +32,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     _minimum = 0;
                     _maximum = 100;
-                    SetNativeControl(new Gtk.HScale(_minimum, _maximum, 1));
+                    SetNativeControl(new Gtk.HScale(_minimum, _maximum, 0.1));
                     Control.ValueChanged += OnControlValueChanged;
                 }
 
