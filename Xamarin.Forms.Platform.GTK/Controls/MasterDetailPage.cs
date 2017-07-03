@@ -375,13 +375,18 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             public void UpdateBackgroundColor(Gdk.Color? backgroundColor)
             {
+                if(_root== null)
+                {
+                    return;
+                }
+
                 if (backgroundColor.HasValue)
                 {
-                    ModifyBg(StateType.Normal, backgroundColor.Value);
+                    _root.ModifyBg(StateType.Normal, backgroundColor.Value);
                 }
                 else
                 {
-                    ModifyBg(StateType.Normal, _defaultBackgroundColor);
+                    _root.ModifyBg(StateType.Normal, _defaultBackgroundColor);
                 }
             }
 
