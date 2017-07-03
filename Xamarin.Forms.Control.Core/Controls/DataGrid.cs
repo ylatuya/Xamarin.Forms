@@ -42,5 +42,23 @@ namespace GtkToolkit.Controls
             get { return (IEnumerable)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
+
+        public static readonly BindableProperty RowHeightProperty =
+            BindableProperty.Create(nameof(RowHeight), typeof(int), typeof(DataGrid), default(int));
+
+        public int RowHeight
+        {
+            get { return (int)GetValue(RowHeightProperty); }
+            set { SetValue(RowHeightProperty, value); }
+        }
+
+        public static readonly BindableProperty EnableGridLinesProperty =
+            BindableProperty.Create(nameof(RowHeight), typeof(bool), typeof(DataGrid), true);
+
+        public bool EnableGridLines
+        {
+            get { return (bool)GetValue(EnableGridLinesProperty); }
+            set { SetValue(EnableGridLinesProperty, value); }
+        }
     }
 }
