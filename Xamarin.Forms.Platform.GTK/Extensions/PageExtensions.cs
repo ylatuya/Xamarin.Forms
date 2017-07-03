@@ -6,8 +6,14 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
     {
         internal static bool ShouldDisplayNativeWindow(this Page page)
         {
-            return page.Parent is NavigationPage ||
-                   page.Parent is MasterDetailPage;
+            var parentPage = page.Parent as Page;
+
+            if (parentPage != null)
+            {
+                return string.IsNullOrEmpty(parentPage.BackgroundImage);
+            }
+
+            return true;
         }
 
         public static Gtk.EventBox CreateContainer(this Page view)
