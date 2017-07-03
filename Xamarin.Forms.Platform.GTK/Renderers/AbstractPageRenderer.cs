@@ -103,21 +103,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBackgroundColor();
 
             _appeared = true;
-        }
 
-        protected override bool OnVisibilityNotifyEvent(EventVisibility evnt)
-        {
-            if (evnt.State == VisibilityState.Unobscured)
-            {
-                PageController.SendAppearing();
-            }
-
-            if (evnt.State == VisibilityState.FullyObscured)
-            {
-                PageController.SendDisappearing();
-            }
-
-            return base.OnVisibilityNotifyEvent(evnt);
+            PageController.SendAppearing();
         }
 
         protected override void OnDestroyed()
@@ -128,6 +115,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
 
             _appeared = false;
+
+            PageController.SendDisappearing();
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
