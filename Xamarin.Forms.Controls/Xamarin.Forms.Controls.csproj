@@ -168,9 +168,6 @@
       <DependentUpon>SampleViewCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="SimpleApp.cs" />
-    <Compile Include="Tests\Contact.cs" />
-    <Compile Include="Tests\DetailPageCS.cs" />
-    <Compile Include="Tests\MainPageCS.cs" />
     <Compile Include="TipCalc\DoubleRoundingConverter.cs" />
     <Compile Include="TipCalc\DoubleToStringConverter.cs" />
     <Compile Include="TipCalc\TipCalcModel.cs" />
