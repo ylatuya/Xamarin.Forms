@@ -30,9 +30,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
-                    _minimum = 0;
-                    _maximum = 100;
-                    SetNativeControl(new Gtk.HScale(_minimum, _maximum, 1));
+                    _minimum = e.NewElement.Minimum;
+                    _maximum = e.NewElement.Maximum;
+                    double stepping = Math.Min((e.NewElement.Maximum - e.NewElement.Minimum) / 10, 1);
+                    SetNativeControl(new Gtk.HScale(_minimum, _maximum, stepping));
                     Control.ValueChanged += OnControlValueChanged;
                 }
 
