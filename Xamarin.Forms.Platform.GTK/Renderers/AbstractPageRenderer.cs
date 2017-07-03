@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
+using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -101,8 +102,22 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             UpdateBackgroundColor();
 
-            PageController.SendAppearing();
             _appeared = true;
+        }
+
+        protected override bool OnVisibilityNotifyEvent(EventVisibility evnt)
+        {
+            if (evnt.State == VisibilityState.Unobscured)
+            {
+                PageController.SendAppearing();
+            }
+
+            if (evnt.State == VisibilityState.FullyObscured)
+            {
+                PageController.SendDisappearing();
+            }
+
+            return base.OnVisibilityNotifyEvent(evnt);
         }
 
         protected override void OnDestroyed()
@@ -112,7 +127,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_appeared || _disposed)
                 return;
 
-            PageController.SendDisappearing();
             _appeared = false;
         }
 
