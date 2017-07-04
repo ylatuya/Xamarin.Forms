@@ -8,12 +8,30 @@ namespace GtkToolkit.Controls
     public class DataGridColumn : BindableObject
     {
         public static readonly BindableProperty TitleProperty =
-        BindableProperty.Create(nameof(Title), typeof(string), typeof(DataGridColumn), string.Empty);
+            BindableProperty.Create(nameof(Title), typeof(string), typeof(DataGridColumn), string.Empty);
 
         public string Title
         {
             get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
+        }
+
+        public static readonly BindableProperty ColumnWidthProperty =
+            BindableProperty.Create(nameof(ColumnWidth), typeof(int), typeof(DataGridColumn), default(int));
+
+        public int ColumnWidth
+        {
+            get { return (int)GetValue(ColumnWidthProperty); }
+            set { SetValue(ColumnWidthProperty, value); }
+        }
+
+        public static readonly BindableProperty ResizableProperty =
+            BindableProperty.Create(nameof(Resizable), typeof(bool), typeof(DataGridColumn), true);
+
+        public bool Resizable
+        {
+            get { return (bool)GetValue(ResizableProperty); }
+            set { SetValue(ResizableProperty, value); }
         }
     }
 
@@ -59,6 +77,24 @@ namespace GtkToolkit.Controls
         {
             get { return (bool)GetValue(EnableGridLinesProperty); }
             set { SetValue(EnableGridLinesProperty, value); }
+        }
+
+        public static readonly BindableProperty CellBackgroundColorProperty =
+            BindableProperty.Create(nameof(CellBackgroundColor), typeof(Color), typeof(DataGrid), Color.White);
+
+        public Color CellBackgroundColor
+        {
+            get { return (Color)GetValue(CellBackgroundColorProperty); }
+            set { SetValue(CellBackgroundColorProperty, value); }
+        }
+
+        public static readonly BindableProperty CellTextColorProperty =
+            BindableProperty.Create(nameof(CellTextColor), typeof(Color), typeof(DataGrid), Color.Black);
+
+        public Color CellTextColor
+        {
+            get { return (Color)GetValue(CellTextColorProperty); }
+            set { SetValue(CellTextColorProperty, value); }
         }
     }
 }

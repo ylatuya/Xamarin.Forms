@@ -75,7 +75,6 @@
     <Compile Include="Renderers\ColorPickerRenderer.cs" />
     <Compile Include="Renderers\DateTimePickerRenderer.cs" />
     <Compile Include="Renderers\ExpanderRenderer.cs" />
-    <Compile Include="Renderers\FileSelectorRenderer.cs" />
     <Compile Include="Renderers\GridSplitterRenderer.cs" />
     <Compile Include="Renderers\DataGridRenderer.cs" />
     <Compile Include="Renderers\HyperLinkRenderer.cs" />

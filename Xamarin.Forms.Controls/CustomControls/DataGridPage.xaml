@@ -7,10 +7,12 @@
     <ContentPage.Content>
         <Grid>
             <controls:DataGrid
-                ItemsSource="{Binding ConstructorStandings}">
+                ItemsSource="{Binding ConstructorStandings}"
+                CellBackgroundColor="White"
+                CellTextColor="Black">
                 <controls:DataGrid.Columns>
-                    <controls:DataGridColumn Title="Pos" />
-                    <controls:DataGridColumn Title="Constructor" />
+                    <controls:DataGridColumn Title="Pos"  />
+                    <controls:DataGridColumn Title="Constructor" ColumnWidth="150" Resizable="false" />
                     <controls:DataGridColumn Title="Nationality" />
                     <controls:DataGridColumn Title="Points" />
                     <controls:DataGridColumn Title="Wins" />

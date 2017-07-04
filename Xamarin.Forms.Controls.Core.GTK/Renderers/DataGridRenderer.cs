@@ -8,6 +8,7 @@ using System.Linq;
 using System;
 using System.Collections;
 using System.Reflection;
+using Xamarin.Forms.Platform.GTK.Extensions;
 
 [assembly: ExportRenderer(typeof(DataGrid), typeof(DataGridRenderer))]
 namespace GtkToolkit.GTK.Renderers
@@ -34,6 +35,8 @@ namespace GtkToolkit.GTK.Renderers
                 UpdateItems();
                 UpdateRowHeight();
                 UpdateGridLines();
+                UpdateCellBackgroundColor();
+                UpdateCellTextColor();
             }
 
             base.OnElementChanged(e);
@@ -49,6 +52,10 @@ namespace GtkToolkit.GTK.Renderers
                 UpdateRowHeight();
             else if (e.PropertyName == DataGrid.EnableGridLinesProperty.PropertyName)
                 UpdateGridLines();
+            else if (e.PropertyName == DataGrid.CellBackgroundColorProperty.PropertyName)
+                UpdateCellBackgroundColor();
+            else if (e.PropertyName == DataGrid.CellTextColorProperty.PropertyName)
+                UpdateCellTextColor();
 
             base.OnElementPropertyChanged(sender, e);
         }
@@ -74,6 +81,13 @@ namespace GtkToolkit.GTK.Renderers
                 {
                     TreeViewColumn column = new TreeViewColumn();
                     column.Title = col.Title;
+
+                    if (col.ColumnWidth > 0)
+                    {
+                        column.MinWidth = col.ColumnWidth;
+                    }
+
+                    column.Resizable = col.Resizable;
 
                     CellRendererText cell = new CellRendererText();
                     column.PackStart(cell, true);
@@ -122,6 +136,57 @@ namespace GtkToolkit.GTK.Renderers
                 _treeView.EnableGridLines = TreeViewGridLines.Both;
             else
                 _treeView.EnableGridLines = TreeViewGridLines.None;
+        }
+
+        private void UpdateCellBackgroundColor()
+        {
+            if (_treeView == null)
+            {
+                return;
+            }
+
+            if (Element.CellBackgroundColor.IsDefault)
+            {
+                return;
+            }
+
+            var backgroundColor = Element.CellBackgroundColor.ToGtkColor();
+
+            foreach (var column in _treeView.Columns)
+            {
+                foreach (var cell in column.Cells)
+                {
+                    cell.CellBackgroundGdk = backgroundColor;
+                }
+            }
+        }
+
+        private void UpdateCellTextColor()
+        {
+            if (_treeView == null)
+            {
+                return;
+            }
+
+            if (Element.CellTextColor.IsDefault)
+            {
+                return;
+            }
+
+            var textColor = Element.CellTextColor.ToGtkColor();
+
+            foreach (var column in _treeView.Columns)
+            {
+                foreach (var cell in column.Cells)
+                {
+                    var cellText = cell as CellRendererText;
+
+                    if (cellText != null)
+                    {
+                        cellText.ForegroundGdk = textColor;
+                    }
+                }
+            }
         }
 
         private int GetPropertiesCount(IEnumerable items)
