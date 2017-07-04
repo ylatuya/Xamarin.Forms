@@ -8,6 +8,7 @@
         <Grid>
             <controls:DataGrid
                 ItemsSource="{Binding ConstructorStandings}"
+                SelectionMode="Single"
                 CellBackgroundColor="White"
                 CellTextColor="Black">
                 <controls:DataGrid.Columns>

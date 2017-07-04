@@ -5,6 +5,13 @@ using Xamarin.Forms;
 
 namespace GtkToolkit.Controls
 {
+    public enum DataGridSelectionMode
+    {
+        None,
+        Single,
+        Multiple
+    };
+
     public class DataGridColumn : BindableObject
     {
         public static readonly BindableProperty TitleProperty =
@@ -95,6 +102,16 @@ namespace GtkToolkit.Controls
         {
             get { return (Color)GetValue(CellTextColorProperty); }
             set { SetValue(CellTextColorProperty, value); }
+        }
+
+        public static readonly BindableProperty SelectionModeProperty =
+            BindableProperty.Create(nameof(SelectionMode), typeof(DataGridSelectionMode), typeof(DataGrid), 
+                DataGridSelectionMode.Single);
+
+        public DataGridSelectionMode SelectionMode
+        {
+            get { return (DataGridSelectionMode)GetValue(SelectionModeProperty); }
+            set { SetValue(SelectionModeProperty, value); }
         }
     }
 }

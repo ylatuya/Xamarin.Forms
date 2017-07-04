@@ -19,12 +19,15 @@ namespace GtkToolkit.GTK.Renderers
 
         private bool _disposed;
         private TreeView _treeView;
+        private ListStore _model;
 
         protected override void OnElementChanged(ElementChangedEventArgs<DataGrid> e)
         {
             if (Control == null)
             {
                 _treeView = new TreeView();
+
+                _treeView.Selection.Changed += OnSelectionChanged;
 
                 SetNativeControl(_treeView);
             }
@@ -37,6 +40,7 @@ namespace GtkToolkit.GTK.Renderers
                 UpdateGridLines();
                 UpdateCellBackgroundColor();
                 UpdateCellTextColor();
+                UpdateSelectionMode();
             }
 
             base.OnElementChanged(e);
@@ -56,6 +60,8 @@ namespace GtkToolkit.GTK.Renderers
                 UpdateCellBackgroundColor();
             else if (e.PropertyName == DataGrid.CellTextColorProperty.PropertyName)
                 UpdateCellTextColor();
+            else if (e.PropertyName == DataGrid.SelectionModeProperty.PropertyName)
+                UpdateSelectionMode();
 
             base.OnElementPropertyChanged(sender, e);
         }
@@ -65,6 +71,11 @@ namespace GtkToolkit.GTK.Renderers
             if (disposing && !_disposed)
             {
                 _disposed = true;
+
+                if (Control != null)
+                {
+                    Control.Selection.Changed += OnSelectionChanged;
+                }
             }
 
             base.Dispose(disposing);
@@ -107,7 +118,8 @@ namespace GtkToolkit.GTK.Renderers
             {
                 var items = Element.ItemsSource;
 
-                _treeView.Model = CreateItems(items); 
+                _model = CreateItems(items);
+                _treeView.Model = _model;
 
                 _treeView.ShowAll();
             }
@@ -189,6 +201,29 @@ namespace GtkToolkit.GTK.Renderers
             }
         }
 
+        private void UpdateSelectionMode()
+        {
+            if (_treeView == null)
+            {
+                return;
+            }
+
+            var selectionMode = Element.SelectionMode;
+
+            switch (selectionMode)
+            {
+                case DataGridSelectionMode.None:
+                    _treeView.Selection.Mode = SelectionMode.None;
+                    break;
+                case DataGridSelectionMode.Single:
+                    _treeView.Selection.Mode = SelectionMode.Single;
+                    break;
+                case DataGridSelectionMode.Multiple:
+                    _treeView.Selection.Mode = SelectionMode.Multiple;
+                    break;
+            }
+        }
+
         private int GetPropertiesCount(IEnumerable items)
         {
             var enumerator = items.GetEnumerator();
@@ -239,7 +274,7 @@ namespace GtkToolkit.GTK.Renderers
                     if (p.GetValue(item, null) != null)
                     {
                         arrayItems[index] = p.GetValue(item, null);
-                   
+
                         index++;
                     }
                 }
@@ -248,6 +283,16 @@ namespace GtkToolkit.GTK.Renderers
             }
 
             return listStore;
+        }
+
+        private void OnSelectionChanged(object sender, EventArgs e)
+        {
+            TreeIter selected;
+
+            if (_treeView.Selection.GetSelected(out selected))
+            {
+                Console.WriteLine("SELECTED ITEM: {0}", _model.GetValue(selected, 0));
+            }
         }
     }
 }
