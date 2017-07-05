@@ -15,6 +15,7 @@
                 <Button x:Name="GridSplitterBtn" Text="GridSplitter" />
                 <Button x:Name="HyperLinkBtn" Text="HyperLink" />
                 <Button x:Name="ImageCheckBoxBtn" Text="ImageCheckBox" />
+                <Button x:Name="ScaleButtonBtn" Text="ScaleButton" />
                 <Button x:Name="SeparatorBtn" Text="Separator" />
                 <Button x:Name="StatusBarBtn" Text="StatusBar" />
             </StackLayout>

@@ -135,6 +135,9 @@
     <Compile Include="CustomControls\ImageCheckBoxPage.xaml.cs">
       <DependentUpon>ImageCheckBoxPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\ScaleButtonPage.xaml.cs">
+      <DependentUpon>ScaleButtonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\StatusBarPage.xaml.cs">
       <DependentUpon>StatusBarPage.xaml</DependentUpon>
     </Compile>
@@ -540,6 +543,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CustomControls\StatusBarPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\ScaleButtonPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

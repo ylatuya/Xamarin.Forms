@@ -56,6 +56,7 @@
     <Compile Include="Controls\DataGrid.cs" />
     <Compile Include="Controls\HyperLinkButton.cs" />
     <Compile Include="Controls\ImageCheckBox.cs" />
+    <Compile Include="Controls\ScaleButton.cs" />
     <Compile Include="Controls\Separator.cs" />
     <Compile Include="Controls\StatusBar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

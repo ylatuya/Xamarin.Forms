@@ -79,6 +79,7 @@
     <Compile Include="Renderers\DataGridRenderer.cs" />
     <Compile Include="Renderers\HyperLinkRenderer.cs" />
     <Compile Include="Renderers\ImageCheckBoxRenderer.cs" />
+    <Compile Include="Renderers\ScaleButtonRenderer.cs" />
     <Compile Include="Renderers\SeparatorRenderer.cs" />
     <Compile Include="Renderers\StatusBarRenderer.cs" />
   </ItemGroup>
