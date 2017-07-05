@@ -17,6 +17,7 @@ namespace Xamarin.Forms.Controls.CustomControls
             HyperLinkBtn.Clicked += (sender, args) => Navigation.PushAsync(new HyperLinkPage());
             ImageCheckBoxBtn.Clicked += (sender, args) => Navigation.PushAsync(new ImageCheckBoxPage());
             SeparatorBtn.Clicked += (sender, args) => Navigation.PushAsync(new SeparatorPage());
+            StatusBarBtn.Clicked += (sender, args) => Navigation.PushAsync(new StatusBarPage());
         }
     }
 }

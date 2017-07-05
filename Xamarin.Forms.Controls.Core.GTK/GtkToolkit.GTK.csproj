@@ -80,6 +80,7 @@
     <Compile Include="Renderers\HyperLinkRenderer.cs" />
     <Compile Include="Renderers\ImageCheckBoxRenderer.cs" />
     <Compile Include="Renderers\SeparatorRenderer.cs" />
+    <Compile Include="Renderers\StatusBarRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">
