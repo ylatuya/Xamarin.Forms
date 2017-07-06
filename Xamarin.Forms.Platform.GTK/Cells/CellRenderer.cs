@@ -12,7 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
         EventHandler _onForceUpdateSizeRequested;
 
-        public virtual Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        public virtual CellBase GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
         {
             var cell = reusableView as Gtk.Container ?? GetCellWidgetInstance(item);
 
@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             UpdateIsEnabled(cellBase);
             UpdateHeight(cellBase);
 
-            return cell;
+            return cellBase;
         }
 
         protected virtual void CellPropertyChanged(object sender, PropertyChangedEventArgs args)

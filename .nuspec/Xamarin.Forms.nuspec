@@ -92,16 +92,6 @@
         <reference file="Xamarin.Forms.Platform.GTK.dll" />
         <reference file="Xamarin.Forms.Platform.dll" />
         <reference file="Xamarin.Forms.Xaml.dll" />
-
-        <reference file="atk-sharp.dll" />
-        <reference file="gdk-sharp.dll" />
-        <reference file="glade-sharp.dll" />
-        <reference file="glib-sharp.dll" />
-        <reference file="gtk-dotnet.dll" />
-        <reference file="gtk-sharp.dll" />
-        <reference file="pango-sharp.dll" />
-        <reference file="Mono.Cairo.dll" />
-        <reference file="Mono.Posix.dll" />
       </group>
     </references>
   </metadata>
@@ -301,15 +291,6 @@
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\net45" />
     <file src="..\Xamarin.Forms.Platform.GTK\bin\$Configuration$\Xamarin.Forms.Platform.GTK.dll" target="lib\net45" />
     <file src="..\Xamarin.Forms.Platform.GTK\bin\$Configuration$\Xamarin.Forms.Platform.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\atk-sharp.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\gdk-sharp.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\glade-sharp.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\glib-sharp.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\gtk-dotnet.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\gtk-sharp.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\gtk-sharp-2.0\pango-sharp.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\Mono.Cairo\Mono.Cairo.dll" target="lib\net45" />
-    <file src="..\Xamarin.Forms.Platform.GTK\Libs\gtk-sharp\Mono.Posix\Mono.Posix.dll" target="lib\net45" />
 
     <!-- iOS Localized String Resource Assemblies -->
     <file src="..\Xamarin.Forms.Platform.iOS\bin\$Configuration$\ar\Xamarin.Forms.Platform.iOS.resources.dll" target="lib\Xamarin.iOS10\ar" />

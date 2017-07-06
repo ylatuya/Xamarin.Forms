@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Animations;
@@ -285,6 +286,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (_currentStack.Count >= 1)
                 oldPage = _currentStack.Peek().Page;
 
+            (oldPage as IPageController)?.SendDisappearing();
+
             _currentStack.Push(new NavigationChildPage(page));
 
             if (Platform.GetRenderer(page) == null)
@@ -354,6 +357,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
                 _currentStack = newStack;
             }
+
+            var oldPage = _currentStack.Peek().Page;
+            (oldPage as IPageController)?.SendAppearing();
         }
 
         private void InsertPageBefore(Page page, Page before)
@@ -406,7 +412,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Element == null)
                 return;
 
-            var backgroundColor = Element.BackgroundColor == Color.Default ? Color.White : Element.BackgroundColor;
+            var backgroundColor = Element.BackgroundColor;
+
+            if (backgroundColor.IsDefaultOrTransparent())
+                return;
 
             Container.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
         }
