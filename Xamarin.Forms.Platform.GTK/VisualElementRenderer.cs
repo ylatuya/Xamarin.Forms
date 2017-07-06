@@ -5,10 +5,11 @@ using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 using Control = Gtk.Widget;
+using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IEffectControlProvider
+    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IDisposable, IEffectControlProvider
         where TElement : VisualElement
         where TNativeElement : Control
     {
@@ -129,7 +130,7 @@ namespace Xamarin.Forms.Platform.GTK
             return Control.GetDesiredSize(widthConstraint, heightConstraint);
         }
 
-        public sealed override void Dispose()
+        public override void Dispose()
         {
             base.Dispose();
 
@@ -217,6 +218,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void UpdateBackgroundColor()
         {
+            if (Element == null)
+                return;
+
             Color backgroundColor = Element.BackgroundColor;
 
             bool isDefault = backgroundColor.IsDefaultOrTransparent();
@@ -268,11 +272,17 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateIsVisible()
         {
+            if (Element == null)
+                return;
+
             Container.Visible = Element.IsVisible;
         }
 
         private void UpdateSensitive()
         {
+            if (Element == null)
+                return;
+
             if (Control == null)
             {
                 return;

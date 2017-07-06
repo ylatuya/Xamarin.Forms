@@ -294,6 +294,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 foreach(var child in _headerContainer.Children)
                 {
                     _headerContainer.RemoveFromContainer(child);
+                    child.Destroy();
                 }
             }
 
@@ -309,6 +310,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 foreach (var child in _footerContainer.Children)
                 {
                     _footerContainer.RemoveFromContainer(child);
+                    child.Destroy();
                 }
             }
 
@@ -363,6 +365,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 foreach (var child in _list.Children)
                 {
                     _list.RemoveFromContainer(child);
+                    child.Destroy();
                 }
             }
 
