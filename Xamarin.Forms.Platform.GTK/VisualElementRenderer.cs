@@ -129,6 +129,13 @@ namespace Xamarin.Forms.Platform.GTK
             return Control.GetDesiredSize(widthConstraint, heightConstraint);
         }
 
+        protected override void OnShown()
+        {
+            base.OnShown();
+
+            UpdateIsVisible();
+        }
+
         public sealed override void Dispose()
         {
             base.Dispose();
