@@ -7,6 +7,12 @@ namespace Xamarin.Forms.Controls.CustomControls
         public ScaleButtonPage()
         {
             InitializeComponent();
+
+            ScaleBtn.ValueChanged += (sender, args) =>
+            {
+                LabelInfo.Text = 
+                string.Format("Value: {0}", ScaleBtn.Value);
+            };
         }
     }
 }

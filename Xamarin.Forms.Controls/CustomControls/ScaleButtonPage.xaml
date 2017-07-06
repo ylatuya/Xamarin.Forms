@@ -6,10 +6,21 @@
              Title="StatusBar">
     <ContentPage.Content>
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
             <controls:ScaleButton
+                x:Name="ScaleBtn"
+                Grid.Row="0"
+                Icon="ZoomIn"
                 Minimum="0"
                 Maximum="10"
                 StepIncrement="1"/>
+            <Label
+                x:Name="LabelInfo"
+                Grid.Row="1"
+                FontSize="Large"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

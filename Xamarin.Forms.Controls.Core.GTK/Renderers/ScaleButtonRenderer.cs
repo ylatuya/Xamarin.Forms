@@ -3,6 +3,7 @@ using GtkToolkit.Controls;
 using GtkToolkit.GTK.Renderers;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.GTK;
+using GtkToolkit.Extensions;
 
 [assembly: ExportRenderer(typeof(ScaleButton), typeof(ScaleButtonRenderer))]
 namespace GtkToolkit.GTK.Renderers
@@ -14,6 +15,7 @@ namespace GtkToolkit.GTK.Renderers
         private double _minimum;
         private double _maximum;
         private double _step;
+        private string[] _icons;
 
         protected override void OnElementChanged(ElementChangedEventArgs<ScaleButton> e)
         {
@@ -22,13 +24,16 @@ namespace GtkToolkit.GTK.Renderers
                 _minimum = Element.Minimum;
                 _maximum = Element.Maximum;
                 _step = Element.StepIncrement;
+                _icons = new string[1];
 
                 _scaleButton = new Gtk.ScaleButton(
                     Gtk.IconSize.Button,
                     _minimum,
                     _maximum,
                     _step,
-                    null);
+                    _icons);
+
+                _scaleButton.ValueChanged += OnValueChanged;
 
                 Add(_scaleButton);
 
@@ -39,6 +44,7 @@ namespace GtkToolkit.GTK.Renderers
 
             if (e.NewElement != null)
             {
+                UpdateIcon();
                 UpdateMinimum();
                 UpdateMaximum();
                 UpdateStepIncrement();
@@ -49,12 +55,16 @@ namespace GtkToolkit.GTK.Renderers
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == ScaleButton.MaximumProperty.PropertyName)
+            if (e.PropertyName == ScaleButton.IconProperty.PropertyName)
+                UpdateIcon();
+            else if (e.PropertyName == ScaleButton.MaximumProperty.PropertyName)
                 UpdateMaximum();
             else if (e.PropertyName == ScaleButton.MinimumProperty.PropertyName)
                 UpdateMinimum();
             else if (e.PropertyName == ScaleButton.StepIncrementProperty.PropertyName)
                 UpdateStepIncrement();
+            else if (e.PropertyName == ScaleButton.ValueProperty.PropertyName)
+                UpdateValue();
 
             base.OnElementPropertyChanged(sender, e);
         }
@@ -64,9 +74,21 @@ namespace GtkToolkit.GTK.Renderers
             if (disposing && !_disposed)
             {
                 _disposed = true;
+
+                if(Control != null)
+                {
+                    Control.ValueChanged -= OnValueChanged;
+                }
             }
 
             base.Dispose(disposing);
+        }
+
+        private void UpdateIcon()
+        {
+            var icon = Element.Icon;
+            _icons[0] = icon.GetStringValue();
+            Control.Icons = _icons;
         }
 
         private void UpdateMaximum()
@@ -88,6 +110,22 @@ namespace GtkToolkit.GTK.Renderers
             _step = Element.StepIncrement;
 
             Control.Adjustment.StepIncrement = _step;
+        }
+
+        private void UpdateValue()
+        {
+            var value = Element.Value;
+
+            Control.Adjustment.Value = value;
+        }
+
+        private void OnValueChanged(object o, Gtk.ValueChangedArgs args)
+        {
+            var value = args.Value;
+
+            Element.Value = args.Value;
+
+            Element.SendValueChanged();
         }
     }
 }

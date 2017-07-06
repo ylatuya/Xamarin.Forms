@@ -49,6 +49,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\StringValue.cs" />
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />
     <Compile Include="Controls\Expander.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Controls\ScaleButton.cs" />
     <Compile Include="Controls\Separator.cs" />
     <Compile Include="Controls\StatusBar.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
