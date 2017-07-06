@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
+using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -101,8 +102,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             UpdateBackgroundColor();
 
-            PageController.SendAppearing();
             _appeared = true;
+
+            PageController.SendAppearing();
         }
 
         protected override void OnDestroyed()
@@ -112,8 +114,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_appeared || _disposed)
                 return;
 
-            PageController.SendDisappearing();
             _appeared = false;
+
+            PageController.SendDisappearing();
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)

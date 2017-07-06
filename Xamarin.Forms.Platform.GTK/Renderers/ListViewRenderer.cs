@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -179,8 +180,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            Performance.Start();
-
             foreach (var item in items)
             {
                 var cell = GetCell(item);
@@ -189,8 +188,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             _listView.Items = _cells;
-
-            Performance.Stop();
         }
 
         private void UpdateHeader()
@@ -407,7 +404,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private CellBase GetCell(Cell cell)
         {
             var renderer =
-                (Cells.CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
+                (CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
 
             var realCell = renderer.GetCell(cell, null, _listView);
 
@@ -416,6 +413,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                return;
+            }
+
             bool grouping = Element.IsGroupingEnabled;
 
             if (grouping)

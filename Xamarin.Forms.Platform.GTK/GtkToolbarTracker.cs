@@ -232,10 +232,7 @@ namespace Xamarin.Forms.Platform.GTK
 
                 _toolbarSection.PackStart(newToolButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
 
-                newToolButton.Clicked += (sender, args) =>
-                {
-                    toolBarItem.Command?.Execute(toolBarItem.CommandParameter);
-                };
+                newToolButton.Clicked += (sender, args) => { toolBarItem.Activate(); };
             }
 
             var secondaryToolBarItems = toolBarItems.Where(t => t.Order == ToolbarItemOrder.Secondary);
