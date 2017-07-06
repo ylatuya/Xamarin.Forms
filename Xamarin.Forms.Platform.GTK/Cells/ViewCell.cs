@@ -6,28 +6,44 @@ namespace Xamarin.Forms.Platform.GTK.Cells
     public class ViewCell : CellBase
     {
         private WeakReference<IVisualElementRenderer> _rendererRef;
+        private Gdk.Rectangle _lastAllocation;
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
-            var viewCell = Cell as Xamarin.Forms.ViewCell;
-            var view = viewCell.View;
-
-            Layout.LayoutChildIntoBoundingRegion(
-               view, 
-               new Rectangle(0, 0, allocation.Width, allocation.Height));
-
-            if (_rendererRef == null)
-                return;
-
-            IVisualElementRenderer renderer;
-            if (_rendererRef.TryGetTarget(out renderer))
-            {
-                renderer.Container.SetSizeRequest(
-                    Convert.ToInt32(view.Bounds.Width),
-                    Convert.ToInt32(view.Bounds.Height));
-            }
-
             base.OnSizeAllocated(allocation);
+
+            if (_lastAllocation != allocation)
+            {
+                _lastAllocation = allocation;
+
+                var viewCell = Cell as Xamarin.Forms.ViewCell;
+                var view = viewCell.View;
+
+                double width = allocation.Width;
+                double height = DesiredHeight > 0
+                                ? DesiredHeight
+                                : Cell.RenderHeight > 0
+                                    ? Cell.RenderHeight
+                                    : GetHeightMeasure(viewCell, allocation);
+
+                Layout.LayoutChildIntoBoundingRegion(view, new Rectangle(0, 0, width, height));
+
+                if (_rendererRef == null)
+                    return;
+
+                IVisualElementRenderer renderer;
+                if (_rendererRef.TryGetTarget(out renderer))
+                {
+                    renderer.Container.WidthRequest = (int)width;
+                }
+            }
+        }
+
+        private double GetHeightMeasure(Xamarin.Forms.ViewCell viewCell, Gdk.Rectangle allocation)
+        {
+            var request = viewCell.View.Measure(allocation.Width, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+
+            return request.Request.Height;
         }
 
         public override void Dispose()
