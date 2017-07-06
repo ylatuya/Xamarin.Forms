@@ -36,7 +36,7 @@ namespace GtkToolkit.GTK.Renderers
         {
             if (e.PropertyName == Expander.TitleProperty.PropertyName)
                 UpdateTitle();
-            if (e.PropertyName == Expander.ContentProperty.PropertyName)
+            else if (e.PropertyName == Expander.ContentProperty.PropertyName)
                 UpdateContent();
 
             base.OnElementPropertyChanged(sender, e);

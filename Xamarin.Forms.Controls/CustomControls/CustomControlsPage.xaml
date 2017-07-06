@@ -7,6 +7,7 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
+                <Button x:Name="ColorButtonBtn" Text="ColorButton" />
                 <Button x:Name="ColorPickerBtn" Text="ColorPicker" />
                 <Button x:Name="ChartsBtn" Text="Charts" />
                 <Button x:Name="DataGridBtn" Text="DataGrid" />
