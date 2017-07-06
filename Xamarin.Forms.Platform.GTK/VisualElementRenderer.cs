@@ -18,7 +18,6 @@ namespace Xamarin.Forms.Platform.GTK
         private VisualElementTracker<TElement, TNativeElement> _tracker;
         private string _defaultAccessibilityLabel;
         private string _defaultAccessibilityHint;
-        private Gdk.Rectangle _lastAllocation;
 
         protected VisualElementRenderer()
         {
@@ -147,23 +146,18 @@ namespace Xamarin.Forms.Platform.GTK
         {
             base.OnSizeAllocated(allocation);
 
-            if (_lastAllocation != allocation)
+            Rectangle bounds = Element.Bounds;
+            Container.MoveTo((int)bounds.X, (int)bounds.Y);
+
+            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
             {
-                _lastAllocation = allocation;
+                var child = ElementController.LogicalChildren[i] as VisualElement;
 
-                Rectangle bounds = Element.Bounds;
-                Container.MoveTo((int)bounds.X, (int)bounds.Y);
-
-                for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+                if (child != null)
                 {
-                    var child = ElementController.LogicalChildren[i] as VisualElement;
-
-                    if (child != null)
-                    {
-                        var renderer = Platform.GetRenderer(child);
-                        renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-                        renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
-                    }
+                    var renderer = Platform.GetRenderer(child);
+                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
+                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
                 }
             }
         }

@@ -12,17 +12,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class ListViewRenderer : ViewRenderer<ListView, Controls.ListView>
     {
-        public const int DefaultRowHeight = 44;
-
         private bool _disposed;
         private Controls.ListView _listView;
         private IVisualElementRenderer _headerRenderer;
         private IVisualElementRenderer _footerRenderer;
-        private List<Gtk.Container> _cells;
+        private List<CellBase> _cells;
 
         public ListViewRenderer()
         {
-            _cells = new List<Gtk.Container>();
+            _cells = new List<CellBase>();
         }
 
         ListView ListView => Element;
@@ -63,7 +61,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateHeader();
                 UpdateFooter();
                 UpdateRowHeight();
-                UpdateHasUnevenRows();
                 UpdateSeparatorColor();
                 UpdateSeparatorVisibility();
                 UpdateIsRefreshing();
@@ -88,7 +85,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             else if (e.PropertyName == ListView.RowHeightProperty.PropertyName)
                 UpdateRowHeight();
             else if (e.PropertyName == ListView.HasUnevenRowsProperty.PropertyName)
-                UpdateHasUnevenRows();
+                UpdateRowHeight();
             else if (e.PropertyName == ListView.SeparatorColorProperty.PropertyName)
                 UpdateSeparatorColor();
             else if (e.PropertyName == ListView.SeparatorVisibilityProperty.PropertyName)
@@ -249,13 +246,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateRowHeight()
         {
-            var hasUnevenRows = Element.HasUnevenRows;
-
-            if (hasUnevenRows)
-            {
-                return;
-            }
-
             var rowHeight = Element.RowHeight;
 
             foreach (var cell in _cells)
@@ -267,44 +257,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     var isGroupHeader = formsCell.GetIsGroupHeader<ItemsView<Cell>, Cell>();
 
                     if (isGroupHeader)
-                        cell.HeightRequest = DefaultRowHeight;
+                    {
+                        cell.SetDesiredHeight(Cell.DefaultCellHeight);
+                    }
+                    else if (Element.HasUnevenRows && rowHeight == -1)
+                    {
+                        cell.SetDesiredHeight(-1); // Auto size
+                    }
                     else
-                        cell.HeightRequest = rowHeight > 0 ? rowHeight : DefaultRowHeight;
+                    {
+                        cell.SetDesiredHeight(rowHeight > 0 ? rowHeight : Cell.DefaultCellHeight);
+                    }
                 }
             }
-        }
-
-        private void UpdateHasUnevenRows()
-        {
-            var hasUnevenRows = Element.HasUnevenRows;
-
-            if (hasUnevenRows)
-            {
-                foreach (var cell in _cells)
-                {
-                    var cellHeight = GetUnevenRowCellHeight(cell);
-
-                    cell.HeightRequest = cellHeight > 0 ? cellHeight : DefaultRowHeight;
-                }
-            }
-            else
-            {
-                UpdateRowHeight();
-            }
-        }
-
-        private int GetUnevenRowCellHeight(Gtk.Container cell)
-        {
-            int height = -1;
-
-            var formsCell = GetXamarinFormsCell(cell);
-
-            if (formsCell != null)
-            {
-                height = Convert.ToInt32(formsCell.RenderHeight);
-            }
-
-            return height;
         }
 
         private Cell GetXamarinFormsCell(Gtk.Container cell)
@@ -436,7 +401,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Color.Black.ToGtkColor());
         }
 
-        private Gtk.Container GetCell(Cell cell)
+        private CellBase GetCell(Cell cell)
         {
             var renderer =
                 (CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
