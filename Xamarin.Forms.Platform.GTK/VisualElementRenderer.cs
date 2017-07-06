@@ -18,7 +18,6 @@ namespace Xamarin.Forms.Platform.GTK
         private VisualElementTracker<TElement, TNativeElement> _tracker;
         private string _defaultAccessibilityLabel;
         private string _defaultAccessibilityHint;
-        private Gdk.Rectangle _lastAllocation;
 
         protected VisualElementRenderer()
         {
