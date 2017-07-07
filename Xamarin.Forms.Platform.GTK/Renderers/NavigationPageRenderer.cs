@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Animations;
@@ -78,8 +77,20 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Element = null;
                 }
 
-                _tracker?.Dispose();
-                _tracker = null;
+                if (_tracker != null)
+                {
+                    _tracker?.Dispose();
+                    _tracker = null;
+                }
+
+                if (NavigationController != null)
+                {
+                    NavigationController.PushRequested -= OnPushRequested;
+                    NavigationController.PopRequested -= OnPopRequested;
+                    NavigationController.PopToRootRequested -= OnPopToRootRequested;
+                    NavigationController.RemovePageRequested -= OnRemovedPageRequested;
+                    NavigationController.InsertPageBeforeRequested -= OnInsertPageBeforeRequested;
+                }
 
                 _disposed = true;
             }

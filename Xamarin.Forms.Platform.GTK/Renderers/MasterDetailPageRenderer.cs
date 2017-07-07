@@ -80,6 +80,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarTextColor);
             MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarBackgroundColor);
 
+            _tracker?.Dispose();
+            _tracker = null;
+
             base.Dispose();
         }
 
