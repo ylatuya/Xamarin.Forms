@@ -250,9 +250,9 @@ namespace Xamarin.Forms.Platform.GTK
                     Gtk.MenuItem menuItem = new Gtk.MenuItem(secondaryToolBarItem.Text);
                     menu.Add(menuItem);
 
-                    menu.ButtonPressEvent += (sender, args) =>
+                    menuItem.ButtonPressEvent += (sender, args) =>
                     {
-                        secondaryToolBarItem.Command?.Execute(secondaryToolBarItem.CommandParameter);
+                        secondaryToolBarItem.Activate();
                     };
                 }
 
