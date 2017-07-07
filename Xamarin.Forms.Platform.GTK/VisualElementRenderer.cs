@@ -8,7 +8,7 @@ using Control = Gtk.Widget;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IEffectControlProvider
+    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IDisposable, IEffectControlProvider
         where TElement : VisualElement
         where TNativeElement : Control
     {
@@ -135,7 +135,7 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateIsVisible();
         }
 
-        public sealed override void Dispose()
+        public override void Dispose()
         {
             base.Dispose();
 
@@ -195,11 +195,6 @@ namespace Xamarin.Forms.Platform.GTK
 
             Tracker?.Dispose();
             Tracker = null;
-
-            Element = null;
-
-            SetNativeControl(null);
-            SetElement(null);
         }
 
         protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -218,6 +213,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void UpdateBackgroundColor()
         {
+            if (_disposed || Element == null || Control == null)
+                return;
+
             Color backgroundColor = Element.BackgroundColor;
 
             bool isDefault = backgroundColor.IsDefaultOrTransparent();
@@ -232,7 +230,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void SetAccessibilityHint()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             if (_defaultAccessibilityHint == null)
@@ -248,7 +246,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void SetAccessibilityLabel()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             if (_defaultAccessibilityLabel == null)
@@ -269,15 +267,16 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateIsVisible()
         {
+            if (_disposed || Element == null || Control == null)
+                return;
+
             Container.Visible = Element.IsVisible;
         }
 
         private void UpdateSensitive()
         {
-            if (Control == null)
-            {
+            if (_disposed || Element == null || Control == null)
                 return;
-            }
 
             Control.Sensitive = Element.IsEnabled;
         }

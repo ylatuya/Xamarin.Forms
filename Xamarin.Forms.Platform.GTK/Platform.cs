@@ -196,7 +196,7 @@ namespace Xamarin.Forms.Platform.GTK
 
             DisposeModelAndChildrenRenderers(modal);
 
-            return Task.FromResult<Page>(null);
+            return Task.FromResult<Page>(modal);
         }
 
         Task INavigation.PopToRootAsync()

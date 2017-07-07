@@ -1,4 +1,5 @@
 ﻿using Gtk;
+using System;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
@@ -30,6 +31,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             _checkButton = new CheckButton();
             _checkButton.SetAlignment(0, 0);
             _checkButton.Active = on;
+            _checkButton.Toggled += OnCheckButtonToggled;
 
             _root.PackStart(_checkButton, false, false, 0);
         }
@@ -46,6 +48,8 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             set { _on = value; UpdateOn(_on); }
         }
 
+        public EventHandler<bool> Toggled;
+
         private void UpdateText(string text)
         {
             if (_textLabel != null)
@@ -60,6 +64,11 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             {
                 _checkButton.Active = on;
             }
+        }
+
+        private void OnCheckButtonToggled(object sender, EventArgs e)
+        {
+            Toggled?.Invoke(this, _checkButton.Active);
         }
     }
 }

@@ -115,7 +115,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 if (gtkPage != null)
                 {
                     _pages.Remove(gtkPage);
-                    _root.Remove(gtkPage.GtkPage);
+                    _root.RemoveFromContainer(gtkPage.GtkPage);
                 }
             }
 

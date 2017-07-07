@@ -74,9 +74,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnElementPropertyChanged(sender, e);
 
-            if (e.PropertyName == ListView.ItemsSourceProperty.PropertyName)
-                UpdateItems();
-            else if (e.PropertyName == ListView.IsGroupingEnabledProperty.PropertyName)
+            if (e.PropertyName == ListView.IsGroupingEnabledProperty.PropertyName)
                 UpdateGrouping();
             else if (e.PropertyName == nameof(ListView.HeaderElement))
                 UpdateHeader();
@@ -413,11 +411,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                return;
-            }
-
             bool grouping = Element.IsGroupingEnabled;
 
             if (grouping)
