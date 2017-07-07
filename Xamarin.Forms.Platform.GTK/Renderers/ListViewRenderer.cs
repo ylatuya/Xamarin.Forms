@@ -413,11 +413,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Reset)
-            {
-                return;
-            }
-
             bool grouping = Element.IsGroupingEnabled;
 
             if (grouping)
