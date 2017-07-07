@@ -286,20 +286,23 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             ShowAll(); 
         }
-       
+
         private void RefreshHeader(Widget newHeader)
         {
             if (_headerContainer != null)
             {
-                foreach(var child in _headerContainer.Children)
+                foreach (var child in _headerContainer.Children)
                 {
                     _headerContainer.RemoveFromContainer(child);
                 }
             }
 
-            _header = newHeader;
-            _headerContainer.Add(_header);
-            _header.ShowAll();
+            if (newHeader != null)
+            {
+                _header = newHeader;
+                _headerContainer.Add(_header);
+                _header.ShowAll();
+            }
         }
 
         private void RefreshFooter(Widget newFooter)
@@ -312,9 +315,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
             }
 
-            _footer = newFooter;
-            _footerContainer.Add(_footer);
-            _footer.ShowAll();
+            if (newFooter != null)
+            {
+                _footer = newFooter;
+                _footerContainer.Add(_footer);
+                _footer.ShowAll();
+            }
         }
 
         // TODO: Improve cell creation for the highest performance
