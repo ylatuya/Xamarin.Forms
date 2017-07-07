@@ -87,7 +87,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     Page.SendDisappearing();
 
-              
+                    /*
                     if (Element != null)
                     {
                         ReadOnlyCollection<Element> children = ((IElementController)Element).LogicalChildren;
@@ -97,7 +97,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                             visualChild?.Cleanup();
                         }
                     }
-           
+                    */
                 }
 
                 _appeared = false;
