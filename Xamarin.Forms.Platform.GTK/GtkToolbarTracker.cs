@@ -224,14 +224,8 @@ namespace Xamarin.Forms.Platform.GTK
         {
             foreach (var toolBarItem in toolBarItems.Where(t => t.Order != ToolbarItemOrder.Secondary))
             {
-                var newToolButtonIcon = new Gtk.Image(toolBarItem.Icon.ToPixbuf());
-                ToolButton newToolButton = new ToolButton(newToolButtonIcon, toolBarItem.Text);
-                newToolButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                newToolButton.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
-                newToolButton.TooltipText = toolBarItem.Text;
-
+                ToolButton newToolButton = ToolButtonHelper.CreateToolButton(toolBarItem);
                 _toolbarSection.PackStart(newToolButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
-
                 newToolButton.Clicked += (sender, args) => { toolBarItem.Activate(); };
             }
 
@@ -239,9 +233,7 @@ namespace Xamarin.Forms.Platform.GTK
 
             if (secondaryToolBarItems.Any())
             {
-                ToolButton secondaryButton = new ToolButton(Stock.Add);
-                secondaryButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                secondaryButton.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
+                ToolButton secondaryButton = ToolButtonHelper.CreateToolButton(Stock.Add);
                 _toolbarSection.PackStart(secondaryButton, false, false, 0);
 
                 Menu menu = new Menu();
@@ -292,19 +284,14 @@ namespace Xamarin.Forms.Platform.GTK
 
                 if (string.IsNullOrEmpty(_backButton))
                 {
-                    navigationButton = new ToolButton(Stock.GoBack);
+                    navigationButton = ToolButtonHelper.CreateToolButton(Stock.GoBack);
                 }
                 else
                 {
-                    var pixBuf = new Pixbuf(_backButton);
-                    var image = new Gtk.Image(pixBuf);
-                    image.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
-                    image.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
-                    navigationButton = new ToolButton(image, string.Empty);
+                    navigationButton = ToolButtonHelper.CreateToolButton(_backButton, string.Empty);
                 }
 
                 navigationButton.TooltipText = GetPreviousPageTitle() ?? string.Empty;
-                navigationButton.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
                 navigationButton.WidthRequest = GtkToolbarConstants.BackButtonItemWidth;
                 _toolbarNavigationSection.PackStart(navigationButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
 
@@ -409,6 +396,46 @@ namespace Xamarin.Forms.Platform.GTK
                 {
                     _toolbar.Visible = false;
                 }
+            }
+        }
+
+        static class ToolButtonHelper
+        {
+            public static ToolButton CreateToolButton(string stockId)
+            {
+                ToolButton button = new ToolButton(stockId);
+                ApplyDefaultDimensions(button);
+
+                return button;
+            }
+
+            public static ToolButton CreateToolButton(string iconFileName, string title)
+            {
+                var pixBuf = new Pixbuf(iconFileName);
+                var image = new Gtk.Image(pixBuf);
+
+                ToolButton button = new ToolButton(image, title);
+                ApplyDefaultDimensions(button);
+
+                return button;
+            }
+
+            public static ToolButton CreateToolButton(ToolbarItem item)
+            {
+                var pixBuf = item.Icon.ToPixbuf();
+                Gtk.Image icon = pixBuf != null ? new Gtk.Image(pixBuf) : null;
+                
+                ToolButton button = new ToolButton(icon, item.Text);
+                ApplyDefaultDimensions(button);
+                button.TooltipText = item.Text;
+
+                return button;
+            }
+
+            private static void ApplyDefaultDimensions(ToolButton button)
+            {
+                button.HeightRequest = GtkToolbarConstants.ToolbarItemHeight;
+                button.WidthRequest = GtkToolbarConstants.ToolbarItemWidth;
             }
         }
     }
