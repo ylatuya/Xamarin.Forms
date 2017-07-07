@@ -218,6 +218,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void UpdateBackgroundColor()
         {
+            if (_disposed || Element == null || Control == null)
+                return;
+
             Color backgroundColor = Element.BackgroundColor;
 
             bool isDefault = backgroundColor.IsDefaultOrTransparent();
@@ -269,15 +272,16 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateIsVisible()
         {
+            if (_disposed || Element == null || Control == null)
+                return;
+
             Container.Visible = Element.IsVisible;
         }
 
         private void UpdateSensitive()
         {
-            if (Control == null)
-            {
+            if (_disposed || Element == null || Control == null)
                 return;
-            }
 
             Control.Sensitive = Element.IsEnabled;
         }
