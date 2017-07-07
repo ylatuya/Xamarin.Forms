@@ -2,6 +2,7 @@
 using Gtk;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
@@ -222,11 +223,19 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateItems(IList<ToolbarItem> toolBarItems)
         {
+            foreach (var child in _toolbarSection.Children)
+            {
+                _toolbarSection.Remove(child);
+            }
+
             foreach (var toolBarItem in toolBarItems.Where(t => t.Order != ToolbarItemOrder.Secondary))
             {
                 ToolButton newToolButton = ToolButtonHelper.CreateToolButton(toolBarItem);
                 _toolbarSection.PackStart(newToolButton, false, false, GtkToolbarConstants.ToolbarItemSpacing);
                 newToolButton.Clicked += (sender, args) => { toolBarItem.Activate(); };
+
+                toolBarItem.PropertyChanged -= OnToolbarItemPropertyChanged;
+                toolBarItem.PropertyChanged += OnToolbarItemPropertyChanged;
             }
 
             var secondaryToolBarItems = toolBarItems.Where(t => t.Order == ToolbarItemOrder.Secondary);
@@ -240,12 +249,16 @@ namespace Xamarin.Forms.Platform.GTK
                 foreach (var secondaryToolBarItem in secondaryToolBarItems)
                 {
                     Gtk.MenuItem menuItem = new Gtk.MenuItem(secondaryToolBarItem.Text);
+                    menuItem.Sensitive = secondaryToolBarItem.IsEnabled;
                     menu.Add(menuItem);
 
                     menuItem.ButtonPressEvent += (sender, args) =>
                     {
                         secondaryToolBarItem.Activate();
                     };
+
+                    secondaryToolBarItem.PropertyChanged -= OnToolbarItemPropertyChanged;
+                    secondaryToolBarItem.PropertyChanged += OnToolbarItemPropertyChanged;
                 }
 
                 secondaryButton.Clicked += (sender, args) =>
@@ -254,6 +267,8 @@ namespace Xamarin.Forms.Platform.GTK
                     menu.Popup();
                 };
             }
+
+            _toolbarSection.ShowAll();
         }
 
         private bool ShowBackButton()
@@ -399,6 +414,16 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
+        private void OnToolbarItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == MenuItem.IsEnabledProperty.PropertyName)
+                UpdateToolbarItems();
+            else if (e.PropertyName == MenuItem.TextProperty.PropertyName)
+                UpdateToolbarItems();
+            else if (e.PropertyName == MenuItem.IconProperty.PropertyName)
+                UpdateToolbarItems();
+        }
+
         static class ToolButtonHelper
         {
             public static ToolButton CreateToolButton(string stockId)
@@ -424,10 +449,10 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 var pixBuf = item.Icon.ToPixbuf();
                 Gtk.Image icon = pixBuf != null ? new Gtk.Image(pixBuf) : null;
-                
                 ToolButton button = new ToolButton(icon, item.Text);
                 ApplyDefaultDimensions(button);
                 button.TooltipText = item.Text;
+                button.Sensitive = item.IsEnabled;
 
                 return button;
             }
