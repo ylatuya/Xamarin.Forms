@@ -4,16 +4,20 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
-    public class CellRenderer : IRegisterable
+    public abstract class CellRenderer : IRegisterable
     {
         static readonly BindableProperty RealCellProperty =
             BindableProperty.CreateAttached("RealCell", typeof(Gtk.Container),
                 typeof(Cell), null);
 
-        EventHandler _onForceUpdateSizeRequested;
+        protected Cell Cell { get; private set; }
+
+        private EventHandler _onForceUpdateSizeRequested;
 
         public virtual CellBase GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
         {
+            Cell = item;
+
             var cell = reusableView as Gtk.Container ?? GetCellWidgetInstance(item);
 
             var cellBase = cell as CellBase;

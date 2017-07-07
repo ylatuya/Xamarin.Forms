@@ -4,6 +4,16 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class SwitchCellRenderer : CellRenderer
     {
+        public override CellBase GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        {
+            var switchCell = base.GetCell(item, reusableView, listView) as SwitchCell;
+
+            switchCell.Toggled -= OnToggled;
+            switchCell.Toggled += OnToggled;
+
+            return switchCell;
+        }
+
         protected override Gtk.Container GetCellWidgetInstance(Cell item)
         {
             var switchCell = (Xamarin.Forms.SwitchCell)item;
@@ -11,9 +21,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             var text = switchCell.Text ?? string.Empty;
             var on = switchCell.On;
 
-            return new SwitchCell(
-                    text,
-                    on);
+            return new SwitchCell(text, on);
         }
 
         protected override void CellPropertyChanged(object sender, PropertyChangedEventArgs args)
@@ -31,6 +39,11 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             {
                 gtkSwitchCell.On = switchCell.On;
             }
+        }
+
+        private void OnToggled(object sender, bool active)
+        {
+            ((Xamarin.Forms.SwitchCell)Cell).On = active;
         }
     }
 }
