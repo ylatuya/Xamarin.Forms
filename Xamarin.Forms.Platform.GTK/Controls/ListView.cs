@@ -367,8 +367,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 foreach (var child in _list.Children)
                 {
                     _list.RemoveFromContainer(child);
-                    child.Destroy();
-                    child.Dispose();
                 }
             }
 
