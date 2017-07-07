@@ -218,6 +218,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void UpdateBackgroundColor()
         {
+            if (Element == null)
+                return;
+
             Color backgroundColor = Element.BackgroundColor;
 
             bool isDefault = backgroundColor.IsDefaultOrTransparent();
@@ -269,6 +272,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateIsVisible()
         {
+            if (Element == null)
+                return;
+
             Container.Visible = Element.IsVisible;
         }
 
