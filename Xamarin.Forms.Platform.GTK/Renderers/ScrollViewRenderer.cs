@@ -73,8 +73,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Control != null)
             {
                 Control.ScrollEvent -= OnScrollEvent;
-                Control.Hadjustment.ValueChanged -= OnScrollEvent;
-                Control.Vadjustment.ValueChanged -= OnScrollEvent;
+
+                if (Control.Hadjustment != null)
+                    Control.Hadjustment.ValueChanged -= OnScrollEvent;
+
+                if (Control.Vadjustment != null)
+                    Control.Vadjustment.ValueChanged -= OnScrollEvent;
             }
 
             base.Dispose(disposing);
