@@ -9,10 +9,11 @@ namespace Xamarin.Forms.Platform.GTK.Cells
     public abstract class CellBase : EventBox
     {
         private Cell _cell;
+        private int _desiredHeight;
         private IList<MenuItem> _contextActions;
 
         public Action<object, PropertyChangedEventArgs> PropertyChanged;
-
+        
         protected CellBase()
         {
             ButtonReleaseEvent += OnClick;
@@ -38,9 +39,55 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             }
         }
 
+        protected bool ParentHasUnevenRows
+        {
+            get
+            {
+                var table = Cell.RealParent as TableView;
+                if (table != null)
+                    return table.HasUnevenRows;
+
+                var list = Cell.RealParent as ListView;
+                if (list != null)
+                    return list.HasUnevenRows;
+
+                return false;
+            }
+        }
+
+        public int DesiredHeight
+        {
+            get
+            {
+                return _desiredHeight;
+            }
+
+            set
+            {
+                _desiredHeight = value;
+            }
+        }
+
+        public void SetDesiredHeight(int height)
+        {
+            DesiredHeight = height;
+
+            if (IsRealized)
+            {
+                HeightRequest = DesiredHeight;
+            }
+        }
+
         public void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
+        }
+
+        protected override void OnRealized()
+        {
+            base.OnRealized();
+
+            HeightRequest = DesiredHeight;
         }
 
         protected override void OnDestroyed()
@@ -80,7 +127,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             foreach (MenuItem item in Cell.ContextActions)
             {
-                var menuItem = new Gtk.ImageMenuItem(item.Text);
+                var menuItem = new ImageMenuItem(item.Text);
 
                 string icon = item.Icon;
 

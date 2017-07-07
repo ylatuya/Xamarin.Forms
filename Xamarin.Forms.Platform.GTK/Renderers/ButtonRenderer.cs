@@ -75,6 +75,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void UpdateBackgroundColor()
         {
+            if (Element == null)
+                return;
+
             if (Element.BackgroundColor.IsDefault)
             {
                 Control.ResetBackgroundColor();

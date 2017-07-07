@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class ImageCellRenderer : CellRenderer
     {
-        public override Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        public override CellBase GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
         {
             var gtkImageCell = base.GetCell(item, reusableView, listView) as ImageCell;
             var imageCell = (Xamarin.Forms.ImageCell)item;
