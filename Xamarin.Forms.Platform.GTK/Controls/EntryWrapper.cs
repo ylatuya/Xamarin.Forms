@@ -79,6 +79,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             base.OnSizeAllocated(allocation);
 
+            _entry.SetSizeRequest(allocation.Width, allocation.Height);
+
             ShowPlaceholderIfNeeded();
         }
 
