@@ -74,6 +74,22 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     PageController?.SendDisappearing();
                     ((Element as IPageContainer<Page>)?.CurrentPage as IPageController)?.SendDisappearing();
                     Element.PropertyChanged -= HandlePropertyChanged;
+                    Element = null;
+                }
+
+                if (_tracker != null)
+                {
+                    _tracker?.Dispose();
+                    _tracker = null;
+                }
+
+                if (NavigationController != null)
+                {
+                    NavigationController.PushRequested -= OnPushRequested;
+                    NavigationController.PopRequested -= OnPopRequested;
+                    NavigationController.PopToRootRequested -= OnPopToRootRequested;
+                    NavigationController.RemovePageRequested -= OnRemovedPageRequested;
+                    NavigationController.InsertPageBeforeRequested -= OnInsertPageBeforeRequested;
                 }
 
                 _disposed = true;
@@ -285,6 +301,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (_currentStack.Count >= 1)
                 oldPage = _currentStack.Peek().Page;
 
+            (oldPage as IPageController)?.SendDisappearing();
+
             _currentStack.Push(new NavigationChildPage(page));
 
             if (Platform.GetRenderer(page) == null)
@@ -354,6 +372,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
                 _currentStack = newStack;
             }
+
+            var oldPage = _currentStack.Peek().Page;
+            (oldPage as IPageController)?.SendAppearing();
         }
 
         private void InsertPageBefore(Page page, Page before)
@@ -406,7 +427,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Element == null)
                 return;
 
-            var backgroundColor = Element.BackgroundColor == Color.Default ? Color.White : Element.BackgroundColor;
+            var backgroundColor = Element.BackgroundColor;
+
+            if (backgroundColor.IsDefaultOrTransparent())
+                return;
 
             Container.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
         }

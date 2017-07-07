@@ -57,9 +57,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private const int RefreshHeight = 48;
 
         private VBox _root;
-        private EventBox _header;
+        private EventBox _headerContainer;
+        private Widget _header;
         private VBox _list;
-        private EventBox _footer;
+        private EventBox _footerContainer;
+        private Widget _footer;
         private Viewport _viewPort;
         private IEnumerable<Widget> _cells;
         private List<ListViewSeparator> _separators;
@@ -84,7 +86,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             BuildListView();
         }
 
-        public EventBox Header
+        public Widget Header
         {
             get
             {
@@ -113,7 +115,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public EventBox Footer
+        public Widget Footer
         {
             get
             {
@@ -263,8 +265,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _root.PackStart(_refreshHeader, false, false, 0);
 
             // Header
-            _header = new EventBox();
-            _root.PackStart(_header, false, false, 0);
+            _headerContainer = new EventBox();
+            _root.PackStart(_headerContainer, false, false, 0);
 
             // List
             _list = new VBox();
@@ -272,8 +274,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _root.PackStart(_list, true, true, 0);
 
             // Footer
-            _footer = new EventBox();
-            _root.PackStart(_footer, false, false, 0);
+            _footerContainer = new EventBox();
+            _root.PackStart(_footerContainer, false, false, 0);
 
             _viewPort = new Viewport();
             _viewPort.ShadowType = ShadowType.None;
@@ -284,14 +286,44 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             ShowAll(); 
         }
-       
-        private void RefreshHeader(EventBox header)
-        {
-            _header = header;
 
-            if (_header != null)
+        private void RefreshHeader(Widget newHeader)
+        {
+            if (_headerContainer != null)
             {
+                foreach (var child in _headerContainer.Children)
+                {
+                    _headerContainer.RemoveFromContainer(child);
+                    child.Destroy();
+                    child.Dispose();
+                }
+            }
+
+            if (newHeader != null)
+            {
+                _header = newHeader;
+                _headerContainer.Add(_header);
                 _header.ShowAll();
+            }
+        }
+
+        private void RefreshFooter(Widget newFooter)
+        {
+            if (_footerContainer != null)
+            {
+                foreach (var child in _footerContainer.Children)
+                {
+                    _footerContainer.RemoveFromContainer(child);
+                    child.Destroy();
+                    child.Dispose();
+                }
+            }
+
+            if (newFooter != null)
+            {
+                _footer = newFooter;
+                _footerContainer.Add(_footer);
+                _footer.ShowAll();
             }
         }
 
@@ -318,7 +350,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                     var itemContainer = item as EventBox;
 
-                    if(itemContainer != null)
+                    if (itemContainer != null)
                     {
                         itemContainer.VisibleWindow = false;
                     }
@@ -338,25 +370,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             if (_list != null)
             {
-                foreach (var cell in _list.Children)
+                foreach (var child in _list.Children)
                 {
-                    cell.Destroy();
+                    _list.RemoveFromContainer(child);
                 }
             }
 
             if (_separators != null)
             {
                 _separators.Clear();
-            }
-        }
-
-        private void RefreshFooter(EventBox footer)
-        {
-            _footer = footer;
-
-            if (_footer != null)
-            {
-                _footer.ShowAll();
             }
         }
     }

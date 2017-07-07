@@ -80,6 +80,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarTextColor);
             MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarBackgroundColor);
 
+            _tracker?.Dispose();
+            _tracker = null;
+
             base.Dispose();
         }
 
@@ -169,16 +172,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBarTextColor()
         {
-            var barTextColor = Platform.NativeToolbarTracker.Navigation.BarTextColor;
+            var navigationPage = Platform.NativeToolbarTracker.Navigation;
 
-            Widget.UpdateBarTextColor(barTextColor.ToGtkColor());
+            if (navigationPage != null)
+            {
+                var barTextColor = navigationPage.BarTextColor;
+
+                Widget.UpdateBarTextColor(barTextColor.ToGtkColor());
+            }
         }
 
         private void UpdateBarBackgroundColor()
         {
-            var barBackgroundColor = Platform.NativeToolbarTracker.Navigation.BarBackgroundColor;
+            var navigationPage = Platform.NativeToolbarTracker.Navigation;
 
-            Widget.UpdateBarBackgroundColor(barBackgroundColor.ToGtkColor());
+            if (navigationPage != null)
+            {
+                var barBackgroundColor = navigationPage.BarBackgroundColor;
+                Widget.UpdateBarBackgroundColor(barBackgroundColor.ToGtkColor());
+            }
         }
 
         private async Task UpdateHamburguerIconAsync()

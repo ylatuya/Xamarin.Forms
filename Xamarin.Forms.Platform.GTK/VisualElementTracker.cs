@@ -170,8 +170,7 @@ namespace Xamarin.Forms.Platform.GTK
                 _control.ButtonPressEvent -= OnControlButtonPressEvent;
             }
 
-            Control = null;
-            Element = null;
+            Container.Dispose();
             Container = null;
         }
 
@@ -347,6 +346,11 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void OnContainerButtonPressEvent(object o, ButtonPressEventArgs args)
         {
+            if (args.Event.Button != 1)
+            {
+                return;
+            }
+
             var view = Element as View;
 
             if (view == null)

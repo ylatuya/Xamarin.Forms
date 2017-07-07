@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System;
 using System.Collections.Generic;
+using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
@@ -10,6 +11,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private VBox _root;
         private TableRoot _source;
         private List<Container> _cells;
+
+        public delegate void ItemTappedEventHandler(object sender, ItemTappedEventArgs args);
+        public event ItemTappedEventHandler OnItemTapped = null;
 
         public TableView()
         {
@@ -149,6 +153,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                     // Cells
                     _cells.Clear();
+
                     for (int j = 0; j < tableSection.Count; j++)
                     {
                         var cell = tableSection[j];
@@ -157,7 +162,21 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                             (Cells.CellRenderer)Internals.Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
                         var nativeCell = renderer.GetCell(cell, null, null);
 
-                        _cells.Add(nativeCell);
+                        if (nativeCell != null)
+                        {
+                            nativeCell.ButtonPressEvent += (sender, args) =>
+                            {
+                                var gtkCell = sender as CellBase;
+
+                                if (gtkCell != null && gtkCell.Cell != null)
+                                {
+                                    var selectedCell = gtkCell.Cell;
+      
+                                    OnItemTapped?.Invoke(this, new ItemTappedEventArgs(selectedCell));
+                                }
+                            };
+                            _cells.Add(nativeCell);
+                        }
                     }
 
                     foreach (var cell in _cells)

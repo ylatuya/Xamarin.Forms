@@ -6,7 +6,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class TextCellRenderer : CellRenderer
     {
-        public override Gtk.Container GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        public override CellBase GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
         {
             var gtkTextCell = base.GetCell(item, reusableView, listView) as TextCell;
             var textCell = (Xamarin.Forms.TextCell)item;

@@ -1,10 +1,23 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
 {
     public class EntryCellRenderer : CellRenderer
     {
+        public override CellBase GetCell(Cell item, Gtk.Container reusableView, Controls.ListView listView)
+        {
+            var entryCell = base.GetCell(item, reusableView, listView) as EntryCell;
+
+            entryCell.TextChanged -= OnTextChanged;
+            entryCell.TextChanged += OnTextChanged;
+            entryCell.EditingDone -= OnEditingDone;
+            entryCell.EditingDone += OnEditingDone;
+
+            return entryCell;
+        }
+
         protected override Gtk.Container GetCellWidgetInstance(Cell item)
         {
             var entryCell = (Xamarin.Forms.EntryCell)item;
@@ -44,6 +57,17 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             {
                 gtkEntryCell.Placeholder = entryCell.Placeholder;
             }
+        }
+
+        private void OnTextChanged(object sender, string text)
+        {
+            ((Xamarin.Forms.EntryCell)Cell).Text = text;
+        }
+
+        private void OnEditingDone(object sender, EventArgs e)
+        {
+            var entryCell = (IEntryCellController)Cell;
+            entryCell.SendCompleted();
         }
     }
 }

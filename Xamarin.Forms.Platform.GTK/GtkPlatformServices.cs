@@ -93,19 +93,11 @@ namespace Xamarin.Forms.Platform.GTK
 
         public void StartTimer(TimeSpan interval, Func<bool> callback)
         {
-            var timer = new System.Timers.Timer(interval.TotalMilliseconds);
-
-            timer.Elapsed += (sender, args) =>
+            GLib.Timeout.Add((uint)interval.TotalMilliseconds, () =>
             {
                 var result = callback();
-
-                if (!result)
-                {
-                    timer.Stop();
-                }
-            };
-
-            timer.Start();
+                return result;
+            });
         }
 
         private static int Hex(int v)

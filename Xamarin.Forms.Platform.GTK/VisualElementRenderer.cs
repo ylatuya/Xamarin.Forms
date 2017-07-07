@@ -8,7 +8,7 @@ using Control = Gtk.Widget;
 
 namespace Xamarin.Forms.Platform.GTK
 {
-    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer
+    public class VisualElementRenderer<TElement, TNativeElement> : Container, IVisualElementRenderer, IDisposable, IEffectControlProvider
         where TElement : VisualElement
         where TNativeElement : Control
     {
@@ -76,6 +76,13 @@ namespace Xamarin.Forms.Platform.GTK
 
         public event EventHandler<ElementChangedEventArgs<TElement>> ElementChanged;
 
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            var platformEffect = effect as PlatformEffect;
+            if (platformEffect != null)
+                OnRegisterEffect(platformEffect);
+        }
+
         void IVisualElementRenderer.SetElement(VisualElement element)
         {
             SetElement((TElement)element);
@@ -121,11 +128,44 @@ namespace Xamarin.Forms.Platform.GTK
             return Control.GetDesiredSize(widthConstraint, heightConstraint);
         }
 
-        public sealed override void Dispose()
+        protected override void OnShown()
+        {
+            base.OnShown();
+
+            UpdateIsVisible();
+        }
+
+        public override void Dispose()
         {
             base.Dispose();
 
             Dispose(true);
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            Rectangle bounds = Element.Bounds;
+            Container.MoveTo((int)bounds.X, (int)bounds.Y);
+
+            for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
+            {
+                var child = ElementController.LogicalChildren[i] as VisualElement;
+
+                if (child != null)
+                {
+                    var renderer = Platform.GetRenderer(child);
+                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
+                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                }
+            }
+        }
+
+        protected virtual void OnRegisterEffect(PlatformEffect effect)
+        {
+            effect.SetContainer(this);
+            effect.SetControl(Container);
         }
 
         protected virtual void OnElementChanged(ElementChangedEventArgs<TElement> e)
@@ -155,11 +195,6 @@ namespace Xamarin.Forms.Platform.GTK
 
             Tracker?.Dispose();
             Tracker = null;
-
-            Element = null;
-
-            SetNativeControl(null);
-            SetElement(null);
         }
 
         protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -178,6 +213,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void UpdateBackgroundColor()
         {
+            if (_disposed || Element == null || Control == null)
+                return;
+
             Color backgroundColor = Element.BackgroundColor;
 
             bool isDefault = backgroundColor.IsDefaultOrTransparent();
@@ -192,7 +230,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void SetAccessibilityHint()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             if (_defaultAccessibilityHint == null)
@@ -208,7 +246,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void SetAccessibilityLabel()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             if (_defaultAccessibilityLabel == null)
@@ -227,32 +265,18 @@ namespace Xamarin.Forms.Platform.GTK
             UpdateSensitive();
         }
 
-        protected bool IsAnimationRunning(VisualElement element)
-        {
-            bool isAnimationRunning = false;
-
-            if (element.TranslationX != 0 ||
-                element.TranslationY != 0 ||
-                element.Rotation != 0 ||
-                element.RotationX != 0 ||
-                element.RotationY != 0 ||
-                element.Scale != 1)
-                isAnimationRunning = true;
-
-            return isAnimationRunning;
-        }
-
         private void UpdateIsVisible()
         {
+            if (_disposed || Element == null || Control == null)
+                return;
+
             Container.Visible = Element.IsVisible;
         }
 
         private void UpdateSensitive()
         {
-            if (Control == null)
-            {
+            if (_disposed || Element == null || Control == null)
                 return;
-            }
 
             Control.Sensitive = Element.IsEnabled;
         }

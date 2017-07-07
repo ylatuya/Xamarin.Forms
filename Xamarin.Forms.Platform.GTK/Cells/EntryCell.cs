@@ -1,4 +1,5 @@
 ﻿using Gtk;
+using System;
 using Xamarin.Forms.Platform.GTK.Controls;
 
 namespace Xamarin.Forms.Platform.GTK.Cells
@@ -11,7 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         private string _placeholder;
         private VBox _root;
         private Gtk.Label _textLabel;
-        private EntryWrapper _entry;
+        private EntryWrapper _entryWrapper;
 
         public EntryCell(
             string label,
@@ -29,12 +30,14 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
             _root.PackStart(_textLabel, false, false, 0);
 
-            _entry = new EntryWrapper();
-            _entry.Sensitive = true;
-            _entry.Entry.Text = text;
-            _entry.PlaceholderText = placeholder;
+            _entryWrapper = new EntryWrapper();
+            _entryWrapper.Sensitive = true;
+            _entryWrapper.Entry.Text = text;
+            _entryWrapper.PlaceholderText = placeholder;
+            _entryWrapper.Entry.Changed += OnEntryChanged;
+            _entryWrapper.Entry.EditingDone += OnEditingDone;
 
-            _root.PackStart(_entry, false, false, 0);
+            _root.PackStart(_entryWrapper, false, false, 0);
         }
 
         public string Label
@@ -61,6 +64,9 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             set { _placeholder = value; UpdatePlaceholder(_placeholder); }
         }
 
+        public event EventHandler<string> TextChanged;
+        public event EventHandler EditingDone;
+
         private void UpdateLabel(string label)
         {
             if (_textLabel != null)
@@ -79,18 +85,28 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
         private void UpdateText(string text)
         {
-            if (_entry != null)
+            if (_entryWrapper != null)
             {
-                _entry.Entry.Text = text;
+                _entryWrapper.Entry.Text = text;
             }
         }
 
         private void UpdatePlaceholder(string placeholder)
         {
-            if (_entry != null)
+            if (_entryWrapper != null)
             {
-                _entry.PlaceholderText = placeholder;
+                _entryWrapper.PlaceholderText = placeholder;
             }
+        }
+
+        private void OnEntryChanged(object sender, EventArgs e)
+        {
+            TextChanged?.Invoke(this, _entryWrapper.Entry.Text);
+        }
+
+        private void OnEditingDone(object sender, EventArgs e)
+        {
+            EditingDone?.Invoke(this, EventArgs.Empty);
         }
     }
 }

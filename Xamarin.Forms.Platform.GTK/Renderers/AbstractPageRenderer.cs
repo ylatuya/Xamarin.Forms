@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
+using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -83,11 +84,26 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_disposed)
             {
                 if (_appeared)
+                {
                     Page.SendDisappearing();
+
+              
+                    if (Element != null)
+                    {
+                        ReadOnlyCollection<Element> children = ((IElementController)Element).LogicalChildren;
+                        for (var i = 0; i < children.Count; i++)
+                        {
+                            var visualChild = children[i] as VisualElement;
+                            visualChild?.Cleanup();
+                        }
+                    }
+           
+                }
 
                 _appeared = false;
 
                 Dispose(true);
+
                 _disposed = true;
             }
         }
@@ -101,8 +117,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             UpdateBackgroundColor();
 
-            PageController.SendAppearing();
             _appeared = true;
+
+            PageController.SendAppearing();
         }
 
         protected override void OnDestroyed()
@@ -112,8 +129,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_appeared || _disposed)
                 return;
 
-            PageController.SendDisappearing();
             _appeared = false;
+
+            PageController.SendDisappearing();
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
@@ -139,6 +157,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Platform.SetRenderer(Element, null);
 
                 this.RemoveFromContainer(Control);
+
+                Control.Destroy();
                 Control = null;
                 Element = null;
             }

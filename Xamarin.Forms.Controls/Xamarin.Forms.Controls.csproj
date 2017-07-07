@@ -140,6 +140,9 @@
       <DependentUpon>MenuView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Bugzilla44596SplashPage.cs" />
+    <Compile Include="BuiltInStyles\BuiltInStylesXaml.xaml.cs">
+      <DependentUpon>BuiltInStylesXaml.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ControlGalleryPages\AutomationPropertiesGallery.cs" />
     <Compile Include="ControlGalleryPages\CellForceUpdateSizeGalleryPage.cs" />
     <Compile Include="ControlGalleryPages\LayoutAddPerformance.xaml.cs">
@@ -511,6 +514,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BikeSharing\Views\MyRidesView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BuiltInStyles\BuiltInStylesXaml.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

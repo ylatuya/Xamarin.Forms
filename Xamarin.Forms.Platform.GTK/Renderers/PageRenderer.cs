@@ -21,7 +21,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnShown();
 
-            _packager = new PageElementPackager(this);
+            if (_packager == null)
+            {
+                _packager = new PageElementPackager(this);
+            }
+
             _packager.Load();
         }
     }
