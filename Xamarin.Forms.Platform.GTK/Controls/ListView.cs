@@ -295,6 +295,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     _headerContainer.RemoveFromContainer(child);
                     child.Destroy();
+                    child.Dispose();
                 }
             }
 
@@ -311,6 +312,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     _footerContainer.RemoveFromContainer(child);
                     child.Destroy();
+                    child.Dispose();
                 }
             }
 
@@ -366,6 +368,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     _list.RemoveFromContainer(child);
                     child.Destroy();
+                    child.Dispose();
                 }
             }
 

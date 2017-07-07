@@ -170,8 +170,7 @@ namespace Xamarin.Forms.Platform.GTK
                 _control.ButtonPressEvent -= OnControlButtonPressEvent;
             }
 
-            Control = null;
-            Element = null;
+            Container.Dispose();
             Container = null;
         }
 

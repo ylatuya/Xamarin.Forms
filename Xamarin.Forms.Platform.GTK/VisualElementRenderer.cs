@@ -5,7 +5,6 @@ using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
 using Control = Gtk.Widget;
-using Gdk;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -195,11 +194,6 @@ namespace Xamarin.Forms.Platform.GTK
 
             Tracker?.Dispose();
             Tracker = null;
-
-            Element = null;
-
-            SetNativeControl(null);
-            SetElement(null);
         }
 
         protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -218,7 +212,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void UpdateBackgroundColor()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             Color backgroundColor = Element.BackgroundColor;
@@ -235,7 +229,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void SetAccessibilityHint()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             if (_defaultAccessibilityHint == null)
@@ -251,7 +245,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected virtual void SetAccessibilityLabel()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             if (_defaultAccessibilityLabel == null)
@@ -272,7 +266,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateIsVisible()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
 
             Container.Visible = Element.IsVisible;
@@ -280,13 +274,8 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void UpdateSensitive()
         {
-            if (Element == null)
+            if (_disposed || Element == null || Control == null)
                 return;
-
-            if (Control == null)
-            {
-                return;
-            }
 
             Control.Sensitive = Element.IsEnabled;
         }

@@ -75,7 +75,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     PageController?.SendDisappearing();
                     ((Element as IPageContainer<Page>)?.CurrentPage as IPageController)?.SendDisappearing();
                     Element.PropertyChanged -= HandlePropertyChanged;
+                    Element = null;
                 }
+
+                _tracker?.Dispose();
+                _tracker = null;
 
                 _disposed = true;
             }
