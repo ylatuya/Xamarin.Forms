@@ -76,6 +76,7 @@
     <Compile Include="Renderers\ColorPickerRenderer.cs" />
     <Compile Include="Renderers\DateTimePickerRenderer.cs" />
     <Compile Include="Renderers\ExpanderRenderer.cs" />
+    <Compile Include="Renderers\FontButtonRenderer.cs" />
     <Compile Include="Renderers\GridSplitterRenderer.cs" />
     <Compile Include="Renderers\DataGridRenderer.cs" />
     <Compile Include="Renderers\HyperLinkRenderer.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Renderers\ScaleButtonRenderer.cs" />
     <Compile Include="Renderers\SeparatorRenderer.cs" />
     <Compile Include="Renderers\StatusBarRenderer.cs" />
+    <Compile Include="Renderers\ToggleButtonRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">

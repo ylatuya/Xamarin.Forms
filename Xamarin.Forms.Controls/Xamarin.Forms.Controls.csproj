@@ -114,6 +114,12 @@
     <Compile Include="ControlGalleryPages\NestedNativeControlGalleryPage.cs" />
     <Compile Include="ControlGalleryPages\PanGestureGalleryPage.cs" />
     <Compile Include="CoreGalleryPages\KeyboardCoreGalleryPage.cs" />
+    <Compile Include="CustomControls\FontButtonPage.xaml.cs">
+      <DependentUpon>FontButtonPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\ToggleButtonPage.xaml.cs">
+      <DependentUpon>ToggleButtonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\DataGridPage.xaml.cs">
       <DependentUpon>DataGridPage.xaml</DependentUpon>
     </Compile>
@@ -558,6 +564,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CustomControls\ColorButtonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\ToggleButtonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\FontButtonPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

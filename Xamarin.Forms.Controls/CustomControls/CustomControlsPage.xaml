@@ -13,12 +13,14 @@
                 <Button x:Name="DataGridBtn" Text="DataGrid" />
                 <Button x:Name="DateTimePickerBtn" Text="DateTimePicker" />
                 <Button x:Name="ExpanderBtn" Text="Expander" />
+                <Button x:Name="FontButtonBtn" Text="FontButton" />
                 <Button x:Name="GridSplitterBtn" Text="GridSplitter" />
                 <Button x:Name="HyperLinkBtn" Text="HyperLink" />
                 <Button x:Name="ImageCheckBoxBtn" Text="ImageCheckBox" />
                 <Button x:Name="ScaleButtonBtn" Text="ScaleButton" />
                 <Button x:Name="SeparatorBtn" Text="Separator" />
                 <Button x:Name="StatusBarBtn" Text="StatusBar" />
+                <Button x:Name="ToggleButtonBtn" Text="ToggleButton" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
