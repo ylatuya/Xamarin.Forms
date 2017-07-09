@@ -7,6 +7,7 @@
     <ContentPage.Content>
         <StackLayout>
             <controls:ToggleButton
+                Text="ToggleButton"
                 HeightRequest="48"/>
         </StackLayout>
     </ContentPage.Content>

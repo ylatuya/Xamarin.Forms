@@ -7,6 +7,10 @@
     <ContentPage.Content>
         <StackLayout>
             <controls:FontButton
+                Title="Choose your font"
+                FontName="Verdana"
+                ShowSize="true"
+                ShowStyle="true"
                 HeightRequest="48"/>
         </StackLayout>
     </ContentPage.Content>
