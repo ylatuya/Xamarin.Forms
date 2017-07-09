@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\StringValue.cs" />
+    <Compile Include="Controls\Calendar.cs" />
     <Compile Include="Controls\ColorButton.cs" />
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />

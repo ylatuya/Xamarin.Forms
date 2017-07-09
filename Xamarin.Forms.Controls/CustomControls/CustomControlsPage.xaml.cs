@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Controls.CustomControls
         {
             InitializeComponent();
 
+            CalendarBtn.Clicked += (sender, args) => Navigation.PushAsync(new CalendarPage());
             ColorButtonBtn.Clicked += (sender, args) => Navigation.PushAsync(new ColorButtonPage());
             ColorPickerBtn.Clicked += (sender, args) => Navigation.PushAsync(new ColorPickerPage());
             ChartsBtn.Clicked += (sender, args) => Navigation.PushAsync(new ChartPage());
