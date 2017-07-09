@@ -14,6 +14,7 @@ namespace Xamarin.Forms.Controls.CustomControls
             DataGridBtn.Clicked += (sender, args) => Navigation.PushAsync(new DataGridPage());
             DateTimePickerBtn.Clicked += (sender, args) => Navigation.PushAsync(new DateTimePickerPage());
             ExpanderBtn.Clicked += (sender, args) => Navigation.PushAsync(new ExpanderPage());
+            FileButtonBtn.Clicked += (sender, args) => Navigation.PushAsync(new FileButtonPage());
             FontButtonBtn.Clicked += (sender, args) => Navigation.PushAsync(new FontButtonPage());
             GridSplitterBtn.Clicked += (sender, args) => Navigation.PushAsync(new GridSplitterPage());
             HyperLinkBtn.Clicked += (sender, args) => Navigation.PushAsync(new HyperLinkPage());

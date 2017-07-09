@@ -54,6 +54,7 @@
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />
     <Compile Include="Controls\Expander.cs" />
+    <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FontButton.cs" />
     <Compile Include="Controls\GridSplitter.cs" />
     <Compile Include="Controls\DataGrid.cs" />

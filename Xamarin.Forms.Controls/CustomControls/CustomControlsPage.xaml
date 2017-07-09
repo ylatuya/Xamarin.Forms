@@ -13,6 +13,7 @@
                 <Button x:Name="DataGridBtn" Text="DataGrid" />
                 <Button x:Name="DateTimePickerBtn" Text="DateTimePicker" />
                 <Button x:Name="ExpanderBtn" Text="Expander" />
+                <Button x:Name="FileButtonBtn" Text="FileButton" />
                 <Button x:Name="FontButtonBtn" Text="FontButton" />
                 <Button x:Name="GridSplitterBtn" Text="GridSplitter" />
                 <Button x:Name="HyperLinkBtn" Text="HyperLink" />
