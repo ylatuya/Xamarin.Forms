@@ -80,6 +80,43 @@ namespace Xamarin.Forms.Platform.GTK
             return Toolbar.Allocation.Size;
         }
 
+        public void UpdateIcon()
+        {
+            if (_toolbar == null || _navigation == null)
+                return;
+
+            var iconPath = GetCurrentPageIconPath();
+
+            if (!string.IsNullOrEmpty(iconPath))
+            {
+                _toolbarIcon.Pixbuf = new Pixbuf(iconPath);
+                _toolbarIcon.SetSizeRequest(GtkToolbarConstants.ToolbarIconWidth, GtkToolbarConstants.ToolbarIconHeight);
+            }
+            else
+            {
+                _toolbarIcon.WidthRequest = 1;
+            }
+        }
+
+        public void UpdateTitle()
+        {
+            if (_toolbar == null || _navigation == null)
+                return;
+
+            var title = GetCurrentPageTitle();
+
+            if (_toolbarTitle != null)
+            {
+                var span = new Span()
+                {
+                    FontSize = 12.0d,
+                    Text = title
+                };
+
+                _toolbarTitle.SetTextFromSpan(span);
+            }
+        }
+
         protected virtual HBox ConfigureToolbar()
         {
             var toolbar = new HBox();
@@ -121,49 +158,12 @@ namespace Xamarin.Forms.Platform.GTK
                 e.PropertyName.Equals(Page.IconProperty.PropertyName))
                 UpdateToolBar();
         }
-
-        private void UpdateTitle()
-        {
-            if (_toolbar == null || _navigation == null)
-                return;
-
-            var title = GetCurrentPageTitle();
-
-            if (_toolbarTitle != null)
-            {
-                var span = new Span()
-                {
-                    FontSize = 12.0d,
-                    Text = title
-                };
-
-                _toolbarTitle.SetTextFromSpan(span);
-            }
-        }
-
+        
         private string GetCurrentPageTitle()
         {
             if (_navigation == null)
                 return string.Empty;
             return _navigation.Peek(0).Title ?? string.Empty;
-        }
-
-        private void UpdateIcon()
-        {
-            if (_toolbar == null || _navigation == null)
-                return;
-
-            var iconPath = GetCurrentPageIconPath();
-
-            if (!string.IsNullOrEmpty(iconPath))
-            {
-                _toolbarIcon.Pixbuf = new Pixbuf(iconPath);
-                _toolbarIcon.SetSizeRequest(GtkToolbarConstants.ToolbarIconWidth, GtkToolbarConstants.ToolbarIconHeight);
-            }
-            else
-            {
-                _toolbarIcon.WidthRequest = 1;
-            }
         }
 
         private string GetCurrentPageIconPath()
