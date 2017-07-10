@@ -24,7 +24,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
             _textLabel = new Gtk.Label();
             _textLabel.SetAlignment(0, 0);
-            _textLabel.Text = text;
+            _textLabel.Text = text ?? string.Empty;
 
             _labelBox.PackStart(_textLabel, false, true, 0);
 
@@ -54,7 +54,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             if (_textLabel != null)
             {
-                _textLabel.Text = text;
+                _textLabel.Text = text ?? string.Empty;
             }
         }
 
