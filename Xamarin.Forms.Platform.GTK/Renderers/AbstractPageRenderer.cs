@@ -206,6 +206,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBackgroundColor();
             else if (e.PropertyName == Xamarin.Forms.Page.BackgroundImageProperty.PropertyName)
                 UpdateBackgroundImage();
+            else if (e.PropertyName == Xamarin.Forms.Page.TitleProperty.PropertyName)
+                UpdateTitle();
+            else if (e.PropertyName == Xamarin.Forms.Page.IconProperty.PropertyName)
+                UpdateIcon();
         }
 
         private void SetPageSize(int width, int height)
@@ -213,6 +217,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
             var pageContentSize = new Gdk.Rectangle(0, 0, width, height - toolbarSize.Height);
             SetElementSize(pageContentSize.ToSize());
+        }
+
+        private void UpdateTitle()
+        {
+            Platform.NativeToolbarTracker.UpdateToolBar();
+        }
+
+        private void UpdateIcon()
+        {
+            Platform.NativeToolbarTracker.UpdateToolBar();
         }
     }
 }
