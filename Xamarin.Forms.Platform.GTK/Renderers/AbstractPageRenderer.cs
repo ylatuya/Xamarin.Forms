@@ -221,12 +221,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateTitle()
         {
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            Platform.NativeToolbarTracker.UpdateTitle();
         }
 
         private void UpdateIcon()
         {
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            Platform.NativeToolbarTracker.UpdateIcon();
         }
     }
 }
