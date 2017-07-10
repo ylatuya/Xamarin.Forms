@@ -110,7 +110,7 @@ namespace Xamarin.Forms.Platform.GTK
                 var span = new Span()
                 {
                     FontSize = 12.0d,
-                    Text = title
+                    Text = title ?? string.Empty
                 };
 
                 _toolbarTitle.SetTextFromSpan(span);
@@ -451,7 +451,7 @@ namespace Xamarin.Forms.Platform.GTK
                 Gtk.Image icon = pixBuf != null ? new Gtk.Image(pixBuf) : null;
                 ToolButton button = new ToolButton(icon, item.Text);
                 ApplyDefaultDimensions(button);
-                button.TooltipText = item.Text;
+                button.TooltipText = item.Text ?? string.Empty;
                 button.Sensitive = item.IsEnabled;
 
                 return button;

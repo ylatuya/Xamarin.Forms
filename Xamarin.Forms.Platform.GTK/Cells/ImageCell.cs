@@ -36,7 +36,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             var span = new Span()
             {
                 FontSize = 12,
-                Text = text
+                Text = text ?? string.Empty
             };
 
             _textLabel = new Gtk.Label();
@@ -49,7 +49,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             _detailLabel = new Gtk.Label();
             _detailLabel.SetAlignment(0, 0);
             _detailLabel.ModifyFg(StateType.Normal, detailColor);
-            _detailLabel.Text = detail;
+            _detailLabel.Text = detail ?? string.Empty;
 
             _vertical.PackStart(_detailLabel, true, true, 0);
 
@@ -98,7 +98,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             if (_textLabel != null)
             {
-                _textLabel.Text = text;
+                _textLabel.Text = text ?? string.Empty;
             }
         }
 
@@ -106,7 +106,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             if (_detailLabel != null)
             {
-                _detailLabel.Text = detail;
+                _detailLabel.Text = detail ?? string.Empty;
             }
         }
 

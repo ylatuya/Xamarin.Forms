@@ -42,7 +42,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                _placeholder.Text = value;
+                _placeholder.Text = value ?? string.Empty;
             }
         }
 

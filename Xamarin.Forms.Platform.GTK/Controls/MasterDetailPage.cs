@@ -118,7 +118,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             set
             {
-                _titleContainer.Title = value;
+                _titleContainer.Title = value ?? string.Empty;
             }
         }
 

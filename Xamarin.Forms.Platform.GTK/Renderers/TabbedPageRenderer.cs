@@ -178,7 +178,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 var page = (Page)sender;
                 var index = TabbedPage.GetIndex(page);
-                var title = page.Title;
 
                 Widget.SetTabLabelText(index, page.Title);
             }
