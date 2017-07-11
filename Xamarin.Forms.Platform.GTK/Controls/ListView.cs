@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -55,6 +56,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
     public class ListView : ScrolledWindow
     {
         private const int RefreshHeight = 48;
+        private const int DefaultItemHeight = 48;
+        private const int PageSize = 50;
+
+        private int _page = 1;
+        private List<Widget> _items;
 
         private VBox _root;
         private EventBox _headerContainer;
@@ -232,6 +238,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void BuildListView()
         {
+            _items = new List<Widget>();
+
             CanFocus = true;
             ShadowType = ShadowType.None;
             BorderWidth = 0;
@@ -284,7 +292,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             Add(_viewPort);
 
-            ShowAll(); 
+            Vadjustment.ValueChanged += OnVadjustmentValueChanged;
+
+            ShowAll();
         }
 
         private void RefreshHeader(Widget newHeader)
@@ -334,6 +344,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             foreach (var item in items)
             {
+                _items.Add(item);
+            }
+
+            LoadItems();
+        }
+
+        private void LoadItems()
+        {
+            foreach (var item in _items.Skip(_page * PageSize).Take(PageSize))
+            {
                 if (item != null)
                 {
                     item.ButtonPressEvent += (sender, args) =>
@@ -364,10 +384,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
 
             _list.ShowAll();
+
+            if (_page * PageSize < _items.Count)
+                _page++;
         }
 
         private void ClearList()
         {
+            _page = 1;
+
             if (_list != null)
             {
                 foreach (var child in _list.Children)
@@ -376,9 +401,30 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
             }
 
+            if (_items != null)
+            {
+                _items.Clear();
+            }
+
             if (_separators != null)
             {
                 _separators.Clear();
+            }
+        }
+
+        private void OnVadjustmentValueChanged(object sender, EventArgs e)
+        {
+            var adjustment = sender as Adjustment;
+
+            if (adjustment.Value > 0)
+            {
+                var scrollHeight = adjustment.Upper - adjustment.PageSize;
+                bool isAtBottom = adjustment.Value >= scrollHeight - DefaultItemHeight;
+
+                if (isAtBottom)
+                {
+                    LoadItems();
+                }
             }
         }
     }
