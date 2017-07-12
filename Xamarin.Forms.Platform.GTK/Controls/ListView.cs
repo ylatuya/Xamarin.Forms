@@ -91,10 +91,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Label _refreshLabel;
         private bool _isPullToRequestEnabled;
         private bool _refreshing;
-
-        public IdleData _data;
-        public ListStore _store = null;
-        public List _items;
+        private IdleData _data;
+        private ListStore _store = null;
+        private List _items;
 
         public delegate void ItemTappedEventHandler(object sender, ItemTappedEventArgs args);
         public event ItemTappedEventHandler OnItemTapped = null;
