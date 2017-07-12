@@ -56,20 +56,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
     public enum State : uint
     {
-        STARTED,  
-        LOADING,  
-        COMPLETE, 
-        FINISHED  
+        Started,  
+        Loading,  
+        Completed, 
+        Finished  
     };
 
     public class IdleData
     {
-        public State _loadState;
-        public uint _loadId;
-        public ListStore _listStore;
-        public int _nItems;
-        public int _nLoaded;
-        public List _items;
+        public State LoadState;
+        public uint LoadId;
+        public ListStore ListStore;
+        public int NumItems;
+        public int NumLoaded;
+        public List Items;
     }
 
     public class ListView : ScrolledWindow
@@ -358,12 +358,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             _data = new IdleData();
 
-            _data._items = items;
-            _data._nItems = 0;
-            _data._nLoaded = 0;
-            _data._listStore = _store;
-            _data._loadState = Controls.State.STARTED;
-            _data._loadId = Idle.Add(new IdleHandler(LoadItems));
+            _data.Items = items;
+            _data.NumItems = 0;
+            _data.NumLoaded = 0;
+            _data.ListStore = _store;
+            _data.LoadState = Controls.State.Started;
+            _data.LoadId = Idle.Add(new IdleHandler(LoadItems));
         }
 
         private bool LoadItems()
@@ -373,51 +373,51 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             TreeIter iter;
 
             // Make sure we're in the right state 
-            var isLoading = (id._loadState == Controls.State.STARTED) ||
-                (id._loadState == Controls.State.LOADING);
+            var isLoading = (id.LoadState == Controls.State.Started) ||
+                (id.LoadState == Controls.State.Loading);
    
             if(!isLoading)
             {
-                id._loadState = Controls.State.COMPLETE;
+                id.LoadState = Controls.State.Completed;
                 return false;
             }
 
             // No items 
-            if (id._items.Count == 0)
+            if (id.Items.Count == 0)
             {
-                id._loadState = Controls.State.COMPLETE;
+                id.LoadState = Controls.State.Completed;
                 return false;
             }
 
             // First run 
-            if (id._nItems == 0)
+            if (id.NumItems == 0)
             {
-                id._nItems = id._items.Count;
-                id._nLoaded = 0;
-                id._loadState = Controls.State.LOADING;
+                id.NumItems = id.Items.Count;
+                id.NumLoaded = 0;
+                id.LoadState = Controls.State.Loading;
             }   
             
             // Get the item in the list at pos n_loaded 
-            obj = id._items[id._nLoaded] as CellBase;
+            obj = id.Items[id.NumLoaded] as CellBase;
 
             // Append the row to the store
-            iter = id._listStore.AppendValues(obj);
+            iter = id.ListStore.AppendValues(obj);
 
             // Fill in the row at position n_loaded
-            id._listStore.SetValue(iter, 0, obj);
+            id.ListStore.SetValue(iter, 0, obj);
 
-            id._nLoaded += 1;
+            id.NumLoaded += 1;
 
             // Update UI with every item
             UpdateItem(obj);
 
             // We loaded everything, so we can change state and remove the idle callback function
-            if (id._nLoaded == id._nItems)
+            if (id.NumLoaded == id.NumItems)
             {
-                id._loadState = Controls.State.COMPLETE;
-                id._nLoaded = 0;
-                id._nItems = 0;
-                id._items = null;
+                id.LoadState = Controls.State.Completed;
+                id.NumLoaded = 0;
+                id.NumItems = 0;
+                id.Items = null;
 
                 CleanupLoadItems();
 
@@ -461,12 +461,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void CleanupLoadItems()
         {
-            Debug.Assert(_data._loadState == Controls.State.COMPLETE);
+            Debug.Assert(_data.LoadState == Controls.State.Completed);
 
             _list.ShowAll();
 
-            if (_data._listStore == null)
-                Console.WriteLine("Something was wrong!");
+            if (_data.ListStore == null)
+                Debug.WriteLine("Something was wrong!");
         }
 
         private void PopulateData(List items)
