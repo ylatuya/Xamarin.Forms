@@ -135,6 +135,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _cells = value;
+                _items = new List(typeof(CellBase));
                 PopulateData(_items);
             }
         }
@@ -372,8 +373,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             TreeIter iter;
 
             // Make sure we're in the right state 
-            Debug.Assert((id._loadState == Controls.State.STARTED) ||
-                    (id._loadState == Controls.State.LOADING));
+            var isLoading = (id._loadState == Controls.State.STARTED) ||
+                (id._loadState == Controls.State.LOADING);
+   
+            if(!isLoading)
+            {
+                id._loadState = Controls.State.COMPLETE;
+                return false;
+            }
 
             // No items 
             if (id._items.Count == 0)
@@ -464,9 +471,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void PopulateData(List items)
         {
-            if (_store != null)
-                return;
-
             _store = new ListStore(typeof(CellBase));
 
             foreach (var cell in _cells)
