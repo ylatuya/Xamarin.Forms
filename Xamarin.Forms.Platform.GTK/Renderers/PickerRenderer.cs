@@ -78,6 +78,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.Dispose(disposing);
         }
 
+        internal override void OnElementFocusChangeRequested(object sender, VisualElement.FocusRequestArgs args)
+        {
+            if (Control == null)
+                return;
+
+            if (args.Focus)
+                args.Result = OpenPicker();
+            else
+                args.Result = ClosePicker();
+
+            base.OnElementFocusChangeRequested(sender, args);
+        }
+
         private void UpdatePicker()
         {
             if (Control == null || Element == null)
@@ -150,6 +163,30 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateItemsSource();
+        }
+
+        private bool OpenPicker()
+        {
+            if(Control == null)
+            {
+                return false;
+            }
+
+            Control.Popup();
+
+            return true;
+        }
+
+        private bool ClosePicker()
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+
+            Control.Popdown();
+
+            return true;
         }
     }
 }

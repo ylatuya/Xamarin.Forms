@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -292,6 +293,22 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _comboBox.SetBackgroundColor(color);
         }
 
+        public void OpenPicker()
+        {
+            ShowTimePickerWindow();
+        }
+
+        public void ClosePicker()
+        {
+            var windows = Gtk.Window.ListToplevels();
+            var window = windows.FirstOrDefault(w => w.GetType() == typeof(TimePickerWindow));
+
+            if (window != null)
+            {
+                Remove(window);
+            }
+        }
+
         protected virtual void OnTxtTimeChanged(object sender, EventArgs e)
         {
             _comboBox.Entry.ModifyText(Gtk.StateType.Normal, TextColor);
@@ -300,6 +317,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
 
         protected virtual void OnBtnShowTimePickerClicked(object sender, EventArgs e)
+        {
+            ShowTimePickerWindow();
+        }
+
+        private void ShowTimePickerWindow()
         {
             int x = 0;
             int y = 0;
