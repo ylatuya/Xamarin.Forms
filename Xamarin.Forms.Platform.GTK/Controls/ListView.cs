@@ -1,7 +1,8 @@
-﻿using Gtk;
+﻿using GLib;
+using Gtk;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -53,14 +54,27 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
     }
 
+    public enum State : uint
+    {
+        STARTED,  
+        LOADING,  
+        COMPLETE, 
+        FINISHED  
+    };
+
+    public class IdleData
+    {
+        public State _loadState;
+        public uint _loadId;
+        public ListStore _listStore;
+        public int _nItems;
+        public int _nLoaded;
+        public List _items;
+    }
+
     public class ListView : ScrolledWindow
     {
         private const int RefreshHeight = 48;
-        private const int DefaultItemHeight = 48;
-        private const int PageSize = 50;
-
-        private int _page = 1;
-        private List<Widget> _items;
 
         private VBox _root;
         private EventBox _headerContainer;
@@ -77,6 +91,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Label _refreshLabel;
         private bool _isPullToRequestEnabled;
         private bool _refreshing;
+
+        public IdleData _data;
+        public ListStore _store = null;
+        public List _items;
 
         public delegate void ItemTappedEventHandler(object sender, ItemTappedEventArgs args);
         public event ItemTappedEventHandler OnItemTapped = null;
@@ -117,7 +135,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _cells = value;
-                RefreshItems(_cells);
+                PopulateData(_items);
             }
         }
 
@@ -192,7 +210,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             IsPullToRequestEnabled = isPullToRequestEnabled;
 
-            if(_refreshHeader == null)
+            if (_refreshHeader == null)
             {
                 return;
             }
@@ -213,7 +231,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             Refreshing = refreshing;
 
-            if(Refreshing)
+            if (Refreshing)
             {
                 _refreshHeader.Attach(_refreshLabel, 0, 1, 0, 1);
             }
@@ -228,7 +246,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetSeletedItem(object selectedItem)
         {
-            if(selectedItem == null)
+            if (selectedItem == null)
             {
                 return;
             }
@@ -238,7 +256,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void BuildListView()
         {
-            _items = new List<Widget>();
+            _items = new List(typeof(CellBase));
 
             CanFocus = true;
             ShadowType = ShadowType.None;
@@ -263,7 +281,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 });
             _refreshButton.ImageWidget.Stock = Stock.Refresh;
             _refreshButton.SetImagePosition(PositionType.Left);
-            _refreshButton.Clicked += (sender, args) =>  
+            _refreshButton.Clicked += (sender, args) =>
             {
                 OnRefresh?.Invoke(this, new EventArgs());
             };
@@ -291,8 +309,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _viewPort.Add(_root);
 
             Add(_viewPort);
-
-            Vadjustment.ValueChanged += OnVadjustmentValueChanged;
 
             ShowAll();
         }
@@ -337,62 +353,133 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        // TODO: Improve cell creation for the highest performance
-        private void RefreshItems(IEnumerable<Widget> items)
+        public void LazyLoadItems(List items)
         {
-            ClearList();
+            _data = new IdleData();
 
-            foreach (var item in items)
-            {
-                _items.Add(item);
-            }
-
-            LoadItems();
+            _data._items = items;
+            _data._nItems = 0;
+            _data._nLoaded = 0;
+            _data._listStore = _store;
+            _data._loadState = Controls.State.STARTED;
+            _data._loadId = Idle.Add(new IdleHandler(LoadItems));
         }
 
-        private void LoadItems()
+        public bool LoadItems()
         {
-            foreach (var item in _items.Skip(_page * PageSize).Take(PageSize))
+            IdleData id = _data;
+            CellBase obj;
+            TreeIter iter;
+
+            // Make sure we're in the right state 
+            Debug.Assert((id._loadState == Controls.State.STARTED) ||
+                    (id._loadState == Controls.State.LOADING));
+
+            // No items 
+            if (id._items.Count == 0)
             {
-                if (item != null)
-                {
-                    item.ButtonPressEvent += (sender, args) =>
-                    {
-                        var gtkCell = sender as CellBase;
-
-                        if (gtkCell != null && gtkCell.Cell != null)
-                        {
-                            var selectedItem = gtkCell.Cell.BindingContext;
-                            SelectedItem = selectedItem;
-                            OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
-                        }
-                    };
-
-                    var itemContainer = item as EventBox;
-
-                    if (itemContainer != null)
-                    {
-                        itemContainer.VisibleWindow = false;
-                    }
-
-                    _list.PackStart(item, false, false, 0);
-
-                    var separator = new ListViewSeparator();
-                    _separators.Add(separator);
-                    _list.PackStart(separator, false, false, 0);
-                }
+                id._loadState = Controls.State.COMPLETE;
+                return false;
             }
+
+            // First run 
+            if (id._nItems == 0)
+            {
+                id._nItems = id._items.Count;
+                id._nLoaded = 0;
+                id._loadState = Controls.State.LOADING;
+            }   
+            
+            // Get the item in the list at pos n_loaded 
+            obj = id._items[id._nLoaded] as CellBase;
+
+            // Append the row to the store
+            iter = id._listStore.AppendValues(obj);
+
+            // Fill in the row at position n_loaded
+            id._listStore.SetValue(iter, 0, obj);
+
+            id._nLoaded += 1;
+
+            // Update UI with every item
+            UpdateItem(obj);
+
+            // We loaded everything, so we can change state and remove the idle callback function
+            if (id._nLoaded == id._nItems)
+            {
+                id._loadState = Controls.State.COMPLETE;
+                id._nLoaded = 0;
+                id._nItems = 0;
+                id._items = null;
+
+                CleanupLoadItems();
+
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void UpdateItem(CellBase cell)
+        {
+            cell.ButtonPressEvent += (sender, args) =>
+            {
+                var gtkCell = sender as CellBase;
+
+                if (gtkCell != null && gtkCell.Cell != null)
+                {
+                    var selectedItem = gtkCell.Cell.BindingContext;
+                    SelectedItem = selectedItem;
+                    OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
+                }
+            };
+
+            var itemContainer = cell as EventBox;
+
+            if (itemContainer != null)
+            {
+                itemContainer.VisibleWindow = false;
+            }
+
+            _list.PackStart(cell, false, false, 0);
+            cell.ShowAll();
+
+            var separator = new ListViewSeparator();
+            _separators.Add(separator);
+            _list.PackStart(separator, false, false, 0);
+            separator.ShowAll();
+        }
+
+        public void CleanupLoadItems()
+        {
+            Debug.Assert(_data._loadState == Controls.State.COMPLETE);
 
             _list.ShowAll();
 
-            if (_page * PageSize < _items.Count)
-                _page++;
+            if (_data._listStore == null)
+                Console.WriteLine("Something was wrong!");
+        }
+
+        private void PopulateData(List items)
+        {
+            if (_store != null)
+                return;
+
+            _store = new ListStore(typeof(CellBase));
+
+            foreach (var cell in _cells)
+            {
+                items.Append(cell);
+            }
+
+            ClearList();
+            LazyLoadItems(items);
         }
 
         private void ClearList()
         {
-            _page = 1;
-
             if (_list != null)
             {
                 foreach (var child in _list.Children)
@@ -401,30 +488,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 }
             }
 
-            if (_items != null)
-            {
-                _items.Clear();
-            }
-
             if (_separators != null)
             {
                 _separators.Clear();
-            }
-        }
-
-        private void OnVadjustmentValueChanged(object sender, EventArgs e)
-        {
-            var adjustment = sender as Adjustment;
-
-            if (adjustment.Value > 0)
-            {
-                var scrollHeight = adjustment.Upper - adjustment.PageSize;
-                bool isAtBottom = adjustment.Value >= scrollHeight - DefaultItemHeight;
-
-                if (isAtBottom)
-                {
-                    LoadItems();
-                }
             }
         }
     }
