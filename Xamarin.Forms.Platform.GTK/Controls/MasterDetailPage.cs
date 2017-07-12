@@ -18,6 +18,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private const int DefaultMasterWidth = 300;
         private const int IsPresentedAnimationMilliseconds = 300;
 
+        private Gdk.Rectangle _lastAllocation;
         private bool _isPresented;
         private MasterDetailMasterTitleContainer _titleContainer;
         private EventBox _masterContainerWrapper;
@@ -65,6 +66,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 if (_masterBehaviorType != value)
                 {
                     _masterBehaviorType = value;
+                    RefreshMasterBehavior(_masterBehaviorType);
                 }
             }
         }
@@ -191,21 +193,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             base.OnSizeAllocated(allocation);
 
+            if (_lastAllocation != allocation)
+            {
+                _lastAllocation = allocation;
+            }
+
             _master.WidthRequest = DefaultMasterWidth;
             _master.HeightRequest = _detail.HeightRequest = allocation.Height;
-
-            switch (_masterBehaviorType)
-            {
-                case MasterBehaviorType.Split:
-                    _detail.WidthRequest = allocation.Width - DefaultMasterWidth;
-                    _detail.MoveTo(_master.WidthRequest, 0);
-                    break;
-                case MasterBehaviorType.Default:
-                case MasterBehaviorType.Popover:
-                    _detail.WidthRequest = allocation.Width;
-                    _detail.MoveTo(0, 0);
-                    break;
-            }
+            RefreshMasterBehavior(_masterBehaviorType);
         }
 
         protected override void OnShown()
@@ -213,6 +208,23 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             base.OnShown();
 
             _animationsEnabled = true;
+        }
+
+
+        private void RefreshMasterBehavior(MasterBehaviorType masterBehaviorType)
+        {
+            switch (_masterBehaviorType)
+            {
+                case MasterBehaviorType.Split:
+                    _detail.WidthRequest = _lastAllocation.Width - DefaultMasterWidth;
+                    _detail.MoveTo(_master.WidthRequest, 0);
+                    break;
+                case MasterBehaviorType.Default:
+                case MasterBehaviorType.Popover:
+                    _detail.WidthRequest = _lastAllocation.Width;
+                    _detail.MoveTo(0, 0);
+                    break;
+            }
         }
 
         private void RefreshMaster(Widget newMaster)
