@@ -353,7 +353,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public void LazyLoadItems(List items)
+        private void LazyLoadItems(List items)
         {
             _data = new IdleData();
 
@@ -365,7 +365,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _data._loadId = Idle.Add(new IdleHandler(LoadItems));
         }
 
-        public bool LoadItems()
+        private bool LoadItems()
         {
             IdleData id = _data;
             CellBase obj;
@@ -452,7 +452,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             separator.ShowAll();
         }
 
-        public void CleanupLoadItems()
+        private void CleanupLoadItems()
         {
             Debug.Assert(_data._loadState == Controls.State.COMPLETE);
 
