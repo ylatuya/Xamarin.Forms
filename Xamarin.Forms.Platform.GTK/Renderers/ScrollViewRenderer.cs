@@ -125,6 +125,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (_currentView != null)
             {
                 renderer = _currentView.GetOrCreateRenderer();
+                renderer.Container.Unparent();
             }
 
             if (renderer != null)

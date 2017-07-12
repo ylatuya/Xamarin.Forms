@@ -25,15 +25,15 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
             _textLabel = new Gtk.Label();
             _textLabel.SetAlignment(0, 0);
-            _textLabel.Text = label;
+            _textLabel.Text = label ?? string.Empty;
             _textLabel.ModifyFg(StateType.Normal, labelColor);
 
             _root.PackStart(_textLabel, false, false, 0);
 
             _entryWrapper = new EntryWrapper();
             _entryWrapper.Sensitive = true;
-            _entryWrapper.Entry.Text = text;
-            _entryWrapper.PlaceholderText = placeholder;
+            _entryWrapper.Entry.Text = text ?? string.Empty;
+            _entryWrapper.PlaceholderText = placeholder ?? string.Empty;
             _entryWrapper.Entry.Changed += OnEntryChanged;
             _entryWrapper.Entry.EditingDone += OnEditingDone;
 
@@ -71,7 +71,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             if (_textLabel != null)
             {
-                _textLabel.Text = label;
+                _textLabel.Text = label ?? string.Empty;
             }
         }
 
@@ -87,7 +87,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             if (_entryWrapper != null)
             {
-                _entryWrapper.Entry.Text = text;
+                _entryWrapper.Entry.Text = text ?? string.Empty;
             }
         }
 
@@ -95,7 +95,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         {
             if (_entryWrapper != null)
             {
-                _entryWrapper.PlaceholderText = placeholder;
+                _entryWrapper.PlaceholderText = placeholder ?? string.Empty;
             }
         }
 

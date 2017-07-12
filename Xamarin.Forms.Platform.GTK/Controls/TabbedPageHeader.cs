@@ -17,7 +17,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             Add(_image);
 
             _label = new Gtk.Label();
-            _label.Text = title;
+            _label.Text = title ?? string.Empty;
             Add(_label);
 
             ShowAll();

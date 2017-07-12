@@ -17,7 +17,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void InsertPage(Widget container, string title, Pixbuf icon, int position)
         {
-            var header = new TabbedPageHeader(title, icon);
+            var header = new TabbedPageHeader(title ?? string.Empty, icon);
             container.Unparent();
 
             var wrapper = new NotebookPageWrapper(container);
@@ -97,7 +97,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetBackgroundImage(string backgroundImagePath)
         {
-            _backgroundPixbuf = new Pixbuf(backgroundImagePath);
+            _backgroundPixbuf = !string.IsNullOrEmpty(backgroundImagePath)
+                ? new Pixbuf(backgroundImagePath)
+                : null;
 
             for (int i = 0; i < _noteBook.NPages; i++)
             {
