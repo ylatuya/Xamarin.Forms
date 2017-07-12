@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System.ComponentModel;
 using System.Linq;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -23,6 +24,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     comboBox.Focused += OnFocused;
                     comboBox.FocusOutEvent += OnFocusOutEvent;
                     comboBox.Changed += OnChanged;
+
+                    ((LockableObservableListWrapper)Element.Items)._list.CollectionChanged += OnCollectionChanged;
 
                     SetNativeControl(comboBox);
                 }
@@ -64,6 +67,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         Control.Changed -= OnChanged;
                     }
 
+                    if(Element != null)
+                    {
+                        ((LockableObservableListWrapper)Element.Items)._list.CollectionChanged -= OnCollectionChanged;
+                    }
+
                 }
             }
 
@@ -87,8 +95,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateItemsSource()
         {
-            var items = Element.Items;
-
+            var items = ((LockableObservableListWrapper)Element.Items)._list;
             ListStore listStore = new ListStore(typeof(string));
             Control.Model = listStore;
 
@@ -138,6 +145,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnChanged(object sender, System.EventArgs e)
         {
             ElementController?.SetValueFromRenderer(Picker.SelectedIndexProperty, Control.Active);
+        }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateItemsSource();
         }
     }
 }
