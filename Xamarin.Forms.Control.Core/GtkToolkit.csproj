@@ -50,10 +50,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\StringValue.cs" />
+    <Compile Include="Controls\Calendar.cs" />
     <Compile Include="Controls\ColorButton.cs" />
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />
     <Compile Include="Controls\Expander.cs" />
+    <Compile Include="Controls\FileButton.cs" />
+    <Compile Include="Controls\FontButton.cs" />
     <Compile Include="Controls\GridSplitter.cs" />
     <Compile Include="Controls\DataGrid.cs" />
     <Compile Include="Controls\HyperLinkButton.cs" />
@@ -61,6 +64,7 @@
     <Compile Include="Controls\ScaleButton.cs" />
     <Compile Include="Controls\Separator.cs" />
     <Compile Include="Controls\StatusBar.cs" />
+    <Compile Include="Controls\ToggleButton.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

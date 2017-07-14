@@ -114,6 +114,18 @@
     <Compile Include="ControlGalleryPages\NestedNativeControlGalleryPage.cs" />
     <Compile Include="ControlGalleryPages\PanGestureGalleryPage.cs" />
     <Compile Include="CoreGalleryPages\KeyboardCoreGalleryPage.cs" />
+    <Compile Include="CustomControls\FontButtonPage.xaml.cs">
+      <DependentUpon>FontButtonPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\FileButtonPage.xaml.cs">
+      <DependentUpon>FileButtonPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\CalendarPage.xaml.cs">
+      <DependentUpon>CalendarPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomControls\ToggleButtonPage.xaml.cs">
+      <DependentUpon>ToggleButtonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\DataGridPage.xaml.cs">
       <DependentUpon>DataGridPage.xaml</DependentUpon>
     </Compile>
@@ -345,6 +357,10 @@
     <Compile Include="Weather\WeatherPage.xaml.cs">
       <DependentUpon>WeatherPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Xamarin.Forms.Live\LiveApp.cs" />
+    <Compile Include="Xamarin.Forms.Live\LivePage.xaml.cs">
+      <DependentUpon>LivePage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\.nuspec\Xamarin.Forms.targets" />
@@ -558,6 +574,36 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CustomControls\ColorButtonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\ToggleButtonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\FontButtonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\FileButtonPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\CalendarPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xamarin.Forms.Live\LivePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
