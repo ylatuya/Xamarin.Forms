@@ -76,6 +76,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.Dispose(disposing);
         }
 
+        internal override void OnElementFocusChangeRequested(object sender, VisualElement.FocusRequestArgs args)
+        {
+            if (Control == null)
+                return;
+
+            if (args.Focus)
+                args.Result = OpenPicker();
+            else
+                args.Result = ClosePicker();
+
+            base.OnElementFocusChangeRequested(sender, args);
+        }
+
         private void UpdateDate(DateTime date)
         {
             Control.CurrentDate = date;
@@ -121,6 +134,30 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnDateChanged(object sender, EventArgs e)
         {
             ElementController?.SetValueFromRenderer(DatePicker.DateProperty, Control.CurrentDate.Date);
+        }
+
+        private bool OpenPicker()
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+
+            Control.OpenPicker();
+
+            return true;
+        }
+
+        private bool ClosePicker()
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+
+            Control.ClosePicker();
+
+            return true;
         }
     }
 }
