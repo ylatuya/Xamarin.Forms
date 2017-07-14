@@ -24,7 +24,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
             var label = entryCell.Label ?? string.Empty;
             var labelColor = entryCell.LabelColor.ToGtkColor();
-            var text = entryCell.Text;
+            var text = entryCell.Text ?? string.Empty;
             var placeholder = entryCell.Placeholder;
 
             return new EntryCell(
@@ -51,7 +51,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             }
             else if (args.PropertyName == Xamarin.Forms.EntryCell.TextProperty.PropertyName)
             {
-                gtkEntryCell.Text = entryCell.Text;
+                gtkEntryCell.Text = entryCell.Text ?? string.Empty;
             }
             else if (args.PropertyName == Xamarin.Forms.EntryCell.PlaceholderProperty.PropertyName)
             {
@@ -61,7 +61,7 @@ namespace Xamarin.Forms.Platform.GTK.Cells
 
         private void OnTextChanged(object sender, string text)
         {
-            ((Xamarin.Forms.EntryCell)Cell).Text = text;
+            ((Xamarin.Forms.EntryCell)Cell).Text = text ?? string.Empty;
         }
 
         private void OnEditingDone(object sender, EventArgs e)

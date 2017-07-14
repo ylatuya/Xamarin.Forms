@@ -50,7 +50,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                _entryWrapper.Entry.Text = value;
+                _entryWrapper.Entry.Text = value ?? string.Empty;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                _entryWrapper.PlaceholderText = value;
+                _entryWrapper.PlaceholderText = value ?? string.Empty;
             }
         }
 
