@@ -36,7 +36,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (Page != null)
             {
+                Page.PropertyChanged -= OnPagePropertyChanged;
                 Page.PagesChanged -= OnPagesChanged;
+            }
+
+            if(Widget != null)
+            {
+                Widget.SelectedIndexChanged -= OnSelectedIndexChanged;
             }
         }
 
@@ -58,6 +64,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     Widget = new Carousel();
                     Widget.Animated = true;
+
+                    Widget.SelectedIndexChanged += OnSelectedIndexChanged;
 
                     var eventBox = new EventBox();
                     eventBox.Add(Widget);
@@ -85,6 +93,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBackgroundColor();
             UpdateBackgroundImage();
 
+            Page.PropertyChanged += OnPagePropertyChanged;
             Page.PagesChanged += OnPagesChanged;
         }
 
@@ -110,6 +119,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void UpdateBackgroundImage()
         {
             Widget?.SetBackgroundImage(Page.BackgroundImage);
+        }
+
+        private void OnPagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(TabbedPage.CurrentPage))
+                UpdateCurrentPage();
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -199,6 +214,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             UpdateCurrentPage();
+        }
+
+        private void OnSelectedIndexChanged(object sender, CarouselEventArgs args)
+        {
+            var selectedIndex = args.SelectedIndex;
+            var widgetPage = Widget.Pages[selectedIndex];
+            var page = widgetPage.Page as ContentPage;
+
+            if (page == null)
+                return;
+
+            if (((CarouselPage)Element).CurrentPage == page)
+                return;
+
+            ContentPage currentPage = page;
+
+            currentPage?.SendDisappearing();
+            ((CarouselPage)Element).CurrentPage = page;
+            page?.SendAppearing();
         }
     }
 }
