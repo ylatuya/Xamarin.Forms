@@ -1,0 +1,41 @@
+﻿using Xamarin.Forms;
+using GtkToolkit.Controls;
+using System.Collections.ObjectModel;
+
+namespace Xamarin.Forms.Controls.CustomControls
+{
+    public partial class TreeViewPage : ContentPage
+    {
+        public TreeViewPage()
+        {
+            InitializeComponent();
+
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            ObservableCollection<Node> items = new ObservableCollection<Node>();
+            var node1 = new Node { Name = "element1" };
+            var node2 = new Node { Name = "element2" };
+
+            for (int i = 1; i <= 50; i++)
+            {
+                node2.Children.Add(new Node { Name = "element2_" + i });
+            }
+
+            var node3 = new Node { Name = "element3" };
+            var node31 = new Node { Name = "element3_1" };
+            var node311 = new Node { Name = "element3_1_1" };
+
+            node3.Children.Add(node31);
+            node31.Children.Add(node311);
+
+            items.Add(node1);
+            items.Add(node2);
+            items.Add(node3);
+
+            TreeView.ItemsSource = items;
+        }
+    }
+}

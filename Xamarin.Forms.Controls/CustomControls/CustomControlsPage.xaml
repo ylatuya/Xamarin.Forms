@@ -23,6 +23,7 @@
                 <Button x:Name="SeparatorBtn" Text="Separator" />
                 <Button x:Name="StatusBarBtn" Text="StatusBar" />
                 <Button x:Name="ToggleButtonBtn" Text="ToggleButton" />
+                <Button x:Name="TreeViewBtn" Text="TreeView" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

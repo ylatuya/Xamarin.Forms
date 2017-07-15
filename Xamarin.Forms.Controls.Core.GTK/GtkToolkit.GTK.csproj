@@ -87,6 +87,7 @@
     <Compile Include="Renderers\SeparatorRenderer.cs" />
     <Compile Include="Renderers\StatusBarRenderer.cs" />
     <Compile Include="Renderers\ToggleButtonRenderer.cs" />
+    <Compile Include="Renderers\TreeViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xamarin.Forms.Control.Core\GtkToolkit.csproj">

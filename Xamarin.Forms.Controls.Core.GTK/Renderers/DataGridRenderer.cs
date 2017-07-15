@@ -13,19 +13,19 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 [assembly: ExportRenderer(typeof(DataGrid), typeof(DataGridRenderer))]
 namespace GtkToolkit.GTK.Renderers
 {
-    public class DataGridRenderer : ViewRenderer<DataGrid, TreeView>
+    public class DataGridRenderer : ViewRenderer<DataGrid, Gtk.TreeView>
     {
         private const int DefaultRowHeight = 40;
 
         private bool _disposed;
-        private TreeView _treeView;
+        private Gtk.TreeView _treeView;
         private ListStore _model;
 
         protected override void OnElementChanged(ElementChangedEventArgs<DataGrid> e)
         {
             if (Control == null)
             {
-                _treeView = new TreeView();
+                _treeView = new Gtk.TreeView();
 
                 _treeView.Selection.Changed += OnSelectionChanged;
 

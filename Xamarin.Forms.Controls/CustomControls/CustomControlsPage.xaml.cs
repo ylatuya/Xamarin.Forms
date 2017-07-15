@@ -24,6 +24,7 @@ namespace Xamarin.Forms.Controls.CustomControls
             SeparatorBtn.Clicked += (sender, args) => Navigation.PushAsync(new SeparatorPage());
             StatusBarBtn.Clicked += (sender, args) => Navigation.PushAsync(new StatusBarPage());
             ToggleButtonBtn.Clicked += (sender, args) => Navigation.PushAsync(new ToggleButtonPage());
+            TreeViewBtn.Clicked += (sender, args) => Navigation.PushAsync(new TreeViewPage());
         }
     }
 }
