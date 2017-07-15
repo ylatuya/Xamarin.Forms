@@ -2,6 +2,8 @@
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Xamarin.Forms.Live.GTK
 {
@@ -20,7 +22,7 @@ namespace Xamarin.Forms.Live.GTK
                 NotifyFilter = NotifyFilters.LastWrite
             };
 
-            fw.Changed += (sender, eventArgs) =>
+            fw.Changed += async (sender, eventArgs) =>
             {
                 Console.WriteLine(string.Format("Waiting changes in XAML files from {0}", eventArgs.FullPath));
 
@@ -48,7 +50,16 @@ namespace Xamarin.Forms.Live.GTK
                 if (page == null)
                     return;
 
-                UpdatePageFromXaml(page, xaml);
+                try
+                {
+                    await UpdatePageFromXamlAsync(page, xaml);
+                }
+                catch(Exception exception)
+                {
+                    var errorXaml = GetXamlException(exception);
+                    await UpdatePageFromXamlAsync(page, errorXaml);
+                    Console.WriteLine(exception.Message);
+                }
             };
         }
 
@@ -63,8 +74,10 @@ namespace Xamarin.Forms.Live.GTK
             return null;
         }
 
-        private static void UpdatePageFromXaml(Page page, string xaml)
+        private static Task UpdatePageFromXamlAsync(Page page, string xaml)
         {
+            var taskCompletionSource = new TaskCompletionSource<Page>();
+
             Device.BeginInvokeOnMainThread(() =>
             {
                 var bindingContext = page.BindingContext;
@@ -73,10 +86,12 @@ namespace Xamarin.Forms.Live.GTK
                     Console.WriteLine("Loading XAML...");
                     LoadXaml(page, xaml);
                     page.ForceLayout();
+                    taskCompletionSource.SetResult(page);
                 }
-                catch(Exception ex)
+                catch (Exception exception)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(exception.Message);
+                    taskCompletionSource.SetException(exception);
                 }
                 finally
                 {
@@ -84,6 +99,32 @@ namespace Xamarin.Forms.Live.GTK
                     Console.WriteLine("XAML Loaded!");
                 }
             });
+
+            return taskCompletionSource.Task;
+        }
+
+        private static string GetXamlException(Exception exception)
+        {
+            XNamespace xmlns = "http://xamarin.com/schemas/2014/forms";
+
+            var errorPage = new XDocument(  
+                new XElement(xmlns + "ContentPage",  
+                new XElement(xmlns + "ScrollView",     
+                new XElement(xmlns + "StackLayout",
+                new XAttribute("Margin", "12, 0"),
+                new XElement(xmlns + "Label",
+                    new XAttribute("Text", "Oops!"),
+                    new XAttribute("TextColor", "Red"),
+                    new XAttribute("FontSize", "Large")
+                ),
+                new XElement(xmlns + "Label",
+                    new XAttribute("Text", exception.Message),
+                    new XAttribute("TextColor", "Red"),
+                    new XAttribute("LineBreakMode", "CharacterWrap"),
+                    new XAttribute("FontSize", "Small")
+                ))))).ToString();
+
+            return errorPage;
         }
 
         private static void LoadXaml(BindableObject view, string xaml)
