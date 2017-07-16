@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using Xamarin.Forms;
 
 namespace GtkToolkit.Controls
@@ -20,6 +21,28 @@ namespace GtkToolkit.Controls
         }
     }
 
+    public class NodeEventArgs : EventArgs
+    {
+        private Node _node;
+
+        public NodeEventArgs(Node node)
+        {
+            _node = node;
+        }
+
+        public Node Node
+        {
+            get
+            {
+                return _node;
+            }
+            set
+            {
+                _node = value;
+            }
+        }
+    }
+
     public class TreeView : ContentView
     {
         public static readonly BindableProperty ItemsSourceProperty =
@@ -31,13 +54,42 @@ namespace GtkToolkit.Controls
             set { SetValue(ItemsSourceProperty, value); }
         }
 
-        public static readonly BindableProperty RowHeightProperty = 
+        public static readonly BindableProperty RowHeightProperty =
             BindableProperty.Create(nameof(RowHeight), typeof(int), typeof(TreeView), default(int));
 
         public int RowHeight
         {
             get { return (int)GetValue(RowHeightProperty); }
             set { SetValue(RowHeightProperty, value); }
+        }
+
+        public Color RowTextColor
+        {
+            get { return (Color)GetValue(RowTextColorProperty); }
+            set { SetValue(RowTextColorProperty, value); }
+        }
+
+        public static readonly BindableProperty RowTextColorProperty =
+            BindableProperty.Create(nameof(RowTextColor), typeof(Color), typeof(TreeView),
+                Color.Black);
+
+        public event EventHandler RowExpanded;
+        public event EventHandler RowCollapsed;
+        public event EventHandler RowSelected;
+
+        public void SendRowExpanded(Node node)
+        {
+            RowExpanded?.Invoke(this, new NodeEventArgs(node));
+        }
+
+        public void SendRowCollapsed(Node node)
+        {
+            RowCollapsed?.Invoke(this, new NodeEventArgs(node));
+        }
+
+        public void SendRowSelected(Node node)
+        {
+            RowSelected?.Invoke(this, new NodeEventArgs(node));
         }
     }
 }

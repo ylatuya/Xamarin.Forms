@@ -74,7 +74,7 @@ namespace GtkToolkit.GTK.Renderers
 
                 if (Control != null)
                 {
-                    Control.Selection.Changed += OnSelectionChanged;
+                    Control.Selection.Changed -= OnSelectionChanged;
                 }
             }
 

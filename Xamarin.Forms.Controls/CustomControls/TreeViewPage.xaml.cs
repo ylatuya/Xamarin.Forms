@@ -26,10 +26,8 @@ namespace Xamarin.Forms.Controls.CustomControls
 
             var node3 = new Node { Name = "element3" };
             var node31 = new Node { Name = "element3_1" };
-            var node311 = new Node { Name = "element3_1_1" };
 
             node3.Children.Add(node31);
-            node31.Children.Add(node311);
 
             items.Add(node1);
             items.Add(node2);
