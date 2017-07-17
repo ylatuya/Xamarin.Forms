@@ -95,12 +95,14 @@ namespace Xamarin.Forms.Platform.GTK
 
             if (oldElement != null)
             {
+                oldElement.FocusChangeRequested -= OnElementFocusChangeRequested;
                 oldElement.PropertyChanged -= _propertyChangedHandler;
             }
 
             if (element != null)
             {
                 element.PropertyChanged += _propertyChangedHandler;
+                element.FocusChangeRequested += OnElementFocusChangeRequested;
 
                 if (Tracker == null)
                 {
@@ -263,6 +265,22 @@ namespace Xamarin.Forms.Platform.GTK
         protected virtual void UpdateNativeControl()
         {
             UpdateSensitive();
+        }
+
+        internal virtual void OnElementFocusChangeRequested(object sender, VisualElement.FocusRequestArgs args)
+        {
+            var control = Control as Control;
+
+            if (control == null)
+                return;
+
+            if (args.Focus)
+                args.Result = control.IsFocus = true; 
+            else
+            {
+                control.IsFocus = false;
+                args.Result = true;
+            }
         }
 
         private void UpdateIsVisible()

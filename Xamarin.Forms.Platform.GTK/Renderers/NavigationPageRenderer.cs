@@ -335,7 +335,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             (page as IPageController)?.SendDisappearing();
             var target = Platform.GetRenderer(page);
 
-            if (animated)
+            if (animated && target != null)
             {
                 target.Container.MoveTo(0, 0);
                 var to = target.Container.Parent.Allocation.Width;
@@ -399,8 +399,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             GLib.Idle.Add(() =>
             {
                 var target = Platform.GetRenderer(page);
-                Control.RemoveFromContainer(target.Container);
-                //target?.Dispose();
+
+                if (target != null)
+                {
+                    Control.RemoveFromContainer(target.Container);
+                }
 
                 if (removeFromStack)
                 {
