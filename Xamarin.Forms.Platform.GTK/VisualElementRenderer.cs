@@ -158,8 +158,15 @@ namespace Xamarin.Forms.Platform.GTK
                 if (child != null)
                 {
                     var renderer = Platform.GetRenderer(child);
-                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+
+                    if (renderer != null)
+                    {
+                        double width = child.Bounds.Width >= -1 ? child.Bounds.Width : 0;
+                        double height = child.Bounds.Height >= -1 ? child.Bounds.Height : 0;
+
+                        renderer.Container.SetSize(width, height);
+                        renderer.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                    }
                 }
             }
         }
