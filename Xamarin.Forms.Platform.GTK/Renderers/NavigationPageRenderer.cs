@@ -147,9 +147,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Control.SetSizeRequest(
                     _lastAllocation.Width,
                     _lastAllocation.Height);
-                
 
-                foreach(var children in Control.Children)
+
+                foreach (var children in Control.Children)
                 {
                     children.SetSizeRequest(
                         _lastAllocation.Width,
@@ -217,21 +217,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected virtual async Task<bool> OnPopToRoot(Page page, bool animated)
         {
             var removed = await PopToRootPageAsync(page, animated);
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            UpdateToolBar();
             return removed;
         }
 
         protected virtual async Task<bool> OnPop(Page page, bool animated)
         {
             var removed = await PopPageAsync(page, animated);
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            UpdateToolBar();
             return removed;
         }
 
         protected virtual async Task<bool> OnPush(Page page, bool animated)
         {
-            var shown = await AddPage(page, animated);
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            var shown = await AddPageAsync(page, animated);
+            UpdateToolBar();
             return shown;
         }
 
@@ -281,10 +281,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             e.Task = PopToRootAsync(e.Page, e.Animated);
         }
 
-        private void OnRemovedPageRequested(object sender, NavigationRequestedEventArgs e)
+        private async void OnRemovedPageRequested(object sender, NavigationRequestedEventArgs e)
         {
-            RemovePage(e.Page, true, true);
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            await RemovePageAsync(e.Page, true, true);
+            UpdateToolBar();
         }
 
         private void OnInsertPageBeforeRequested(object sender, NavigationRequestedEventArgs e)
@@ -292,7 +292,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             InsertPageBefore(e.Page, e.BeforePage);
         }
 
-        private async Task<bool> AddPage(Page page, bool animated)
+        private async Task<bool> AddPageAsync(Page page, bool animated)
         {
             if (page == null)
                 throw new ArgumentNullException(nameof(page));
@@ -321,15 +321,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 var from = pageRenderer.Container.Parent.Allocation.Width;
                 pageRenderer.Container.MoveTo(from, 0);
-                var to = 0;
 
-                await new FloatAnimation(from, to, TimeSpan.FromMilliseconds(NavigationAnimationDuration), true, (x) =>
-                {
-                    Gtk.Application.Invoke(delegate
-                    {
-                        pageRenderer.Container.MoveTo(Convert.ToInt32(x), 0);
-                    });
-                }).Run();
+                await AnimatePageAsync(pageRenderer.Container, from, 0);
             }
 
             (page as IPageController)?.SendAppearing();
@@ -337,47 +330,23 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             return true;
         }
 
-        private async void RemovePage(Page page, bool removeFromStack, bool animated)
+        private async Task RemovePageAsync(Page page, bool removeFromStack, bool animated)
         {
             (page as IPageController)?.SendDisappearing();
             var target = Platform.GetRenderer(page);
 
-            if (target != null)
+            if (animated && target != null)
             {
-                if (animated)
-                {
-                    var from = 0;
-                    target.Container.MoveTo(0, 0);
-                    var to = target.Container.Parent.Allocation.Width;
+                target.Container.MoveTo(0, 0);
+                var to = target.Container.Parent.Allocation.Width;
 
-                    await new FloatAnimation(from, to, TimeSpan.FromMilliseconds(NavigationAnimationDuration), true, (x) =>
-                    {
-                        Gtk.Application.Invoke(delegate
-                        {
-                            target.Container.MoveTo(Convert.ToInt32(x), 0);
-                        });
-                    }).Run();
-                }
-
-                Control.RemoveFromContainer(target.Container);
-                target.Dispose();
+                await AnimatePageAsync(target.Container, 0, to);
+                FinishRemovePage(page, removeFromStack);
             }
-
-            if (removeFromStack)
+            else
             {
-                var newStack = new Stack<NavigationChildPage>();
-                foreach (var stack in _currentStack)
-                {
-                    if (stack.Page != page)
-                    {
-                        newStack.Push(stack);
-                    }
-                }
-                _currentStack = newStack;
+                FinishRemovePage(page, removeFromStack);
             }
-
-            var oldPage = _currentStack.Peek().Page;
-            (oldPage as IPageController)?.SendAppearing();
         }
 
         private void InsertPageBefore(Page page, Page before)
@@ -388,7 +357,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 throw new ArgumentNullException(nameof(page));
         }
 
-        private Task<bool> PopPageAsync(Page page, bool animated)
+        private async Task<bool> PopPageAsync(Page page, bool animated)
         {
             if (page == null)
                 throw new ArgumentNullException(nameof(page));
@@ -403,12 +372,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var target = Platform.GetRenderer(page);
             var previousPage = _currentStack.Peek().Page;
 
-            RemovePage(page, false, animated);
+            await RemovePageAsync(page, false, animated);
 
-            return Task.FromResult(true);
+            return true;
         }
 
-        private Task<bool> PopToRootPageAsync(Page page, bool animated)
+        private async Task<bool> PopToRootPageAsync(Page page, bool animated)
         {
             if (page == null)
                 throw new ArgumentNullException(nameof(page));
@@ -419,10 +388,41 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 var lastPage = _currentStack.Pop();
 
-                RemovePage(lastPage.Page, false, animated);
+                await RemovePageAsync(lastPage.Page, false, animated);
             }
 
-            return Task.FromResult(true);
+            return true;
+        }
+
+        private void FinishRemovePage(Page page, bool removeFromStack)
+        {
+            GLib.Idle.Add(() =>
+            {
+                var target = Platform.GetRenderer(page);
+
+                if (target != null)
+                {
+                    Control.RemoveFromContainer(target.Container);
+                }
+
+                if (removeFromStack)
+                {
+                    var newStack = new Stack<NavigationChildPage>();
+                    foreach (var stack in _currentStack)
+                    {
+                        if (stack.Page != page)
+                        {
+                            newStack.Push(stack);
+                        }
+                    }
+                    _currentStack = newStack;
+                }
+
+                var oldPage = _currentStack.Peek().Page;
+                (oldPage as IPageController)?.SendAppearing();
+
+                return false;
+            });
         }
 
         private void UpdateBackgroundColor()
@@ -440,13 +440,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBarBackgroundColor()
         {
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            UpdateToolBar();
             MessagingCenter.Send(Element, Forms.BarBackgroundColor, Element.BarBackgroundColor);
         }
 
         private void UpdateBarTextColor()
         {
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            UpdateToolBar();
             MessagingCenter.Send(Element, Forms.BarTextColor, Element.BarTextColor);
         }
 
@@ -454,7 +454,29 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             var backButton = Element.OnThisPlatform().GetBackButtonIcon();
             Platform.NativeToolbarTracker.UpdateBackButton(backButton);
-            Platform.NativeToolbarTracker.UpdateToolBar();
+            UpdateToolBar();
+        }
+
+        private Task AnimatePageAsync(Container container, int from, int to)
+        {
+            return new FloatAnimation(from, to, TimeSpan.FromMilliseconds(NavigationAnimationDuration), true, (x) =>
+            {
+                GLib.Timeout.Add(0, () =>
+                {
+                    container?.MoveTo(Convert.ToInt32(x), 0);
+
+                    return false;
+                });
+            }).Run();
+        }
+
+        private void UpdateToolBar()
+        {
+            GLib.Timeout.Add(0, () =>
+            {
+                Platform.NativeToolbarTracker.UpdateToolBar();
+                return false;
+            });
         }
 
         private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
