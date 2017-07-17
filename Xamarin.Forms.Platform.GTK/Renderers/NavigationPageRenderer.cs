@@ -342,23 +342,26 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             (page as IPageController)?.SendDisappearing();
             var target = Platform.GetRenderer(page);
 
-            if (animated)
+            if (target != null)
             {
-                var from = 0;
-                target.Container.MoveTo(0, 0);
-                var to = target.Container.Parent.Allocation.Width;
-
-                await new FloatAnimation(from, to, TimeSpan.FromMilliseconds(NavigationAnimationDuration), true, (x) =>
+                if (animated)
                 {
-                    Gtk.Application.Invoke(delegate
-                    {
-                        target.Container.MoveTo(Convert.ToInt32(x), 0);
-                    });
-                }).Run();
-            }
+                    var from = 0;
+                    target.Container.MoveTo(0, 0);
+                    var to = target.Container.Parent.Allocation.Width;
 
-            Control.RemoveFromContainer(target.Container);
-            target.Dispose();
+                    await new FloatAnimation(from, to, TimeSpan.FromMilliseconds(NavigationAnimationDuration), true, (x) =>
+                    {
+                        Gtk.Application.Invoke(delegate
+                        {
+                            target.Container.MoveTo(Convert.ToInt32(x), 0);
+                        });
+                    }).Run();
+                }
+
+                Control.RemoveFromContainer(target.Container);
+                target.Dispose();
+            }
 
             if (removeFromStack)
             {
