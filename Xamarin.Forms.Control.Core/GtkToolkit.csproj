@@ -64,6 +64,7 @@
     <Compile Include="Controls\ScaleButton.cs" />
     <Compile Include="Controls\Separator.cs" />
     <Compile Include="Controls\StatusBar.cs" />
+    <Compile Include="Controls\TextEditor.cs" />
     <Compile Include="Controls\ToggleButton.cs" />
     <Compile Include="Controls\TreeView.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />

@@ -70,6 +70,7 @@
     <Compile Include="Controls\AnalogClock.cs" />
     <Compile Include="Controls\DateTimePicker.cs" />
     <Compile Include="Controls\ImageCheckBox.cs" />
+    <Compile Include="Controls\TextEditor.cs" />
     <Compile Include="Helpers\CairoUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\CalendarRenderer.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Renderers\ScaleButtonRenderer.cs" />
     <Compile Include="Renderers\SeparatorRenderer.cs" />
     <Compile Include="Renderers\StatusBarRenderer.cs" />
+    <Compile Include="Renderers\TextEditorRenderer.cs" />
     <Compile Include="Renderers\ToggleButtonRenderer.cs" />
     <Compile Include="Renderers\TreeViewRenderer.cs" />
   </ItemGroup>

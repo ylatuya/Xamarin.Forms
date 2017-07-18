@@ -23,6 +23,7 @@ namespace Xamarin.Forms.Controls.CustomControls
             ScaleButtonBtn.Clicked += (sender, args) => Navigation.PushAsync(new ScaleButtonPage());
             SeparatorBtn.Clicked += (sender, args) => Navigation.PushAsync(new SeparatorPage());
             StatusBarBtn.Clicked += (sender, args) => Navigation.PushAsync(new StatusBarPage());
+            TextEditorBtn.Clicked += (sender, args) => Navigation.PushAsync(new TextEditorPage());
             ToggleButtonBtn.Clicked += (sender, args) => Navigation.PushAsync(new ToggleButtonPage());
             TreeViewBtn.Clicked += (sender, args) => Navigation.PushAsync(new TreeViewPage());
         }
