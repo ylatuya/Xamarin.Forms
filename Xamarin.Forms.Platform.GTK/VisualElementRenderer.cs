@@ -95,12 +95,14 @@ namespace Xamarin.Forms.Platform.GTK
 
             if (oldElement != null)
             {
+                oldElement.FocusChangeRequested -= OnElementFocusChangeRequested;
                 oldElement.PropertyChanged -= _propertyChangedHandler;
             }
 
             if (element != null)
             {
                 element.PropertyChanged += _propertyChangedHandler;
+                element.FocusChangeRequested += OnElementFocusChangeRequested;
 
                 if (Tracker == null)
                 {
@@ -156,8 +158,15 @@ namespace Xamarin.Forms.Platform.GTK
                 if (child != null)
                 {
                     var renderer = Platform.GetRenderer(child);
-                    renderer?.Container.SetSize(child.Bounds.Width, child.Bounds.Height);
-                    renderer?.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+
+                    if (renderer != null)
+                    {
+                        double width = child.Bounds.Width >= -1 ? child.Bounds.Width : 0;
+                        double height = child.Bounds.Height >= -1 ? child.Bounds.Height : 0;
+
+                        renderer.Container.SetSize(width, height);
+                        renderer.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
+                    }
                 }
             }
         }
@@ -263,6 +272,22 @@ namespace Xamarin.Forms.Platform.GTK
         protected virtual void UpdateNativeControl()
         {
             UpdateSensitive();
+        }
+
+        internal virtual void OnElementFocusChangeRequested(object sender, VisualElement.FocusRequestArgs args)
+        {
+            var control = Control as Control;
+
+            if (control == null)
+                return;
+
+            if (args.Focus)
+                args.Result = control.IsFocus = true; 
+            else
+            {
+                control.IsFocus = false;
+                args.Result = true;
+            }
         }
 
         private void UpdateIsVisible()

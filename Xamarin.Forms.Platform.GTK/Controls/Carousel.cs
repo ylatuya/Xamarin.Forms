@@ -8,6 +8,24 @@ using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
+    public class CarouselEventArgs : EventArgs
+    {
+        private int _selectedIndex;
+
+        public int SelectedIndex
+        {
+            get
+            {
+                return _selectedIndex;
+            }
+        }
+
+        public CarouselEventArgs(int selectedIndex)
+        {
+            _selectedIndex = selectedIndex;
+        }
+    }
+
     public class CarouselPage
     {
         public Container GtkPage { get; set; }
@@ -33,6 +51,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private double _initialPos;
         private bool _animated;
 
+        public delegate void EventHandler(object sender, CarouselEventArgs args);
+
+        public event EventHandler SelectedIndexChanged;
+
         public Carousel()
         {
             BuildCarousel();
@@ -57,13 +79,22 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public int SelectedIndex
         {
             get { return _selectedIndex; }
-            private set { _selectedIndex = value; }
+            private set
+            {
+                _selectedIndex = value;
+                SelectedIndexChanged?.Invoke(this, new CarouselEventArgs(_selectedIndex));
+            }
         }
 
         public bool Animated
         {
             get { return _animated; }
             set { _animated = value; }
+        }
+
+        public List<CarouselPage> Pages
+        {
+            get { return _pages; }
         }
 
         public void SetBackground(Gdk.Color backgroundColor)

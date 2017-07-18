@@ -70,6 +70,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateFormat();
         }
 
+        internal override void OnElementFocusChangeRequested(object sender, VisualElement.FocusRequestArgs args)
+        {
+            if (Control == null)
+                return;
+
+            if (args.Focus)
+                args.Result = OpenPicker();
+            else
+                args.Result = ClosePicker();
+
+            base.OnElementFocusChangeRequested(sender, args);
+        }
+
         private void UpdateTime()
         {
             if (Control == null || Element == null)
@@ -106,6 +119,30 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var currentTime = (DateTime.Today + Control.CurrentTime);
 
             ElementController?.SetValueFromRenderer(TimePicker.TimeProperty, currentTime);
+        }
+
+        private bool OpenPicker()
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+
+            Control.OpenPicker();
+
+            return true;
+        }
+
+        private bool ClosePicker()
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+
+            Control.ClosePicker();
+
+            return true;
         }
     }
 }
