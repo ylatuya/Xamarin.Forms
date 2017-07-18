@@ -10,11 +10,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private const uint DefaultBorderWidth = 1;
 
-        public ButtonRenderer()
-        {
-            Container.VisibleWindow = false;
-        }
-
         protected override bool PreventGestureBubbling { get; set; } = true;
 
         protected override void Dispose(bool disposing)
