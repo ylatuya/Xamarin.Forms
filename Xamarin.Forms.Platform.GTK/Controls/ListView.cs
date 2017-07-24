@@ -3,6 +3,7 @@ using Gtk;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -94,6 +95,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private IdleData _data;
         private ListStore _store = null;
         private List _items;
+        private CellBase _selectedCell;
+        private Gdk.Color _selectionColor;
 
         public delegate void ItemTappedEventHandler(object sender, ItemTappedEventArgs args);
         public event ItemTappedEventHandler OnItemTapped = null;
@@ -107,7 +110,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public ListView()
         {
             BuildListView();
+
+            _selectionColor = DefaultSelectionColor;
         }
+
+        public static Gdk.Color DefaultSelectionColor = Color.FromHex("#3498DB").ToGtkColor();
 
         public Widget Header
         {
@@ -162,8 +169,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (value != _selectedItem)
                 {
-                    _selectedItem = value;
-                    OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(_selectedItem));
+                    UpdateSelectedItem(value);
                 }
             }
         }
@@ -178,6 +184,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             get { return _refreshing; }
             set { _refreshing = value; }
+        }
+
+        public Gdk.Color SelectionColor
+        {
+            get
+            {
+                return _selectionColor;
+            }
+
+            set
+            {
+                _selectionColor = value;
+                SelectionColorUpdated();
+            }
         }
 
         public void SetBackgroundColor(Gdk.Color backgroundColor)
@@ -436,18 +456,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                 if (gtkCell != null && gtkCell.Cell != null)
                 {
-                    var selectedItem = gtkCell.Cell.BindingContext;
-                    SelectedItem = selectedItem;
+                    SelectedItem = gtkCell.Item;
+
+                    MarkCellAsSelected(gtkCell);
+
                     OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
                 }
             };
-
-            var itemContainer = cell as EventBox;
-
-            if (itemContainer != null)
-            {
-                itemContainer.VisibleWindow = false;
-            }
+            
+            cell.VisibleWindow = false;
 
             _list.PackStart(cell, false, false, 0);
             cell.ShowAll();
@@ -483,6 +500,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void ClearList()
         {
+            _selectedCell = null;
+
             if (_list != null)
             {
                 foreach (var child in _list.Children)
@@ -495,6 +514,37 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 _separators.Clear();
             }
+        }
+
+        private void UpdateSelectedItem(object value)
+        {
+            _selectedItem = value;
+
+            CellBase cell = _list.Children.OfType<CellBase>().FirstOrDefault(c => c.Item == value);
+            MarkCellAsSelected(cell);
+
+            OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(_selectedItem));
+        }
+
+        private void MarkCellAsSelected(CellBase cell)
+        {
+            foreach (var childCell in _list.Children.OfType<CellBase>())
+            {
+                bool isTargetCell = cell == childCell;
+
+                childCell.VisibleWindow = isTargetCell;
+
+                if (isTargetCell)
+                {
+                    _selectedCell = childCell;
+                    childCell.ModifyBg(StateType.Normal, _selectionColor);
+                }
+            }
+        }
+
+        private void SelectionColorUpdated()
+        {
+            _selectedCell?.ModifyBg(StateType.Normal, _selectionColor);
         }
     }
 }
