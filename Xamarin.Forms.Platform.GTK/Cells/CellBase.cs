@@ -39,6 +39,8 @@ namespace Xamarin.Forms.Platform.GTK.Cells
             }
         }
 
+        public object Item => Cell?.BindingContext;
+
         protected bool ParentHasUnevenRows
         {
             get
