@@ -65,8 +65,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Widget = new Carousel();
                     Widget.Animated = true;
 
-                    Widget.SelectedIndexChanged += OnSelectedIndexChanged;
-
                     var eventBox = new EventBox();
                     eventBox.Add(Widget);
                     Control.Content = eventBox;
@@ -80,7 +78,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (newPage != null)
             {
-                UpdateCurrentPage();
                 newPage.SendAppearing();
             }
 
@@ -195,6 +192,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateSource()
         {
+            Widget.SelectedIndexChanged -= OnSelectedIndexChanged;
+
             _pages = new List<PageContainer>();
 
             for (var i = 0; i < Element.LogicalChildren.Count; i++)
@@ -214,6 +213,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             UpdateCurrentPage();
+
+            Widget.SelectedIndexChanged += OnSelectedIndexChanged;
         }
 
         private void OnSelectedIndexChanged(object sender, CarouselEventArgs args)

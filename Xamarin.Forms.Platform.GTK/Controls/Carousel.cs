@@ -128,6 +128,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (page != null)
             {
                 var gtkPage = Platform.CreateRenderer(page);
+                gtkPage.Container.Shown += OnChildPageShown;
+
                 _pages.Insert(index, new CarouselPage(gtkPage.Container, page));
                 _root.Attach(gtkPage.Container, 0, 1, 0, 1);
             }
@@ -142,9 +144,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (page != null)
             {
                 var gtkPage = _pages.FirstOrDefault(p => p.Page == page);
-
+                
                 if (gtkPage != null)
                 {
+                    gtkPage.GtkPage.Shown -= OnChildPageShown;
                     _pages.Remove(gtkPage);
                     _root.RemoveFromContainer(gtkPage.GtkPage);
                 }
@@ -155,6 +158,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void Reset()
         {
+            foreach (var page in _pages)
+            {
+                page.GtkPage.Shown -= OnChildPageShown;
+            }
+
             _pages.Clear();
 
             do
@@ -181,16 +189,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 Internals.Log.Warning("CarouselPage BackgroundImage", "Could not load background image: {0}", ex);
             }
-        }
-
-        protected override bool OnExposeEvent(EventExpose evnt)
-        {
-            if (_pages.Count(p => p.GtkPage.Visible) > 1)
-            {
-                SetCurrentPage(SelectedIndex);
-            }
-
-            return base.OnExposeEvent(evnt);
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
@@ -264,6 +262,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 {
                     var page = pageContainer.Page;
                     var gtkPage = Platform.CreateRenderer(page);
+                    gtkPage.Container.Shown += OnChildPageShown;
 
                     _pages.Add(new CarouselPage(gtkPage.Container, page));
                     _root.Attach(gtkPage.Container, 0, 1, 0, 1);
@@ -295,6 +294,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             
             SelectedIndex++;
 
+            SetCurrentPage(SelectedIndex);
+        }
+
+        private void OnChildPageShown(object sender, EventArgs e)
+        {
             SetCurrentPage(SelectedIndex);
         }
     }
