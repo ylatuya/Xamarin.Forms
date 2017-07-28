@@ -83,6 +83,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _tracker?.Dispose();
             _tracker = null;
 
+            if (Page?.Master != null)
+            {
+                Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
+            }
+
             base.Dispose();
         }
 
@@ -132,8 +137,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateMasterBehavior();
         }
 
+        private async void HandleMasterPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == Xamarin.Forms.Page.IconProperty.PropertyName)
+                await UpdateHamburguerIconAsync();
+        }
+
         private async Task UpdateMasterDetail()
         {
+            Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
             await UpdateHamburguerIconAsync();
 
             if (Platform.GetRenderer(Page.Master) == null)
@@ -147,6 +159,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             UpdateBarTextColor();
             UpdateBarBackgroundColor();
+
+            Page.Master.PropertyChanged += HandleMasterPropertyChanged;
         }
 
         private void UpdateIsPresented()
@@ -204,6 +218,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 var image = await handler.LoadImageAsync(hamburguerIcon);
                 Widget.UpdateHamburguerIcon(image);
+
+                Platform.NativeToolbarTracker.UpdateToolBar();
             }
         }
 
