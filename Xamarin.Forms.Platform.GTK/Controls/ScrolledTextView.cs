@@ -22,5 +22,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
 
         public TextView TextView => _textView;
+
+        protected override void OnFocusGrabbed()
+        {
+            _textView?.GrabFocus();
+        }
     }
 }
