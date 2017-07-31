@@ -501,20 +501,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
 
             var templatedItems = TemplatedItemsView.TemplatedItems;
-            var index = -1;
-
-            if (Element.IsGroupingEnabled)
-            {
-                int selectedItemIndex = templatedItems.GetGlobalIndexOfItem(args.Item);
-                var leftOver = 0;
-                int groupIndex = templatedItems.GetGroupIndexFromGlobal(selectedItemIndex, out leftOver);
-
-                index = selectedItemIndex - (groupIndex + 1);
-            }
-            else
-            {
-                index = templatedItems.GetGlobalIndexOfItem(args.Item);
-            }
+            var index = templatedItems.GetGlobalIndexOfItem(args.Item);
 
             if (index > -1)
             {

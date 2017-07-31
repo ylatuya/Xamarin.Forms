@@ -84,6 +84,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             ShowPlaceholderIfNeeded();
         }
 
+        protected override void OnFocusGrabbed()
+        {
+            _entry?.GrabFocus();
+        }
+
         private void ShowPlaceholderIfNeeded()
         {
             if (string.IsNullOrEmpty(_entry.Text) && !string.IsNullOrEmpty(_placeholder.Text))

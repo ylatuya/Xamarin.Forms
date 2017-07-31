@@ -56,9 +56,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Element == null || Control == null)
                 return;
 
-            var backgroundColor = color != Color.Default ? color : Color.Transparent;
-
-            Control.UpdateColor(backgroundColor.ToGtkColor());
+            if (color.IsDefaultOrTransparent())
+            {
+                Control.ResetColor();
+            }
+            else
+            {
+                var backgroundColor = color.ToGtkColor();
+                Control.UpdateColor(backgroundColor);
+            }
         }
 
         private void SetSize()

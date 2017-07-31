@@ -155,6 +155,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _entryWrapper.SetAlignment(alignmentValue);
         }
 
+        protected override void OnFocusGrabbed()
+        {
+            _entryWrapper?.GrabFocus();
+        }
+
         private void ShowClearButton()
         {
             if (_clearButton.Parent == null)
