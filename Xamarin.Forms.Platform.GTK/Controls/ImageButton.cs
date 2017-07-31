@@ -26,7 +26,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _defaultBorderColor = Style.BaseColors[(int)StateType.Active];
 
             Relief = ReliefStyle.None;
-            CanFocus = false;
 
             _image = new Gtk.Image();
             _label = new Gtk.Label();
