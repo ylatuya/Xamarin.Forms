@@ -171,30 +171,33 @@ namespace Xamarin.Forms.Platform.GTK
 
             var pageControl = PlatformRenderer.Child as IPageControl;
 
-            if (pageControl != null)
+            Device.BeginInvokeOnMainThread(() =>
             {
-                var page = pageControl.Control;
-
-                if (page != null)
+                if (pageControl != null)
                 {
-                    if (page.Children.Length > 0)
-                    {
-                        page.Remove(modalPage);
-                    }
+                    var page = pageControl.Control;
 
-                    if (page.Children != null)
+                    if (page != null)
                     {
-                        foreach (var children in page.Children)
+                        if (page.Children.Length > 0)
                         {
-                            children.ShowAll();
+                            page.Remove(modalPage);
                         }
 
-                        page.ShowAll();
+                        if (page.Children != null)
+                        {
+                            foreach (var children in page.Children)
+                            {
+                                children.ShowAll();
+                            }
+
+                            page.ShowAll();
+                        }
                     }
                 }
-            }
 
-            DisposeModelAndChildrenRenderers(modal);
+                DisposeModelAndChildrenRenderers(modal);
+            });
 
             return Task.FromResult<Page>(modal);
         }
@@ -238,25 +241,28 @@ namespace Xamarin.Forms.Platform.GTK
 
             var pageControl = PlatformRenderer.Child as IPageControl;
 
-            if (pageControl != null)
+            Device.BeginInvokeOnMainThread(() =>
             {
-                var page = pageControl.Control;
-
-                if (page != null)
+                if (pageControl != null)
                 {
-                    page.Attach(modalRenderer.Container, 0, 1, 0, 1);
+                    var page = pageControl.Control;
 
-                    if (page.Children != null)
+                    if (page != null)
                     {
-                        foreach (var children in page.Children)
-                        {
-                            children.ShowAll();
-                        }
+                        page.Attach(modalRenderer.Container, 0, 1, 0, 1);
 
-                        page.ShowAll();
+                        if (page.Children != null)
+                        {
+                            foreach (var children in page.Children)
+                            {
+                                children.ShowAll();
+                            }
+
+                            page.ShowAll();
+                        }
                     }
                 }
-            }
+            });
 
             return Task.FromResult<object>(null);
         }
