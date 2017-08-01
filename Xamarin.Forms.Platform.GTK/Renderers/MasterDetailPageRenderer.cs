@@ -88,7 +88,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
             }
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
 
         protected override async void OnElementChanged(VisualElementChangedEventArgs e)
