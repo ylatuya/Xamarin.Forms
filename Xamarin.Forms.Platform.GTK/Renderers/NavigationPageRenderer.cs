@@ -120,7 +120,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Platform.NativeToolbarTracker.TryHide(Element as NavigationPage);
             _appeared = false;
 
-            PageController.SendDisappearing();
+            PageController?.SendDisappearing();
 
             base.OnDestroyed();
         }
