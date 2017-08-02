@@ -17,6 +17,7 @@ using Xamarin.Forms.Platform.GTK.Renderers;
 [assembly: ExportImageSourceHandler(typeof(UriImageSource), typeof(UriImageSourceHandler))]
 
 [assembly: Dependency(typeof(ResourcesProvider))]
+[assembly: Dependency(typeof(GtkSerializer))]
 
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(BoxView), typeof(BoxViewRenderer))]
