@@ -991,7 +991,7 @@
                 g.ResetTransform();
             }
 
-            if (!SelectedArea.IsEmpty)
+            if (!SelectedArea.IsEmpty && MouseWheelZoomEnabled)
             {
                 GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
                 GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
@@ -1145,7 +1145,7 @@
         protected override void OnSizeAllocated(Gdk.Rectangle box)
         {
             base.OnSizeAllocated(box);
-            Console.WriteLine(string.Format("Allocation Tread: {0}", System.Threading.Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(string.Format("Allocation Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             if (box.Width == 0 || box.Height == 0)
             {
                 Debug.WriteLine("minimized");
@@ -1373,7 +1373,7 @@
             }
             else
             {
-                if (_isSelected || DisableAltForSelection)
+                if ((_isSelected || DisableAltForSelection) && MouseWheelZoomEnabled)
                 {
                     _selectionEnd = FromLocalToLatLng((int)e.X, (int)e.Y);
                     {
@@ -1583,7 +1583,7 @@
 
             if (IsRotated)
             {
-                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
+                Point[] tt = new Point[] { new Point(x, y) };
                 rotationMatrixInvert.TransformPoints(tt);
                 var f = tt[0];
 
@@ -1611,7 +1611,7 @@
 
             if (IsRotated)
             {
-                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point((int)ret.X, (int)ret.Y) };
+                Point[] tt = new Point[] { new Point((int)ret.X, (int)ret.Y) };
                 rotationMatrix.TransformPoints(tt);
                 var f = tt[0];
 
