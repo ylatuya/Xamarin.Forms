@@ -55,6 +55,7 @@ namespace Xamarin.Forms.Maps.GTK
                     Control.OnPositionChanged += OnPositionChanged;
                     Control.OnMapZoomChanged += OnMapZoomChanged;
                     Control.ButtonPressEvent += OnButtonPressEvent;
+                    Control.OnMarkerClick += OnMarkerClick;
                 }
 
                 MessagingCenter.Subscribe<Maps.Map, MapSpan>(this, "MapMoveToRegion", (s, a) =>
@@ -127,6 +128,7 @@ namespace Xamarin.Forms.Maps.GTK
                     Control.OnPositionChanged -= OnPositionChanged;
                     Control.OnMapZoomChanged -= OnMapZoomChanged;
                     Control.ButtonPressEvent -= OnButtonPressEvent;
+                    Control.OnMarkerClick -= OnMarkerClick;
                 }
 
                 if (Element != null)
@@ -175,11 +177,13 @@ namespace Xamarin.Forms.Maps.GTK
 
             if (overlay != null)
             {
-                overlay.Markers.Add(new GMapImageMarker(
+                var gMapImageMarker = new GMapImageMarker(
                     new PointLatLng(
                         pin.Position.Latitude,
                         pin.Position.Longitude),
-                    GMapImageMarkerType.RedDot));
+                    GMapImageMarkerType.RedDot);
+
+                overlay.Markers.Add(gMapImageMarker);
             }
         }
 
@@ -189,7 +193,7 @@ namespace Xamarin.Forms.Maps.GTK
 
             if (overlay != null)
             {
-                var positionToRemove = new GMap.NET.PointLatLng(
+                var positionToRemove = new PointLatLng(
                         pinToRemove.Position.Latitude,
                         pinToRemove.Position.Longitude);
 
@@ -402,6 +406,21 @@ namespace Xamarin.Forms.Maps.GTK
                 Log.Warning("Xamarin.Forms MapRenderer", $"UpdateVisibleRegion exception: {ex}");
 
                 return;
+            }
+        }
+
+        private void OnMarkerClick(GMap.NET.GTK.Markers.GMapMarker item)
+        {
+            var marker = item;
+
+            foreach (var pin in Element.Pins)
+            {
+                if(pin.Position.Latitude == marker.Position.Lat &&
+                    pin.Position.Longitude == marker.Position.Lng)
+                {
+                    pin.SendTap();
+                    break;
+                }
             }
         }
     }
