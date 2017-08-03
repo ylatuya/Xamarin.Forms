@@ -5,14 +5,11 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class MasterDetailPageRenderer : AbstractPageRenderer<Controls.MasterDetailPage, MasterDetailPage>
     {
-        private VisualElementTracker<Page, Container> _tracker;
-
         public MasterDetailPageRenderer()
         {
             MessagingCenter.Subscribe(this, Forms.BarTextColor, (NavigationPage sender, Color color) =>
@@ -44,48 +41,22 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             });
         }
 
-        protected VisualElementTracker<Page, Container> Tracker
-        {
-            get { return _tracker; }
-            set
-            {
-                if (_tracker == value)
-                    return;
-
-                if (_tracker != null)
-                    _tracker.Dispose();
-
-                _tracker = value;
-            }
-        }
-
-        public override void SetElement(VisualElement element)
-        {
-            var oldElement = Element;
-
-            Element = element;
-
-            OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
-
-            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
-        }
-
         protected override void Dispose(bool disposing)
         {
-            if (Widget != null)
+            if (disposing)
             {
-                Widget.IsPresentedChanged -= OnIsPresentedChanged;
-            }
+                if (Widget != null)
+                {
+                    Widget.IsPresentedChanged -= OnIsPresentedChanged;
+                }
 
-            MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarTextColor);
-            MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarBackgroundColor);
+                MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarTextColor);
+                MessagingCenter.Unsubscribe<NavigationPage, Color>(this, Forms.BarBackgroundColor);
 
-            _tracker?.Dispose();
-            _tracker = null;
-
-            if (Page?.Master != null)
-            {
-                Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
+                if (Page?.Master != null)
+                {
+                    Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
+                }
             }
 
             base.Dispose(disposing);
@@ -93,17 +64,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override async void OnElementChanged(VisualElementChangedEventArgs e)
         {
-            if (e.OldElement != null)
-                e.OldElement.PropertyChanged -= OnElementPropertyChanged;
+            base.OnElementChanged(e);
 
             if (e.NewElement != null)
             {
-                if (Control == null)
-                {
-                    Control = new Controls.Page();
-                    Add(Control);
-                }
-
                 if (Widget == null)
                 {
                     Widget = new Controls.MasterDetailPage();
@@ -120,8 +84,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     UpdateBarTextColor();
                     UpdateBarBackgroundColor();
                 }
-
-                e.NewElement.PropertyChanged += OnElementPropertyChanged;
             }
         }
 
