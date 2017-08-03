@@ -270,4 +270,6 @@ namespace GMap.NET.GTK.Markers
     public delegate void MarkerEnter(GMapMarker item);
 
     public delegate void MarkerLeave(GMapMarker item);
+
+    public delegate void MarkerClick(GMapMarker item);
 }

@@ -4,7 +4,6 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
-using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -116,6 +115,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
 
             UpdateBackgroundColor();
+            UpdateBackgroundImage();
 
             _appeared = true;
 
@@ -166,6 +166,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
         {
+            if (e.OldElement != null)
+                e.OldElement.PropertyChanged -= OnElementPropertyChanged;
+
             if (e.NewElement != null)
             {
                 if (Control == null)
@@ -174,9 +177,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Add(Control);
                 }
 
-                VisibleWindow = Page.ShouldDisplayNativeWindow();
-                UpdateBackgroundImage();
+                e.NewElement.PropertyChanged += OnElementPropertyChanged;
             }
+
+            UpdateBackgroundImage();
 
             ElementChanged?.Invoke(this, e);
         }
@@ -197,6 +201,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void UpdateBackgroundImage()
         {
+            VisibleWindow = Page.ShouldDisplayNativeWindow();
             Control.SetBackgroundImage(Page.BackgroundImage);
         }
 

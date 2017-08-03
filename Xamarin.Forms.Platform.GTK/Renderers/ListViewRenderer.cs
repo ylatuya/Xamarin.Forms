@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -35,8 +34,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 e.OldElement.ScrollToRequested -= OnElementScrollToRequested;
 
-                var templatedItems = ((ITemplatedItemsView<Cell>)e.OldElement).TemplatedItems;
+                var templatedItems = TemplatedItemsView.TemplatedItems;
                 templatedItems.CollectionChanged -= OnCollectionChanged;
+                templatedItems.GroupedCollectionChanged -= OnGroupedCollectionChanged;
             }
 
             if (e.NewElement != null)
@@ -52,8 +52,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(_listView);
                 }
 
-                var templatedItems = ((ITemplatedItemsView<Cell>)e.NewElement).TemplatedItems;
+                var templatedItems = TemplatedItemsView.TemplatedItems;
                 templatedItems.CollectionChanged += OnCollectionChanged;
+                templatedItems.GroupedCollectionChanged += OnGroupedCollectionChanged;
 
                 UpdateItems();
                 UpdateGrouping();
@@ -108,6 +109,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     var templatedItems = TemplatedItemsView.TemplatedItems;
                     templatedItems.CollectionChanged -= OnCollectionChanged;
+                    templatedItems.GroupedCollectionChanged -= OnGroupedCollectionChanged;
                 }
 
                 if (_headerRenderer != null)
@@ -411,6 +413,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            UpdateSource();
+        }
+
+        private void OnGroupedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateSource();
+        }
+
+        private void UpdateSource()
+        {
             bool grouping = Element.IsGroupingEnabled;
 
             if (grouping)
@@ -421,7 +433,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void OnRefresh(object sender, EventArgs args)
         {
-            if(Element == null)
+            if (Element == null)
             {
                 return;
             }
@@ -483,7 +495,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
             }
 
-            var listHeight = _listView.Allocation.Height; 
+            var listHeight = _listView.Allocation.Height;
 
             if (e.Position == ScrollToPosition.Start)
                 y = height;

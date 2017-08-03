@@ -213,17 +213,26 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RefreshMasterBehavior(MasterBehaviorType masterBehaviorType)
         {
+            int detailWidthRequest = 0;
+            Gdk.Point point = default(Gdk.Point);
+
             switch (_masterBehaviorType)
             {
                 case MasterBehaviorType.Split:
-                    _detail.WidthRequest = _lastAllocation.Width - DefaultMasterWidth;
-                    _detail.MoveTo(_master.WidthRequest, 0);
+                    detailWidthRequest = _lastAllocation.Width - DefaultMasterWidth;
+                    point = new Gdk.Point(_master.WidthRequest, 0);
                     break;
                 case MasterBehaviorType.Default:
                 case MasterBehaviorType.Popover:
-                    _detail.WidthRequest = _lastAllocation.Width;
-                    _detail.MoveTo(0, 0);
+                    detailWidthRequest = _lastAllocation.Width;
+                    point = new Gdk.Point(0, 0);
                     break;
+            }
+
+            if (detailWidthRequest >= 0)
+            {
+                _detail.WidthRequest = detailWidthRequest;
+                _detail.MoveTo(point.X, point.Y);
             }
         }
 

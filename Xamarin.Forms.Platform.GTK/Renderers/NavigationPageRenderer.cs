@@ -12,17 +12,11 @@ using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class NavigationPageRenderer : Container, IVisualElementRenderer, IEffectControlProvider
+    public class NavigationPageRenderer : AbstractPageRenderer<Fixed, NavigationPage>
     {
         private const int NavigationAnimationDuration = 250;    // Ms
 
-        private bool _disposed;
-        private bool _appeared;
         private Stack<NavigationChildPage> _currentStack;
-        private VisualElementTracker<Page, Container> _tracker;
-        private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
-
-        IPageController PageController => Element as IPageController;
 
         INavigationPageController NavigationController => Element as INavigationPageController;
 
@@ -31,58 +25,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             _currentStack = new Stack<NavigationChildPage>();
         }
 
-        public Fixed Control { get; private set; }
-
-        public Container Container => this;
-
-        public NavigationPage Element { get; private set; }
-
-        public bool Disposed { get { return _disposed; } }
-
-        VisualElement IVisualElementRenderer.Element => Element;
-
-        public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
-
-        void IEffectControlProvider.RegisterEffect(Effect effect)
+        public Task<bool> PopToRootAsync(Page page, bool animated = true)
         {
-            var platformEffect = effect as PlatformEffect;
-            if (platformEffect != null)
-                platformEffect.SetContainer(Container);
+            return OnPopToRoot(page, animated);
         }
 
-        protected VisualElementTracker<Page, Container> Tracker
+        public Task<bool> PopViewAsync(Page page, bool animated = true)
         {
-            get { return _tracker; }
-            set
-            {
-                if (_tracker == value)
-                    return;
-
-                if (_tracker != null)
-                    _tracker.Dispose();
-
-                _tracker = value;
-            }
+            return OnPop(page, animated);
         }
 
-        public override void Dispose()
+        public Task<bool> PushPageAsync(Page page, bool animated = true)
         {
-            if (!_disposed)
+            return OnPush(page, animated);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (Element != null)
-                {
-                    PageController?.SendDisappearing();
-                    ((Element as IPageContainer<Page>)?.CurrentPage as IPageController)?.SendDisappearing();
-                    Element.PropertyChanged -= HandlePropertyChanged;
-                    Element = null;
-                }
-
-                if (_tracker != null)
-                {
-                    _tracker?.Dispose();
-                    _tracker = null;
-                }
-
                 if (NavigationController != null)
                 {
                     NavigationController.PushRequested -= OnPushRequested;
@@ -91,16 +52,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     NavigationController.RemovePageRequested -= OnRemovedPageRequested;
                     NavigationController.InsertPageBeforeRequested -= OnInsertPageBeforeRequested;
                 }
-
-                _disposed = true;
             }
 
-            base.Dispose();
+            base.Dispose(disposing);
         }
 
         protected override void OnShown()
         {
-            Platform.NativeToolbarTracker.Navigation = Element;
+            Platform.NativeToolbarTracker.Navigation = Page;
 
             if (_appeared)
                 return;
@@ -117,101 +76,68 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_appeared)
                 return;
 
-            Platform.NativeToolbarTracker.TryHide(Element as NavigationPage);
+            Platform.NativeToolbarTracker.TryHide(Page);
             _appeared = false;
 
-            PageController.SendDisappearing();
+            PageController?.SendDisappearing();
 
             base.OnDestroyed();
-        }
-
-        protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
-        {
-            if (e.OldElement != null)
-                e.OldElement.PropertyChanged -= HandlePropertyChanged;
-
-            if (e.NewElement != null)
-                e.NewElement.PropertyChanged += HandlePropertyChanged;
-
-            ElementChanged?.Invoke(this, e);
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
 
-            if (_lastAllocation != allocation)
+            Widget.SetSizeRequest(allocation.Width, allocation.Height);
+
+            foreach (var children in Widget.Children)
             {
-                _lastAllocation = allocation;
+                children.SetSizeRequest(
+                    allocation.Width,
+                    allocation.Height);
+            }
+        }
 
-                Control.SetSizeRequest(
-                    _lastAllocation.Width,
-                    _lastAllocation.Height);
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            base.OnElementChanged(e);
 
+            if (e.OldElement != null)
+            {
+                NavigationController.PushRequested -= OnPushRequested;
+                NavigationController.PopRequested -= OnPopRequested;
+                NavigationController.PopToRootRequested -= OnPopToRootRequested;
+                NavigationController.RemovePageRequested -= OnRemovedPageRequested;
+                NavigationController.InsertPageBeforeRequested -= OnInsertPageBeforeRequested;
+            }
 
-                foreach (var children in Control.Children)
+            if (e.NewElement != null)
+            {
+                if (Widget == null)
                 {
-                    children.SetSizeRequest(
-                        _lastAllocation.Width,
-                        _lastAllocation.Height);
+                    Widget = new Fixed();
+                    var eventBox = new EventBox();
+                    eventBox.Add(Widget);
+                    Add(Widget);
+
+                    Control.Content = eventBox;
                 }
+
+                UpdateBackgroundImage();
+                Init();
             }
         }
 
-        public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
+        protected override void UpdateBackgroundImage()
         {
-            var result = new Size(
-             widthConstraint,
-             heightConstraint);
+            base.UpdateBackgroundImage();
 
-            return new SizeRequest(result);
-        }
+            var parent = Widget?.Parent as EventBox;
 
-        public void SetElement(VisualElement element)
-        {
-            var oldElement = Element;
-            Element = element as NavigationPage;
-
-            if (element != null)
+            if (parent != null)
             {
-                if (Control == null)
-                {
-                    Control = new Fixed();
-
-                    Add(Control);
-                }
+                parent.VisibleWindow = Page.CurrentPage?.ShouldDisplayNativeWindow() ?? true;
             }
-
-            Init();
-
-            OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
-
-            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
-        }
-
-        public void SetElementSize(Size size)
-        {
-            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
-
-            if (Element.Bounds != bounds)
-            {
-                Element.Layout(bounds);
-            }
-        }
-
-        public Task<bool> PopToRootAsync(Page page, bool animated = true)
-        {
-            return OnPopToRoot(page, animated);
-        }
-
-        public Task<bool> PopViewAsync(Page page, bool animated = true)
-        {
-            return OnPop(page, animated);
-        }
-
-        public Task<bool> PushPageAsync(Page page, bool animated = true)
-        {
-            return OnPush(page, animated);
         }
 
         protected virtual async Task<bool> OnPopToRoot(Page page, bool animated)
@@ -240,17 +166,30 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Container.IsFocus = true;
         }
 
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
+                UpdateBarBackgroundColor();
+            else if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName)
+                UpdateBarTextColor();
+            else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
+                UpdateBackgroundColor();
+            else if (e.PropertyName ==
+                PlatformConfiguration.GTKSpecific.NavigationPage.BackButtonIconProperty.PropertyName)
+                UpdateBackButtonIcon();
+        }
+
         private void Init()
         {
             ConfigurePageRenderer();
 
-            var navPage = (NavigationPage)Element;
-
-            if (navPage.CurrentPage == null)
+            if (Page.CurrentPage == null)
                 throw new InvalidOperationException(
                     "NavigationPage must have a root Page before being used. Either call PushAsync with a valid Page, or pass a Page to the constructor before usage.");
 
-            Platform.NativeToolbarTracker.Navigation = navPage;
+            Platform.NativeToolbarTracker.Navigation = Page;
             NavigationController.PushRequested += OnPushRequested;
             NavigationController.PopRequested += OnPopRequested;
             NavigationController.PopToRootRequested += OnPopToRootRequested;
@@ -260,7 +199,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBarBackgroundColor();
             UpdateBarTextColor();
 
-            ((INavigationPageController)navPage).Pages.ForEach(async p => await PushPageAsync(p, false));
+            NavigationController.Pages.ForEach(async p => await PushPageAsync(p, false));
 
             UpdateBackgroundColor();
             UpdateBackButtonIcon();
@@ -309,11 +248,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Platform.SetRenderer(page, Platform.CreateRenderer(page));
 
             var pageRenderer = Platform.GetRenderer(page);
-            Control.Add(pageRenderer.Container);
+            Widget.Add(pageRenderer.Container);
 
             pageRenderer.Container.SetSizeRequest(
-                  _lastAllocation.Width,
-                  _lastAllocation.Height);
+                  Allocation.Width,
+                  Allocation.Height);
 
             pageRenderer.Container.ShowAll();
 
@@ -402,7 +341,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 if (target != null)
                 {
-                    Control.RemoveFromContainer(target.Container);
+                    Widget.RemoveFromContainer(target.Container);
                 }
 
                 if (removeFromStack)
@@ -425,34 +364,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             });
         }
 
-        private void UpdateBackgroundColor()
-        {
-            if (Element == null)
-                return;
-
-            var backgroundColor = Element.BackgroundColor;
-
-            if (backgroundColor.IsDefaultOrTransparent())
-                return;
-
-            Container.ModifyBg(StateType.Normal, backgroundColor.ToGtkColor());
-        }
-
         private void UpdateBarBackgroundColor()
         {
             UpdateToolBar();
-            MessagingCenter.Send(Element, Forms.BarBackgroundColor, Element.BarBackgroundColor);
+            MessagingCenter.Send(Element, Forms.BarBackgroundColor, Page.BarBackgroundColor);
         }
 
         private void UpdateBarTextColor()
         {
             UpdateToolBar();
-            MessagingCenter.Send(Element, Forms.BarTextColor, Element.BarTextColor);
+            MessagingCenter.Send(Element, Forms.BarTextColor, Page.BarTextColor);
         }
 
         private void UpdateBackButtonIcon()
         {
-            var backButton = Element.OnThisPlatform().GetBackButtonIcon();
+            var backButton = Page.OnThisPlatform().GetBackButtonIcon();
             Platform.NativeToolbarTracker.UpdateBackButton(backButton);
             UpdateToolBar();
         }
@@ -477,19 +403,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 Platform.NativeToolbarTracker.UpdateToolBar();
                 return false;
             });
-        }
-
-        private void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == NavigationPage.BarBackgroundColorProperty.PropertyName)
-                UpdateBarBackgroundColor();
-            else if (e.PropertyName == NavigationPage.BarTextColorProperty.PropertyName)
-                UpdateBarTextColor();
-            else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-                UpdateBackgroundColor();
-            else if (e.PropertyName ==
-                PlatformConfiguration.GTKSpecific.NavigationPage.BackButtonIconProperty.PropertyName)
-                UpdateBackButtonIcon();
         }
     }
 }
