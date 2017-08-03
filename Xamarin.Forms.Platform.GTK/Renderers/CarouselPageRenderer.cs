@@ -32,33 +32,37 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-
-            if (Page != null)
+            if (disposing)
             {
-                Page.PropertyChanged -= OnPagePropertyChanged;
+                if (Page != null)
+                {
+                    Page.PagesChanged -= OnPagesChanged;
+                }
+
+                if (Widget != null)
+                {
+                    Widget.SelectedIndexChanged -= OnSelectedIndexChanged;
+                }
+            }
+
+            base.Dispose(disposing);
+        }
+
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.OldElement != null)
+            {
                 Page.PagesChanged -= OnPagesChanged;
             }
 
-            if(Widget != null)
+            if (e.NewElement != null)
             {
-                Widget.SelectedIndexChanged -= OnSelectedIndexChanged;
-            }
-        }
+                var newPage = e.NewElement as CarouselPage;
 
-        public override void SetElement(VisualElement element)
-        {
-            var newPage = element as CarouselPage;
-            if (element != null && newPage == null)
-                throw new ArgumentException("element must be a CarouselPage");
-
-            if (element != null)
-            {
-                if (Control == null)
-                {
-                    Control = new Controls.Page();
-                    Add(Control);
-                }
+                if (newPage == null)
+                    throw new ArgumentException("New element must be a CarouselPage");
 
                 if (Widget == null)
                 {
@@ -69,29 +73,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     eventBox.Add(Widget);
                     Control.Content = eventBox;
                 }
+
+                Init();
             }
-
-            VisualElement oldElement = Element;
-            Element = element;
-
-            Init();
-
-            if (newPage != null)
-            {
-                newPage.SendAppearing();
-            }
-
-            OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
-        }
-
-        private void Init()
-        {
-            UpdateSource();
-            UpdateBackgroundColor();
-            UpdateBackgroundImage();
-
-            Page.PropertyChanged += OnPagePropertyChanged;
-            Page.PagesChanged += OnPagesChanged;
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -118,10 +102,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Widget?.SetBackgroundImage(Page.BackgroundImage);
         }
 
-        private void OnPagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Init()
         {
-            if (e.PropertyName == nameof(TabbedPage.CurrentPage))
-                UpdateCurrentPage();
+            UpdateSource();
+            UpdateBackgroundColor();
+            UpdateBackgroundImage();
+
+            Page.PagesChanged += OnPagesChanged;
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
