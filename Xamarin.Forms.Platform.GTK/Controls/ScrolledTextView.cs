@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _textView = new TextView
             {
-                AcceptsTab = true,
+                AcceptsTab = false,
                 WrapMode = WrapMode.WordChar
             };
 
