@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Controls.CustomControls.ScaleButtonPage"
              xmlns:controls="clr-namespace:GtkToolkit.Controls;assembly=GtkToolkit"
-             Title="StatusBar">
+             Title="ScaleButton">
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>

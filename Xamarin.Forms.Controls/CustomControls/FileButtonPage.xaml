@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Controls.CustomControls.FileButtonPage"
              xmlns:controls="clr-namespace:GtkToolkit.Controls;assembly=GtkToolkit"
-             Title="ToggleButton">
+             Title="FileButton">
     <ContentPage.Content>
         <StackLayout>
             <controls:FileButton
