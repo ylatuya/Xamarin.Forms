@@ -14,43 +14,41 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private const int DefaultIconWidth = 24;
         private const int DefaultIconHeight = 24;
 
-        public override void SetElement(VisualElement element)
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
         {
-            if (element != null && !(element is TabbedPage))
-                throw new ArgumentException("Element must be a TabbedPage", "element");
+            base.OnElementChanged(e);
 
-            TabbedPage oldElement = Page;
-
-            Element = element;
-
-            if (oldElement != null)
+            if (e.OldElement != null)
             {
-                oldElement.PropertyChanged -= OnElementPropertyChanged;
-                ((INotifyCollectionChanged)oldElement.Children).CollectionChanged -= OnPagesChanged;
+                Page.ChildAdded -= OnPageAdded;
+                Page.ChildRemoved -= OnPageRemoved;
+                Page.PagesChanged -= OnPagesChanged;
             }
 
-            if (element != null)
+            if (e.NewElement != null)
             {
-                if (Control == null)
-                {
-                    Control = new Controls.Page();
-                    Add(Control);
-                }
+                var newPage = e.NewElement as TabbedPage;
+
+                if (newPage == null)
+                    throw new ArgumentException("Element must be a TabbedPage");
 
                 if (Widget == null)
                 {
                     Widget = new NotebookWrapper();
                     Control.Content = Widget;
                 }
-            }
 
-            OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
+                Init();
+            }
+        }
+
+        private void Init()
+        {
             OnPagesChanged(Page.Children,
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                  new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
             Page.ChildAdded += OnPageAdded;
             Page.ChildRemoved += OnPageRemoved;
-            Page.PropertyChanged += OnElementPropertyChanged;
             Page.PagesChanged += OnPagesChanged;
 
             UpdateCurrentPage();
@@ -58,12 +56,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBarTextColor();
             UpdateTabPos();
             UpdateBackgroundImage();
-
-            EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            base.OnElementPropertyChanged(sender, e);
+
             if (e.PropertyName == nameof(TabbedPage.CurrentPage))
             {
                 UpdateCurrentPage();
@@ -81,7 +79,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void UpdateBackgroundImage()
         {
-            Widget.SetBackgroundImage(Page.BackgroundImage);
+            Widget?.SetBackgroundImage(Page.BackgroundImage);
         }
 
         protected override void Dispose(bool disposing)
