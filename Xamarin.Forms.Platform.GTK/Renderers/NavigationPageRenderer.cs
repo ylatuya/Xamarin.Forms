@@ -91,9 +91,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             Widget.SetSizeRequest(allocation.Width, allocation.Height);
 
-            foreach (var children in Widget.Children)
+            foreach (var child in Widget.Children)
             {
-                children.SetSizeRequest(
+                child.SetSizeRequest(
                     allocation.Width,
                     allocation.Height);
             }

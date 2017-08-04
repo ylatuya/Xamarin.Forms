@@ -99,9 +99,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void RemoveChildIfExists()
         {
-            foreach (var children in Children)
+            foreach (var child in Children)
             {
-                var widget = children as Widget;
+                var widget = child as Widget;
 
                 if (widget != null)
                 {
