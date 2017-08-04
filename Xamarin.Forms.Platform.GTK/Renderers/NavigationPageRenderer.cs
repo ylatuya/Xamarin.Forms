@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Animations;
@@ -293,6 +294,50 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 throw new ArgumentNullException(nameof(before));
             if (page == null)
                 throw new ArgumentNullException(nameof(page));
+
+            int index = PageController.InternalChildren.IndexOf(before);
+
+            if (index == -1)
+                throw new InvalidOperationException("This should never happen, please file a bug");
+
+            var items = _currentStack.ToArray();
+            _currentStack.Clear();
+
+            int counter = 0;
+
+            foreach(var item in items.Reverse())
+            {
+                if (counter == index)
+                {
+                    _currentStack.Push(new NavigationChildPage(page));
+
+                    if (Platform.GetRenderer(page) == null)
+                        Platform.SetRenderer(page, Platform.CreateRenderer(page));
+                }
+
+                _currentStack.Push(item);
+
+                counter++;
+            }
+     
+            foreach (var child in Widget.Children)
+            {
+                child.Unparent();
+            }
+
+            items = _currentStack.ToArray();
+
+            foreach (var item in items.Reverse())
+            {
+                var pageRenderer = Platform.GetRenderer(item.Page);
+                Widget.Add(pageRenderer.Container);
+
+                pageRenderer.Container.SetSizeRequest(
+                      Allocation.Width,
+                      Allocation.Height);
+
+                pageRenderer.Container.ShowAll();
+            }
         }
 
         private async Task<bool> PopPageAsync(Page page, bool animated)
