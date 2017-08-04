@@ -167,9 +167,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             do
             {
-                foreach (var children in _root.Children)
+                foreach (var child in _root.Children)
                 {
-                    _root.RemoveFromContainer(children);
+                    _root.RemoveFromContainer(child);
                 }
             } while (_root.Children.Length > 0);
         }

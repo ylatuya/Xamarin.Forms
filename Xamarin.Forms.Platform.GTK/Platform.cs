@@ -186,9 +186,9 @@ namespace Xamarin.Forms.Platform.GTK
 
                         if (page.Children != null)
                         {
-                            foreach (var children in page.Children)
+                            foreach (var child in page.Children)
                             {
-                                children.ShowAll();
+                                child.ShowAll();
                             }
 
                             page.ShowAll();
@@ -253,9 +253,9 @@ namespace Xamarin.Forms.Platform.GTK
 
                         if (page.Children != null)
                         {
-                            foreach (var children in page.Children)
+                            foreach (var child in page.Children)
                             {
-                                children.ShowAll();
+                                child.ShowAll();
                             }
 
                             page.ShowAll();
