@@ -118,7 +118,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Widget = new Fixed();
                     var eventBox = new EventBox();
                     eventBox.Add(Widget);
-                    Add(Widget);
 
                     Control.Content = eventBox;
                 }
