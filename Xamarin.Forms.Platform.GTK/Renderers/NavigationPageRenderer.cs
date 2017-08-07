@@ -60,8 +60,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnShown()
         {
-            Platform.NativeToolbarTracker.Navigation = Page;
-
             if (_appeared)
                 return;
 

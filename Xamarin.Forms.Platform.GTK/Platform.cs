@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
-using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
@@ -197,9 +196,32 @@ namespace Xamarin.Forms.Platform.GTK
                 }
 
                 DisposeModelAndChildrenRenderers(modal);
+                RestoreToolbar();
             });
 
             return Task.FromResult<Page>(modal);
+        }
+
+        private void RestoreToolbar()
+        {
+            if (_modals.Any())
+            {
+                NativeToolbarTracker.Navigation = _modals.Last() as NavigationPage;
+            }
+            else
+            {
+                var mainPage = Application.Current.MainPage;
+
+                if (mainPage is MasterDetailPage)
+                {
+                    var masterDetailPage = mainPage as MasterDetailPage;
+                    NativeToolbarTracker.Navigation = masterDetailPage.Detail as NavigationPage;
+                }
+                else
+                {
+                    NativeToolbarTracker.Navigation = mainPage as NavigationPage;
+                }
+            }
         }
 
         Task INavigation.PopToRootAsync()
