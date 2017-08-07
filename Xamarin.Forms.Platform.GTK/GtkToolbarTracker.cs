@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Renderers;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -212,12 +213,12 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
             }
 
-            var page = pageRenderer?.Container?.Child as Controls.Page;
+            var page = pageRenderer as IPageControl;
 
-            if (page != null)
+            if (page?.Control != null)
             {
-                page.Toolbar = _toolbar;
-                UpdateBarBackgroundColor(page);
+                page.Control.Toolbar = _toolbar;
+                UpdateBarBackgroundColor(page.Control);
             }
         }
 
