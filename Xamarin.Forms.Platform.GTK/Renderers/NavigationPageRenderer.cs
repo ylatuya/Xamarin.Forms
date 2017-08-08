@@ -89,7 +89,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
 
             _toolbarTracker.TryHide(Page);
-            //Platform.NativeToolbarTracker.TryHide(Page);
             _appeared = false;
 
             PageController?.SendDisappearing();
@@ -203,7 +202,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 throw new InvalidOperationException(
                     "NavigationPage must have a root Page before being used. Either call PushAsync with a valid Page, or pass a Page to the constructor before usage.");
 
-            //Platform.NativeToolbarTracker.Navigation = Page;
             _toolbarTracker.Navigation = Page;
             _currentPage = Page.CurrentPage;
             UpdateCurrentPage();
@@ -479,7 +477,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var backButton = Page.OnThisPlatform().GetBackButtonIcon();
 
             _toolbarTracker.UpdateBackButton(backButton);
-            //Platform.NativeToolbarTracker.UpdateBackButton(backButton);
             UpdateToolBar();
         }
 
@@ -507,7 +504,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             GLib.Timeout.Add(0, () =>
             {
                 _toolbarTracker.UpdateToolBar();
-                //Platform.NativeToolbarTracker.UpdateToolBar();
                 return false;
             });
         }
