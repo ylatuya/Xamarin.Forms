@@ -177,6 +177,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Container.IsFocus = true;
         }
 
+        protected override void SetPageSize(int width, int height)
+        {
+            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - GtkToolbarConstants.ToolbarHeight);
+            SetElementSize(pageContentSize.ToSize());
+        }
+
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -478,12 +484,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             _toolbarTracker.UpdateBackButton(backButton);
             UpdateToolBar();
-        }
-
-        protected override void SetPageSize(int width, int height)
-        {
-            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - GtkToolbarConstants.ToolbarHeight);
-            SetElementSize(pageContentSize.ToSize());
         }
 
         private Task AnimatePageAsync(Container container, int from, int to)
