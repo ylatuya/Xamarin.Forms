@@ -27,8 +27,6 @@ namespace Xamarin.Forms.Platform.GTK
 
         internal PlatformRenderer PlatformRenderer => _renderer;
 
-        internal static GtkToolbarTracker NativeToolbarTracker = new GtkToolbarTracker();
-
         Page Page { get; set; }
 
         IReadOnlyList<Page> INavigation.ModalStack
@@ -196,32 +194,9 @@ namespace Xamarin.Forms.Platform.GTK
                 }
 
                 DisposeModelAndChildrenRenderers(modal);
-                RestoreToolbar();
             });
 
             return Task.FromResult<Page>(modal);
-        }
-
-        private void RestoreToolbar()
-        {
-            if (_modals.Any())
-            {
-                NativeToolbarTracker.Navigation = _modals.Last() as NavigationPage;
-            }
-            else
-            {
-                var mainPage = Application.Current.MainPage;
-
-                if (mainPage is MasterDetailPage)
-                {
-                    var masterDetailPage = mainPage as MasterDetailPage;
-                    NativeToolbarTracker.Navigation = masterDetailPage.Detail as NavigationPage;
-                }
-                else
-                {
-                    NativeToolbarTracker.Navigation = mainPage as NavigationPage;
-                }
-            }
         }
 
         Task INavigation.PopToRootAsync()

@@ -56,8 +56,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             UpdateBarTextColor();
             UpdateTabPos();
             UpdateBackgroundImage();
-
-            Platform.NativeToolbarTracker.Navigation = Page.CurrentPage as NavigationPage;
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -272,14 +270,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnNotebookPageSwitched(object o, SwitchPageArgs args)
         {
             var currentPageIndex = (int)args.PageNum;
-            Element currentSelectedChild = Page.Children.Count > currentPageIndex
+            VisualElement currentSelectedChild = Page.Children.Count > currentPageIndex
                 ? Page.Children[currentPageIndex]
                 : null;
 
             if (currentSelectedChild != null)
             {
-                Platform.NativeToolbarTracker.Navigation = currentSelectedChild as NavigationPage;
                 ElementController.SetValueFromRenderer(TabbedPage.SelectedItemProperty, currentSelectedChild.BindingContext);
+
+                var pageRenderer = Platform.GetRenderer(currentSelectedChild);
+                pageRenderer?.Container.ShowAll();
             }
         }
     }

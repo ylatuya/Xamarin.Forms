@@ -179,6 +179,7 @@
     <Compile Include="Renderers\FrameRenderer.cs" />
     <Compile Include="Renderers\ImageRenderer.cs" />
     <Compile Include="Renderers\IPageControl.cs" />
+    <Compile Include="Renderers\IToolbarTracker.cs" />
     <Compile Include="Renderers\LabelRenderer.cs" />
     <Compile Include="Renderers\LayoutRenderer.cs" />
     <Compile Include="Renderers\ListViewRenderer.cs" />

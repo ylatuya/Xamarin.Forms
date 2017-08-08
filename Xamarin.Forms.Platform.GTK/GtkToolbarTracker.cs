@@ -71,16 +71,6 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
-        public Gdk.Size GetCurrentToolbarSize()
-        {
-            if (Toolbar?.Visible != true)
-            {
-                return Gdk.Size.Empty;
-            }
-
-            return Toolbar.Allocation.Size;
-        }
-
         public void UpdateIcon()
         {
             if (_toolbar == null || _navigation == null)
