@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -528,6 +529,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void MarkCellAsSelected(CellBase cell)
         {
+            if (cell == null)
+                return;
+
+            if (cell.Cell.GetIsGroupHeader<ItemsView<Cell>, Cell>())
+                return;
+
             foreach (var childCell in _list.Children.OfType<CellBase>())
             {
                 bool isTargetCell = cell == childCell;
@@ -544,7 +551,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void SelectionColorUpdated()
         {
-            _selectedCell?.ModifyBg(StateType.Normal, _selectionColor);
+            if (_selectedCell == null)
+                return;
+
+            _selectedCell.ModifyBg(StateType.Normal, _selectionColor);
         }
     }
 }

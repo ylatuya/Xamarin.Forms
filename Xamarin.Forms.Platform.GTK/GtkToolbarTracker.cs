@@ -386,15 +386,15 @@ namespace Xamarin.Forms.Platform.GTK
 
                 _toolbarTitle = new Gtk.Label();
                 _toolbarTitleSection.PackEnd(_toolbarTitle, true, true, 0);
-                
+
+                FindParentMasterDetail();
+
                 UpdateNavigationItems();
                 UpdateTitle();
                 UpdateIcon();
                 UpdateToolbarItems();
                 UpdateBarTextColor();
                 UpdateBarBackgroundColor();
-
-                FindParentMasterDetail();
             }
             else
             {
