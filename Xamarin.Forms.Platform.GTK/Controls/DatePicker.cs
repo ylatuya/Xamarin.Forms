@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System;
+using System.Linq;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -89,7 +90,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             return false;
         }
 
-        protected virtual void OnButtonPressEvent(object o, Gtk.ButtonPressEventArgs args)
+        protected virtual void OnButtonPressEvent(object o, ButtonPressEventArgs args)
         {
             Close();
         }
@@ -318,6 +319,22 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public void SetBackgroundColor(Gdk.Color color)
         {
             _comboBox.SetBackgroundColor(color);
+        }
+
+        public void OpenPicker()
+        {
+            ShowPickerWindow();
+        }
+
+        public void ClosePicker()
+        {
+            var windows = Window.ListToplevels();
+            var window = windows.FirstOrDefault(w => w.GetType() == typeof(DatePickerWindow));
+
+            if (window != null)
+            {
+                Remove(window);
+            }
         }
 
         private void ShowPickerWindow()

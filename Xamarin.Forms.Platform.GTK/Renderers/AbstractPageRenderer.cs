@@ -4,7 +4,6 @@ using System.ComponentModel;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Container = Gtk.EventBox;
-using System.Collections.ObjectModel;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -87,7 +86,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     Page.SendDisappearing();
 
-              
+                    /*
                     if (Element != null)
                     {
                         ReadOnlyCollection<Element> children = ((IElementController)Element).LogicalChildren;
@@ -97,7 +96,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                             visualChild?.Cleanup();
                         }
                     }
-           
+                    */
                 }
 
                 _appeared = false;
@@ -116,6 +115,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 return;
 
             UpdateBackgroundColor();
+            UpdateBackgroundImage();
 
             _appeared = true;
 
@@ -166,6 +166,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void OnElementChanged(VisualElementChangedEventArgs e)
         {
+            if (e.OldElement != null)
+                e.OldElement.PropertyChanged -= OnElementPropertyChanged;
+
             if (e.NewElement != null)
             {
                 if (Control == null)
@@ -174,9 +177,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Add(Control);
                 }
 
-                VisibleWindow = Page.ShouldDisplayNativeWindow();
-                UpdateBackgroundImage();
+                e.NewElement.PropertyChanged += OnElementPropertyChanged;
             }
+
+            UpdateBackgroundImage();
 
             ElementChanged?.Invoke(this, e);
         }
@@ -197,6 +201,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void UpdateBackgroundImage()
         {
+            VisibleWindow = Page.ShouldDisplayNativeWindow();
             Control.SetBackgroundImage(Page.BackgroundImage);
         }
 
@@ -206,6 +211,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBackgroundColor();
             else if (e.PropertyName == Xamarin.Forms.Page.BackgroundImageProperty.PropertyName)
                 UpdateBackgroundImage();
+            else if (e.PropertyName == Xamarin.Forms.Page.TitleProperty.PropertyName)
+                UpdateTitle();
+            else if (e.PropertyName == Xamarin.Forms.Page.IconProperty.PropertyName)
+                UpdateIcon();
         }
 
         private void SetPageSize(int width, int height)
@@ -213,6 +222,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
             var pageContentSize = new Gdk.Rectangle(0, 0, width, height - toolbarSize.Height);
             SetElementSize(pageContentSize.ToSize());
+        }
+
+        private void UpdateTitle()
+        {
+            Platform.NativeToolbarTracker.UpdateTitle();
+        }
+
+        private void UpdateIcon()
+        {
+            Platform.NativeToolbarTracker.UpdateIcon();
         }
     }
 }

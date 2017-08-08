@@ -117,7 +117,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 var titleSpan = new Span()
                 {
                     FontSize = 16,
-                    Text = source.Title
+                    Text = source.Title ?? string.Empty
                 };
 
                 Gtk.Label title = new Gtk.Label();
@@ -136,7 +136,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     var tableSectionSpan = new Span()
                     {
                         FontSize = 12,
-                        Text = tableSection.Title
+                        Text = tableSection.Title ?? string.Empty
                     };
 
                     // Table Section Title

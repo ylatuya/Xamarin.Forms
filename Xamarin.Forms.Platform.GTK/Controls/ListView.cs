@@ -1,6 +1,9 @@
-﻿using Gtk;
+﻿using GLib;
+using Gtk;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
@@ -52,6 +55,24 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
     }
 
+    public enum State : uint
+    {
+        Started,  
+        Loading,  
+        Completed, 
+        Finished  
+    };
+
+    public class IdleData
+    {
+        public State LoadState;
+        public uint LoadId;
+        public ListStore ListStore;
+        public int NumItems;
+        public int NumLoaded;
+        public List Items;
+    }
+
     public class ListView : ScrolledWindow
     {
         private const int RefreshHeight = 48;
@@ -71,6 +92,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gtk.Label _refreshLabel;
         private bool _isPullToRequestEnabled;
         private bool _refreshing;
+        private IdleData _data;
+        private ListStore _store = null;
+        private List _items;
+        private CellBase _selectedCell;
+        private Gdk.Color _selectionColor;
 
         public delegate void ItemTappedEventHandler(object sender, ItemTappedEventArgs args);
         public event ItemTappedEventHandler OnItemTapped = null;
@@ -84,7 +110,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public ListView()
         {
             BuildListView();
+
+            _selectionColor = DefaultSelectionColor;
         }
+
+        public static Gdk.Color DefaultSelectionColor = Color.FromHex("#3498DB").ToGtkColor();
 
         public Widget Header
         {
@@ -111,7 +141,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             set
             {
                 _cells = value;
-                RefreshItems(_cells);
+                _items = new List(typeof(CellBase));
+                PopulateData(_items);
             }
         }
 
@@ -138,8 +169,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 if (value != _selectedItem)
                 {
-                    _selectedItem = value;
-                    OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(_selectedItem));
+                    UpdateSelectedItem(value);
                 }
             }
         }
@@ -154,6 +184,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             get { return _refreshing; }
             set { _refreshing = value; }
+        }
+
+        public Gdk.Color SelectionColor
+        {
+            get
+            {
+                return _selectionColor;
+            }
+
+            set
+            {
+                _selectionColor = value;
+                SelectionColorUpdated();
+            }
         }
 
         public void SetBackgroundColor(Gdk.Color backgroundColor)
@@ -186,7 +230,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             IsPullToRequestEnabled = isPullToRequestEnabled;
 
-            if(_refreshHeader == null)
+            if (_refreshHeader == null)
             {
                 return;
             }
@@ -207,7 +251,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             Refreshing = refreshing;
 
-            if(Refreshing)
+            if (Refreshing)
             {
                 _refreshHeader.Attach(_refreshLabel, 0, 1, 0, 1);
             }
@@ -222,7 +266,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void SetSeletedItem(object selectedItem)
         {
-            if(selectedItem == null)
+            if (selectedItem == null)
             {
                 return;
             }
@@ -232,6 +276,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void BuildListView()
         {
+            _items = new List(typeof(CellBase));
+
             CanFocus = true;
             ShadowType = ShadowType.None;
             BorderWidth = 0;
@@ -255,7 +301,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 });
             _refreshButton.ImageWidget.Stock = Stock.Refresh;
             _refreshButton.SetImagePosition(PositionType.Left);
-            _refreshButton.Clicked += (sender, args) =>  
+            _refreshButton.Clicked += (sender, args) =>
             {
                 OnRefresh?.Invoke(this, new EventArgs());
             };
@@ -284,7 +330,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             Add(_viewPort);
 
-            ShowAll(); 
+            ShowAll();
         }
 
         private void RefreshHeader(Widget newHeader)
@@ -327,47 +373,135 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        // TODO: Improve cell creation for the highest performance
-        private void RefreshItems(IEnumerable<Widget> items)
+        private void LazyLoadItems(List items)
         {
-            ClearList();
+            _data = new IdleData();
 
-            foreach (var item in items)
+            _data.Items = items;
+            _data.NumItems = 0;
+            _data.NumLoaded = 0;
+            _data.ListStore = _store;
+            _data.LoadState = Controls.State.Started;
+            _data.LoadId = Idle.Add(new IdleHandler(LoadItems));
+        }
+
+        private bool LoadItems()
+        {
+            IdleData id = _data;
+            CellBase obj;
+            TreeIter iter;
+
+            // Make sure we're in the right state 
+            var isLoading = (id.LoadState == Controls.State.Started) ||
+                (id.LoadState == Controls.State.Loading);
+   
+            if(!isLoading)
             {
-                if (item != null)
-                {
-                    item.ButtonPressEvent += (sender, args) =>
-                    {
-                        var gtkCell = sender as CellBase;
-
-                        if (gtkCell != null && gtkCell.Cell != null)
-                        {
-                            var selectedItem = gtkCell.Cell.BindingContext;
-                            SelectedItem = selectedItem;
-                            OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
-                        }
-                    };
-
-                    var itemContainer = item as EventBox;
-
-                    if (itemContainer != null)
-                    {
-                        itemContainer.VisibleWindow = false;
-                    }
-
-                    _list.PackStart(item, false, false, 0);
-
-                    var separator = new ListViewSeparator();
-                    _separators.Add(separator);
-                    _list.PackStart(separator, false, false, 0);
-                }
+                id.LoadState = Controls.State.Completed;
+                return false;
             }
 
+            // No items 
+            if (id.Items.Count == 0)
+            {
+                id.LoadState = Controls.State.Completed;
+                return false;
+            }
+
+            // First run 
+            if (id.NumItems == 0)
+            {
+                id.NumItems = id.Items.Count;
+                id.NumLoaded = 0;
+                id.LoadState = Controls.State.Loading;
+            }   
+            
+            // Get the item in the list at pos n_loaded 
+            obj = id.Items[id.NumLoaded] as CellBase;
+
+            // Append the row to the store
+            iter = id.ListStore.AppendValues(obj);
+
+            // Fill in the row at position n_loaded
+            id.ListStore.SetValue(iter, 0, obj);
+
+            id.NumLoaded += 1;
+
+            // Update UI with every item
+            UpdateItem(obj);
+
+            // We loaded everything, so we can change state and remove the idle callback function
+            if (id.NumLoaded == id.NumItems)
+            {
+                id.LoadState = Controls.State.Completed;
+                id.NumLoaded = 0;
+                id.NumItems = 0;
+                id.Items = null;
+
+                CleanupLoadItems();
+
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void UpdateItem(CellBase cell)
+        {
+            cell.ButtonPressEvent += (sender, args) =>
+            {
+                var gtkCell = sender as CellBase;
+
+                if (gtkCell != null && gtkCell.Cell != null)
+                {
+                    SelectedItem = gtkCell.Item;
+
+                    MarkCellAsSelected(gtkCell);
+
+                    OnItemTapped?.Invoke(this, new ItemTappedEventArgs(SelectedItem));
+                }
+            };
+            
+            cell.VisibleWindow = false;
+
+            _list.PackStart(cell, false, false, 0);
+            cell.ShowAll();
+
+            var separator = new ListViewSeparator();
+            _separators.Add(separator);
+            _list.PackStart(separator, false, false, 0);
+            separator.ShowAll();
+        }
+
+        private void CleanupLoadItems()
+        {
+            Debug.Assert(_data.LoadState == Controls.State.Completed);
+
             _list.ShowAll();
+
+            if (_data.ListStore == null)
+                Debug.WriteLine("Something was wrong!");
+        }
+
+        private void PopulateData(List items)
+        {
+            _store = new ListStore(typeof(CellBase));
+
+            foreach (var cell in _cells)
+            {
+                items.Append(cell);
+            }
+
+            ClearList();
+            LazyLoadItems(items);
         }
 
         private void ClearList()
         {
+            _selectedCell = null;
+
             if (_list != null)
             {
                 foreach (var child in _list.Children)
@@ -380,6 +514,37 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 _separators.Clear();
             }
+        }
+
+        private void UpdateSelectedItem(object value)
+        {
+            _selectedItem = value;
+
+            CellBase cell = _list.Children.OfType<CellBase>().FirstOrDefault(c => c.Item == value);
+            MarkCellAsSelected(cell);
+
+            OnSelectedItemChanged?.Invoke(this, new SelectedItemEventArgs(_selectedItem));
+        }
+
+        private void MarkCellAsSelected(CellBase cell)
+        {
+            foreach (var childCell in _list.Children.OfType<CellBase>())
+            {
+                bool isTargetCell = cell == childCell;
+
+                childCell.VisibleWindow = isTargetCell;
+
+                if (isTargetCell)
+                {
+                    _selectedCell = childCell;
+                    childCell.ModifyBg(StateType.Normal, _selectionColor);
+                }
+            }
+        }
+
+        private void SelectionColorUpdated()
+        {
+            _selectedCell?.ModifyBg(StateType.Normal, _selectionColor);
         }
     }
 }

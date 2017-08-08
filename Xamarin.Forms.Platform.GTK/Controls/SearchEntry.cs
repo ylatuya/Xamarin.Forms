@@ -50,7 +50,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                _entryWrapper.Entry.Text = value;
+                _entryWrapper.Entry.Text = value ?? string.Empty;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                _entryWrapper.PlaceholderText = value;
+                _entryWrapper.PlaceholderText = value ?? string.Empty;
             }
         }
 
@@ -153,6 +153,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public void SetAlignment(float alignmentValue)
         {
             _entryWrapper.SetAlignment(alignmentValue);
+        }
+
+        protected override void OnFocusGrabbed()
+        {
+            _entryWrapper?.GrabFocus();
         }
 
         private void ShowClearButton()

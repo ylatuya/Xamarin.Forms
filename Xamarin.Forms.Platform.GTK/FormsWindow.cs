@@ -68,6 +68,14 @@ namespace Xamarin.Forms.Platform.GTK
             }
         }
 
+        protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
+        {
+            var pageRenderer = Platform.GetRenderer(_application.MainPage);
+            pageRenderer?.SetElementSize(new Size(evnt.Width, evnt.Height));
+
+            return base.OnConfigureEvent(evnt);
+        }
+
         private void UpdateMainPage()
         {
             if (_application.MainPage == null)
@@ -91,9 +99,9 @@ namespace Xamarin.Forms.Platform.GTK
 
         private void RemoveChildIfExists()
         {
-            foreach (var children in Children)
+            foreach (var child in Children)
             {
-                var widget = children as Widget;
+                var widget = child as Widget;
 
                 if (widget != null)
                 {

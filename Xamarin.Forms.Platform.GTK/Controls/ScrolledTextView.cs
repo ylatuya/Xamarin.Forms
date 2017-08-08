@@ -14,7 +14,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             _textView = new TextView
             {
-                AcceptsTab = true,
+                AcceptsTab = false,
                 WrapMode = WrapMode.WordChar
             };
 
@@ -22,5 +22,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         }
 
         public TextView TextView => _textView;
+
+        protected override void OnFocusGrabbed()
+        {
+            _textView?.GrabFocus();
+        }
     }
 }

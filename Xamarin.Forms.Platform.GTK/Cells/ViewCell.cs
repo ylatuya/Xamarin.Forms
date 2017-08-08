@@ -19,6 +19,11 @@ namespace Xamarin.Forms.Platform.GTK.Cells
                 var viewCell = Cell as Xamarin.Forms.ViewCell;
                 var view = viewCell.View;
 
+                if (view == null)
+                {
+                    return;
+                }
+
                 double width = allocation.Width;
                 double height = DesiredHeight > 0
                                 ? DesiredHeight
@@ -89,6 +94,12 @@ namespace Xamarin.Forms.Platform.GTK.Cells
         private IVisualElementRenderer GetNewRenderer()
         {
             var viewCell = Cell as Xamarin.Forms.ViewCell;
+
+            if (viewCell.View == null)
+            {
+                return null;
+            }
+
             var newRenderer = Platform.CreateRenderer(viewCell.View);
 
             _rendererRef = new WeakReference<IVisualElementRenderer>(newRenderer);

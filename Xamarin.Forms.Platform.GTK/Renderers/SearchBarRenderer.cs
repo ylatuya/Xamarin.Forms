@@ -89,7 +89,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdatePlaceholder()
         {
-            Control.PlaceholderText = Element.Placeholder;
+            Control.PlaceholderText = Element.Placeholder ?? string.Empty;
             Control.SetPlaceholderTextColor(Element.PlaceholderColor.ToGtkColor());
         }
 

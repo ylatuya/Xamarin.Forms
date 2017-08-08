@@ -32,27 +32,37 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
+            if (disposing)
+            {
+                if (Page != null)
+                {
+                    Page.PagesChanged -= OnPagesChanged;
+                }
 
-            if (Page != null)
+                if (Widget != null)
+                {
+                    Widget.SelectedIndexChanged -= OnSelectedIndexChanged;
+                }
+            }
+
+            base.Dispose(disposing);
+        }
+
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
+        {
+            base.OnElementChanged(e);
+
+            if (e.OldElement != null)
             {
                 Page.PagesChanged -= OnPagesChanged;
             }
-        }
 
-        public override void SetElement(VisualElement element)
-        {
-            var newPage = element as CarouselPage;
-            if (element != null && newPage == null)
-                throw new ArgumentException("element must be a CarouselPage");
-
-            if (element != null)
+            if (e.NewElement != null)
             {
-                if (Control == null)
-                {
-                    Control = new Controls.Page();
-                    Add(Control);
-                }
+                var newPage = e.NewElement as CarouselPage;
+
+                if (newPage == null)
+                    throw new ArgumentException("New element must be a CarouselPage");
 
                 if (Widget == null)
                 {
@@ -63,29 +73,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     eventBox.Add(Widget);
                     Control.Content = eventBox;
                 }
+
+                Init();
             }
-
-            VisualElement oldElement = Element;
-            Element = element;
-
-            Init();
-
-            if (newPage != null)
-            {
-                UpdateCurrentPage();
-                newPage.SendAppearing();
-            }
-
-            OnElementChanged(new VisualElementChangedEventArgs(oldElement, element));
-        }
-
-        private void Init()
-        {
-            UpdateSource();
-            UpdateBackgroundColor();
-            UpdateBackgroundImage();
-
-            Page.PagesChanged += OnPagesChanged;
         }
 
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -110,6 +100,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void UpdateBackgroundImage()
         {
             Widget?.SetBackgroundImage(Page.BackgroundImage);
+        }
+
+        private void Init()
+        {
+            UpdateSource();
+            UpdateBackgroundColor();
+            UpdateBackgroundImage();
+
+            Page.PagesChanged += OnPagesChanged;
         }
 
         private void OnPagesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -180,6 +179,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateSource()
         {
+            Widget.SelectedIndexChanged -= OnSelectedIndexChanged;
+
             _pages = new List<PageContainer>();
 
             for (var i = 0; i < Element.LogicalChildren.Count; i++)
@@ -199,6 +200,27 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             UpdateCurrentPage();
+
+            Widget.SelectedIndexChanged += OnSelectedIndexChanged;
+        }
+
+        private void OnSelectedIndexChanged(object sender, CarouselEventArgs args)
+        {
+            var selectedIndex = args.SelectedIndex;
+            var widgetPage = Widget.Pages[selectedIndex];
+            var page = widgetPage.Page as ContentPage;
+
+            if (page == null)
+                return;
+
+            if (((CarouselPage)Element).CurrentPage == page)
+                return;
+
+            ContentPage currentPage = page;
+
+            currentPage?.SendDisappearing();
+            ((CarouselPage)Element).CurrentPage = page;
+            page?.SendAppearing();
         }
     }
 }

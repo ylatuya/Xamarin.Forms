@@ -42,7 +42,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
-                _placeholder.Text = value;
+                _placeholder.Text = GLib.Markup.EscapeText(value ?? string.Empty);
             }
         }
 
@@ -79,7 +79,14 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             base.OnSizeAllocated(allocation);
 
+            _entry.SetSizeRequest(allocation.Width, allocation.Height);
+
             ShowPlaceholderIfNeeded();
+        }
+
+        protected override void OnFocusGrabbed()
+        {
+            _entry?.GrabFocus();
         }
 
         private void ShowPlaceholderIfNeeded()

@@ -24,6 +24,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public void ResetColor()
+        {
+            UpdateColor(Gdk.Color.Zero);
+        }
+
         public void UpdateBackgroundColor(Gdk.Color color)
         {
             if (_boxView != null)
@@ -123,6 +128,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void DrawBoxView(Context cr, EventExpose ev)
         {
+            if (Color.Equal(Gdk.Color.Zero)) return;
+
             int clipHeight = ev.Area.Height > 0 ? Height : 0;
             int clipWidth = ev.Area.Width > 0 ? Width : 0;
 

@@ -44,6 +44,7 @@
         public event SelectionChange OnSelectionChange;
         public event MarkerEnter OnMarkerEnter;
         public event MarkerLeave OnMarkerLeave;
+        public event MarkerClick OnMarkerClick;
 
         public readonly ObservableCollectionThreadSafe<GMapOverlay> Overlays =
             new ObservableCollectionThreadSafe<GMapOverlay>();
@@ -730,7 +731,8 @@
 
         protected override bool OnExposeEvent(Gdk.EventExpose e)
         {
-            Console.WriteLine(String.Format("Tread: {0}", System.Threading.Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(String.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
+
             if (ForceDoubleBuffer)
             {
                 if (_gxOff != null)
@@ -849,7 +851,7 @@
                             Tile t = Core.Matrix.GetTileWithNoLock(Core.Zoom, tilePoint.PosXY);
                             if (t.NotEmpty)
                             {
-                                // render tile
+                                // Render tile
                                 {
                                     foreach (GMapImage img in t.Overlays)
                                     {
@@ -871,7 +873,7 @@
                                             }
                                             else
                                             {
-                                                // TODO: move calculations to loader thread
+                                                // TODO: Move calculations to loader thread
                                                 RectangleF srcRect = new RectangleF((float)(img.Xoff * (img.Img.Width / img.Ix)), (float)(img.Yoff * (img.Img.Height / img.Ix)), (img.Img.Width / img.Ix), (img.Img.Height / img.Ix));
                                                 Rectangle dst = new Rectangle((int)Core.tileRect.X, (int)Core.tileRect.Y, (int)Core.tileRect.Width, (int)Core.tileRect.Height);
 
@@ -898,7 +900,7 @@
                                     long Xoff = Math.Abs(tilePoint.PosXY.X - (parentTile.Pos.X * Ix));
                                     long Yoff = Math.Abs(tilePoint.PosXY.Y - (parentTile.Pos.Y * Ix));
 
-                                    // render tile 
+                                    // Render tile 
                                     {
                                         foreach (GMapImage img in parentTile.Overlays)
                                         {
@@ -989,7 +991,7 @@
                 g.ResetTransform();
             }
 
-            if (!SelectedArea.IsEmpty)
+            if (!SelectedArea.IsEmpty && MouseWheelZoomEnabled)
             {
                 GPoint p1 = FromLatLngToLocal(SelectedArea.LocationTopLeft);
                 GPoint p2 = FromLatLngToLocal(SelectedArea.LocationRightBottom);
@@ -1143,7 +1145,7 @@
         protected override void OnSizeAllocated(Gdk.Rectangle box)
         {
             base.OnSizeAllocated(box);
-            Console.WriteLine(string.Format("Allocation Tread: {0}", System.Threading.Thread.CurrentThread.ManagedThreadId));
+            Console.WriteLine(string.Format("Allocation Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             if (box.Width == 0 || box.Height == 0)
             {
                 Debug.WriteLine("minimized");
@@ -1222,6 +1224,23 @@
                     _selectionStart = FromLocalToLatLng((int)e.X, (int)e.Y);
                 }
             }
+            else
+            {
+                var markerPosition = FromLocalToLatLng((int)e.X, (int)e.Y);
+
+                foreach (GMapOverlay o in Overlays)
+                {
+                    foreach (GMapMarker m in o.Markers)
+                    {
+                        if (m.IsVisible && m.IsHitTestVisible && m.IsMouseOver)
+                        {
+                            OnMarkerClick?.Invoke(m);
+                            break;
+                        }
+                    }
+                }
+            }
+
             return base.OnButtonPressEvent(e);
         }
 
@@ -1354,7 +1373,7 @@
             }
             else
             {
-                if (_isSelected || DisableAltForSelection)
+                if ((_isSelected || DisableAltForSelection) && MouseWheelZoomEnabled)
                 {
                     _selectionEnd = FromLocalToLatLng((int)e.X, (int)e.Y);
                     {
@@ -1382,10 +1401,12 @@
                                 if (m.IsVisible && m.IsHitTestVisible)
                                 {
                                     GPoint rp = new GPoint((long)e.X, (long)e.Y);
+
                                     if (!MobileMode)
                                     {
                                         rp.OffsetNegative(Core.renderOffset);
                                     }
+
                                     if (m.LocalArea.Contains((int)rp.X, (int)rp.Y))
                                     {
                                         if (!m.IsMouseOver)
@@ -1562,7 +1583,7 @@
 
             if (IsRotated)
             {
-                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point(x, y) };
+                Point[] tt = new Point[] { new Point(x, y) };
                 rotationMatrixInvert.TransformPoints(tt);
                 var f = tt[0];
 
@@ -1590,7 +1611,7 @@
 
             if (IsRotated)
             {
-                System.Drawing.Point[] tt = new System.Drawing.Point[] { new System.Drawing.Point((int)ret.X, (int)ret.Y) };
+                Point[] tt = new Point[] { new Point((int)ret.X, (int)ret.Y) };
                 rotationMatrix.TransformPoints(tt);
                 var f = tt[0];
 

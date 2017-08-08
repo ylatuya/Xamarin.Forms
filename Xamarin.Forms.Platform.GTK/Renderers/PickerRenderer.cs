@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System.ComponentModel;
 using System.Linq;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Extensions;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -23,6 +24,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     comboBox.Focused += OnFocused;
                     comboBox.FocusOutEvent += OnFocusOutEvent;
                     comboBox.Changed += OnChanged;
+
+                    ((LockableObservableListWrapper)Element.Items)._list.CollectionChanged += OnCollectionChanged;
 
                     SetNativeControl(comboBox);
                 }
@@ -64,10 +67,28 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                         Control.Changed -= OnChanged;
                     }
 
+                    if(Element != null)
+                    {
+                        ((LockableObservableListWrapper)Element.Items)._list.CollectionChanged -= OnCollectionChanged;
+                    }
+
                 }
             }
 
             base.Dispose(disposing);
+        }
+
+        internal override void OnElementFocusChangeRequested(object sender, VisualElement.FocusRequestArgs args)
+        {
+            if (Control == null)
+                return;
+
+            if (args.Focus)
+                args.Result = OpenPicker();
+            else
+                args.Result = ClosePicker();
+
+            base.OnElementFocusChangeRequested(sender, args);
         }
 
         private void UpdatePicker()
@@ -87,8 +108,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateItemsSource()
         {
-            var items = Element.Items;
-
+            var items = ((LockableObservableListWrapper)Element.Items)._list;
             ListStore listStore = new ListStore(typeof(string));
             Control.Model = listStore;
 
@@ -138,6 +158,35 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnChanged(object sender, System.EventArgs e)
         {
             ElementController?.SetValueFromRenderer(Picker.SelectedIndexProperty, Control.Active);
+        }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateItemsSource();
+        }
+
+        private bool OpenPicker()
+        {
+            if(Control == null)
+            {
+                return false;
+            }
+
+            Control.Popup();
+
+            return true;
+        }
+
+        private bool ClosePicker()
+        {
+            if (Control == null)
+            {
+                return false;
+            }
+
+            Control.Popdown();
+
+            return true;
         }
     }
 }
