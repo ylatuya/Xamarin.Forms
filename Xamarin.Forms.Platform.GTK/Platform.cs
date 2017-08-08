@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
-using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
@@ -27,8 +26,6 @@ namespace Xamarin.Forms.Platform.GTK
             });
 
         internal PlatformRenderer PlatformRenderer => _renderer;
-
-        internal static GtkToolbarTracker NativeToolbarTracker = new GtkToolbarTracker();
 
         Page Page { get; set; }
 
