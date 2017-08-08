@@ -374,7 +374,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     if (group.Count != 0)
                     {
-                        if (group.HeaderContent != null)
+                        if (HasHeader(group))
                             _cells.Add(GetCell(group.HeaderContent));
                         else
                             _cells.Add(CreateEmptyHeader());
@@ -390,6 +390,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 _listView.Items = _cells;
             }
+        }
+
+        private bool HasHeader(ITemplatedItemsList<Cell> group)
+        {
+            if (Element == null)
+                return false;
+
+            if (group.HeaderContent != null &&
+                Element.GroupShortNameBinding != null ||
+                Element.GroupHeaderTemplate != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private Cells.TextCell CreateEmptyHeader()
