@@ -150,6 +150,7 @@
     <Compile Include="GtkIsolatedStorageFile.cs" />
     <Compile Include="GtkPlatformServices.cs" />
     <Compile Include="GtkSerializer.cs" />
+    <Compile Include="GtkSynchronizationContext.cs" />
     <Compile Include="GtkTicker.cs" />
     <Compile Include="GtkToolbarConstants.cs" />
     <Compile Include="Helpers\DialogHelper.cs" />
