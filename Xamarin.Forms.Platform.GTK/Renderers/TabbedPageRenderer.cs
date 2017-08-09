@@ -270,13 +270,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnNotebookPageSwitched(object o, SwitchPageArgs args)
         {
             var currentPageIndex = (int)args.PageNum;
-            Element currentSelectedChild = Page.Children.Count > currentPageIndex
+            VisualElement currentSelectedChild = Page.Children.Count > currentPageIndex
                 ? Page.Children[currentPageIndex]
                 : null;
 
             if (currentSelectedChild != null)
             {
                 ElementController.SetValueFromRenderer(TabbedPage.SelectedItemProperty, currentSelectedChild.BindingContext);
+
+                var pageRenderer = Platform.GetRenderer(currentSelectedChild);
+                pageRenderer?.Container.ShowAll();
             }
         }
     }

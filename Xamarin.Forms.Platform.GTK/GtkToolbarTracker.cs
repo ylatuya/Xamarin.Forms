@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Renderers;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -68,16 +69,6 @@ namespace Xamarin.Forms.Platform.GTK
             {
                 Navigation = null;
             }
-        }
-
-        public Gdk.Size GetCurrentToolbarSize()
-        {
-            if (Toolbar?.Visible != true)
-            {
-                return Gdk.Size.Empty;
-            }
-
-            return Toolbar.Allocation.Size;
         }
 
         public void UpdateIcon()
@@ -212,12 +203,12 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
             }
 
-            var page = pageRenderer?.Container?.Child as Controls.Page;
+            var page = pageRenderer as IPageControl;
 
-            if (page != null)
+            if (page?.Control != null)
             {
-                page.Toolbar = _toolbar;
-                UpdateBarBackgroundColor(page);
+                page.Control.Toolbar = _toolbar;
+                UpdateBarBackgroundColor(page.Control);
             }
         }
 
@@ -395,15 +386,15 @@ namespace Xamarin.Forms.Platform.GTK
 
                 _toolbarTitle = new Gtk.Label();
                 _toolbarTitleSection.PackEnd(_toolbarTitle, true, true, 0);
-                
+
+                FindParentMasterDetail();
+
                 UpdateNavigationItems();
                 UpdateTitle();
                 UpdateIcon();
                 UpdateToolbarItems();
                 UpdateBarTextColor();
                 UpdateBarBackgroundColor();
-
-                FindParentMasterDetail();
             }
             else
             {
