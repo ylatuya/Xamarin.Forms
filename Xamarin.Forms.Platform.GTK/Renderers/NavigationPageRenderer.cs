@@ -461,6 +461,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 var oldPage = _currentStack.Peek().Page;
                 (oldPage as IPageController)?.SendAppearing();
+                target?.Dispose();
 
                 return false;
             });

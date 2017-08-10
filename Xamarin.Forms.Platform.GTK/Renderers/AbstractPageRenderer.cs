@@ -63,6 +63,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
+            if (Element == null)
+                return;
+
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
             if (Element.Bounds != bounds)

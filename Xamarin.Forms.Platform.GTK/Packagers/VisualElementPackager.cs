@@ -28,6 +28,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public void Load()
