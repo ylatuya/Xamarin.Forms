@@ -91,8 +91,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     if (Control != null)
                     {
-                        Control.Browser.LoadStarted += OnLoadStarted;
-                        Control.Browser.LoadFinished += OnLoadFinished;
+                        //Control.Browser.LoadStarted += OnLoadStarted;
+                        //Control.Browser.LoadFinished += OnLoadFinished;
                     }
 
                     WebViewController.EvalRequested += OnEvalRequested;
@@ -148,8 +148,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (Control != null)
             {
-                WebViewController.CanGoBack = Control.Browser.CanGoBack();
-                WebViewController.CanGoForward = Control.Browser.CanGoForward();
+                //WebViewController.CanGoBack = Control.Browser.CanGoBack();
+                //WebViewController.CanGoForward = Control.Browser.CanGoForward();
             }
         }
 
