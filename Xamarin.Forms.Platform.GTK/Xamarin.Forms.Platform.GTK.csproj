@@ -115,6 +115,7 @@
     <Compile Include="Controls\CustomFrame.cs" />
     <Compile Include="Controls\DatePicker.cs" />
     <Compile Include="Controls\EntryWrapper.cs" />
+    <Compile Include="Controls\GLWidgetLinux.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\ImageControl.cs" />
     <Compile Include="Controls\ListView.cs" />
