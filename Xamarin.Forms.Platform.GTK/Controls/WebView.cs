@@ -6,15 +6,190 @@ using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
-    public class WebView : EventBox
+    public interface IWebView
+    {
+        string Uri { get; set; }
+        void Navigate(string uri);
+        void LoadHTML(string html, string baseUrl);
+        bool CanGoBack();
+        void GoBack();
+        bool CanGoForward();
+        void GoForward();
+        void ExecuteScript(string script);
+        event EventHandler LoadStarted;
+        event EventHandler LoadFinished;
+    }
+
+    public class WebView : EventBox, IWebView
+    {
+        private GTKPlatform _platform;
+        private WebViewWindows _webViewWindows;
+        private WebViewLinux _webViewLinux;
+
+        public event EventHandler LoadStarted;
+        public event EventHandler LoadFinished;
+
+        public string Uri
+        {
+            get
+            {
+                if (_platform == GTKPlatform.Windows)
+                {
+                    return _webViewWindows.WebBrowser.Url != null ? _webViewWindows.WebBrowser.Url.ToString() : string.Empty;
+                }
+                else
+                {
+                    return _webViewLinux.WebView.Uri;
+                }
+            }
+            set
+            {
+                if (_platform == GTKPlatform.Windows)
+                {
+                    _webViewWindows.WebBrowser.Url = new Uri(value);
+                }
+                else
+                {
+                    _webViewLinux.WebView.LoadUri(value);
+                }
+            }
+        }
+
+        public WebView()
+        {
+            BuildWebView();
+        }
+
+        private void BuildWebView()
+        {
+            _platform = PlatformHelper.GetGTKPlatform();
+
+            if (_platform == GTKPlatform.Windows)
+            {
+                _webViewWindows = new WebViewWindows();
+
+                _webViewWindows.WebBrowser.Navigating += (sender, args) =>
+                {
+                    LoadStarted?.Invoke(this, args);
+                };
+
+                _webViewWindows.WebBrowser.Navigated += (sender, args) =>
+                {
+                    LoadFinished?.Invoke(this, args);
+                };
+
+                Add(_webViewWindows);
+            }
+            else
+            {
+                _webViewLinux = new WebViewLinux();
+
+                _webViewLinux.WebView.LoadStarted += (sender, args) =>
+                {
+                    LoadStarted?.Invoke(this, args);
+                };
+
+                _webViewLinux.WebView.LoadFinished += (sender, args) =>
+                {
+                    LoadFinished?.Invoke(this, args);
+                };
+
+                Add(_webViewLinux);
+            }
+        }
+
+        public void Navigate(string uri)
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                _webViewWindows.Navigate(uri);
+            }
+            else
+            {
+                _webViewLinux.Navigate(uri);
+            }
+        }
+
+        public void LoadHTML(string html, string baseUrl)
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                _webViewWindows.LoadHTML(html, baseUrl);
+            }
+            else
+            {
+                _webViewLinux.LoadHTML(html, baseUrl);
+            }
+        }
+
+        public bool CanGoBack()
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                return _webViewWindows.WebBrowser.CanGoBack;
+            }
+            else
+            {
+                return _webViewLinux.WebView.CanGoBack();
+            }
+        }
+
+        public void GoBack()
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                _webViewWindows.WebBrowser.GoBack();
+            }
+            else
+            {
+                _webViewLinux.WebView.GoBack();
+            }
+        }
+
+        public bool CanGoForward()
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                return _webViewWindows.WebBrowser.CanGoForward;
+            }
+            else
+            {
+                return _webViewLinux.WebView.CanGoForward();
+            }
+        }
+
+        public void GoForward()
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                _webViewWindows.WebBrowser.GoForward();
+            }
+            else
+            {
+                 _webViewLinux.WebView.GoForward();
+            }
+        }
+
+        public void ExecuteScript(string script)
+        {
+            if (_platform == GTKPlatform.Windows)
+            {
+                _webViewWindows.WebBrowser.DocumentText = script;
+                _webViewWindows.WebBrowser.Document.InvokeScript(script);
+            }
+            else
+            {
+                _webViewLinux.WebView.ExecuteScript(script);
+            }
+        }
+    }
+
+    public class WebViewWindows : EventBox
     {
         [DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
 
-        private VBox _vbox = null;
-        private WebKit.WebView _webview = null;
         private WebBrowser _browser = null;
-        private GTKPlatform _platform;
 
         /// <summary>
         /// Imported unmanaged function for setting the parent of a window.
@@ -23,44 +198,25 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         [DllImport("user32.dll", EntryPoint = "SetParent")]
         private static extern IntPtr SetParent([In] IntPtr hWndChild, [In] IntPtr hWndNewParent);
 
-        public WebView()
+        public WebViewWindows()
         {
-            _platform = PlatformHelper.GetGTKPlatform();
             BuildWebView();
         }
 
-        public WebKit.WebView Browser
-        {
-            get { return _webview; }
-        }
-
-        public WebBrowser WindowsBrowser
+        public WebBrowser WebBrowser
         {
             get { return _browser; }
         }
 
-        public void Open(string uri)
+        public void Navigate(string uri)
         {
-            if (_platform == GTKPlatform.Linux || _platform == GTKPlatform.MacOS)
-            {
-                _webview.Open(uri);
-            }
-            else
-            {
-                _browser.Navigate(uri);
-            }
+            _browser.Navigate(uri);
         }
 
-        public void LoadString(string html, string baseUrl)
+        public void LoadHTML(string html, string baseUrl)
         {
-            if (_platform == GTKPlatform.Linux || _platform == GTKPlatform.MacOS)
-            {
-                _webview.LoadHtmlString(html, baseUrl);
-            }
-            else
-            {
-                _browser.DocumentText = html;
-            }
+            _browser.DocumentText = html;
+            _browser.Update();
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
@@ -69,8 +225,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             if (IsRealized)
             {
-                System.Drawing.Size size = new System.Drawing.Size(allocation.Width, allocation.Height);
-                _browser.Size = size;
+                _browser.Bounds = 
+                    new System.Drawing.Rectangle(allocation.X, allocation.Y, allocation.Width, allocation.Height);
             }
         }
 
@@ -78,59 +234,82 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             CreateWebView();
 
-            if (_platform == GTKPlatform.Linux || _platform == GTKPlatform.MacOS)
+            var browserHandle = _browser.Handle;
+
+            ScrolledWindow scroll = new ScrolledWindow
             {
-                ScrolledWindow scroll = new ScrolledWindow();
-                scroll.AddWithViewport(_webview);
+                CanFocus = true,
+                ShadowType = ShadowType.None
+            };
 
-                _vbox = new VBox(false, 1);
-                _vbox.PackStart(scroll, true, true, 0);
+            var drawingArea = new DrawingArea();
 
-                Add(_vbox);
-                ShowAll();
-            }
-            else
+            IntPtr windowHandle;
+
+            drawingArea.ExposeEvent += (s, a) =>
             {
-                var browserHandle = _browser.Handle;
+                IntPtr test = drawingArea.GdkWindow.Handle;
+                windowHandle = gdk_win32_drawable_get_handle(test);
+                SetParent(browserHandle, windowHandle);
+            };
 
-                ScrolledWindow scroll = new ScrolledWindow
-                {
-                    CanFocus = true,
-                    ShadowType = ShadowType.None
-                };
+            scroll.Add(drawingArea);
 
-                var drawingArea = new DrawingArea();
-
-                IntPtr windowHandle;
-
-                drawingArea.ExposeEvent += (s, a) =>
-                {
-                    IntPtr test = drawingArea.GdkWindow.Handle;
-                    windowHandle = gdk_win32_drawable_get_handle(test);
-                    SetParent(browserHandle, windowHandle);
-                };
-
-                scroll.Add(drawingArea);
-
-                Add(scroll);
-                ShowAll();
-            }
+            Add(scroll);
+            ShowAll();
         }
 
         private void CreateWebView()
         {
-            if (_platform == GTKPlatform.Linux || _platform == GTKPlatform.MacOS)
-            {
-                _webview = new WebKit.WebView();
-                _webview.Editable = false;
-            }
-            else
-            {
-                _browser = new WebBrowser();
-                _browser.ScriptErrorsSuppressed = true;
-                _browser.AllowWebBrowserDrop = false;
-                _browser.DocumentText = string.Empty; // Force Document initialization
-            }
+            _browser = new WebBrowser();
+            _browser.ScriptErrorsSuppressed = true;
+            _browser.AllowWebBrowserDrop = false;
+        }
+    }
+
+    public class WebViewLinux : EventBox
+    {
+        private VBox _vbox = null;
+        private WebKit.WebView _webview = null;
+
+        public WebViewLinux()
+        {
+            BuildWebView();
+        }
+
+        public WebKit.WebView WebView
+        {
+            get { return _webview; }
+        }
+        
+        public void Navigate(string uri)
+        {
+            _webview.Open(uri);
+        }
+
+        public void LoadHTML(string html, string baseUrl)
+        {
+            _webview.LoadHtmlString(html, baseUrl);
+        }
+
+        private void BuildWebView()
+        {
+            CreateWebView();
+
+            ScrolledWindow scroll = new ScrolledWindow();
+            scroll.AddWithViewport(_webview);
+
+            _vbox = new VBox(false, 1);
+            _vbox.PackStart(scroll, true, true, 0);
+
+            Add(_vbox);
+            ShowAll();
+        }
+
+        private void CreateWebView()
+        {
+            _webview = new WebKit.WebView();
+            _webview.Editable = false;
         }
     }
 }
