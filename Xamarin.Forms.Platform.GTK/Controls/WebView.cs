@@ -8,6 +8,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public class WebView : EventBox
     {
+        [DllImport("libgdk-win32-2.0-0.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr gdk_win32_drawable_get_handle(IntPtr d);
+
         private VBox _vbox = null;
         private WebKit.WebView _webview = null;
         private WebBrowser _browser = null;
@@ -88,24 +91,28 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             else
             {
+                var browserHandle = _browser.Handle;
+
                 ScrolledWindow scroll = new ScrolledWindow
                 {
                     CanFocus = true,
                     ShadowType = ShadowType.None
                 };
 
-                _vbox = new VBox(false, 1);
-                _vbox.PackStart(scroll, true, true, 0);
+                var drawingArea = new DrawingArea();
 
-                var socket = new Socket();
-                scroll.Add(socket);
-                socket.Realize();
+                IntPtr windowHandle;
 
-                IntPtr browserHandle = _browser.Handle;
-                IntPtr socketHandle = (IntPtr)socket.Id;
-                SetParent(browserHandle, socketHandle);
+                drawingArea.ExposeEvent += (s, a) =>
+                {
+                    IntPtr test = drawingArea.GdkWindow.Handle;
+                    windowHandle = gdk_win32_drawable_get_handle(test);
+                    SetParent(browserHandle, windowHandle);
+                };
 
-                Add(_vbox);
+                scroll.Add(drawingArea);
+
+                Add(scroll);
                 ShowAll();
             }
         }
