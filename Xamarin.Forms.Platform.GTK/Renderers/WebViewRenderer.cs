@@ -120,8 +120,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 _disposed = true;
 
-                Control.Browser.LoadStarted -= OnLoadStarted;
-                Control.Browser.LoadFinished -= OnLoadFinished;
+                if (Control != null)
+                {
+                    Control.Browser.LoadStarted -= OnLoadStarted;
+                    Control.Browser.LoadFinished -= OnLoadFinished;
+                }
 
                 WebViewController.EvalRequested -= OnEvalRequested;
                 WebViewController.GoBackRequested -= OnGoBackRequested;
