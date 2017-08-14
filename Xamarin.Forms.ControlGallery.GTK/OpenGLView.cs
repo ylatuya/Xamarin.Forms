@@ -128,13 +128,11 @@ namespace Xamarin.Forms.ControlGallery.GTK
 
         public static uint CompileShader(string shaderString, ShaderType shaderType)
         {
+            uint shaderHandle = (uint)GL.CreateShader(shaderType);
+            GL.ShaderSource((int)shaderHandle, shaderString);
+            GL.CompileShader(shaderHandle);
 
-                uint shaderHandle = (uint)GL.CreateShader(shaderType);
-                GL.ShaderSource((int)shaderHandle, shaderString);
-                GL.CompileShader(shaderHandle);
-
-                return shaderHandle;
-
+            return shaderHandle;
         }
 
         public static void UniformMatrix4(int location, Matrix4 value)

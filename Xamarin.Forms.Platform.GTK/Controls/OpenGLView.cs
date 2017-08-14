@@ -2,14 +2,13 @@
 using OpenTK;
 using OpenTK.Graphics;
 using System;
-using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
     public class OpenGLView : EventBox
     {
         private GLWidget _glWidget;
-        private GLWidgetLinux _glWidgetLinux;
+
         private Action<Rectangle> _action;
         private bool _hasLoop;
         protected uint _timerId;
@@ -20,53 +19,27 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             GraphicsMode graphicsMode = GraphicsMode.Default;
 
-            GTKPlatform platform = PlatformHelper.GetGTKPlatform();
+            _glWidget = new GLWidget(GraphicsMode.Default);
 
-            if (platform == GTKPlatform.Windows)
-            {
-                _glWidget = new GLWidget(GraphicsMode.Default);
+            _glWidget.SingleBuffer = true;
+            _glWidget.ColorBPP = graphicsMode.ColorFormat.BitsPerPixel;
+            _glWidget.AccumulatorBPP = graphicsMode.AccumulatorFormat.BitsPerPixel;
+            _glWidget.DepthBPP = graphicsMode.Depth;
+            _glWidget.Samples = graphicsMode.Samples;
+            _glWidget.StencilBPP = graphicsMode.Stencil;
+            _glWidget.Stereo = graphicsMode.Stereo;
+            _glWidget.GlVersionMajor = 0;
+            _glWidget.GlVersionMinor = 0;
+            _glWidget.CanFocus = true;
+            _glWidget.GraphicsContextFlags = GraphicsContextFlags.Default;
 
-                _glWidget.SingleBuffer = true;
-                _glWidget.ColorBPP = graphicsMode.ColorFormat.BitsPerPixel;
-                _glWidget.AccumulatorBPP = graphicsMode.AccumulatorFormat.BitsPerPixel;
-                _glWidget.DepthBPP = graphicsMode.Depth;
-                _glWidget.Samples = graphicsMode.Samples;
-                _glWidget.StencilBPP = graphicsMode.Stencil;
-                _glWidget.Stereo = graphicsMode.Stereo;
-                _glWidget.GlVersionMajor = 0;
-                _glWidget.GlVersionMinor = 0;
-                _glWidget.CanFocus = true;
-                _glWidget.GraphicsContextFlags = GraphicsContextFlags.Default;
+            _glWidget.Initialized += new EventHandler(OnGLWidgetInitialized);
+            _glWidget.RenderFrame += new EventHandler(OnGLWidgetRenderer);
+            _glWidget.Destroyed += new EventHandler(OnGLWidgetDestroy);
 
-                _glWidget.Initialized += new EventHandler(OnGLWidgetInitialized);
-                _glWidget.RenderFrame += new EventHandler(OnGLWidgetRenderer);
-                _glWidget.Destroyed += new EventHandler(OnGLWidgetDestroy);
+            _glWidget.AddEvents((int)Gdk.EventMask.AllEventsMask);
 
-                _glWidget.AddEvents((int)Gdk.EventMask.AllEventsMask);
-
-                Add(_glWidget);
-            }
-            else
-            {
-                _glWidgetLinux = new GLWidgetLinux(GraphicsMode.Default);
-                _glWidgetLinux.SingleBuffer = true;
-                _glWidget.ColorBPP = graphicsMode.ColorFormat.BitsPerPixel;
-                _glWidgetLinux.AccumulatorBPP = graphicsMode.AccumulatorFormat.BitsPerPixel;
-                _glWidgetLinux.DepthBPP = graphicsMode.Depth;
-                _glWidgetLinux.Samples = graphicsMode.Samples;
-                _glWidgetLinux.StencilBPP = graphicsMode.Stencil;
-                _glWidgetLinux.Stereo = graphicsMode.Stereo;
-                _glWidgetLinux.CanFocus = true;
-
-                _glWidgetLinux.Initialized += new EventHandler(OnGLWidgetInitialized);
-                _glWidgetLinux.RenderFrame += new EventHandler(OnGLWidgetRenderer);
-                _glWidgetLinux.Destroyed += new EventHandler(OnGLWidgetDestroy);
-
-                _glWidgetLinux.AddEvents((int)Gdk.EventMask.AllEventsMask);
-
-                Add(_glWidgetLinux);
-            }
-
+            Add(_glWidget);
         }
 
         public Action<Rectangle> OnDisplay
@@ -103,11 +76,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_glWidget != null)
             {
                 _glWidget.Dispose();
-            }
-
-            if (_glWidgetLinux != null)
-            {
-                _glWidgetLinux.Dispose();
             }
         }
 
