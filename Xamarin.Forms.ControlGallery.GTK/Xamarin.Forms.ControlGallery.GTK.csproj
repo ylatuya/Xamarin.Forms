@@ -141,6 +141,14 @@
       <Link>crimsonsmall.jpg</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\default.css">
+      <Link>default.css</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Xamarin.Forms.ControlGallery.iOS\local.html">
+      <Link>local.html</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Xamarin.Forms.ControlGallery.iOS\menuIcon.png">
       <Link>menuIcon.png</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

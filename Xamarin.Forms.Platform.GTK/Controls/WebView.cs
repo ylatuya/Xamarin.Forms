@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Xamarin.Forms.Platform.GTK.Helpers;
@@ -210,7 +211,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public void Navigate(string uri)
         {
-            _browser.Navigate(uri);
+            Uri uriResult;
+            bool result = Uri.TryCreate(uri, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (result)
+            {
+                _browser.Navigate(new Uri(uri));
+            }
+            else
+            {
+                string appPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
+                string filePath = System.IO.Path.Combine(appPath, uri);
+                _browser.Url = new Uri(filePath);
+            }
         }
 
         public void LoadHTML(string html, string baseUrl)
