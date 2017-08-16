@@ -50,10 +50,6 @@
       <HintPath>..\..\..\Program Files (x86)\GtkSharp\2.12\lib\gtk-sharp-2.0\glib-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="GLWidget, Version=1.0.3746.36713, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\GLWidget\GLWidget.dll</HintPath>
-    </Reference>
     <Reference Include="gtk-dotnet, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\GtkSharp\2.12\lib\gtk-sharp-2.0\gtk-dotnet.dll</HintPath>
@@ -69,9 +65,9 @@
       <HintPath>..\..\..\Program Files (x86)\GtkSharp\2.12\lib\Mono.Cairo\Mono.Cairo.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\OpenTK\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -117,6 +113,10 @@
     <Compile Include="Controls\CustomFrame.cs" />
     <Compile Include="Controls\DatePicker.cs" />
     <Compile Include="Controls\EntryWrapper.cs" />
+    <Compile Include="Controls\GLWidget\GLWidget.cs" />
+    <Compile Include="Controls\GLWidget\OSX\OSXWindowInfoInitializer.cs" />
+    <Compile Include="Controls\GLWidget\Win\WinWindowsInfoInitializer.cs" />
+    <Compile Include="Controls\GLWidget\X11\XWindowInfoInitializer.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\ImageControl.cs" />
     <Compile Include="Controls\ListView.cs" />
@@ -229,18 +229,16 @@
     <Content Include="Libs\gtk-sharp\gtk-sharp-2.0\pango-sharp.pdb" />
     <Content Include="Libs\gtk-sharp\Mono.Cairo\Mono.Cairo.dll" />
     <Content Include="Libs\gtk-sharp\Mono.Posix\Mono.Posix.dll" />
+    <Content Include="Libs\gtk-sharp\README.txt" />
+    <Content Include="Libs\OpenTK\OpenTK.dll" />
+    <Content Include="Libs\OpenTK\README.txt" />
     <Content Include="Libs\webkit-sharp\webkit-sharp.dll.config" />
-    <None Include="OpenTK.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
+    <None Include="Libs\OpenTK\OpenTK.dll.config" />
     <None Include="webkit-sharp.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Libs\GLWidget\GLWidget.dll" />
-    <Content Include="Libs\GLWidget\README.txt" />
     <Content Include="Libs\webkit-sharp\README.txt" />
     <Content Include="Libs\webkit-sharp\webkit-sharp.dll" />
     <Content Include="Resources\hamburger.png">

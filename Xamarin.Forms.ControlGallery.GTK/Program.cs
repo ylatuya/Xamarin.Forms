@@ -22,7 +22,9 @@ namespace Xamarin.Forms.ControlGallery.GTK
             Forms.Init();
             FormsMaps.Init(string.Empty);
 
-            var app = new Controls.App();
+            var app = new App();
+            //var app = new BasicOpenGLApp();
+            //var app = new AdvancedOpenGLApp();
             var window = new FormsWindow();
             window.LoadApplication(app);
             window.SetApplicationTitle("Xamarin.Forms GTK# Backend");
