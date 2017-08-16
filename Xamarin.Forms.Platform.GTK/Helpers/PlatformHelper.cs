@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Xamarin.Forms.Platform.GTK.Helpers
 {
@@ -24,13 +25,39 @@ namespace Xamarin.Forms.Platform.GTK.Helpers
                 case PlatformID.WinCE:
                     return GTKPlatform.Windows;
                 case PlatformID.Unix:
-                    return GTKPlatform.Linux;
+                    if (GetCommandExecutionOutput("uname", string.Empty) == "Darwin\n")
+                    {
+                        return GTKPlatform.MacOS;
+                    }
+                    else
+                    {
+                        return GTKPlatform.Linux;
+                    }
                 case PlatformID.MacOSX:
                     return GTKPlatform.MacOS;
                 default:
                     return GTKPlatform.Windows;
 
             }
+        }
+
+        internal static string GetCommandExecutionOutput(string command, string arguments)
+        {
+            var process = new Process();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.FileName = command;
+            process.StartInfo.Arguments = arguments;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+
+            if (string.IsNullOrEmpty(output))
+            {
+                output = process.StandardError.ReadToEnd();
+            }
+
+            return output;
         }
     }
 }

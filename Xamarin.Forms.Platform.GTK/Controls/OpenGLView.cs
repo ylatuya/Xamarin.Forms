@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using OpenTK;
+using OpenTK.GLWidget;
 using OpenTK.Graphics;
 using System;
 

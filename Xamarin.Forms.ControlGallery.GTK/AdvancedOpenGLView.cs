@@ -4,15 +4,15 @@ using System;
 
 namespace Xamarin.Forms.ControlGallery.GTK
 {
-    public class OpenGLApp : Application
+    public class AdvancedOpenGLApp : Application
     {
-        public OpenGLApp()
+        public AdvancedOpenGLApp()
         {
-            MainPage = new OpenGLView();
+            MainPage = new AdvancedOpenGLView();
         }
     }
 
-    public class OpenGLView : ContentPage
+    public class AdvancedOpenGLView : ContentPage
     {
         private const string VertexShader = @"
             uniform mat4 uMVPMatrix;
@@ -48,9 +48,9 @@ namespace Xamarin.Forms.ControlGallery.GTK
 
         private Xamarin.Forms.OpenGLView _openGLView = null;
 
-        public OpenGLView()
+        public AdvancedOpenGLView()
         {
-            Title = "OpenGLView Sample";
+            Title = "Advanced OpenGLView Sample";
 
             var titleLabel = new Label
             {
@@ -58,7 +58,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
                 FontSize = 36
             };
 
-            _openGLView = new Xamarin.Forms.OpenGLView
+            _openGLView = new OpenGLView
             {
                 HeightRequest = 300,
                 WidthRequest = 300,
