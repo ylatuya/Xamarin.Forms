@@ -58,6 +58,7 @@ namespace Xamarin.Forms.Controls
             {
                 Title = "Upcoming ride",
                 MenuItemType = MenuItemType.UpcomingRide,
+                ViewModelType = typeof(MainViewModel),
                 IsEnabled = true
             });
 
