@@ -1,6 +1,7 @@
 ﻿using Gtk;
 using System;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Xamarin.Forms.Platform.GTK
 {
@@ -13,7 +14,14 @@ namespace Xamarin.Forms.Platform.GTK
         {
             SetDefaultSize(800, 600);
             SetSizeRequest(400, 400);
+
+            MainThreadID = Thread.CurrentThread.ManagedThreadId;
+
+            if (SynchronizationContext.Current == null)
+                SynchronizationContext.SetSynchronizationContext(new GtkSynchronizationContext());
         }
+
+        public static int MainThreadID { get; set; }
 
         public void LoadApplication(Application application)
         {

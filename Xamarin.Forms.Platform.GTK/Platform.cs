@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
-using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.Platform.GTK.Renderers;
 
@@ -27,8 +26,6 @@ namespace Xamarin.Forms.Platform.GTK
             });
 
         internal PlatformRenderer PlatformRenderer => _renderer;
-
-        internal static GtkToolbarTracker NativeToolbarTracker = new GtkToolbarTracker();
 
         Page Page { get; set; }
 
@@ -101,13 +98,19 @@ namespace Xamarin.Forms.Platform.GTK
 
         void IDisposable.Dispose()
         {
-            if (_disposed) return;
+            if (_disposed)
+                return;
 
             _disposed = true;
 
+            Page.DescendantRemoved -= HandleChildRemoved;
             MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName);
             MessagingCenter.Unsubscribe<Page, AlertArguments>(this, Page.AlertSignalName);
             MessagingCenter.Unsubscribe<Page, bool>(this, Page.BusySetSignalName);
+
+            DisposeModelAndChildrenRenderers(Page);
+            foreach (var modal in _modals)
+                DisposeModelAndChildrenRenderers(modal);
 
             PlatformRenderer.Dispose();
         }
@@ -125,6 +128,8 @@ namespace Xamarin.Forms.Platform.GTK
 
             AddChild(Page);
 
+            Page.DescendantRemoved += HandleChildRemoved;
+
             Application.Current.NavigationProxy.Inner = this;
         }
 
@@ -140,6 +145,12 @@ namespace Xamarin.Forms.Platform.GTK
                 PlatformRenderer.Add(viewRenderer.Container);
                 PlatformRenderer.ShowAll();
             }
+        }
+
+        private void HandleChildRemoved(object sender, ElementEventArgs e)
+        {
+            var view = e.Element;
+            DisposeModelAndChildrenRenderers(view);
         }
 
         void INavigation.InsertPageBefore(Page page, Page before)
@@ -166,6 +177,7 @@ namespace Xamarin.Forms.Platform.GTK
         {
             var modal = _modals.Last();
             _modals.Remove(modal);
+            modal.DescendantRemoved -= HandleChildRemoved;
 
             var modalPage = GetRenderer(modal) as Container;
 
@@ -231,6 +243,7 @@ namespace Xamarin.Forms.Platform.GTK
         {
             _modals.Add(modal);
             modal.Platform = this;
+            modal.DescendantRemoved += HandleChildRemoved;
 
             var modalRenderer = GetRenderer(modal);
             if (modalRenderer == null)
