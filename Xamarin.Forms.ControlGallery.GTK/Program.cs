@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.ControlGallery.GTK;
 using Xamarin.Forms.Controls;
+using System;
 using Xamarin.Forms.Maps.GTK;
 using Xamarin.Forms.Platform.GTK;
 using Xamarin.Forms.Platform.GTK.Renderers;
@@ -12,6 +13,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             ExceptionManager.UnhandledException += OnUnhandledException;
