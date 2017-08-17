@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using Xamarin.Forms.Controls.GreatPlaces.Views;
 using Xamarin.Forms.Controls.Instagram.Views;
+using Xamarin.Forms.Controls.SocialNetwork.Views;
+using Xamarin.Forms.Controls.Timeline.Views;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
@@ -48,7 +51,7 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
-            return new NavigationPage(new WelcomeView());
+            return new NavigationPage(new TimelineView());
         }
 
         protected override void OnAppLinkRequestReceived(Uri uri)

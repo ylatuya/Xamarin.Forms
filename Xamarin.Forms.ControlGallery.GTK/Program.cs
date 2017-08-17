@@ -28,7 +28,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
             var window = new FormsWindow();
             window.LoadApplication(app);
             window.SetApplicationTitle("Xamarin.Forms GTK# Backend");
-            window.SetApplicationIcon("InstagramIcon.jpg");
+            window.SetApplicationIcon("xamarinlogo.png");
             window.Show();
             Gtk.Application.Run();
         }

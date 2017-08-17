@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin.Forms.Controls.GreatPlaces.Views.GreatPlacesView"
+             BackgroundColor="Black"
+             Title="Great Places">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+
+            <Color x:Key="BodyTextColor">#FFFFFF</Color>
+
+            <Style x:Key="TitleLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BodyTextColor}" />
+                <Setter Property="FontSize" Value="20" />
+            </Style>
+
+            <Style x:Key="HandleLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BodyTextColor}" />
+                <Setter Property="FontSize" Value="14" />
+            </Style>
+
+            <Style x:Key="BodyLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource BodyTextColor}" />
+                <Setter Property="FontSize" Value="14" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Image Source="ColoredBackground" VerticalOptions="Fill" HorizontalOptions="Fill" Aspect="Fill"/>
+        <ListView 
+            x:Name="placeList" 
+		    BackgroundColor="Transparent"
+		    RowHeight="200" 
+            ItemsSource="{Binding .}" 
+            SeparatorVisibility="None">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid RowSpacing="5" ColumnSpacing="0" Margin="10,5" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="AUTO"/>
+                            </Grid.RowDefinitions>
+                            <Image Source="{Binding HeroImage}" Aspect="AspectFill" Grid.RowSpan="2" />
+                            <Image Source="ShadowOverlay.png" Grid.RowSpan="2"  Aspect="Fill" VerticalOptions="End" HorizontalOptions="Fill" />
+                            <Grid Margin="10" RowSpacing="10" ColumnSpacing="10" Grid.Row="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="AUTO"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="25"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="AUTO"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Title}" Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource TitleLabel}" LineBreakMode="NoWrap"/>
+                                <Image Source="{Binding ProfileImage}" Aspect="AspectFill" Grid.Row="1" Grid.Column="0" WidthRequest="25" HeightRequest="25" />
+                                <Label Text="{Binding Handle}" Grid.Row="1" Grid.Column="1" VerticalOptions="Center" Style="{StaticResource HandleLabel}" />
+                                <StackLayout Orientation="Horizontal"  VerticalOptions="Center" Grid.Column="2" Grid.Row="1" Spacing="5">
+                                    <Image Source="Eye"/>
+                                    <Label Text="{Binding ViewCount, StringFormat='{0:N0}'}" Style="{StaticResource HandleLabel}" />
+                                    <Label Text="views" Style="{StaticResource BodyLabel}"/>
+                                </StackLayout>
+                            </Grid>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</ContentPage>

@@ -129,6 +129,11 @@
     <Compile Include="GalleryPages\PlatformSpecificsGalleries\VisualElementiOS.cs" />
     <Compile Include="GalleryPages\PlatformSpecificsGalleries\WindowsPlatformSpecificsGalleryHelpers.cs" />
     <Compile Include="GalleryPages\PlatformSpecificsGallery.cs" />
+    <Compile Include="GreatPlaces\GreatPlacesView.xaml.cs">
+      <DependentUpon>GreatPlacesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GreatPlaces\Models\GreatPlace.cs" />
+    <Compile Include="GreatPlaces\Models\GreatPlacesDataFactory.cs" />
     <Compile Include="Instagram\Models\FeedItem.cs" />
     <Compile Include="Instagram\ViewModels\FeedViewModel.cs" />
     <Compile Include="Instagram\Views\LoginView.xaml.cs">
@@ -179,6 +184,15 @@
       <DependentUpon>SampleViewCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="SimpleApp.cs" />
+    <Compile Include="SocialNetwork\SocialNetworkView.xaml.cs">
+      <DependentUpon>SocialNetworkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Timeline\Converters\NotBooleanConverter.cs" />
+    <Compile Include="Timeline\Models\ExerciseClass.cs" />
+    <Compile Include="Timeline\Models\TimelineDataFactory.cs" />
+    <Compile Include="Timeline\Views\TimelineView.xaml.cs">
+      <DependentUpon>TimelineView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TipCalc\DoubleRoundingConverter.cs" />
     <Compile Include="TipCalc\DoubleToStringConverter.cs" />
     <Compile Include="TipCalc\TipCalcModel.cs" />
@@ -447,7 +461,12 @@
   <ItemGroup>
     <Content Include="Instagram\README.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="SocialNetwork\SocialNetworkView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Instagram\Views\WelcomeView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
@@ -466,6 +485,19 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GreatPlaces\GreatPlacesView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Timeline\Views\TimelineView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
   <Target Name="BeforeBuild">
     <CreateItem Include="blank.config">
       <Output TaskParameter="Include" ItemName="ConfigFile" />
