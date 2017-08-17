@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using Gtk;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -16,6 +17,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private IVisualElementRenderer _headerRenderer;
         private IVisualElementRenderer _footerRenderer;
         private List<CellBase> _cells;
+        private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
 
         public ListViewRenderer()
         {
@@ -118,6 +120,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     _headerRenderer = null;
                 }
 
+                var headerView = ListView?.HeaderElement as VisualElement;
+                if (headerView != null)
+                    headerView.MeasureInvalidated -= OnHeaderMeasureInvalidated;
+
                 if (_listView != null)
                 {
                     _listView.OnItemTapped -= OnItemTapped;
@@ -129,6 +135,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     Platform.DisposeModelAndChildrenRenderers(_footerRenderer.Element);
                     _footerRenderer = null;
                 }
+
+                var footerView = ListView?.FooterElement as VisualElement;
+                if (footerView != null)
+                    footerView.MeasureInvalidated -= OnFooterMeasureInvalidated;
             }
         }
 
@@ -155,10 +165,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            foreach (var cell in _cells)
+            if (_lastAllocation != allocation)
             {
-                cell.WidthRequest = allocation.Width;
-                cell.QueueDraw();
+                _lastAllocation = allocation;
+
+                foreach (var cell in _cells)
+                {
+                    cell.WidthRequest = _lastAllocation.Width;
+                    cell.QueueDraw();
+                }
+
+                if (Controller.HeaderElement != null)
+                {
+                    UpdateHeader();
+                }
+
+                if (Controller.FooterElement != null)
+                {
+                    UpdateFooter();
+                }
             }
         }
 
@@ -192,56 +217,123 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateHeader()
         {
-            var header = Controller.HeaderElement;
-            var headerView = (View)header;
-
-            if (headerView != null)
+            GLib.Idle.Add(delegate
             {
-                _headerRenderer = Platform.CreateRenderer(headerView);
-                Platform.SetRenderer(headerView, _headerRenderer);
+                var header = Controller.HeaderElement;
+                var headerView = (View)header;
 
-                _listView.Header = _headerRenderer.Container;
-            }
-            else
-            {
-                ClearHeader();
-            }
+                if (headerView != null)
+                {
+                    _headerRenderer = Platform.CreateRenderer(headerView);
+                    // This will force measure to invalidate, which we haven't hooked up to yet because we are smarter!
+                    Platform.SetRenderer(headerView, _headerRenderer);
+
+                    var window = FormsWindow.MainWindow;
+                    int winWidth, winHeight;
+                    window.GetSize(out winWidth, out winHeight);
+
+                    HeaderMeasure(headerView, winWidth);
+
+                    _listView.Header = _headerRenderer.Container;
+                    headerView.MeasureInvalidated += OnHeaderMeasureInvalidated;
+                }
+                else
+                {
+                    ClearHeader();
+                }
+
+                return false;
+            });
         }
 
         private void ClearHeader()
         {
             _listView.Header = null;
+
             if (_headerRenderer == null)
                 return;
+
             Platform.DisposeModelAndChildrenRenderers(_headerRenderer.Element);
+            _headerRenderer.Element.MeasureInvalidated -= OnHeaderMeasureInvalidated;
             _headerRenderer = null;
+        }
+
+        private void OnHeaderMeasureInvalidated(object sender, EventArgs eventArgs)
+        {
+            double width = _lastAllocation.Width;
+            var headerView = (VisualElement)sender;
+
+            HeaderMeasure(headerView, width);
+            _listView.Header = _headerRenderer.Container;
+        }
+
+        private void HeaderMeasure(VisualElement footerView, double width)
+        {
+            if (width == 0)
+                return;
+
+            var request = footerView.Measure(width, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+            Layout.LayoutChildIntoBoundingRegion(footerView, new Rectangle(0, 0, width, request.Request.Height));
         }
 
         private void UpdateFooter()
         {
-            var footer = Controller.FooterElement;
-            var footerView = (View)footer;
-
-            if (footerView != null)
+            GLib.Idle.Add(delegate
             {
-                _footerRenderer = Platform.CreateRenderer(footerView);
-                Platform.SetRenderer(footerView, _footerRenderer);
+                var footer = Controller.FooterElement;
+                var footerView = (View)footer;
 
-                _listView.Footer = _footerRenderer.Container;
-            }
-            else
-            {
-                ClearFooter();
-            }
+                if (footerView != null)
+                {
+                    _footerRenderer = Platform.CreateRenderer(footerView);
+                    Platform.SetRenderer(footerView, _footerRenderer);
+
+                    var window = FormsWindow.MainWindow;
+                    int winWidth, winHeight;
+                    window.GetSize(out winWidth, out winHeight);
+
+                    FooterMeasure(footerView, winWidth);
+
+                    _listView.Footer = _footerRenderer.Container;
+                    footerView.MeasureInvalidated += OnFooterMeasureInvalidated;
+                }
+                else
+                {
+                    ClearFooter();
+                }
+
+                return false;
+            });
         }
 
         private void ClearFooter()
         {
             _listView.Footer = null;
+
             if (_footerRenderer == null)
                 return;
+
             Platform.DisposeModelAndChildrenRenderers(_footerRenderer.Element);
+            _footerRenderer.Element.MeasureInvalidated -= OnFooterMeasureInvalidated;
             _footerRenderer = null;
+        }
+
+        private void OnFooterMeasureInvalidated(object sender, EventArgs eventArgs)
+        {
+            double width = _lastAllocation.Width;
+            var footerView = (VisualElement)sender;
+
+            FooterMeasure(footerView, width);
+            _listView.Footer = _footerRenderer.Container;
+        }
+
+        private void FooterMeasure(VisualElement footerView, double width)
+        {
+            if (width == 0)
+                return;
+
+            var request = footerView.Measure(width, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+            Layout.LayoutChildIntoBoundingRegion(footerView, new Rectangle(0, 0, width, request.Request.Height));
         }
 
         private void UpdateRowHeight()
@@ -419,7 +511,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private CellBase GetCell(Cell cell)
         {
             var renderer =
-                (CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
+                (Cells.CellRenderer)Registrar.Registered.GetHandler<IRegisterable>(cell.GetType());
 
             var realCell = renderer.GetCell(cell, null, _listView);
 
