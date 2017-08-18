@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using Gtk;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Cells;
 using Xamarin.Forms.Platform.GTK.Extensions;
@@ -173,16 +172,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     cell.WidthRequest = _lastAllocation.Width;
                     cell.QueueDraw();
-                }
-
-                if (Controller.HeaderElement != null)
-                {
-                    UpdateHeader();
-                }
-
-                if (Controller.FooterElement != null)
-                {
-                    UpdateFooter();
                 }
             }
         }
