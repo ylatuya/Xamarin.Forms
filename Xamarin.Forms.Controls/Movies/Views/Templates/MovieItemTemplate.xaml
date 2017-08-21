@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Movies.Views.Templates.MovieItemTemplate"            
+             xmlns:controls="clr-namespace:Movies.Controls;assembly=Xamarin.Forms.Controls">
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <Style x:Key="MovieImageStyle" TargetType="Image">
+                <Setter Property="Aspect" Value="AspectFit" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+            </Style>
+            
+            <Style x:Key="MovieTitleStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource WhiteColor}" />
+            </Style>
+            
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <Grid
+            Margin="0, 0, 12, 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="12" />
+            </Grid.RowDefinitions>
+            <Image 	
+                Grid.Column="0"
+                Grid.Row="0"
+                Source="{Binding PosterPath, Converter={StaticResource MovieImageConverter}}"
+                Style="{StaticResource MovieImageStyle}"/>
+            <Label 	
+                Grid.Column="0"
+                Grid.Row="1" 
+                Text="{Binding OriginalTitle}"
+                Style="{StaticResource MovieTitleStyle}"/>
+            <Grid  
+                Grid.Column="0"
+                Grid.Row="2">
+                <controls:RatingStars
+                    Rating="{Binding VoteAverage}"
+                    Precision="Half"
+                    HorizontalOptions="Start"
+                    HeightRequest="20"
+                    WidthRequest="200"/>
+            </Grid>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

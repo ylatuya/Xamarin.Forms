@@ -19,16 +19,17 @@ namespace Xamarin.Forms.ControlGallery.GTK
             ExceptionManager.UnhandledException += OnUnhandledException;
 
             GtkThemes.Init();
+            GtkThemes.LoadCustomTheme("Themes/gtkrc-dark");
+
             Gtk.Application.Init();
             Forms.Init();
             FormsMaps.Init(string.Empty);
-            var app = new App();
+            var app = new Movies.App();
             //var app = new BasicOpenGLApp();
             //var app = new AdvancedOpenGLApp();
             var window = new FormsWindow();
             window.LoadApplication(app);
-            window.SetApplicationTitle("Xamarin.Forms GTK# Backend");
-            window.SetApplicationIcon("xamarinlogo.png");
+            window.SetApplicationTitle("Movies");
             window.Show();
             Gtk.Application.Run();
         }
