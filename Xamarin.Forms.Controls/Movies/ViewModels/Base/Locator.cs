@@ -32,6 +32,8 @@ namespace Movies.ViewModels.Base
             _container.RegisterType<IPeopleService, PeopleService>();
             _container.RegisterType<ITVShowService, TVShowService>();
 
+            _container.RegisterType<DetailViewModel>();
+            _container.RegisterType<MoviesViewModel>();
             _container.RegisterType<MenuViewModel>();
             _container.RegisterType<MainViewModel>();
             _container.RegisterType<HomeViewModel>();

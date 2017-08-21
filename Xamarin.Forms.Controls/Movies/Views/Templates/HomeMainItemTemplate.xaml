@@ -46,6 +46,7 @@
 				Style="{StaticResource HighlightImageStyle}"/>
             <Image 
 				Grid.Row="0" 
+                Source="movies-opacity.png"
 				Style="{StaticResource HighlightGradientImageStyle}" />
             <Grid
 				Grid.Row="0"

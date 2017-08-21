@@ -6,6 +6,9 @@ using Movies.Models.Movie;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Movies.Models.TVShow;
+using System.Windows.Input;
+using Xamarin.Forms;
+using Movies.Services.Navigation;
 
 namespace Movies.ViewModels
 {
@@ -19,13 +22,16 @@ namespace Movies.ViewModels
 
         private IMoviesService _moviesService;
         private ITVShowService _tvShowService;
+        private INavigationService _navigationService;
 
         public HomeViewModel(
             IMoviesService moviesService,
-            ITVShowService tvShowService)
+            ITVShowService tvShowService,
+            INavigationService navigationService)
         {
             _moviesService = moviesService;
             _tvShowService = tvShowService;
+            _navigationService = navigationService;
 
             TopRatedMovies = new ObservableCollection<Movie>();
         }
@@ -80,6 +86,11 @@ namespace Movies.ViewModels
             }
         }
 
+        public ICommand MovieDetailCommand => new Command<Movie>(MovieDetailAsync);
+
+        public ICommand ShowDetailCommand => new Command<TVShow>(ShowDetailAsync);
+
+
         public override async Task InitializeAsync(object navigationData)
         {
             IsBusy = true;
@@ -119,6 +130,26 @@ namespace Movies.ViewModels
             var result = await _tvShowService.GetPopularAsync();
 
             PopularTvShows = new ObservableCollection<TVShow>(result.Results);
+        }
+
+        private async void MovieDetailAsync(object obj)
+        {
+            var movie = obj as Movie;
+
+            if (movie != null)
+            {
+                await _navigationService.NavigateToAsync<DetailViewModel>(movie);
+            }
+        }
+
+        private async void ShowDetailAsync(object obj)
+        {
+            var show = obj as TVShow;
+
+            if (show != null)
+            {
+                await _navigationService.NavigateToAsync<DetailViewModel>(show);
+            }
         }
     }
 }

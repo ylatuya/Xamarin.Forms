@@ -145,8 +145,10 @@ namespace Movies.Services.Navigation
 
         private void CreatePageViewModelMappings()
         {
+            _mappings.Add(typeof(DetailViewModel), typeof(DetailView));
             _mappings.Add(typeof(HomeViewModel), typeof(HomeView));
             _mappings.Add(typeof(MainViewModel), typeof(MainView));
+            _mappings.Add(typeof(MoviesViewModel), typeof(MoviesView));
         }
     }
 }

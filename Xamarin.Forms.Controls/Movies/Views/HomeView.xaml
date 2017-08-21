@@ -27,7 +27,6 @@
     <ContentPage.Content>
         <Grid>
             <ScrollView   
-                IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
                 BackgroundColor="{StaticResource BackgroundColor}">
                 <Grid
 				    RowSpacing="0">
@@ -55,7 +54,8 @@
                                 Grid.Row="1"
                                 ListOrientation="Horizontal" 
                                 BackgroundColor="{StaticResource BackgroundColor}"
-                                ItemsSource="{Binding TopRatedMovies}">
+                                ItemsSource="{Binding TopRatedMovies}"      
+                                SelectedCommand="{Binding MovieDetailCommand}">
                                 <controls:HorizontalList.ItemTemplate>
                                     <DataTemplate>
                                         <templates:MovieItemTemplate />
@@ -78,7 +78,8 @@
                                 Grid.Row="1"
                                 ListOrientation="Horizontal" 
                                 BackgroundColor="{StaticResource BackgroundColor}"
-                                ItemsSource="{Binding PopularMovies}">
+                                ItemsSource="{Binding PopularMovies}"
+                                SelectedCommand="{Binding MovieDetailCommand}">
                                 <controls:HorizontalList.ItemTemplate>
                                     <DataTemplate>
                                         <templates:MovieItemTemplate />
@@ -101,7 +102,8 @@
                                 Grid.Row="1"
                                 ListOrientation="Horizontal"  
                                 BackgroundColor="{StaticResource BackgroundColor}"
-                                ItemsSource="{Binding TopRatedTvShows}">
+                                ItemsSource="{Binding TopRatedTvShows}"
+                                SelectedCommand="{Binding ShowDetailCommand}">
                                 <controls:HorizontalList.ItemTemplate>
                                     <DataTemplate>
                                         <templates:ShowItemTemplate />
@@ -124,7 +126,8 @@
                                 Grid.Row="1"
                                 ListOrientation="Horizontal" 
                                 BackgroundColor="{StaticResource BackgroundColor}"
-                                ItemsSource="{Binding PopularTvShows}">
+                                ItemsSource="{Binding PopularTvShows}"
+                                SelectedCommand="{Binding ShowDetailCommand}">
                                 <controls:HorizontalList.ItemTemplate>
                                     <DataTemplate>
                                         <templates:ShowItemTemplate />

@@ -177,17 +177,25 @@
     <Compile Include="Movies\Services\TVShow\TVShowService.cs" />
     <Compile Include="Movies\ViewModels\Base\Locator.cs" />
     <Compile Include="Movies\ViewModels\Base\ViewModelBase.cs" />
+    <Compile Include="Movies\ViewModels\DetailViewModel.cs" />
     <Compile Include="Movies\ViewModels\HomeViewModel.cs" />
     <Compile Include="Movies\ViewModels\MainViewModel.cs" />
     <Compile Include="Movies\ViewModels\MenuViewModel.cs" />
+    <Compile Include="Movies\ViewModels\MoviesViewModel.cs" />
     <Compile Include="Movies\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\MoviesView.xaml.cs">
+      <DependentUpon>MoviesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\DetailView.xaml.cs">
+      <DependentUpon>DetailView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\MenuView.xaml.cs">
       <DependentUpon>MenuView.xaml</DependentUpon>
@@ -554,6 +562,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Movies\Views\Templates\ShowItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\DetailView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\MoviesView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
