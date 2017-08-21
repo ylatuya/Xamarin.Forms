@@ -46,6 +46,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 if (Control == null)
                 {
+                    // Custom control that stacks elements in a scroll.
                     _listView = new Controls.ListView();
                     _listView.OnItemTapped += OnItemTapped;
                     _listView.OnRefresh += OnRefresh;

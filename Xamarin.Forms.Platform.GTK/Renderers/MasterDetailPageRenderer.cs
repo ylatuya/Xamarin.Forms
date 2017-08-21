@@ -70,6 +70,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Widget == null)
                 {
+                    // There is nothing similar in Gtk. 
+                    // Custom control has been created that simulates the expected behavior.
                     Widget = new Controls.MasterDetailPage();
                     var eventBox = new EventBox();
                     eventBox.Add(Widget);

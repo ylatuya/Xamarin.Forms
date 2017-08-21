@@ -42,7 +42,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (e.NewElement != null)
             {
                 if (Control == null)
-                {
+                {       
+                    // A time picker custom control
                     var timePicker = new Controls.TimePicker();
                     timePicker.GotFocus += GotFocus;
                     timePicker.LostFocus += LostFocus;
