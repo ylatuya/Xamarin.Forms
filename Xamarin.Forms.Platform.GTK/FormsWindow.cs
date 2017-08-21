@@ -16,12 +16,14 @@ namespace Xamarin.Forms.Platform.GTK
             SetSizeRequest(400, 400);
 
             MainThreadID = Thread.CurrentThread.ManagedThreadId;
+            MainWindow = this;
 
             if (SynchronizationContext.Current == null)
                 SynchronizationContext.SetSynchronizationContext(new GtkSynchronizationContext());
         }
 
         public static int MainThreadID { get; set; }
+        public static Window MainWindow { get; set; }
 
         public void LoadApplication(Application application)
         {
