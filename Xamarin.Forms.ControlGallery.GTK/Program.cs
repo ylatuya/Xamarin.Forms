@@ -30,6 +30,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
             var window = new FormsWindow();
             window.LoadApplication(app);
             window.SetApplicationTitle("Movies");
+            window.SetApplicationIcon("movies-icon.png");
             window.Show();
             Gtk.Application.Run();
         }

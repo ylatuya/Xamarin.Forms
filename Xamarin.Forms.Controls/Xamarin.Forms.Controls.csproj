@@ -195,6 +195,12 @@
     <Compile Include="Movies\Views\Templates\HomeMainItemTemplate.xaml.cs">
       <DependentUpon>HomeMainItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Movies\Views\Templates\MenuItemTemplate.xaml.cs">
+      <DependentUpon>MenuItemTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\Templates\ShowItemTemplate.xaml.cs">
+      <DependentUpon>ShowItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Movies\Views\Templates\MovieItemTemplate.xaml.cs">
       <DependentUpon>MovieItemTemplate.xaml</DependentUpon>
     </Compile>
@@ -538,6 +544,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="rating_half.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\Templates\MenuItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\Templates\ShowItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Target Name="BeforeBuild">

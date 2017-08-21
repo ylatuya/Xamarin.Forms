@@ -13,7 +13,7 @@
 
             <Style x:Key="TitleStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="{StaticResource TitleColor}" />
-                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontAttributes" Value="Bold" />
             </Style>
 
@@ -21,7 +21,7 @@
     </ContentPage.Resources>
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Icon=""
+            Icon="movies-search.png"
             Text="Search"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
@@ -39,13 +39,12 @@
                     <templates:HomeMainItemTemplate 
                         Grid.Row="0"/>
                     <StackLayout
-                        Grid.Row="1" 
-                        BackgroundColor="{StaticResource BackgroundColor}">
+                        Grid.Row="1">
                         <!-- TOP MOVIES -->
                         <Grid
                             Margin="12">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="48" />
+                                <RowDefinition Height="36" />
                                 <RowDefinition Height="300" />
                             </Grid.RowDefinitions>
                             <Label
@@ -68,7 +67,7 @@
                         <Grid
                             Margin="12">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="48" />
+                                <RowDefinition Height="36" />
                                 <RowDefinition Height="300" />
                             </Grid.RowDefinitions>
                             <Label
@@ -91,7 +90,7 @@
                         <Grid 
                             Margin="12">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="48" />
+                                <RowDefinition Height="36" />
                                 <RowDefinition Height="300" />
                             </Grid.RowDefinitions>
                             <Label
@@ -105,7 +104,7 @@
                                 ItemsSource="{Binding TopRatedTvShows}">
                                 <controls:HorizontalList.ItemTemplate>
                                     <DataTemplate>
-                                        <templates:MovieItemTemplate />
+                                        <templates:ShowItemTemplate />
                                     </DataTemplate>
                                 </controls:HorizontalList.ItemTemplate>
                             </controls:HorizontalList>
@@ -114,7 +113,7 @@
                         <Grid
                             Margin="12">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="48" />
+                                <RowDefinition Height="36" />
                                 <RowDefinition Height="300" />
                             </Grid.RowDefinitions>
                             <Label
@@ -128,7 +127,7 @@
                                 ItemsSource="{Binding PopularTvShows}">
                                 <controls:HorizontalList.ItemTemplate>
                                     <DataTemplate>
-                                        <templates:MovieItemTemplate />
+                                        <templates:ShowItemTemplate />
                                     </DataTemplate>
                                 </controls:HorizontalList.ItemTemplate>
                             </controls:HorizontalList>

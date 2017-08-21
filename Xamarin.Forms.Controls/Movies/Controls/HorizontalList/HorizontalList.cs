@@ -62,10 +62,12 @@ namespace Movies.Controls
 
         public HorizontalList()
         {
+            BackgroundColor = Color.FromHex("#1E2634");
             Spacing = 6;
             _scrollView = new ScrollView();
             _itemsStackLayout = new StackLayout
             {
+                BackgroundColor = BackgroundColor,
                 Padding = Padding,
                 Spacing = Spacing,
                 HorizontalOptions = LayoutOptions.FillAndExpand
@@ -79,7 +81,6 @@ namespace Movies.Controls
         protected virtual void SetItems()
         {
             _itemsStackLayout.Children.Clear();
-            _itemsStackLayout.BackgroundColor = BackgroundColor;
             _itemsStackLayout.Spacing = Spacing;
 
             _innerSelectedCommand = new Command<View>(view => 
@@ -103,6 +104,7 @@ namespace Movies.Controls
                 _itemsStackLayout.Children.Add(GetItemView(item));
             }
 
+            _itemsStackLayout.BackgroundColor = BackgroundColor;
             SelectedItem = null;
         }
 
