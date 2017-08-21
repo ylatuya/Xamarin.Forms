@@ -28,6 +28,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     _minimum = 0;
                     _maximum = 100;
+
+                    // Use Gtk.SpinButton. This Widget retrieve an integer or floating-point number from the user.
                     SetNativeControl(new SpinButton(_minimum, _maximum, 1));
                 }
 

@@ -33,6 +33,8 @@ namespace Xamarin.Forms.Platform.GTK
             if (!IsInitialized)
                 throw new InvalidOperationException("call GtkThemes.Init() before this");
 
+            // GTK provides resource file mechanism for configuring various aspects of the operation of a GTK program at runtime. 
+            // Parses resource information from a string to allow change the App appearance.
             Rc.Parse(filename);
         }
 

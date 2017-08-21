@@ -17,6 +17,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             HeightRequest = DefaultHeight;
             WidthRequest = DefaultWidth;
 
+            // Custom control created with Cairo.
             _activityIndicator = new ActivityIndicatorDrawingArea
             {
                 Height = HeightRequest,

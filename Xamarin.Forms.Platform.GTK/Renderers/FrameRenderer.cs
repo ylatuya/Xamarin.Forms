@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // Draw a rectangle using Cairo.
                     var customFrame = new Controls.CustomFrame();
                     customFrame.SetBorderWidth(2);
                     customFrame.SetShadowWidth(2);
