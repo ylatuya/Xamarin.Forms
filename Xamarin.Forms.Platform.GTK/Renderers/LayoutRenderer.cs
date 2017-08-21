@@ -16,6 +16,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 {
                     if(_fixed == null)
                     {
+                        // Use a Gtk.Fixed, a container which you to position widgets at fixed coordinates.
+                        // This allows apply transformations.
                         _fixed = new Fixed();
                     }
 
