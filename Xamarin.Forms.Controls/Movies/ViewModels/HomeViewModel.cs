@@ -142,13 +142,13 @@ namespace Movies.ViewModels
             }
         }
 
-        private async void ShowDetailAsync(object obj)
+        private void ShowDetailAsync(object obj)
         {
             var show = obj as TVShow;
 
             if (show != null)
             {
-                await _navigationService.NavigateToAsync<DetailViewModel>(show);
+        
             }
         }
     }

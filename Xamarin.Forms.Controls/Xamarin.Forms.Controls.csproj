@@ -148,6 +148,7 @@
     <Compile Include="Movies\Controls\Rating\RatingStars.cs" />
     <Compile Include="Movies\Converters\InverseBoolConverter.cs" />
     <Compile Include="Movies\Converters\MovieImageConverter.cs" />
+    <Compile Include="Movies\Converters\ReleaseDateConverter.cs" />
     <Compile Include="Movies\Converters\ToUpperConverter.cs" />
     <Compile Include="Movies\Models\Collections\CollectionInfo.cs" />
     <Compile Include="Movies\Models\Company\ParentCompany.cs" />
@@ -158,6 +159,11 @@
     <Compile Include="Movies\Models\Language.cs" />
     <Compile Include="Movies\Models\MenuItem.cs" />
     <Compile Include="Movies\Models\Movie\Movie.cs" />
+    <Compile Include="Movies\Models\Movie\MovieCastMember.cs" />
+    <Compile Include="Movies\Models\Movie\MovieCredit.cs" />
+    <Compile Include="Movies\Models\Movie\MovieCrewMember.cs" />
+    <Compile Include="Movies\Models\Movie\MovieVideo.cs" />
+    <Compile Include="Movies\Models\Movie\MovieVideoItem.cs" />
     <Compile Include="Movies\Models\People\Gender.cs" />
     <Compile Include="Movies\Models\People\Person.cs" />
     <Compile Include="Movies\Models\SearchResponse.cs" />
@@ -182,8 +188,12 @@
     <Compile Include="Movies\ViewModels\MainViewModel.cs" />
     <Compile Include="Movies\ViewModels\MenuViewModel.cs" />
     <Compile Include="Movies\ViewModels\MoviesViewModel.cs" />
+    <Compile Include="Movies\ViewModels\HomepageViewModel.cs" />
     <Compile Include="Movies\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\HomepageView.xaml.cs">
+      <DependentUpon>HomepageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\MoviesView.xaml.cs">
       <DependentUpon>MoviesView.xaml</DependentUpon>
@@ -205,6 +215,9 @@
     </Compile>
     <Compile Include="Movies\Views\Templates\MenuItemTemplate.xaml.cs">
       <DependentUpon>MenuItemTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\Templates\CastingItemTemplate.xaml.cs">
+      <DependentUpon>CastingItemTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\Templates\ShowItemTemplate.xaml.cs">
       <DependentUpon>ShowItemTemplate.xaml</DependentUpon>
@@ -574,6 +587,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Movies\Views\MoviesView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\Templates\CastingItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\HomepageView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

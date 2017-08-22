@@ -149,6 +149,7 @@ namespace Movies.Services.Navigation
             _mappings.Add(typeof(HomeViewModel), typeof(HomeView));
             _mappings.Add(typeof(MainViewModel), typeof(MainView));
             _mappings.Add(typeof(MoviesViewModel), typeof(MoviesView));
+            _mappings.Add(typeof(HomepageViewModel), typeof(HomepageView));
         }
     }
 }

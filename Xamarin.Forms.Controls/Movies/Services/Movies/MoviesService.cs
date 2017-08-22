@@ -58,5 +58,23 @@ namespace Movies.Services.Movies
 
             return response;
         }
+
+        public async Task<MovieCredit> GetCreditsAsync(int movieId, string language = "en")
+        {
+            string uri = $"{AppSettings.ApiUrl}movie/{movieId}/credits?api_key={AppSettings.ApiKey}&language={language}";
+
+            MovieCredit response = await _requestProvider.GetAsync<MovieCredit>(uri);
+
+            return response;
+        }
+
+        public async Task<MovieVideo> GetVideosAsync(int movieId, string language = "en")
+        {
+            string uri = $"{AppSettings.ApiUrl}movie/{movieId}/videos?api_key={AppSettings.ApiKey}&language={language}";
+
+            MovieVideo response = await _requestProvider.GetAsync<MovieVideo>(uri);
+
+            return response;
+        }
     }
 }

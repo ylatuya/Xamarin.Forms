@@ -37,6 +37,7 @@ namespace Movies.ViewModels.Base
             _container.RegisterType<MenuViewModel>();
             _container.RegisterType<MainViewModel>();
             _container.RegisterType<HomeViewModel>();
+            _container.RegisterType<HomepageViewModel>();
         }
 
         public T Resolve<T>()

@@ -29,7 +29,7 @@
 
             <Style x:Key="PlayButtonStyle" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{DynamicResource AccentColor}" />
-                <Setter Property="TextColor" Value="{StaticResource BlackColor}" />
+                <Setter Property="TextColor" Value="{StaticResource WhiteColor}" />
             </Style>
             
         </ResourceDictionary>
@@ -81,7 +81,8 @@
 					VerticalOptions="End"
 					HorizontalOptions="Start"
 					Style="{StaticResource PlayButtonStyle}"
-					Text="Play Trailer" />
+					Text="PLAY TRAILER"
+                    Image="movies-play.png"/>
             </Grid>
         </Grid>
     </ContentView.Content>
