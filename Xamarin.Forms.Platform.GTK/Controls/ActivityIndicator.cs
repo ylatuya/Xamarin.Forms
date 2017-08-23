@@ -45,11 +45,20 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        public void UpdateBackgroundColor(Gdk.Color color)
+        public void UpdateBackgroundColor(Gdk.Color backgroundColor)
         {
             if (_activityIndicator != null)
             {
-                _activityIndicator.ModifyBg(StateType.Normal, color);
+                _activityIndicator.BackgroundColor = backgroundColor;
+                _activityIndicator.ModifyBg(StateType.Normal, backgroundColor);
+            }
+        }
+
+        public void UpdateAlpha(double alpha)
+        {
+            if (_activityIndicator != null)
+            {
+                _activityIndicator.Alpha = alpha;
             }
         }
 
@@ -70,6 +79,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private int _current;
         private int _lines;
         private Gdk.Color _color;
+        private Gdk.Color _backgroundColor;
+        private double _alpha;
 
         public ActivityIndicatorDrawingArea()
         {
@@ -121,6 +132,26 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public Gdk.Color BackgroundColor
+        {
+            get { return (_backgroundColor); }
+            set
+            {
+                _backgroundColor = value;
+                QueueDraw();
+            }
+        }
+
+        public double Alpha
+        {
+            get { return (_alpha); }
+            set
+            {
+                _alpha = value;
+                QueueDraw();
+            }
+        }
+
         public bool IsRunning
         {
             get { return (_running); }
@@ -148,7 +179,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 cr.Rectangle(
                     evnt.Area.X,
                     evnt.Area.Y,
-                    _height,
+                    Height,
                     Width);
 
                 cr.Clip();
@@ -175,6 +206,19 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void Draw(Context cr)
         {
+            // Set BackgroundColor
+            cr.Save();
+
+            var cairoBackgroundColor = new Cairo.Color(
+              (double)BackgroundColor.Red / ushort.MaxValue,
+              (double)BackgroundColor.Green / ushort.MaxValue,
+              (double)BackgroundColor.Blue / ushort.MaxValue);
+
+            cr.SetSourceRGBA(cairoBackgroundColor.R, cairoBackgroundColor.G, cairoBackgroundColor.B, Alpha);
+            cr.Paint();
+            cr.Restore();
+
+            // Draw Activity Indicator
             double radius;
             double half;
             double x, y;
