@@ -7,19 +7,29 @@
              BackgroundColor="{StaticResource ToolbarColor}"
              Title="Upcoming">
     <ContentPage.Content>
-        <ListView
-			ItemsSource="{Binding Upcoming}" 
-			SeparatorVisibility="None"
-			BackgroundColor="{StaticResource BackgroundColor}"
-			HasUnevenRows="true"                
-            behaviors:ItemTappedCommandListView.ItemTappedCommand="{Binding MovieDetailCommand}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <templates:TimelineItemTemplate />
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+        <Grid>
+            <ListView
+                IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+		        ItemsSource="{Binding Upcoming}" 
+		        SeparatorVisibility="None"
+		        BackgroundColor="{StaticResource BackgroundColor}"
+		        HasUnevenRows="true"                
+                behaviors:ItemTappedCommandListView.ItemTappedCommand="{Binding MovieDetailCommand}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <templates:TimelineItemTemplate />
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <ActivityIndicator
+                IsVisible="{Binding IsBusy}"
+                IsRunning="{Binding IsBusy}"
+                Color="{StaticResource AccentColor}"
+                BackgroundColor="{StaticResource BackgroundColor}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>
