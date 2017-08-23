@@ -8,5 +8,7 @@
         public static string BackdropImageUrl = "http://image.tmdb.org/t/p/w500/";
         public static string YouTubeUrl = "https://www.youtube.com/watch?v=";
         public static string DialogMessage = "ShowDialog";
+        public static string MoviesMessage = "Movies";
+        public static string ShowsMessage = "Shows";
     }
 }

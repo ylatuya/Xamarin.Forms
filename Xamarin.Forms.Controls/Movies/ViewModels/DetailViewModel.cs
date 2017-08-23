@@ -60,6 +60,7 @@ namespace Movies.ViewModels
 
         public ICommand PlayCommand => new Command(Play);
         public ICommand HomepageCommand => new Command(HomepageAsync);
+        public ICommand PeopleDetailCommand => new Command<MovieCastMember>(PeopleDetailAsync);
 
         public override async Task InitializeAsync(object navigationData)
         {
@@ -72,7 +73,12 @@ namespace Movies.ViewModels
                 var credits = await _moviesService.GetCreditsAsync(movie.Id);
                 Casting = new ObservableCollection<MovieCastMember>(credits.CastMembers.Take(10));
                 var videos = await _moviesService.GetVideosAsync(movie.Id);
-                Video = string.Format("{0}{1}", AppSettings.YouTubeUrl, videos.Videos[0].Key);
+
+                if (videos.Videos.Any())
+                {
+                    var video = videos.Videos.First();
+                    Video = string.Format("{0}{1}", AppSettings.YouTubeUrl, video.Key);
+                }
 
                 IsBusy = false;
             }
@@ -96,6 +102,16 @@ namespace Movies.ViewModels
             }
 
             await _navigationService.NavigateToAsync<HomepageViewModel>(Movie.Homepage);
+        }
+
+        private async void PeopleDetailAsync(object obj)
+        {
+            var people = obj as MovieCastMember;
+
+            if (people != null)
+            {
+                await _navigationService.NavigateToAsync<PeopleViewModel>(people);
+            }
         }
     }
 }

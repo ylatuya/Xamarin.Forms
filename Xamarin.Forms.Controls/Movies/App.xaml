@@ -15,6 +15,7 @@
             <Color x:Key="ToolbarColor">#151C25</Color>
             <Color x:Key="BackgroundColor">#1E2634</Color>
             <Color x:Key="DarkBackgroundColor">#151C25</Color>
+            <Color x:Key="MenuBackgroundColor">#44545C</Color>
             
             <!-- CONVERTERS -->
             <converters:InverseBoolConverter x:Key="InverseBoolConverter" />

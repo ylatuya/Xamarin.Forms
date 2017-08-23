@@ -8,6 +8,7 @@ namespace Movies.Models
         Discover,
         Movies,
         TVShows,
+        Upcoming,
         Favourites,
         Settings
     }

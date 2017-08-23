@@ -107,14 +107,14 @@ namespace Movies.ViewModels
         {
             var result = await _moviesService.GetTopRatedAsync();
 
-            TopRatedMovies = new ObservableCollection<Movie>(result.Results);
+            TopRatedMovies = new ObservableCollection<Movie>(result.Results.Take(10));
         }
 
         private async Task LoadPopularMoviesAync()
         {
             var result = await _moviesService.GetPopularAsync();
 
-            PopularMovies = new ObservableCollection<Movie>(result.Results);
+            PopularMovies = new ObservableCollection<Movie>(result.Results.Take(10));
             Highlight = result.Results.First();
         }
 
@@ -122,14 +122,14 @@ namespace Movies.ViewModels
         {
             var result = await _tvShowService.GetTopRatedAsync();
 
-            TopRatedTvShows = new ObservableCollection<TVShow>(result.Results);
+            TopRatedTvShows = new ObservableCollection<TVShow>(result.Results.Take(10));
         }
 
         private async Task LoadPopularTvShowsAync()
         {
             var result = await _tvShowService.GetPopularAsync();
 
-            PopularTvShows = new ObservableCollection<TVShow>(result.Results);
+            PopularTvShows = new ObservableCollection<TVShow>(result.Results.Take(10));
         }
 
         private async void MovieDetailAsync(object obj)

@@ -6,6 +6,7 @@ using System;
 using Xamarin.Forms.Maps.GTK;
 using Xamarin.Forms.Platform.GTK;
 using Xamarin.Forms.Platform.GTK.Renderers;
+using Xamarin.Forms.Platform.GTK.Helpers;
 
 [assembly: ExportRenderer(typeof(DisposePage), typeof(DisposePageRenderer))]
 [assembly: ExportRenderer(typeof(DisposeLabel), typeof(DisposeLabelRenderer))]
@@ -19,7 +20,9 @@ namespace Xamarin.Forms.ControlGallery.GTK
             ExceptionManager.UnhandledException += OnUnhandledException;
 
             GtkThemes.Init();
-            GtkThemes.LoadCustomTheme("Themes/gtkrc-dark");
+
+            if(PlatformHelper.GetGTKPlatform() == GTKPlatform.Windows)
+                GtkThemes.LoadCustomTheme("Themes/gtkrc-dark");
 
             Gtk.Application.Init();
             Forms.Init();

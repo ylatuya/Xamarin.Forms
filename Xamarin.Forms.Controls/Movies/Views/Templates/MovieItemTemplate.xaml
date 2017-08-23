@@ -23,7 +23,8 @@
         </ResourceDictionary>
     </ContentView.Resources>
     <ContentView.Content>
-        <Grid
+        <Grid 
+            BackgroundColor="{StaticResource BackgroundColor}"
             Margin="0, 0, 12, 0">
             <Grid.Triggers>
                 <DataTrigger

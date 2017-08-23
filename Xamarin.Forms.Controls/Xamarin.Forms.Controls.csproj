@@ -144,8 +144,12 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\AppSettings.cs" />
+    <Compile Include="Movies\Behaviors\BindableBehavior.cs" />
+    <Compile Include="Movies\Behaviors\ItemTappedCommandListView.cs" />
+    <Compile Include="Movies\Behaviors\MapBehavior.cs" />
     <Compile Include="Movies\Controls\HorizontalList\HorizontalList.cs" />
     <Compile Include="Movies\Controls\Rating\RatingStars.cs" />
+    <Compile Include="Movies\Controls\WrapLayout\WrapLayout.cs" />
     <Compile Include="Movies\Converters\InverseBoolConverter.cs" />
     <Compile Include="Movies\Converters\MovieImageConverter.cs" />
     <Compile Include="Movies\Converters\ReleaseDateConverter.cs" />
@@ -187,13 +191,31 @@
     <Compile Include="Movies\ViewModels\HomeViewModel.cs" />
     <Compile Include="Movies\ViewModels\MainViewModel.cs" />
     <Compile Include="Movies\ViewModels\MenuViewModel.cs" />
+    <Compile Include="Movies\ViewModels\ShowsViewModel.cs" />
     <Compile Include="Movies\ViewModels\MoviesViewModel.cs" />
     <Compile Include="Movies\ViewModels\HomepageViewModel.cs" />
+    <Compile Include="Movies\ViewModels\PeopleViewModel.cs" />
+    <Compile Include="Movies\ViewModels\UpcomingViewModel.cs" />
     <Compile Include="Movies\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\HomepageView.xaml.cs">
       <DependentUpon>HomepageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\ShowsView.xaml.cs">
+      <DependentUpon>ShowsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\Templates\ShowBannerItemTemplate.xaml.cs">
+      <DependentUpon>ShowBannerItemTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\Templates\TimelineItemTemplate.xaml.cs">
+      <DependentUpon>TimelineItemTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\UpcomingView.xaml.cs">
+      <DependentUpon>UpcomingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\PeopleView.xaml.cs">
+      <DependentUpon>PeopleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\MoviesView.xaml.cs">
       <DependentUpon>MoviesView.xaml</DependentUpon>
@@ -218,6 +240,9 @@
     </Compile>
     <Compile Include="Movies\Views\Templates\CastingItemTemplate.xaml.cs">
       <DependentUpon>CastingItemTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\Templates\MovieBannerItemTemplate.xaml.cs">
+      <DependentUpon>MovieBannerItemTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\Templates\ShowItemTemplate.xaml.cs">
       <DependentUpon>ShowItemTemplate.xaml</DependentUpon>
@@ -599,6 +624,42 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Movies\Views\HomepageView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\Templates\MovieBannerItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\PeopleView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\UpcomingView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\Templates\TimelineItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\ShowsView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\Templates\ShowBannerItemTemplate.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

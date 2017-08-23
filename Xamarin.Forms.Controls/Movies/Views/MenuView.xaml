@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Movies.Views.MenuView"   
+             xmlns:behaviors="clr-namespace:Movies.Behaviors;assembly=Xamarin.Forms.Controls"
              xmlns:templates="clr-namespace:Movies.Views.Templates;assembly=Xamarin.Forms.Controls"
              BackgroundColor="{StaticResource ToolbarColor}"
              Icon="movies-menu.png"
@@ -9,9 +10,11 @@
     <ContentPage.Content>
         <Grid>
             <ListView    
+                BackgroundColor="{StaticResource MenuBackgroundColor}"
                 CachingStrategy="RecycleElement"
                 SeparatorVisibility="None"
-                ItemsSource="{Binding MenuItems}">
+                ItemsSource="{Binding MenuItems}"  
+                behaviors:ItemTappedCommandListView.ItemTappedCommand="{Binding ItemSelectedCommand}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
