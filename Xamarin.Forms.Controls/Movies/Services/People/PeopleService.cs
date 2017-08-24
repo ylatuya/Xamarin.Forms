@@ -31,5 +31,14 @@ namespace Movies.Services.People
 
             return response;
         }
+
+        public async Task<PersonImage> GetImagesAsync(int personId, string language = "en")
+        {
+            string uri = $"{AppSettings.ApiUrl}person/{personId}/images?api_key={AppSettings.ApiKey}&language={language}";
+
+            PersonImage response = await _requestProvider.GetAsync<PersonImage>(uri);
+
+            return response;
+        }
     }
 }
