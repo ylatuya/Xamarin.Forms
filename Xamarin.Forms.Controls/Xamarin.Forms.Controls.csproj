@@ -150,6 +150,7 @@
     <Compile Include="Movies\Controls\HorizontalList\HorizontalList.cs" />
     <Compile Include="Movies\Controls\Rating\RatingStars.cs" />
     <Compile Include="Movies\Controls\WrapLayout\WrapLayout.cs" />
+    <Compile Include="Movies\Converters\MenuItemTypeConverter.cs" />
     <Compile Include="Movies\Converters\InverseBoolConverter.cs" />
     <Compile Include="Movies\Converters\MovieImageConverter.cs" />
     <Compile Include="Movies\Converters\ReleaseDateConverter.cs" />
