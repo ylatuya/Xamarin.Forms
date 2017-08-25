@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -21,7 +20,7 @@ namespace Xamarin.Forms.Platform.GTK
 
         public void BeginInvokeOnMainThread(Action action)
         {
-            Gtk.Application.Invoke((o, s) => action());
+            GLib.Idle.Add(delegate { action(); return false; });
         }
 
         public Ticker CreateTicker()

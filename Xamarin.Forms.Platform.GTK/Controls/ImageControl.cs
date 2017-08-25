@@ -76,6 +76,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                 Pixbuf newPixBuf = null;
 
+                // Differents modes in which the image will be scaled to fit the display area.
                 switch (Aspect)
                 {
                     case ImageAspect.AspectFit:

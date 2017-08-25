@@ -30,6 +30,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // To allow all avalaible options in Xamarin.Forms, a custom control has been created.
+                    // Can set text, text color, border, image, etc.
                     var btn = new ImageButton();
                     SetNativeControl(btn);
 

@@ -13,7 +13,7 @@ using Container = Gtk.EventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
-    public class NavigationPageRenderer : AbstractPageRenderer<Fixed, NavigationPage>
+    public class NavigationPageRenderer : AbstractPageRenderer<Fixed, NavigationPage>, IToolbarTracker
     {
         private const int NavigationAnimationDuration = 250;    // Ms
 
@@ -21,10 +21,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         INavigationPageController NavigationController => Element as INavigationPageController;
 
+        private GtkToolbarTracker _toolbarTracker;
+        private Page _currentPage;
+
         public NavigationPageRenderer()
         {
             _currentStack = new Stack<NavigationChildPage>();
+            _toolbarTracker = new GtkToolbarTracker();
         }
+
+        public GtkToolbarTracker NativeToolbarTracker => _toolbarTracker;
 
         public Task<bool> PopToRootAsync(Page page, bool animated = true)
         {
@@ -53,6 +59,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     NavigationController.RemovePageRequested -= OnRemovedPageRequested;
                     NavigationController.InsertPageBeforeRequested -= OnInsertPageBeforeRequested;
                 }
+
+                _toolbarTracker = null;
+
+                if (_currentPage != null)
+                {
+                    _currentPage.PropertyChanged -= OnCurrentPagePropertyChanged;
+                }
             }
 
             base.Dispose(disposing);
@@ -60,8 +73,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnShown()
         {
-            Platform.NativeToolbarTracker.Navigation = Page;
-
             if (_appeared)
                 return;
 
@@ -77,7 +88,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (!_appeared)
                 return;
 
-            Platform.NativeToolbarTracker.TryHide(Page);
+            _toolbarTracker.TryHide(Page);
             _appeared = false;
 
             PageController?.SendDisappearing();
@@ -166,6 +177,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Container.IsFocus = true;
         }
 
+        protected override void SetPageSize(int width, int height)
+        {
+            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - GtkToolbarConstants.ToolbarHeight);
+            SetElementSize(pageContentSize.ToSize());
+        }
+
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -179,6 +196,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             else if (e.PropertyName ==
                 PlatformConfiguration.GTKSpecific.NavigationPage.BackButtonIconProperty.PropertyName)
                 UpdateBackButtonIcon();
+            else if (e.PropertyName == NavigationPage.CurrentPageProperty.PropertyName)
+                UpdateCurrentPage();
         }
 
         private void Init()
@@ -189,7 +208,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 throw new InvalidOperationException(
                     "NavigationPage must have a root Page before being used. Either call PushAsync with a valid Page, or pass a Page to the constructor before usage.");
 
-            Platform.NativeToolbarTracker.Navigation = Page;
+            _toolbarTracker.Navigation = Page;
+            _currentPage = Page.CurrentPage;
+            UpdateCurrentPage();
+
             NavigationController.PushRequested += OnPushRequested;
             NavigationController.PopRequested += OnPopRequested;
             NavigationController.PopToRootRequested += OnPopToRootRequested;
@@ -203,6 +225,42 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             UpdateBackgroundColor();
             UpdateBackButtonIcon();
+        }
+
+        private void UpdateCurrentPage()
+        {
+            if (_currentPage != null)
+            {
+                _currentPage.PropertyChanged -= OnCurrentPagePropertyChanged;
+            }
+
+            _currentPage = Page.CurrentPage;
+
+            if (_currentPage != null)
+            {
+                _currentPage.PropertyChanged += OnCurrentPagePropertyChanged;
+            }
+
+            UpdateTitle();
+            UpdateIcon();
+        }
+
+        private void OnCurrentPagePropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == Xamarin.Forms.Page.TitleProperty.PropertyName)
+                UpdateTitle();
+            else if (e.PropertyName == Xamarin.Forms.Page.IconProperty.PropertyName)
+                UpdateIcon();
+        }
+
+        private void UpdateTitle()
+        {
+            _toolbarTracker.UpdateTitle();
+        }
+
+        private void UpdateIcon()
+        {
+            _toolbarTracker.UpdateIcon();
         }
 
         private void OnPushRequested(object sender, NavigationRequestedEventArgs e)
@@ -280,11 +338,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 var to = target.Container.Parent.Allocation.Width;
 
                 await AnimatePageAsync(target.Container, 0, to);
-                FinishRemovePage(page, removeFromStack);
+                FinishRemovePage(page, target, removeFromStack);
             }
             else
             {
-                FinishRemovePage(page, removeFromStack);
+                FinishRemovePage(page, target, removeFromStack);
             }
         }
 
@@ -377,15 +435,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             return true;
         }
 
-        private void FinishRemovePage(Page page, bool removeFromStack)
+        private void FinishRemovePage(Page page, IVisualElementRenderer pageRenderer, bool removeFromStack)
         {
             GLib.Idle.Add(() =>
             {
-                var target = Platform.GetRenderer(page);
-
-                if (target != null)
+                if (pageRenderer != null)
                 {
-                    Widget.RemoveFromContainer(target.Container);
+                    Widget.RemoveFromContainer(pageRenderer.Container);
                 }
 
                 if (removeFromStack)
@@ -403,6 +459,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 var oldPage = _currentStack.Peek().Page;
                 (oldPage as IPageController)?.SendAppearing();
+                pageRenderer?.Dispose();
 
                 return false;
             });
@@ -423,7 +480,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateBackButtonIcon()
         {
             var backButton = Page.OnThisPlatform().GetBackButtonIcon();
-            Platform.NativeToolbarTracker.UpdateBackButton(backButton);
+
+            _toolbarTracker.UpdateBackButton(backButton);
             UpdateToolBar();
         }
 
@@ -444,7 +502,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             GLib.Timeout.Add(0, () =>
             {
-                Platform.NativeToolbarTracker.UpdateToolBar();
+                _toolbarTracker.UpdateToolBar();
                 return false;
             });
         }

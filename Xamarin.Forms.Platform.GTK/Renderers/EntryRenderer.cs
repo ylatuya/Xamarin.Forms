@@ -17,6 +17,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             if (Control == null)
             {
+                // Custom control. The control is composed of a Gtk.Entry and a Gtk.Label to allow to display Placeholder.
                 var wrapper = new EntryWrapper();
                 SetNativeControl(wrapper);
 

@@ -70,6 +70,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Widget == null)
                 {
+                    // There is nothing similar in Gtk. 
+                    // Custom control has been created that simulates the expected behavior.
                     Widget = new Controls.MasterDetailPage();
                     var eventBox = new EventBox();
                     eventBox.Add(Widget);
@@ -148,7 +150,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBarTextColor()
         {
-            var navigationPage = Platform.NativeToolbarTracker.Navigation;
+            var navigationPage = Page.Detail as NavigationPage;
 
             if (navigationPage != null)
             {
@@ -160,7 +162,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateBarBackgroundColor()
         {
-            var navigationPage = Platform.NativeToolbarTracker.Navigation;
+            var navigationPage = Page.Detail as NavigationPage;
 
             if (navigationPage != null)
             {
@@ -181,7 +183,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 var image = await handler.LoadImageAsync(hamburguerIcon);
                 Widget.UpdateHamburguerIcon(image);
 
-                Platform.NativeToolbarTracker.UpdateToolBar();
+                var navigationPage = Page.Detail as NavigationPage;
+
+                if (navigationPage != null)
+                {
+                    var navigationRenderer = Platform.GetRenderer(navigationPage) as IToolbarTracker;
+                    navigationRenderer?.NativeToolbarTracker.UpdateToolBar();
+                }
             }
         }
 

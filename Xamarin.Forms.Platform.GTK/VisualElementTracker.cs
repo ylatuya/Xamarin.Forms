@@ -372,15 +372,21 @@ namespace Xamarin.Forms.Platform.GTK
             if (view == null)
                 return;
 
-            if (_isPanning)
-                return;
-
-            IEnumerable<TapGestureRecognizer> tapGestures = view.GestureRecognizers
-                .GetGesturesFor<TapGestureRecognizer>(g => g.NumberOfTapsRequired == 1);
-
-            foreach (TapGestureRecognizer recognizer in tapGestures)
+            if (args.Event.Type == Gdk.EventType.TwoButtonPress)
             {
-                recognizer.SendTapped(view);
+                IEnumerable<TapGestureRecognizer> doubleTapGestures = view.GestureRecognizers
+                    .GetGesturesFor<TapGestureRecognizer>(g => g.NumberOfTapsRequired == 2);
+
+                foreach (TapGestureRecognizer recognizer in doubleTapGestures)
+                    recognizer.SendTapped(view);
+            }
+            else
+            {
+                IEnumerable<TapGestureRecognizer> tapGestures = view.GestureRecognizers
+                    .GetGesturesFor<TapGestureRecognizer>(g => g.NumberOfTapsRequired == 1);
+
+                foreach (TapGestureRecognizer recognizer in tapGestures)
+                    recognizer.SendTapped(view);
             }
         }
 

@@ -34,6 +34,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 if (Widget == null)
                 {
+                    // Custom control using a tabbed notebook container.
                     Widget = new NotebookWrapper();
                     Control.Content = Widget;
                 }
@@ -252,7 +253,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        private void UpdateTabPos()
+        private void UpdateTabPos() // Platform-Specific Functionality
         {
             var tabposition = Page.OnThisPlatform().GetTabPosition();
 
@@ -270,13 +271,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void OnNotebookPageSwitched(object o, SwitchPageArgs args)
         {
             var currentPageIndex = (int)args.PageNum;
-            Element currentSelectedChild = Page.Children.Count > currentPageIndex
+            VisualElement currentSelectedChild = Page.Children.Count > currentPageIndex
                 ? Page.Children[currentPageIndex]
                 : null;
 
             if (currentSelectedChild != null)
             {
                 ElementController.SetValueFromRenderer(TabbedPage.SelectedItemProperty, currentSelectedChild.BindingContext);
+
+                var pageRenderer = Platform.GetRenderer(currentSelectedChild);
+                pageRenderer?.Container.ShowAll();
             }
         }
     }

@@ -63,6 +63,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
+            if (Element == null)
+                return;
+
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
             if (Element.Bounds != bounds)
@@ -211,27 +214,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateBackgroundColor();
             else if (e.PropertyName == Xamarin.Forms.Page.BackgroundImageProperty.PropertyName)
                 UpdateBackgroundImage();
-            else if (e.PropertyName == Xamarin.Forms.Page.TitleProperty.PropertyName)
-                UpdateTitle();
-            else if (e.PropertyName == Xamarin.Forms.Page.IconProperty.PropertyName)
-                UpdateIcon();
         }
 
-        private void SetPageSize(int width, int height)
+        protected virtual void SetPageSize(int width, int height)
         {
-            var toolbarSize = Platform.NativeToolbarTracker.GetCurrentToolbarSize();
-            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - toolbarSize.Height);
+            if (Page != null && 
+                Page.Parent is NavigationPage &&
+                NavigationPage.GetHasNavigationBar(Page))
+                height = height - GtkToolbarConstants.ToolbarHeight;
+
+            var pageContentSize = new Gdk.Rectangle(0, 0, width, height);
             SetElementSize(pageContentSize.ToSize());
-        }
-
-        private void UpdateTitle()
-        {
-            Platform.NativeToolbarTracker.UpdateTitle();
-        }
-
-        private void UpdateIcon()
-        {
-            Platform.NativeToolbarTracker.UpdateIcon();
         }
     }
 }

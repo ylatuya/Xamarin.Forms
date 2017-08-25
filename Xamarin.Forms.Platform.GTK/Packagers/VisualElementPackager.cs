@@ -28,6 +28,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public void Load()
@@ -64,7 +65,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
             Platform.SetRenderer(view, viewRenderer);
 
             Gtk.Container container = Renderer.Container;
-            container.Add(viewRenderer.Container);
+            container?.Add(viewRenderer.Container);
             viewRenderer.Container.ShowAll();
         }
 
