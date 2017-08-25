@@ -26,6 +26,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // A date picker custom control.
                     var datePicker = new Controls.DatePicker();
                     datePicker.GotFocus += GotFocus;
                     datePicker.LostFocus += LostFocus;

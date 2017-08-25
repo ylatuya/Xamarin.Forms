@@ -13,6 +13,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // Custom control using a Gtk.Entry with some ImageButtons.
                     SetNativeControl(new SearchEntry());
 
                     Control.SearchTextChanged += SearchTextChanged;
