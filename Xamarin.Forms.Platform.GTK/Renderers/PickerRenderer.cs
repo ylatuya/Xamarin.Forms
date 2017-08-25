@@ -16,6 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // Use Gtk.ComboBox, a widget used to choose from a list of items.
                     ComboBox comboBox = new ComboBox();
                     CellRendererText text = new CellRendererText();
                     comboBox.PackStart(text, true);

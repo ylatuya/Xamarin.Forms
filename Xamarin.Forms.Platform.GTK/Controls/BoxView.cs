@@ -11,6 +11,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public BoxView()
         {
+            // Custom control created with Cairo. It gives nice possibilities as rounded corners, etc.
             _boxView = new BoxViewDrawingArea();
 
             Add(_boxView);
