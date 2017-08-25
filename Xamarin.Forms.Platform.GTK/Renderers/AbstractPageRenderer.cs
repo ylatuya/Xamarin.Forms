@@ -218,7 +218,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void SetPageSize(int width, int height)
         {
-            if (Page != null && NavigationPage.GetHasNavigationBar(Page))
+            if (Page != null && 
+                Page.Parent is NavigationPage &&
+                NavigationPage.GetHasNavigationBar(Page))
                 height = height - GtkToolbarConstants.ToolbarHeight;
 
             var pageContentSize = new Gdk.Rectangle(0, 0, width, height);

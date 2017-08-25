@@ -28,6 +28,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // Use Gtk.ScrolledWindow that adds scrollbars to its child widget.
                     Control = new ScrolledWindow
                     {
                         CanFocus = true,
