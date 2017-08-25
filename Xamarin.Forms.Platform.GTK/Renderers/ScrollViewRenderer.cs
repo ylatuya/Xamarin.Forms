@@ -186,6 +186,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateContentSize()
         {
+            if (Control == null)
+                return;
+
             var contentSize = Element.ContentSize;
 
             var height = Convert.ToInt32(contentSize.Height);
