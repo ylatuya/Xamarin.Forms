@@ -63,6 +63,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         public void SetElementSize(Size size)
         {
+            if (Element == null)
+                return;
+
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
             if (Element.Bounds != bounds)
@@ -215,6 +218,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void SetPageSize(int width, int height)
         {
+            if (Page != null && 
+                Page.Parent is NavigationPage &&
+                NavigationPage.GetHasNavigationBar(Page))
+                height = height - GtkToolbarConstants.ToolbarHeight;
+
             var pageContentSize = new Gdk.Rectangle(0, 0, width, height);
             SetElementSize(pageContentSize.ToSize());
         }

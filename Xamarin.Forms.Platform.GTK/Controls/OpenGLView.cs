@@ -1,5 +1,6 @@
 ﻿using Gtk;
 using OpenTK;
+using OpenTK.GLWidget;
 using OpenTK.Graphics;
 using System;
 
@@ -8,6 +9,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
     public class OpenGLView : EventBox
     {
         private GLWidget _glWidget;
+
         private Action<Rectangle> _action;
         private bool _hasLoop;
         protected uint _timerId;
@@ -15,9 +17,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public OpenGLView()
         {
             Init();
+
             GraphicsMode graphicsMode = GraphicsMode.Default;
 
             _glWidget = new GLWidget(GraphicsMode.Default);
+
             _glWidget.SingleBuffer = true;
             _glWidget.ColorBPP = graphicsMode.ColorFormat.BitsPerPixel;
             _glWidget.AccumulatorBPP = graphicsMode.AccumulatorFormat.BitsPerPixel;
@@ -29,9 +33,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _glWidget.GlVersionMinor = 0;
             _glWidget.CanFocus = true;
             _glWidget.GraphicsContextFlags = GraphicsContextFlags.Default;
+
             _glWidget.Initialized += new EventHandler(OnGLWidgetInitialized);
             _glWidget.RenderFrame += new EventHandler(OnGLWidgetRenderer);
             _glWidget.Destroyed += new EventHandler(OnGLWidgetDestroy);
+
             _glWidget.AddEvents((int)Gdk.EventMask.AllEventsMask);
 
             Add(_glWidget);

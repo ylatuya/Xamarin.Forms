@@ -38,6 +38,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 if (Control == null)
                 {
+                    // Custom control very similar to ListView.
                     _tableView = new Controls.TableView();
                     _tableView.OnItemTapped += OnItemTapped;
 

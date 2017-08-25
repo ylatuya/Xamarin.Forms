@@ -338,11 +338,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 var to = target.Container.Parent.Allocation.Width;
 
                 await AnimatePageAsync(target.Container, 0, to);
-                FinishRemovePage(page, removeFromStack);
+                FinishRemovePage(page, target, removeFromStack);
             }
             else
             {
-                FinishRemovePage(page, removeFromStack);
+                FinishRemovePage(page, target, removeFromStack);
             }
         }
 
@@ -435,15 +435,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             return true;
         }
 
-        private void FinishRemovePage(Page page, bool removeFromStack)
+        private void FinishRemovePage(Page page, IVisualElementRenderer pageRenderer, bool removeFromStack)
         {
             GLib.Idle.Add(() =>
             {
-                var target = Platform.GetRenderer(page);
-
-                if (target != null)
+                if (pageRenderer != null)
                 {
-                    Widget.RemoveFromContainer(target.Container);
+                    Widget.RemoveFromContainer(pageRenderer.Container);
                 }
 
                 if (removeFromStack)
@@ -461,6 +459,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 var oldPage = _currentStack.Peek().Page;
                 (oldPage as IPageController)?.SendAppearing();
+                pageRenderer?.Dispose();
 
                 return false;
             });

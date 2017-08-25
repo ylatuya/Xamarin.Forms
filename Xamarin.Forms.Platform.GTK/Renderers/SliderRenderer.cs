@@ -33,6 +33,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     _minimum = e.NewElement.Minimum;
                     _maximum = e.NewElement.Maximum;
                     double stepping = Math.Min((e.NewElement.Maximum - e.NewElement.Minimum) / 10, 1);
+
+                    // Use gtk.HScale, a horizontal slider widget for selecting a value from a range.
                     SetNativeControl(new Gtk.HScale(_minimum, _maximum, stepping));
                     Control.ValueChanged += OnControlValueChanged;
                 }

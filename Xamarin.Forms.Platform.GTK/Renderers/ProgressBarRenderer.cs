@@ -12,8 +12,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (Control == null)
             {
+                // Use Gtk.ProgressBar, a widget which indicates progress visually.
                 var progressBar = new Gtk.ProgressBar();
-                progressBar.Adjustment = new Gtk.Adjustment(0, 0, 1, 0.1, 1, 1);
+                progressBar.Adjustment = new Gtk.Adjustment(0, 0, 1, 0.1, 1, 1); // Default increment: 0.1
                 SetNativeControl(progressBar);
             }
 
