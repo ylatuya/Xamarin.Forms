@@ -7,6 +7,7 @@ using Xamarin.Forms.Maps.GTK;
 using Xamarin.Forms.Platform.GTK;
 using Xamarin.Forms.Platform.GTK.Renderers;
 using Xamarin.Forms.Platform.GTK.Helpers;
+using System.Net;
 
 [assembly: ExportRenderer(typeof(DisposePage), typeof(DisposePageRenderer))]
 [assembly: ExportRenderer(typeof(DisposeLabel), typeof(DisposeLabelRenderer))]
@@ -17,6 +18,8 @@ namespace Xamarin.Forms.ControlGallery.GTK
         [STAThread]
         static void Main(string[] args)
         {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
             ExceptionManager.UnhandledException += OnUnhandledException;
 
             GtkThemes.Init();
