@@ -8,6 +8,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Animations;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
 using Container = Gtk.EventBox;
 
@@ -334,10 +335,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (animated && target != null)
             {
-                target.Container.MoveTo(0, 0);
-                var to = target.Container.Parent.Allocation.Width;
-
-                await AnimatePageAsync(target.Container, 0, to);
+                if (PlatformHelper.GetGTKPlatform() == GTKPlatform.Windows)
+                {
+                    target.Container.MoveTo(0, 0);
+                    var to = target.Container.Parent.Allocation.Width;
+                    await AnimatePageAsync(target.Container, 0, to);
+                }
 
                 if (target != null)
                 {
