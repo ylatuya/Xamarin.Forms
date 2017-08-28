@@ -7,7 +7,7 @@
         <ResourceDictionary>
 
             <Style x:Key="CastingImageStyle" TargetType="Image">
-                <Setter Property="Aspect" Value="AspectFit" />
+                <Setter Property="Aspect" Value="AspectFill" />
                 <Setter Property="HorizontalOptions" Value="Start" />
             </Style>
             

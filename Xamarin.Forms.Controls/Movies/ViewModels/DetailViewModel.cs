@@ -71,7 +71,7 @@ namespace Movies.ViewModels
                 var movie = (Movie)navigationData;
                 Movie = await _moviesService.FindByIdAsync(movie.Id);
                 var credits = await _moviesService.GetCreditsAsync(movie.Id);
-                Casting = new ObservableCollection<MovieCastMember>(credits.CastMembers.Take(10));
+                Casting = new ObservableCollection<MovieCastMember>(credits.CastMembers.Take(5));
                 var videos = await _moviesService.GetVideosAsync(movie.Id);
 
                 if (videos.Videos.Any())
