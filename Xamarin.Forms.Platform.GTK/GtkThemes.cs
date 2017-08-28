@@ -60,8 +60,6 @@ namespace Xamarin.Forms.Platform.GTK
                 return false;
             }
 
-            Debug.WriteLine("Found GTK# version " + version);
-
             var path = Path.Combine(location, @"bin");
             try
             {
@@ -74,7 +72,6 @@ namespace Xamarin.Forms.Platform.GTK
             {
             }
 
-            Debug.WriteLine("Unable to set GTK+ dll directory");
             return true;
         }
     }
