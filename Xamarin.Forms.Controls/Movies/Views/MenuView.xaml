@@ -4,12 +4,17 @@
              x:Class="Movies.Views.MenuView"   
              xmlns:behaviors="clr-namespace:Movies.Behaviors;assembly=Xamarin.Forms.Controls"
              xmlns:templates="clr-namespace:Movies.Views.Templates;assembly=Xamarin.Forms.Controls"
-             BackgroundColor="{StaticResource ToolbarColor}"
+             BackgroundColor="{StaticResource MenuBackgroundColor}"
              Icon="movies-menu.png"
              Title=" ">
     <ContentPage.Content>
-        <Grid>
+        <Grid 
+            RowSpacing="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
             <ListView    
+                Grid.Row="0"
                 BackgroundColor="{StaticResource MenuBackgroundColor}"
                 CachingStrategy="RecycleElement"
                 SeparatorVisibility="None"

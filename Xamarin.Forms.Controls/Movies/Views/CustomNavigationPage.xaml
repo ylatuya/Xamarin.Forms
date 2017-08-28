@@ -5,5 +5,5 @@
     x:Class="Movies.Views.CustomNavigationPage" 
     BarBackgroundColor="{StaticResource ToolbarColor}"         
     BarTextColor="{StaticResource WhiteColor}" 
-    BackgroundColor="Transparent">
+    BackgroundColor="{StaticResource BackgroundColor}">
 </NavigationPage>
