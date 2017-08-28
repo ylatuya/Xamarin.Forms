@@ -2,7 +2,6 @@
 using Gtk;
 using System;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -141,20 +140,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RefreshToolbar(HBox newToolbar)
         {
-            GTKPlatform platform = PlatformHelper.GetGTKPlatform();
-
-            if (platform != GTKPlatform.Linux)
-            {
-                _headerContainer.RemoveFromContainer(_toolbar);
-            }
-
+            _headerContainer.RemoveFromContainer(_toolbar);
             _toolbar = newToolbar;
             _headerContainer.Add(_toolbar);
-
-            if (_toolbar.IsRealized)
-            {
-                _toolbar.ShowAll();
-            }
+            _toolbar.ShowAll();
         }
 
         private void RefreshContent(EventBox newContent)
