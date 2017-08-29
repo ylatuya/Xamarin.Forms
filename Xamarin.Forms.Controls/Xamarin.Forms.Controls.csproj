@@ -200,12 +200,16 @@
     <Compile Include="Movies\ViewModels\MoviesViewModel.cs" />
     <Compile Include="Movies\ViewModels\HomepageViewModel.cs" />
     <Compile Include="Movies\ViewModels\PeopleViewModel.cs" />
+    <Compile Include="Movies\ViewModels\SplashViewModel.cs" />
     <Compile Include="Movies\ViewModels\UpcomingViewModel.cs" />
     <Compile Include="Movies\Views\CustomNavigationPage.xaml.cs">
       <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Movies\Views\SplashView.xaml.cs">
+      <DependentUpon>SplashView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Movies\Views\HomepageView.xaml.cs">
       <DependentUpon>HomepageView.xaml</DependentUpon>
@@ -686,6 +690,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Movies\Views\Templates\GalleryItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Movies\Views\SplashView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

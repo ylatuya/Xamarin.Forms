@@ -2,9 +2,9 @@
 
 namespace Movies.Views
 {
-    public partial class MainView : MasterDetailPage
+    public partial class SplashView : ContentPage
     {
-        public MainView()
+        public SplashView()
         {
             InitializeComponent();
         }

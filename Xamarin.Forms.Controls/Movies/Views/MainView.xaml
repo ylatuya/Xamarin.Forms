@@ -10,11 +10,7 @@
             BindingContext="{Binding MenuViewModel}"/>
     </MasterDetailPage.Master>
     <MasterDetailPage.Detail>
-        <views:CustomNavigationPage>
-            <x:Arguments>
-                <views:HomeView 
-                    BindingContext="{Binding HomeViewModel}"/>
-            </x:Arguments>
-        </views:CustomNavigationPage>
+        <ContentPage 
+            BackgroundColor="Transparent" />
     </MasterDetailPage.Detail>
 </MasterDetailPage>

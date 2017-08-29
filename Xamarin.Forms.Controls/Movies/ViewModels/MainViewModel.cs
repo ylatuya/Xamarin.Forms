@@ -12,7 +12,7 @@ namespace Movies.ViewModels
         private INavigationService _navigationService;
 
         public MainViewModel(
-            INavigationService navigationService, 
+            INavigationService navigationService,
             MenuViewModel menuViewModel,
             HomeViewModel homeViewModel)
         {
@@ -54,7 +54,7 @@ namespace Movies.ViewModels
             return Task.WhenAll
                 (
                     _menuViewModel.InitializeAsync(navigationData),
-                    _homeViewModel.InitializeAsync(navigationData)
+                    _navigationService.NavigateToAsync<HomeViewModel>()
                 );
         }
     }

@@ -26,7 +26,7 @@ namespace Movies.Services.Navigation
 
         public Task InitializeAsync()
         {
-            return NavigateToAsync<MainViewModel>();
+            return NavigateToAsync<SplashViewModel>();
         }
 
         public Task NavigateToAsync<TViewModel>() where TViewModel : ViewModelBase
@@ -79,9 +79,13 @@ namespace Movies.Services.Navigation
         {
             Page page = CreateAndBindPage(viewModelType, parameter);
 
-            if (page is MainView)
+            if (page is SplashView)
             {
                 CurrentApplication.MainPage = new CustomNavigationPage(page);
+            }
+            else if (page is MainView)
+            {
+                CurrentApplication.MainPage = page;
             }
             else if (CurrentApplication.MainPage is MainView)
             {
@@ -153,6 +157,7 @@ namespace Movies.Services.Navigation
             _mappings.Add(typeof(HomepageViewModel), typeof(HomepageView));
             _mappings.Add(typeof(PeopleViewModel), typeof(PeopleView));
             _mappings.Add(typeof(ShowsViewModel), typeof(ShowsView));
+            _mappings.Add(typeof(SplashViewModel), typeof(SplashView));
             _mappings.Add(typeof(UpcomingViewModel), typeof(UpcomingView));
         }
     }

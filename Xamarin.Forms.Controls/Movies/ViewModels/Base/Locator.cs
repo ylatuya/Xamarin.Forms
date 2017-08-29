@@ -41,6 +41,7 @@ namespace Movies.ViewModels.Base
             _container.RegisterType<HomepageViewModel>();
             _container.RegisterType<PeopleViewModel>();
             _container.RegisterType<ShowsViewModel>();
+            _container.RegisterType<SplashViewModel>();
             _container.RegisterType<UpcomingViewModel>();
         }
 
