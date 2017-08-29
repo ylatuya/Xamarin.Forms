@@ -15,6 +15,7 @@ namespace Movies.ViewModels
 
         public override async Task InitializeAsync(object navigationData)
         {
+            await Task.Delay(3000);
             await _navigationService.NavigateToAsync<MainViewModel>();
         }
     }
