@@ -1,15 +1,14 @@
-﻿
-namespace GMap.NET.MapProviders
+﻿namespace GMap.NET.MapProviders
 {
     using System;
-    using GMap.NET.Projections;
+    using Projections;
     using System.Security.Cryptography;
     using System.Diagnostics;
     using System.Net;
     using System.IO;
     using System.Text.RegularExpressions;
     using System.Threading;
-    using GMap.NET.Internals;
+    using Internals;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Xml;
@@ -133,9 +132,6 @@ namespace GMap.NET.MapProviders
                                 GMapProviders.GoogleHybridMap.Version = verh;
                                 GMapProviders.GoogleChinaHybridMap.Version = verh;
 #if DEBUG
-                                Debug.WriteLine("GMapProviders.GoogleMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
-                                Debug.WriteLine("GMapProviders.GoogleHybridMap.Version: " + verh + ", " + (verh == oldh ? "OK" : "old: " + oldh + ", consider updating source"));
-
                                 if (Debugger.IsAttached && ver != old)
                                 {
                                     Thread.Sleep(1111);
@@ -159,7 +155,6 @@ namespace GMap.NET.MapProviders
                                 GMapProviders.GoogleKoreaSatelliteMap.Version = ver;
                                 GMapProviders.GoogleChinaSatelliteMap.Version = "s@" + ver;
 #if DEBUG
-                                Debug.WriteLine("GMapProviders.GoogleSatelliteMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
                                     Thread.Sleep(1111);
@@ -182,7 +177,6 @@ namespace GMap.NET.MapProviders
                                 GMapProviders.GoogleTerrainMap.Version = ver;
                                 GMapProviders.GoogleChinaTerrainMap.Version = ver;
 #if DEBUG
-                                Debug.WriteLine("GMapProviders.GoogleTerrainMap.Version: " + ver + ", " + (ver == old ? "OK" : "old: " + old + ", consider updating source"));
                                 if (Debugger.IsAttached && ver != old)
                                 {
                                     Thread.Sleep(1111);
@@ -1248,16 +1242,13 @@ namespace GMap.NET.MapProviders
                                 {
                                     foreach (XmlNode n in l)
                                     {
-                                        Debug.WriteLine("---------------------");
-
                                         nn = n.SelectSingleNode("formatted_address");
                                         if (nn != null)
                                         {
                                             var ret = new Placemark(nn.InnerText);
 
-                                            Debug.WriteLine("formatted_address: [" + nn.InnerText + "]");
-
                                             nn = n.SelectSingleNode("type");
+
                                             if (nn != null)
                                             {
                                                 Debug.WriteLine("type: " + nn.InnerText);
@@ -1277,8 +1268,6 @@ namespace GMap.NET.MapProviders
                                                     nn = ac.SelectSingleNode("long_name");
                                                     if (nn != null)
                                                     {
-                                                        Debug.WriteLine("long_name: [" + nn.InnerText + "]");
-
                                                         switch (type)
                                                         {
                                                             case "street_address":
@@ -1818,7 +1807,6 @@ namespace GMap.NET.MapProviders
                                 if (t != null)
                                 {
                                     direction.Duration = t.InnerText;
-                                    Debug.WriteLine("duration: " + direction.Duration);
                                 }
 
                                 t = nn.SelectSingleNode("value");
@@ -1827,7 +1815,6 @@ namespace GMap.NET.MapProviders
                                     if (!string.IsNullOrEmpty(t.InnerText))
                                     {
                                         direction.DurationValue = uint.Parse(t.InnerText);
-                                        Debug.WriteLine("value: " + direction.DurationValue);
                                     }
                                 }
                             }
@@ -1839,7 +1826,6 @@ namespace GMap.NET.MapProviders
                                 if (t != null)
                                 {
                                     direction.Distance = t.InnerText;
-                                    Debug.WriteLine("distance: " + direction.Distance);
                                 }
 
                                 t = nn.SelectSingleNode("value");
@@ -1848,7 +1834,6 @@ namespace GMap.NET.MapProviders
                                     if (!string.IsNullOrEmpty(t.InnerText))
                                     {
                                         direction.DistanceValue = uint.Parse(t.InnerText);
-                                        Debug.WriteLine("value: " + direction.DistanceValue);
                                     }
                                 }
                             }
@@ -1889,21 +1874,18 @@ namespace GMap.NET.MapProviders
                             if (nn != null)
                             {
                                 direction.StartAddress = nn.InnerText;
-                                Debug.WriteLine("start_address: " + direction.StartAddress);
                             }
 
                             nn = doc.SelectSingleNode("/DirectionsResponse/route/leg/end_address");
                             if (nn != null)
                             {
                                 direction.EndAddress = nn.InnerText;
-                                Debug.WriteLine("end_address: " + direction.EndAddress);
                             }
 
                             nn = doc.SelectSingleNode("/DirectionsResponse/route/copyrights");
                             if (nn != null)
                             {
                                 direction.Copyrights = nn.InnerText;
-                                Debug.WriteLine("copyrights: " + direction.Copyrights);
                             }
 
                             nn = doc.SelectSingleNode("/DirectionsResponse/route/overview_polyline/points");
@@ -1925,12 +1907,10 @@ namespace GMap.NET.MapProviders
                                 {
                                     GDirectionStep step = new GDirectionStep();
 
-                                    Debug.WriteLine("----------------------");
                                     nn = s.SelectSingleNode("travel_mode");
                                     if (nn != null)
                                     {
                                         step.TravelMode = nn.InnerText;
-                                        Debug.WriteLine("travel_mode: " + step.TravelMode);
                                     }
 
                                     nn = s.SelectSingleNode("start_location");
@@ -1972,7 +1952,6 @@ namespace GMap.NET.MapProviders
                                         if (nn != null)
                                         {
                                             step.Duration = nn.InnerText;
-                                            Debug.WriteLine("duration: " + step.Duration);
                                         }
                                     }
 
@@ -1983,7 +1962,6 @@ namespace GMap.NET.MapProviders
                                         if (nn != null)
                                         {
                                             step.Distance = nn.InnerText;
-                                            Debug.WriteLine("distance: " + step.Distance);
                                         }
                                     }
 
@@ -1991,7 +1969,6 @@ namespace GMap.NET.MapProviders
                                     if (nn != null)
                                     {
                                         step.HtmlInstructions = nn.InnerText;
-                                        Debug.WriteLine("html_instructions: " + step.HtmlInstructions);
                                     }
 
                                     nn = s.SelectSingleNode("polyline");
