@@ -8,6 +8,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.GTK.Animations;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
 using Container = Gtk.EventBox;
 
@@ -177,12 +178,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Container.IsFocus = true;
         }
 
-        protected override void SetPageSize(int width, int height)
-        {
-            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - GtkToolbarConstants.ToolbarHeight);
-            SetElementSize(pageContentSize.ToSize());
-        }
-
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -324,24 +319,51 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             (page as IPageController)?.SendAppearing();
 
+            if (oldPage != null && Platform.GetRenderer(oldPage) != null)
+            {
+                var oldPageRenderer = Platform.GetRenderer(oldPage);
+                oldPageRenderer.Container.Sensitive = false;
+            }
+
             return true;
         }
 
         private async Task RemovePageAsync(Page page, bool removeFromStack, bool animated)
         {
+            var oldPage = _currentStack.Peek().Page;
+
+            if (oldPage != null && Platform.GetRenderer(oldPage) != null)
+            {
+                var oldPageRenderer = Platform.GetRenderer(oldPage);
+                oldPageRenderer.Container.Sensitive = true;
+            }
+
             (page as IPageController)?.SendDisappearing();
             var target = Platform.GetRenderer(page);
 
             if (animated && target != null)
             {
-                target.Container.MoveTo(0, 0);
-                var to = target.Container.Parent.Allocation.Width;
+                if (PlatformHelper.GetGTKPlatform() == GTKPlatform.Windows)
+                {
+                    target.Container.MoveTo(0, 0);
+                    var to = target.Container.Parent.Allocation.Width;
+                    await AnimatePageAsync(target.Container, 0, to);
+                }
 
-                await AnimatePageAsync(target.Container, 0, to);
+                if (target != null)
+                {
+                    Widget.RemoveFromContainer(target.Container);
+                }
+
                 FinishRemovePage(page, removeFromStack);
             }
             else
             {
+                if (target != null)
+                {
+                    Widget.RemoveFromContainer(target.Container);
+                }
+
                 FinishRemovePage(page, removeFromStack);
             }
         }
@@ -439,13 +461,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             GLib.Idle.Add(() =>
             {
-                var target = Platform.GetRenderer(page);
-
-                if (target != null)
-                {
-                    Widget.RemoveFromContainer(target.Container);
-                }
-
                 if (removeFromStack)
                 {
                     var newStack = new Stack<NavigationChildPage>();
@@ -461,7 +476,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 var oldPage = _currentStack.Peek().Page;
                 (oldPage as IPageController)?.SendAppearing();
-                target?.Dispose();
+
+                var target = Platform.GetRenderer(page);
+
+                if (target != null)
+                {
+                    target.Dispose();
+                }
 
                 return false;
             });

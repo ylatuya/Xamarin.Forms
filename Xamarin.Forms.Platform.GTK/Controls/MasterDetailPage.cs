@@ -37,7 +37,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             // Master Stuff
             _masterContainerWrapper = new EventBox();
-            _masterContainer = new VBox();
+            _masterContainer = new VBox(false, 0);
             _titleContainer = new MasterDetailMasterTitleContainer();
             _titleContainer.HamburguerClicked += OnHamburgerClicked;
             _titleContainer.HeightRequest = GtkToolbarConstants.ToolbarHeight;
@@ -403,10 +403,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
                 if (backgroundColor.HasValue)
                 {
+                    ModifyBg(StateType.Normal, backgroundColor.Value);
                     _root.ModifyBg(StateType.Normal, backgroundColor.Value);
                 }
                 else
                 {
+                    ModifyBg(StateType.Normal, _defaultBackgroundColor);
                     _root.ModifyBg(StateType.Normal, _defaultBackgroundColor);
                 }
             }

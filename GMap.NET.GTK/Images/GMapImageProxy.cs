@@ -43,7 +43,6 @@
             catch (Exception ex)
             {
                 ret = null;
-                Debug.WriteLine("FromStream: " + ex.ToString());
             }
 
             return ret;

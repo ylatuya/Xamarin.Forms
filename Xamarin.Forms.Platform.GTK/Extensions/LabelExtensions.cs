@@ -9,13 +9,21 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
         internal static void SetTextFromFormatted(this Gtk.Label self, FormattedString formatted)
         {
             string markupText = GenerateMarkupText(formatted);
-            self.Markup = markupText;
+
+            if (self != null)
+            {
+                self.Markup = markupText;
+            }
         }
 
         internal static void SetTextFromSpan(this Gtk.Label self, Span span)
         {
             string markupText = GenerateMarkupText(span);
-            self.Markup = markupText;
+
+            if (self != null)
+            {
+                self.Markup = markupText;
+            }
         }
 
         private static string GenerateMarkupText(FormattedString formatted)

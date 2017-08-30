@@ -114,7 +114,6 @@ namespace GMap.NET.CacheProviders
 #if DEBUG
          else
          {
-            Debug.WriteLine("adding empty data to MemoryCache ;} ");
             if(Debugger.IsAttached)
             {
                Debugger.Break();

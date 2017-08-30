@@ -1,5 +1,4 @@
-﻿
-namespace GMap.NET.Projections
+﻿namespace GMap.NET.Projections
 {
    using System;
    using System.Collections.Generic;
