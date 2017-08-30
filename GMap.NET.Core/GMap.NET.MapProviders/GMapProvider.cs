@@ -1,13 +1,12 @@
-﻿
-namespace GMap.NET.MapProviders
+﻿namespace GMap.NET.MapProviders
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.Net;    
-    using GMap.NET.Internals;
-    using GMap.NET.Projections;
+    using Internals;
+    using Projections;
     using System.Text;
     using System.Security.Cryptography;
 

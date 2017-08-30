@@ -320,8 +320,6 @@ namespace GMap.NET
          {
             if(!tileCacheQueue.Contains(task))
             {
-               Debug.WriteLine("EnqueueCacheTask: " + task);
-
                tileCacheQueue.Enqueue(task);
 
                if(CacheEngine != null && CacheEngine.IsAlive)
@@ -359,8 +357,6 @@ namespace GMap.NET
       /// </summary>
       public void CancelTileCaching()
       {
-         Debug.WriteLine("CancelTileCaching...");
-
          abortCacheLoop = true;
          lock(tileCacheQueue)
          {
@@ -411,7 +407,6 @@ namespace GMap.NET
       /// <param name="e"></param>
       void CacheEngineLoop()
       {
-         Debug.WriteLine("CacheEngine: start");
          int left = 0;
 
          if(OnTileCacheStart != null)
@@ -457,8 +452,6 @@ namespace GMap.NET
                   // check if stream wasn't disposed somehow
                   if(task.Value.Img != null)
                   {
-                     Debug.WriteLine("CacheEngine[" + left + "]: storing tile " + task.Value + ", " + task.Value.Img.Length / 1024 + "kB...");
-
                      if((task.Value.CacheType & CacheUsage.First) == CacheUsage.First && PrimaryCache != null)
                      {
                         if(cacheOnIdleRead)
@@ -530,7 +523,6 @@ namespace GMap.NET
                Debug.WriteLine("CacheEngineLoop: " + ex.ToString());
             }
          }
-         Debug.WriteLine("CacheEngine: stop");
 
          if(!startEvent)
          {
