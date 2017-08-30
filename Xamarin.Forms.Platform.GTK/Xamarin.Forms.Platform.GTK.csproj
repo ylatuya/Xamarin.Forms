@@ -76,20 +76,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Windows" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="webkit-sharp, Version=1.1.15.0, Culture=neutral, PublicKeyToken=eaa1d335d2e19745, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\webkit-sharp\webkit-sharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animations\BaseAnimation.cs" />
@@ -211,6 +204,18 @@
     <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
       <Project>{57b8b73d-c3b5-4c42-869e-7b2f17d354ac}</Project>
       <Name>Xamarin.Forms.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Platform.GTK.Linux\Xamarin.Forms.Platform.GTK.Linux.csproj">
+      <Project>{ebc7f7fd-fc94-4a91-9abe-d2c59064ad5b}</Project>
+      <Name>Xamarin.Forms.Platform.GTK.Linux</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Platform.GTK.Mac\Xamarin.Forms.Platform.GTK.Mac.csproj">
+      <Project>{69279503-07d6-4329-abb3-29ee0db80988}</Project>
+      <Name>Xamarin.Forms.Platform.GTK.Mac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Platform.GTK.Windows\Xamarin.Forms.Platform.GTK.Windows.csproj">
+      <Project>{a4131ccc-57b7-486c-bc42-aee046491a52}</Project>
+      <Name>Xamarin.Forms.Platform.GTK.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
