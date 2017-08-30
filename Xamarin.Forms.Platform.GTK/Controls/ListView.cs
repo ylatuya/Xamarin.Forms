@@ -207,6 +207,16 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 _root.ModifyBg(StateType.Normal, backgroundColor);
                 _viewPort.ModifyBg(StateType.Normal, backgroundColor);
+
+                if (_headerContainer != null && !_headerContainer.Children.Any())
+                {
+                    _headerContainer.ModifyBg(StateType.Normal, backgroundColor);
+                }
+
+                if (_footerContainer != null && !_footerContainer.Children.Any())
+                {
+                    _footerContainer.ModifyBg(StateType.Normal, backgroundColor);
+                }
             }
         }
 
