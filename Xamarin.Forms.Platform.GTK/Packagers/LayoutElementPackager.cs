@@ -16,7 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Packagers
             Platform.SetRenderer(view, viewRenderer);
 
             var fixedControl = Renderer.Control;
-            fixedControl.Add(viewRenderer.Container);
+            fixedControl?.Add(viewRenderer.Container);
 
             viewRenderer.Container.ShowAll();
         }

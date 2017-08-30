@@ -41,7 +41,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     _viewPort = new Viewport();
                     _viewPort.ShadowType = ShadowType.None;
                     _viewPort.BorderWidth = 0;
-  
+
                     Control.Add(_viewPort);
                     SetNativeControl(Control);
 
@@ -139,6 +139,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateOrientation()
         {
+            if (Control == null)
+                return;
+
             switch (Element.Orientation)
             {
                 case ScrollOrientation.Vertical:
@@ -183,6 +186,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateContentSize()
         {
+            if (Control == null)
+                return;
+
             var contentSize = Element.ContentSize;
 
             var height = Convert.ToInt32(contentSize.Height);

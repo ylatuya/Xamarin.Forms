@@ -47,6 +47,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateColor()
         {
+            if (Element == null || Control == null)
+                return;
+
             var color = Element.Color == Color.Default ? Color.Default.ToGtkColor() : Element.Color.ToGtkColor();
 
             Control.UpdateColor(color);
@@ -54,6 +57,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateIsRunning()
         {
+            if (Element == null || Control == null)
+                return;
+
             if (Element.IsRunning)
                 Control.Start();
             else
