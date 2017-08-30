@@ -28,5 +28,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             _packager.Load();
         }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            if (!Sensitive)
+                return;
+
+            base.OnSizeAllocated(allocation);
+        }
     }
 }

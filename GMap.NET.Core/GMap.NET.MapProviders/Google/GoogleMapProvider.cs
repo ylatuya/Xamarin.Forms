@@ -514,6 +514,9 @@
 
         string MakeGeocoderUrl(string keywords, string language)
         {
+            if (string.IsNullOrEmpty(keywords))
+                return string.Empty;
+
             return string.Format(CultureInfo.InvariantCulture, GeocoderUrlFormat, ServerAPIs, Uri.EscapeDataString(keywords).Replace(' ', '+'), language);
         }
 
