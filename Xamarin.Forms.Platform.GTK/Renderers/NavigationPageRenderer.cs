@@ -178,12 +178,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Container.IsFocus = true;
         }
 
-        protected override void SetPageSize(int width, int height)
-        {
-            var pageContentSize = new Gdk.Rectangle(0, 0, width, height - GtkToolbarConstants.ToolbarHeight);
-            SetElementSize(pageContentSize.ToSize());
-        }
-
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -325,11 +319,25 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             (page as IPageController)?.SendAppearing();
 
+            if (oldPage != null && Platform.GetRenderer(oldPage) != null)
+            {
+                var oldPageRenderer = Platform.GetRenderer(oldPage);
+                oldPageRenderer.Container.Sensitive = false;
+            }
+
             return true;
         }
 
         private async Task RemovePageAsync(Page page, bool removeFromStack, bool animated)
         {
+            var oldPage = _currentStack.Peek().Page;
+
+            if (oldPage != null && Platform.GetRenderer(oldPage) != null)
+            {
+                var oldPageRenderer = Platform.GetRenderer(oldPage);
+                oldPageRenderer.Container.Sensitive = true;
+            }
+
             (page as IPageController)?.SendDisappearing();
             var target = Platform.GetRenderer(page);
 
