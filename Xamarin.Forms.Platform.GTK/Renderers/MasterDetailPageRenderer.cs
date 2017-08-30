@@ -62,7 +62,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.Dispose(disposing);
         }
 
-        protected override async void OnElementChanged(VisualElementChangedEventArgs e)
+        protected override void OnElementChanged(VisualElementChangedEventArgs e)
         {
             base.OnElementChanged(e);
 
@@ -80,7 +80,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                     Widget.IsPresentedChanged += OnIsPresentedChanged;
 
-                    await UpdateMasterDetail();
+                    UpdateMasterDetail();
                     UpdateMasterBehavior();
                     UpdateIsPresented();
                     UpdateBarTextColor();
@@ -89,12 +89,16 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        protected override async void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
 
             if (e.PropertyName.Equals(nameof(MasterDetailPage.Master)) || e.PropertyName.Equals(nameof(MasterDetailPage.Detail)))
-                await UpdateMasterDetail();
+            {
+                UpdateMasterDetail();
+                UpdateMasterBehavior();
+                UpdateIsPresented();
+            }
             else if (e.PropertyName == MasterDetailPage.IsPresentedProperty.PropertyName)
                 UpdateIsPresented();
             else if (e.PropertyName == MasterDetailPage.MasterBehaviorProperty.PropertyName)
@@ -107,24 +111,27 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 await UpdateHamburguerIconAsync();
         }
 
-        private async Task UpdateMasterDetail()
+        private void UpdateMasterDetail()
         {
-            Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
-            await UpdateHamburguerIconAsync();
+            Gtk.Application.Invoke(async delegate
+            {
+                Page.Master.PropertyChanged -= HandleMasterPropertyChanged;
+                await UpdateHamburguerIconAsync();
 
-            if (Platform.GetRenderer(Page.Master) == null)
-                Platform.SetRenderer(Page.Master, Platform.CreateRenderer(Page.Master));
-            if (Platform.GetRenderer(Page.Detail) == null)
-                Platform.SetRenderer(Page.Detail, Platform.CreateRenderer(Page.Detail));
+                if (Platform.GetRenderer(Page.Master) == null)
+                    Platform.SetRenderer(Page.Master, Platform.CreateRenderer(Page.Master));
+                if (Platform.GetRenderer(Page.Detail) == null)
+                    Platform.SetRenderer(Page.Detail, Platform.CreateRenderer(Page.Detail));
 
-            Widget.Master = Platform.GetRenderer(Page.Master).Container;
-            Widget.Detail = Platform.GetRenderer(Page.Detail).Container;
-            Widget.MasterTitle = Page.Master?.Title ?? string.Empty;
+                Widget.Master = Platform.GetRenderer(Page.Master).Container;
+                Widget.Detail = Platform.GetRenderer(Page.Detail).Container;
+                Widget.MasterTitle = Page.Master?.Title ?? string.Empty;
 
-            UpdateBarTextColor();
-            UpdateBarBackgroundColor();
+                UpdateBarTextColor();
+                UpdateBarBackgroundColor();
 
-            Page.Master.PropertyChanged += HandleMasterPropertyChanged;
+                Page.Master.PropertyChanged += HandleMasterPropertyChanged;
+            });
         }
 
         private void UpdateIsPresented()

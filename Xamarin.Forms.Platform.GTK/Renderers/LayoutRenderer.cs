@@ -10,6 +10,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected override void OnElementChanged(ElementChangedEventArgs<Layout> e)
         {
+            if (e.OldElement != null)
+            {
+                e.OldElement.LayoutChanged -= LayoutChanged;
+            }
+
             if (e.NewElement != null)
             {
                 if (Control == null)
@@ -24,6 +29,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                     SetNativeControl(_fixed);
                 }
 
+                e.NewElement.LayoutChanged += LayoutChanged;
+
                 if (_packager == null)
                 {
                     _packager = new LayoutElementPackager(this);
@@ -33,6 +40,24 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             base.OnElementChanged(e);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (Element != null)
+                {
+                    Element.LayoutChanged -= LayoutChanged;
+                }
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private void LayoutChanged(object sender, System.EventArgs e)
+        {
+            QueueResize();
         }
     }
 }

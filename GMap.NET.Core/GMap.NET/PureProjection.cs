@@ -90,8 +90,6 @@ namespace GMap.NET
                {
                   FromPixelToLatLngCache[zoom].Add(ret, p);
                }
-
-               Debug.WriteLine("FromLatLngToPixelCache[" + zoom + "] added " + p + " with " + ret);
             }
             return ret;
          }
@@ -127,8 +125,6 @@ namespace GMap.NET
                {
                   FromLatLngToPixelCache[zoom].Add(ret, p);
                }
-
-               Debug.WriteLine("FromPixelToLatLngCache[" + zoom + "] added " + p + " with " + ret);
             }
             return ret;
          }
