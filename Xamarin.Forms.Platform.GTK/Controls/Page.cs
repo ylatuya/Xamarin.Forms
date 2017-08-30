@@ -10,7 +10,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
         private EventBox _headerContainer;
         private EventBox _contentContainerWrapper;
-        private Fixed _contentContainer;
+        private Table _contentContainer;
         private HBox _toolbar;
         private EventBox _content;
         private ImageControl _image;
@@ -93,24 +93,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
-        {
-            base.OnSizeAllocated(allocation);
-
-            if (_lastAllocation != allocation)
-            {
-                _lastAllocation = allocation;
-
-                _image.SetSizeRequest(
-                    _contentContainer.Allocation.Width,
-                    _contentContainer.Allocation.Height);
-
-                _content.SetSizeRequest(
-                    _contentContainer.Allocation.Width,
-                    _contentContainer.Allocation.Height);
-            }
-        }
-
         private void BuildPage()
         {
             _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
@@ -127,8 +109,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _image.Aspect = ImageAspect.Fill;
 
             _contentContainerWrapper = new EventBox();
-            _contentContainer = new Fixed();
-            _contentContainer.Add(_image);
+            _contentContainer = new Table(1, 1, true);
+            _contentContainer.Attach(_image, 0, 1, 0, 1);
             _contentContainerWrapper.Add(_contentContainer);
 
             root.PackStart(_contentContainerWrapper, true, true, 0); // Should fill all available space
@@ -150,7 +132,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             _contentContainer.RemoveFromContainer(_content);
             _content = newContent;
-            _contentContainer.Add(_content);
+            _contentContainer.Attach(_content, 0, 1, 0, 1);
             _content.ShowAll();
         }
     }
