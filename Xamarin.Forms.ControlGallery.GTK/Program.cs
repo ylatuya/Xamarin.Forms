@@ -22,7 +22,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
             Gtk.Application.Init();
             Forms.Init();
             FormsMaps.Init(string.Empty);
-            var app = new App();
+            var app = new WeatherApp.App();
             //var app = new BasicOpenGLApp();
             //var app = new AdvancedOpenGLApp();
             var window = new FormsWindow();

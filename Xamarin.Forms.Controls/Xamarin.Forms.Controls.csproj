@@ -292,11 +292,25 @@
     <Compile Include="GalleryPages\MacTwitterDemo.xaml.cs">
       <DependentUpon>MacTwitterDemo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Weather\Core.cs" />
-    <Compile Include="Weather\DataService.cs" />
-    <Compile Include="Weather\Weather.cs" />
-    <Compile Include="Weather\WeatherPage.xaml.cs">
-      <DependentUpon>WeatherPage.xaml</DependentUpon>
+    <Compile Include="Weather\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Weather\AppSettings.cs" />
+    <Compile Include="Weather\Controls\HorizontalList\HorizontalList.cs" />
+    <Compile Include="Weather\Converters\BackgroundConverter.cs" />
+    <Compile Include="Weather\Converters\IconConverter.cs" />
+    <Compile Include="Weather\Converters\InverseBoolConverter.cs" />
+    <Compile Include="Weather\Models\Weather.cs" />
+    <Compile Include="Weather\Services\WeatherService.cs" />
+    <Compile Include="Weather\ViewModels\WeatherViewModel.cs" />
+    <Compile Include="Weather\Views\CustomNavigationPage.xaml.cs">
+      <DependentUpon>CustomNavigationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Weather\Views\Templates\WeatherItemTemplate.xaml.cs">
+      <DependentUpon>WeatherItemTemplate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Weather\Views\WeatherView.xaml.cs">
+      <DependentUpon>WeatherView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
@@ -404,12 +418,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Weather\WeatherPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Monkeys\Views\MonkeysView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
@@ -429,6 +437,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BuiltInStyles\BuiltInStylesXaml.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Weather\App.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Weather\Views\CustomNavigationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Weather\Views\Templates\WeatherItemTemplate.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Weather\Views\WeatherView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
