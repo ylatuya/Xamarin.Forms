@@ -2,7 +2,7 @@
 {
     public class AppSettings
     {
-        public static string Location = "Sevilla";
+        public static string Location = "Seattle";
         public static bool IsImperial = false;
     }
 }
