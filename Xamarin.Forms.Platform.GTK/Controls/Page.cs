@@ -10,7 +10,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private Gdk.Rectangle _lastAllocation = Gdk.Rectangle.Zero;
         private EventBox _headerContainer;
         private EventBox _contentContainerWrapper;
-        private Table _contentContainer;
+        private Fixed _contentContainer;
         private HBox _toolbar;
         private EventBox _content;
         private ImageControl _image;
@@ -93,6 +93,17 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+
+
+            if (_contentContainerWrapper != null)
+            {
+                _contentContainerWrapper.SizeAllocated -= OnContentContainerWrapperSizeAllocated;
+            }
+        }
+
         private void BuildPage()
         {
             _defaultBackgroundColor = Style.Backgrounds[(int)StateType.Normal];
@@ -109,8 +120,9 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _image.Aspect = ImageAspect.Fill;
 
             _contentContainerWrapper = new EventBox();
-            _contentContainer = new Table(1, 1, true);
-            _contentContainer.Attach(_image, 0, 1, 0, 1);
+            _contentContainerWrapper.SizeAllocated += OnContentContainerWrapperSizeAllocated;
+            _contentContainer = new Fixed();
+            _contentContainer.Add(_image);
             _contentContainerWrapper.Add(_contentContainer);
 
             root.PackStart(_contentContainerWrapper, true, true, 0); // Should fill all available space
@@ -132,8 +144,15 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             _contentContainer.RemoveFromContainer(_content);
             _content = newContent;
-            _contentContainer.Attach(_content, 0, 1, 0, 1);
+            _contentContainer.Add(_content);
             _content.ShowAll();
+        }
+
+        private void OnContentContainerWrapperSizeAllocated(object o, SizeAllocatedArgs args)
+        {
+            _image.SetSizeRequest(
+               args.Allocation.Width,
+               args.Allocation.Height);
         }
     }
 }
