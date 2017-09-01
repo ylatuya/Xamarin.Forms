@@ -21,7 +21,9 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             else
             {
                 var req = self.SizeRequest();
-                desiredSize = new Gdk.Size(req.Width, req.Height);
+                desiredSize = new Gdk.Size(
+                    req.Width > 0 ? req.Width : 0, 
+                    req.Height > 0 ? req.Height : 0);
             }
 
             var widthFits = widthConstraint >= desiredSize.Width;
@@ -37,7 +39,9 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                 self.SetSizeRequest((int)widthConstraint, -1);
 
                 var req = self.SizeRequest();
-                desiredSize = new Gdk.Size(req.Width, req.Height);
+                desiredSize = new Gdk.Size(
+                    req.Width > 0 ? req.Width : 0, 
+                    req.Height > 0 ? req.Height : 0);
                 heightFits = heightConstraint >= desiredSize.Height;
             }
 

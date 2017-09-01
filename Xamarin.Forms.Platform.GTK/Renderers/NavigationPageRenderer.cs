@@ -24,6 +24,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private GtkToolbarTracker _toolbarTracker;
         private Page _currentPage;
+        private Gdk.Rectangle _lastAllocation;
 
         public NavigationPageRenderer()
         {
@@ -101,13 +102,18 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
-            Widget.SetSizeRequest(allocation.Width, allocation.Height);
-
-            foreach (var child in Widget.Children)
+            if (_lastAllocation != allocation)
             {
-                child.SetSizeRequest(
-                    allocation.Width,
-                    allocation.Height);
+                _lastAllocation = allocation;
+
+                Widget.SetSizeRequest(allocation.Width, allocation.Height);
+
+                foreach (var child in Widget.Children)
+                {
+                    child.SetSizeRequest(
+                        allocation.Width,
+                        allocation.Height);
+                }
             }
         }
 
