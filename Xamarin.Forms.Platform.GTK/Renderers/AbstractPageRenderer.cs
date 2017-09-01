@@ -68,11 +68,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
-            if (Element.Bounds != bounds)
-            {
-                Element.Layout(bounds);
-                Control.Content.QueueResize();
-            }
+            Element.Layout(bounds);
+            Control.Content.QueueResize();
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
