@@ -47,14 +47,11 @@ namespace Xamarin.Forms.Controls
 
 		public Page CreateDefaultMainPage()
 		{
-            return  new ContentPage
+            return new MasterDetailPage
             {
-                Content = new Label
-                {
-                    Text = "Hello, Forms !",
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand,
-                },
+                AutomationId = DefaultMainPageId,
+                Master = new ContentPage { Icon = "gtk_hamburguer_button.png", Title = "Master", BackgroundColor = Color.Red },
+                Detail = CoreGallery.GetMainPage()
             };
         }
 
