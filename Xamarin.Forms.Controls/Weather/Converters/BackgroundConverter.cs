@@ -13,7 +13,7 @@ namespace WeatherApp.Converters
 
             var condition = value.ToString();
 
-            if (condition.Contains("cloud"))
+            if (condition.Contains("cloud") || (condition.Contains("mist")))
                 return "Images/clouds-background.jpg";
             else if (condition.Contains("rain"))
                 return "Images/rain-background.jpg";
