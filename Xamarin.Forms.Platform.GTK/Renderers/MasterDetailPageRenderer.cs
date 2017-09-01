@@ -89,6 +89,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            Control?.Content?.SetSize(allocation.Width, allocation.Height);
+        }
+
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);

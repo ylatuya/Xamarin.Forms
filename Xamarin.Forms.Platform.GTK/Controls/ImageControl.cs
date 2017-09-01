@@ -39,6 +39,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
             set
             {
+                _lastAllocation = Gdk.Rectangle.Zero;
                 _original = value;
                 _image.Pixbuf = value;
             }

@@ -8,6 +8,7 @@ namespace Xamarin.Forms.Platform.GTK
     public class FormsWindow : Window
     {
         private Application _application;
+        private Gdk.Size _lastSize;
 
         public FormsWindow()
             : base(WindowType.Toplevel)
@@ -80,8 +81,14 @@ namespace Xamarin.Forms.Platform.GTK
 
         protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
         {
-            var pageRenderer = Platform.GetRenderer(_application.MainPage);
-            pageRenderer?.SetElementSize(new Size(evnt.Width, evnt.Height));
+            Gdk.Size newSize = new Gdk.Size(evnt.Width, evnt.Height);
+
+            if (_lastSize != newSize)
+            {
+                _lastSize = newSize;
+                var pageRenderer = Platform.GetRenderer(_application.MainPage);
+                pageRenderer?.SetElementSize(new Size(newSize.Width, newSize.Height));
+            }
 
             return base.OnConfigureEvent(evnt);
         }

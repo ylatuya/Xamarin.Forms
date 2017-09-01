@@ -61,17 +61,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
-        public void SetElementSize(Size size)
+        public virtual void SetElementSize(Size size)
         {
             if (Element == null)
                 return;
 
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
-            if (Element.Bounds != bounds)
-            {
-                Element.Layout(bounds);
-            }
+            Element.Layout(bounds);
+            Control.Content.QueueResize();
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -88,18 +86,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (_appeared)
                 {
                     Page.SendDisappearing();
-
-                    /*
-                    if (Element != null)
-                    {
-                        ReadOnlyCollection<Element> children = ((IElementController)Element).LogicalChildren;
-                        for (var i = 0; i < children.Count; i++)
-                        {
-                            var visualChild = children[i] as VisualElement;
-                            visualChild?.Cleanup();
-                        }
-                    }
-                    */
                 }
 
                 _appeared = false;
@@ -221,7 +207,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var finalHeight = height;
 
             if (Page != null &&
-                Page.Parent is NavigationPage &&
                 NavigationPage.GetHasNavigationBar(Page))
                 finalHeight -= GtkToolbarConstants.ToolbarHeight;
 
