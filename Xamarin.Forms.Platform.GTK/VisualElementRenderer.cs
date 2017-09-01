@@ -148,7 +148,13 @@ namespace Xamarin.Forms.Platform.GTK
         {
             base.OnSizeAllocated(allocation);
 
+            double width, height;
             Rectangle bounds = Element.Bounds;
+
+            width = bounds.Width >= -1 ? bounds.Width : 0;
+            height = bounds.Height >= -1 ? bounds.Height : 0;
+
+            Container.SetSize(width, height);
             Container.MoveTo((int)bounds.X, (int)bounds.Y);
 
             for (var i = 0; i < ElementController.LogicalChildren.Count; i++)
@@ -161,8 +167,8 @@ namespace Xamarin.Forms.Platform.GTK
 
                     if (renderer != null)
                     {
-                        double width = child.Bounds.Width >= -1 ? child.Bounds.Width : 0;
-                        double height = child.Bounds.Height >= -1 ? child.Bounds.Height : 0;
+                        width = child.Bounds.Width >= -1 ? child.Bounds.Width : 0;
+                        height = child.Bounds.Height >= -1 ? child.Bounds.Height : 0;
 
                         renderer.Container.SetSize(width, height);
                         renderer.Container.MoveTo(child.Bounds.X, child.Bounds.Y);
@@ -282,7 +288,7 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
 
             if (args.Focus)
-                args.Result = control.IsFocus = true; 
+                args.Result = control.IsFocus = true;
             else
             {
                 control.IsFocus = false;
