@@ -106,9 +106,12 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
         {
             var container = self as Container;
 
-            if (container != null && container.HasChild(child))
+            if (child != null && child.Parent != null)
             {
-                container.Remove(child);
+                if (container != null && container.HasChild(child))
+                {
+                    container.Remove(child);
+                }
             }
         }
 
