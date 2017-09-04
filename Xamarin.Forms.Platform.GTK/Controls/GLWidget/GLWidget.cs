@@ -320,19 +320,6 @@ namespace OpenTK.GLWidget
 
             GraphicsMode graphicsMode = new GraphicsMode(colorBufferColorFormat, DepthBPP, StencilBPP, Samples, accumulationColorFormat, buffers, Stereo);
 
-            if (Configuration.RunningOnWindows)
-            {
-                Console.WriteLine("OpenTK running on windows");
-            }
-            else if (Configuration.RunningOnMacOS)
-            {
-                Console.WriteLine("OpenTK running on OSX");
-            }
-            else
-            {
-                Console.WriteLine("OpenTK running on X11");
-            }
-
             IntPtr widgetWindowHandle = this.GdkWindow.Handle;
 
             // IWindowInfo

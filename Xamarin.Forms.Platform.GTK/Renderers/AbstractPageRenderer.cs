@@ -207,11 +207,29 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var finalHeight = height;
 
             if (Page != null &&
-                NavigationPage.GetHasNavigationBar(Page))
+                HasAncestorNavigationPage(Page))
                 finalHeight -= GtkToolbarConstants.ToolbarHeight;
 
             var pageContentSize = new Gdk.Rectangle(0, 0, width, finalHeight);
             SetElementSize(pageContentSize.ToSize());
+        }
+
+        private static bool HasAncestorNavigationPage(TPage page)
+        {
+            bool hasParentNavigation = false;
+            TPage parent;
+            TPage current = page;
+
+            while ((parent = current.Parent as TPage) != null)
+            {
+                hasParentNavigation = parent is NavigationPage;
+
+                if (hasParentNavigation) break;
+
+                current = parent;
+            }
+
+            return hasParentNavigation && NavigationPage.GetHasNavigationBar(parent);
         }
     }
 }
