@@ -34,6 +34,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateProgress()
         {
+            if (Control == null)
+                return;
+
             Control.Adjustment.Value = Element.Progress;
             Control.TooltipText = string.Format("{0}%", (Element.Progress * 100));
         }
