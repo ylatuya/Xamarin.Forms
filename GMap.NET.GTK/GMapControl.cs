@@ -8,7 +8,6 @@
     using System.Collections.Specialized;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.ComponentModel;
-    using System.Diagnostics;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
@@ -300,8 +299,6 @@
                 Core.lastInvalidation = DateTime.Now;
             }
 
-            Console.WriteLine(string.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
-
             base.QueueDraw();
         }
 
@@ -390,7 +387,6 @@
         {
 #if DEBUG
             GuiThread = Thread.CurrentThread;
-            Console.WriteLine(string.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
 #endif
             if (!IsDesignerHosted)
             {
@@ -458,7 +454,6 @@
 
         void InvalidatorEngage(object sender, ProgressChangedEventArgs e)
         {
-            Console.WriteLine(string.Format("Get invaladation from Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             Gtk.Application.Invoke(delegate
             {
                 base.QueueDraw();
@@ -467,7 +462,6 @@
 
         internal void ForceUpdateOverlays()
         {
-            Console.WriteLine(string.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             try
             {
                 HoldInvalidation = true;
@@ -731,8 +725,6 @@
 
         protected override bool OnExposeEvent(Gdk.EventExpose e)
         {
-            Console.WriteLine(String.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
-
             if (ForceDoubleBuffer)
             {
                 if (_gxOff != null)
@@ -824,7 +816,6 @@
         {
             if (Core.updatingBounds || MapProvider == EmptyProvider.Instance || MapProvider == null)
             {
-                Debug.WriteLine("Core.updatingBounds");
                 return;
             }
 
@@ -964,7 +955,6 @@
 #if DEBUG
             if (GuiThread != Thread.CurrentThread)
             {
-                Debug.WriteLine("Paint from not Gui thread.");
                 return;
             }
 #endif
@@ -1146,16 +1136,14 @@
         protected override void OnSizeAllocated(Gdk.Rectangle box)
         {
             base.OnSizeAllocated(box);
-            Console.WriteLine(string.Format("Allocation Tread: {0}", Thread.CurrentThread.ManagedThreadId));
+
             if (box.Width == 0 || box.Height == 0)
             {
-                Debug.WriteLine("minimized");
                 return;
             }
 
             if (box.Width == Core.Width && box.Height == Core.Height)
             {
-                Debug.WriteLine("maximized");
                 return;
             }
 
@@ -1257,7 +1245,6 @@
                 if (_isDragging)
                 {
                     _isDragging = false;
-                    Debug.WriteLine("IsDragging = " + _isDragging);
                     _currentCursorType = Gdk.CursorType.LeftPtr;
                     this.GdkWindow.Cursor = new Gdk.Cursor(_currentCursorType);
                 }
@@ -1350,7 +1337,6 @@
                 if (!_isDragging)
                 {
                     _isDragging = true;
-                    Debug.WriteLine("IsDragging = " + _isDragging);
 
                     _currentCursorType = Gdk.CursorType.Fleur;
                     GdkWindow.Cursor = new Gdk.Cursor(_currentCursorType);
@@ -1857,8 +1843,6 @@
             {
                 if (Core.Provider == null || !Core.Provider.Equals(value))
                 {
-                    Debug.WriteLine("MapType: " + Core.Provider.Name + " -> " + value.Name);
-
                     RectLatLng viewarea = SelectedArea;
                     if (viewarea != RectLatLng.Empty)
                     {

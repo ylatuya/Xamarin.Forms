@@ -2,7 +2,6 @@
 using Gtk;
 using System;
 using Xamarin.Forms.Platform.GTK.Extensions;
-using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
@@ -94,21 +93,13 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             }
         }
 
-        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        public override void Dispose()
         {
-            base.OnSizeAllocated(allocation);
-
-            if (_lastAllocation != allocation)
+            base.Dispose();
+            
+            if (_contentContainerWrapper != null)
             {
-                _lastAllocation = allocation;
-
-                _image.SetSizeRequest(
-                    _contentContainer.Allocation.Width,
-                    _contentContainer.Allocation.Height);
-
-                _content.SetSizeRequest(
-                    _contentContainer.Allocation.Width,
-                    _contentContainer.Allocation.Height);
+                _contentContainerWrapper.SizeAllocated -= OnContentContainerWrapperSizeAllocated;
             }
         }
 
@@ -128,6 +119,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _image.Aspect = ImageAspect.Fill;
 
             _contentContainerWrapper = new EventBox();
+            _contentContainerWrapper.SizeAllocated += OnContentContainerWrapperSizeAllocated;
             _contentContainer = new Fixed();
             _contentContainer.Add(_image);
             _contentContainerWrapper.Add(_contentContainer);
@@ -141,20 +133,10 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void RefreshToolbar(HBox newToolbar)
         {
-            GTKPlatform platform = PlatformHelper.GetGTKPlatform();
-
-            if (platform != GTKPlatform.Linux)
-            {
-                _headerContainer.RemoveFromContainer(_toolbar);
-            }
-
+            _headerContainer.RemoveFromContainer(_toolbar);
             _toolbar = newToolbar;
             _headerContainer.Add(_toolbar);
-
-            if (_toolbar.IsRealized)
-            {
-                _toolbar.ShowAll();
-            }
+            _toolbar.ShowAll();
         }
 
         private void RefreshContent(EventBox newContent)
@@ -163,6 +145,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _content = newContent;
             _contentContainer.Add(_content);
             _content.ShowAll();
+        }
+
+        private void OnContentContainerWrapperSizeAllocated(object o, SizeAllocatedArgs args)
+        {
+            _image.SetSizeRequest(args.Allocation.Width, args.Allocation.Height);
         }
     }
 }

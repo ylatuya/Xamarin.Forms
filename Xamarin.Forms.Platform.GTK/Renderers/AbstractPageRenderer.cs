@@ -61,17 +61,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
-        public void SetElementSize(Size size)
+        public virtual void SetElementSize(Size size)
         {
             if (Element == null)
                 return;
 
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
-            if (Element.Bounds != bounds)
-            {
-                Element.Layout(bounds);
-            }
+            Element.Layout(bounds);
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -88,18 +85,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (_appeared)
                 {
                     Page.SendDisappearing();
-
-                    /*
-                    if (Element != null)
-                    {
-                        ReadOnlyCollection<Element> children = ((IElementController)Element).LogicalChildren;
-                        for (var i = 0; i < children.Count; i++)
-                        {
-                            var visualChild = children[i] as VisualElement;
-                            visualChild?.Cleanup();
-                        }
-                    }
-                    */
                 }
 
                 _appeared = false;
@@ -140,11 +125,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
+            SetPageSize(allocation.Width, allocation.Height);
 
             if (_lastAllocation != allocation)
             {
-                _lastAllocation = allocation;
-                SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+                _lastAllocation = allocation; 
+                PageQueueResize();
             }
         }
 
@@ -218,11 +204,37 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         protected virtual void SetPageSize(int width, int height)
         {
-            if (Page != null && NavigationPage.GetHasNavigationBar(Page))
-                height = height - GtkToolbarConstants.ToolbarHeight;
+            var finalHeight = height;
 
-            var pageContentSize = new Gdk.Rectangle(0, 0, width, height);
+            if (Page != null &&
+                HasAncestorNavigationPage(Page))
+                finalHeight -= GtkToolbarConstants.ToolbarHeight;
+
+            var pageContentSize = new Gdk.Rectangle(0, 0, width, finalHeight);
             SetElementSize(pageContentSize.ToSize());
+        }
+
+        private void PageQueueResize()
+        {
+            Control?.Content?.QueueResize();
+        }
+
+        private bool HasAncestorNavigationPage(TPage page)
+        {
+            bool hasParentNavigation = false;
+            TPage parent;
+            TPage current = page;
+
+            while ((parent = current.Parent as TPage) != null)
+            {
+                hasParentNavigation = parent is NavigationPage;
+
+                if (hasParentNavigation) break;
+
+                current = parent;
+            }
+
+            return hasParentNavigation && NavigationPage.GetHasNavigationBar(parent);
         }
     }
 }

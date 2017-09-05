@@ -28,6 +28,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (e.NewElement != null)
             {
+                // The Open Toolkit library is a low-level C# binding for OpenGL, OpenGL ES and OpenAL. 
+                // Runs on Linux, MacOS and Windows with GTK# (and more platforms).
                 _openGlView = new Controls.OpenGLView();
                 SetNativeControl(_openGlView);
 

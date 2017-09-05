@@ -264,6 +264,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 IntPtr test = drawingArea.GdkWindow.Handle;
                 windowHandle = gdk_win32_drawable_get_handle(test);
+
+                // Embedding Windows Browser control into a gtk widget.
                 SetParent(browserHandle, windowHandle);
             };
 

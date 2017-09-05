@@ -33,6 +33,8 @@ namespace Xamarin.Forms.Platform.GTK
             if (!IsInitialized)
                 throw new InvalidOperationException("call GtkThemes.Init() before this");
 
+            // GTK provides resource file mechanism for configuring various aspects of the operation of a GTK program at runtime. 
+            // Parses resource information from a string to allow change the App appearance.
             Rc.Parse(filename);
         }
 
@@ -58,8 +60,6 @@ namespace Xamarin.Forms.Platform.GTK
                 return false;
             }
 
-            Debug.WriteLine("Found GTK# version " + version);
-
             var path = Path.Combine(location, @"bin");
             try
             {
@@ -72,7 +72,6 @@ namespace Xamarin.Forms.Platform.GTK
             {
             }
 
-            Debug.WriteLine("Unable to set GTK+ dll directory");
             return true;
         }
     }

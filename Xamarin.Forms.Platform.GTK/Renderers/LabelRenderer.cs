@@ -22,7 +22,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 if (Control == null)
                 {
                     SetNativeControl(new NativeLabel());
-                    Control.MaxWidthChars = 1000000;
                 }
 
                 UpdateText();

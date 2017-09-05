@@ -34,6 +34,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 if (Widget == null)
                 {
+                    // Custom control using a tabbed notebook container.
                     Widget = new NotebookWrapper();
                     Control.Content = Widget;
                 }
@@ -75,6 +76,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             else if (e.PropertyName ==
                   PlatformConfiguration.GTKSpecific.TabbedPage.TabPositionProperty.PropertyName)
                 UpdateTabPos();
+        }
+
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            Control?.Content?.SetSize(allocation.Width, allocation.Height);
         }
 
         protected override void UpdateBackgroundImage()
@@ -252,7 +260,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        private void UpdateTabPos()
+        private void UpdateTabPos() // Platform-Specific Functionality
         {
             var tabposition = Page.OnThisPlatform().GetTabPosition();
 
