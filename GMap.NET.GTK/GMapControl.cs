@@ -462,7 +462,6 @@
 
         internal void ForceUpdateOverlays()
         {
-            Console.WriteLine(string.Format("Tread: {0}", Thread.CurrentThread.ManagedThreadId));
             try
             {
                 HoldInvalidation = true;
