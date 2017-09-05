@@ -125,13 +125,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
-
-            SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+            SetPageSize(allocation.Width, allocation.Height);
 
             if (_lastAllocation != allocation)
             {
-                _lastAllocation = allocation;
-                Control?.Content?.QueueResize();
+                _lastAllocation = allocation; 
+                PageQueueResize();
             }
         }
 
@@ -215,7 +214,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             SetElementSize(pageContentSize.ToSize());
         }
 
-        private static bool HasAncestorNavigationPage(TPage page)
+        private void PageQueueResize()
+        {
+            Control?.Content?.QueueResize();
+        }
+
+        private bool HasAncestorNavigationPage(TPage page)
         {
             bool hasParentNavigation = false;
             TPage parent;
