@@ -78,6 +78,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateTabPos();
         }
 
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            Control?.Content?.SetSize(allocation.Width, allocation.Height);
+        }
+
         protected override void UpdateBackgroundImage()
         {
             Widget?.SetBackgroundImage(Page.BackgroundImage);
