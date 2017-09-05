@@ -101,11 +101,9 @@
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*pdb" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*mdb" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*pdb" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*mdb" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Platform\bin\$Configuration$\Xamarin.Forms.Platform.dll" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Platform\bin\$Configuration$\Xamarin.Forms.Platform.*pdb" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
     <file src="..\Xamarin.Forms.Platform\bin\$Configuration$\Xamarin.Forms.Platform.*mdb" target="lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20" />
@@ -114,11 +112,9 @@
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*pdb" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*mdb" target="lib\netstandard1.0" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*pdb" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*mdb" target="lib\netstandard1.0" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Platform\bin\$Configuration$\Xamarin.Forms.Platform.dll" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Platform\bin\$Configuration$\Xamarin.Forms.Platform.*pdb" target="lib\netstandard1.0" />
     <file src="..\Xamarin.Forms.Platform\bin\$Configuration$\Xamarin.Forms.Platform.*mdb" target="lib\netstandard1.0" />
@@ -181,10 +177,8 @@
     <file src="..\Xamarin.Forms.Platform.Android.FormsViewGroup\bin\$Configuration$\FormsViewGroup.*pdb" target="lib\MonoAndroid10" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\MonoAndroid10" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*pdb" target="lib\MonoAndroid10" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\MonoAndroid10" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\MonoAndroid10" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*pdb" target="lib\MonoAndroid10" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\MonoAndroid10" />
     <file src="..\Stubs\Xamarin.Forms.Platform.Android\bin\$Configuration$\Xamarin.Forms.Platform.dll" target="lib\MonoAndroid10" />
 
     <!--iPhone Unified-->
@@ -194,11 +188,9 @@
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\Xamarin.iOS10" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*pdb" target="lib\Xamarin.iOS10" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*mdb" target="lib\Xamarin.iOS10" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\Xamarin.iOS10" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\Xamarin.iOS10" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*pdb" target="lib\Xamarin.iOS10" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*mdb" target="lib\Xamarin.iOS10" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\Xamarin.iOS10" />
     <file src="..\Stubs\Xamarin.Forms.Platform.iOS\bin\iPhone\$Configuration$\Xamarin.Forms.Platform.dll" target="lib\Xamarin.iOS10" />
 
     <!--Windows Phone 8-->
@@ -206,10 +198,8 @@
     <file src="..\Xamarin.Forms.Platform.WP8\bin\$Configuration$\Xamarin.Forms.Platform.WP8.*pdb" target="lib\WP80" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\WP80" />
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.*pdb" target="lib\WP80" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\WP80" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\WP80" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.*pdb" target="lib\WP80" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\WP80" />
     <file src="..\Stubs\Xamarin.Forms.Platform.WP8\bin\$Configuration$\Xamarin.Forms.Platform.dll" target="lib\WP80" />
 
     <!--WinRT Phone-->
@@ -231,9 +221,7 @@
     <file src="..\Xamarin.Forms.Platform.WinRT.Phone\bin\$Configuration$\SearchBox.xbf" target="lib\wpa81\Xamarin.Forms.Platform.WinRT.Phone" />
 
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\wpa81" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\wpa81" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\wpa81" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\wpa81" />
 
     <!--WinRT Desktop-->
     <file src="..\Xamarin.Forms.Platform.WinRT\bin\$Configuration$\Xamarin.Forms.Platform.WinRT.dll" target="lib\win81" />
@@ -253,9 +241,7 @@
     <file src="..\Xamarin.Forms.Platform.WinRT.Tablet\bin\$Configuration$\FormsProgressBarStyle.xbf" target="lib\win81\Xamarin.Forms.Platform.WinRT.Tablet" />
 
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\win81" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\win81" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\win81" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\win81" />
 
     <!--UWP-->
     <file src="..\Xamarin.Forms.Platform.UAP\bin\$Configuration$\Xamarin.Forms.Platform.UAP.dll" target="lib\uap10.0" />
@@ -276,9 +262,7 @@
     <file src="..\Xamarin.Forms.Platform.UAP\bin\$Configuration$\TabbedPageStyle.xbf" target="lib\uap10.0\Xamarin.Forms.Platform.UAP" />
 
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\uap10.0" />
-    <file src="..\docs\Xamarin.Forms.Core.xml" target="lib\uap10.0" />
     <file src="..\Xamarin.Forms.Xaml\bin\$Configuration$\Xamarin.Forms.Xaml.dll" target="lib\uap10.0" />
-    <file src="..\docs\Xamarin.Forms.Xaml.xml" target="lib\uap10.0" />
 
     <!--Mac-->
     <file src="..\Xamarin.Forms.Core\bin\$Configuration$\Xamarin.Forms.Core.dll" target="lib\Xamarin.Mac" />
