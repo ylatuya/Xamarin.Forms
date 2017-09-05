@@ -27,7 +27,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
 
             _packager.Load();
-            FormsWindow.MainWindow.ShowAll();
         }
 
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
