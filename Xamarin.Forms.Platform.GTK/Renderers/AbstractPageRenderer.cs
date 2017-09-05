@@ -69,7 +69,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
 
             Element.Layout(bounds);
-            Control.Content.QueueResize();
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -127,10 +126,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
+            SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+
             if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
-                SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+                Control?.Content?.QueueResize();
             }
         }
 
