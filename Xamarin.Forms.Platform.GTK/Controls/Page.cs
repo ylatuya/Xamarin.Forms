@@ -96,8 +96,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public override void Dispose()
         {
             base.Dispose();
-
-
+            
             if (_contentContainerWrapper != null)
             {
                 _contentContainerWrapper.SizeAllocated -= OnContentContainerWrapperSizeAllocated;
@@ -150,9 +149,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         private void OnContentContainerWrapperSizeAllocated(object o, SizeAllocatedArgs args)
         {
-            _image.SetSizeRequest(
-               args.Allocation.Width,
-               args.Allocation.Height);
+            _image.SetSizeRequest(args.Allocation.Width, args.Allocation.Height);
         }
     }
 }
