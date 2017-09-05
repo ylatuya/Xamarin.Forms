@@ -61,12 +61,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
-        public virtual void SetElementSize(Size size)
+        public virtual void SetElementSize(Size newSize)
         {
             if (Element == null)
                 return;
 
-            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+            var elementSize = new Size(Element.Width, Element.Height);
+
+            if (elementSize == newSize)
+                return;
+
+            var bounds = new Rectangle(Element.X, Element.Y, newSize.Width, newSize.Height);
 
             Element.Layout(bounds);
         }
@@ -125,11 +130,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
-            SetPageSize(allocation.Width, allocation.Height);
 
             if (_lastAllocation != allocation)
             {
-                _lastAllocation = allocation; 
+                _lastAllocation = allocation;
+                SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
                 PageQueueResize();
             }
         }
