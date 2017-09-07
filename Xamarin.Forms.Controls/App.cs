@@ -45,10 +45,14 @@ namespace Xamarin.Forms.Controls
             //});
         }
 
-		public Page CreateDefaultMainPage()
-		{
-            return new NavigationPage(new FormsGallery.ButtonDemoPage());
-            //return new NavigationPage(new ResponsiveLayout.StackLayoutPageCode());
+        public Page CreateDefaultMainPage()
+        {
+            return new MasterDetailPage
+            {
+                AutomationId = DefaultMainPageId,
+                Master = new ContentPage { Icon = "gtk_hamburguer_button.png", Title = "Master", BackgroundColor = Color.Red },
+                Detail = CoreGallery.GetMainPage()
+            };
         }
 
         protected override void OnAppLinkRequestReceived(Uri uri)
