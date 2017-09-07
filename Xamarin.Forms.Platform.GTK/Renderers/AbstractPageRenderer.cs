@@ -66,7 +66,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             if (Element == null)
                 return;
 
-            var elementSize = new Size(Element.Width, Element.Height);
+            var elementSize = new Size(Element.Bounds.Width, Element.Bounds.Height);
 
             if (elementSize == newSize)
                 return;
@@ -136,6 +136,13 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 _lastAllocation = allocation;
                 SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
                 PageQueueResize();
+            }
+            else
+            {
+                Gtk.Application.Invoke(delegate
+                {
+                    SetPageSize(allocation.Width, allocation.Height);
+                });
             }
         }
 
@@ -216,7 +223,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 finalHeight -= GtkToolbarConstants.ToolbarHeight;
 
             var pageContentSize = new Gdk.Rectangle(0, 0, width, finalHeight);
-            SetElementSize(pageContentSize.ToSize());
+            var newSize = pageContentSize.ToSize();
+
+            SetElementSize(newSize);
         }
 
         private void PageQueueResize()
