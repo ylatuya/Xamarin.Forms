@@ -1,7 +1,9 @@
-﻿using Gtk;
+﻿using Gdk;
+using Gtk;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Helpers;
 using NativeLabel = Gtk.Label;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
@@ -10,9 +12,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
     {
         private SizeRequest _perfectSize;
         private bool _perfectSizeValid;
+        private bool _allocated;
 
         public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
         {
+            if (!_allocated && PlatformHelper.GetGTKPlatform() == GTKPlatform.Windows)
+            {
+                return default(SizeRequest);
+            }
+
             if (!_perfectSizeValid)
             {
                 _perfectSize = GetPerfectSize();
@@ -106,6 +114,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
+
+            _allocated = true;
 
             Control.Layout.Width = Pango.Units.FromPixels((int)Element.Bounds.Width);
         }
@@ -214,10 +224,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             Control.Layout.Width = Pango.Units.FromPixels(widthConstraint);
             Control.Layout.GetPixelSize(out w, out h);
 
-            Pango.Rectangle inkRect, logicalRect;
-            Control.Layout.GetPixelExtents(out inkRect, out logicalRect);
-
-            return new SizeRequest(new Size(w, h + inkRect.Y));
+            return new SizeRequest(new Size(w, h));
         }
     }
 }
