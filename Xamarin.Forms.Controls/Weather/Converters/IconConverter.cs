@@ -25,9 +25,9 @@ namespace WeatherApp.Converters
                     return "Images/cloud.png";
                 case "10d":
                     return "Images/rain.png";
+                default:
+                    return "Images/cloud.png";
             }
-
-            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
