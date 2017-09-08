@@ -16,7 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 var barTextColor = color;
 
-                if (barTextColor.IsDefaultOrTransparent())
+                if (barTextColor == null || barTextColor.IsDefaultOrTransparent())
                 {
                     Widget.UpdateBarTextColor(null);
                 }
@@ -30,7 +30,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 var barBackgroundColor = color;
 
-                if (barBackgroundColor.IsDefaultOrTransparent())
+                if (barBackgroundColor == null || barBackgroundColor.IsDefaultOrTransparent())
                 {
                     Widget.UpdateBarBackgroundColor(null);
                 }
