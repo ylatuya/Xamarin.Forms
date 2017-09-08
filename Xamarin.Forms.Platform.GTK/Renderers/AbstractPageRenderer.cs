@@ -157,8 +157,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
                 Platform.SetRenderer(Element, null);
 
-                this.RemoveFromContainer(Control);
-
                 Control.Destroy();
                 Control = null;
                 Element = null;
