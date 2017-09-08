@@ -10,6 +10,7 @@ namespace Xamarin.Forms.Platform.GTK
     public abstract class ViewRenderer<TView, TNativeView> : VisualElementRenderer<TView, TNativeView>
         where TView : View where TNativeView : NativeView
     {
+        private bool _disposed;
         private string _defaultAccessibilityLabel;
         private string _defaultAccessibilityHint;
 
@@ -17,7 +18,7 @@ namespace Xamarin.Forms.Platform.GTK
         {
             base.Dispose(disposing);
 
-            if (disposing && Control != null)
+            if (Control != null)
             {
                 Control.Dispose();
                 Control = null;
