@@ -497,13 +497,21 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateBarBackgroundColor()
         {
             UpdateToolBar();
-            MessagingCenter.Send(Element, Forms.BarBackgroundColor, Page.BarBackgroundColor);
+
+            if (Element != null)
+            {
+                MessagingCenter.Send(Element, Forms.BarBackgroundColor, Page?.BarBackgroundColor);
+            }
         }
 
         private void UpdateBarTextColor()
         {
             UpdateToolBar();
-            MessagingCenter.Send(Element, Forms.BarTextColor, Page.BarTextColor);
+
+            if (Element != null)
+            {
+                MessagingCenter.Send(Element, Forms.BarTextColor, Page?.BarTextColor);
+            }
         }
 
         private void UpdateBackButtonIcon()
@@ -531,7 +539,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             GLib.Timeout.Add(0, () =>
             {
-                _toolbarTracker.UpdateToolBar();
+                if (_toolbarTracker != null)
+                {
+                    _toolbarTracker.UpdateToolBar();
+                }
                 return false;
             });
         }

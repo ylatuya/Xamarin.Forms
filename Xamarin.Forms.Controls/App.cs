@@ -45,8 +45,8 @@ namespace Xamarin.Forms.Controls
             //});
         }
 
-		public Page CreateDefaultMainPage()
-		{
+        public Page CreateDefaultMainPage()
+        {
             return new MasterDetailPage
             {
                 AutomationId = DefaultMainPageId,

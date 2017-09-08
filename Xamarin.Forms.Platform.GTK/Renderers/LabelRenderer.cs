@@ -1,18 +1,65 @@
-﻿using Gtk;
+﻿using Gdk;
+using Gtk;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Extensions;
+using Xamarin.Forms.Platform.GTK.Helpers;
 using NativeLabel = Gtk.Label;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
     public class LabelRenderer : ViewRenderer<Label, NativeLabel>
     {
+        private SizeRequest _perfectSize;
+        private bool _perfectSizeValid;
+        private bool _allocated;
+
         public override SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
         {
-            Control.SetSizeRequest(-1, -1); // Force widget to calculate its desired size
+            if (!_allocated && PlatformHelper.GetGTKPlatform() == GTKPlatform.Windows)
+            {
+                return default(SizeRequest);
+            }
 
-            return base.GetDesiredSize(widthConstraint, heightConstraint);
+            if (!_perfectSizeValid)
+            {
+                _perfectSize = GetPerfectSize();
+                _perfectSize.Minimum = new Size(Math.Min(10, _perfectSize.Request.Width), _perfectSize.Request.Height);
+                _perfectSizeValid = true;
+            }
+
+            var widthFits = widthConstraint >= _perfectSize.Request.Width;
+            var heightFits = heightConstraint >= _perfectSize.Request.Height;
+
+            if (widthFits && heightFits)
+                return _perfectSize;
+
+            var result = GetPerfectSize((int)widthConstraint);
+            var tinyWidth = Math.Min(10, result.Request.Width);
+            result.Minimum = new Size(tinyWidth, result.Request.Height);
+
+            if (widthFits || Element.LineBreakMode == LineBreakMode.NoWrap)
+            {
+                return new SizeRequest(
+                    new Size(result.Request.Width, _perfectSize.Request.Height),
+                    new Size(result.Minimum.Width, _perfectSize.Request.Height));
+            }
+
+            bool containerIsNotInfinitelyWide = !double.IsInfinity(widthConstraint);
+
+            if (containerIsNotInfinitelyWide)
+            {
+                bool textCouldHaveWrapped = Element.LineBreakMode == LineBreakMode.WordWrap || Element.LineBreakMode == LineBreakMode.CharacterWrap;
+                bool textExceedsContainer = result.Request.Width > widthConstraint;
+
+                if (textExceedsContainer || textCouldHaveWrapped)
+                {
+                    var expandedWidth = Math.Max(tinyWidth, widthConstraint);
+                    result.Request = new Size(expandedWidth, result.Request.Height);
+                }
+            }
+
+            return result;
         }
 
         protected override void OnElementChanged(ElementChangedEventArgs<Label> e)
@@ -64,8 +111,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             base.SetAccessibilityLabel();
         }
 
+        protected override void OnSizeAllocated(Gdk.Rectangle allocation)
+        {
+            base.OnSizeAllocated(allocation);
+
+            _allocated = true;
+
+            Control.Layout.Width = Pango.Units.FromPixels((int)Element.Bounds.Width);
+        }
+
         private void UpdateText()
         {
+            _perfectSizeValid = false;
+
             string markupText = string.Empty;
             FormattedString formatted = Element.FormattedText;
 
@@ -107,6 +165,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
         private void UpdateLineBreakMode()
         {
+            _perfectSizeValid = false;
+
             switch (Element.LineBreakMode)
             {
                 case LineBreakMode.NoWrap:
@@ -143,8 +203,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             }
         }
 
-        private static float GetAlignmentValue(TextAlignment alignment)
+        private float GetAlignmentValue(TextAlignment alignment)
         {
+            _perfectSizeValid = false;
+
             switch (alignment)
             {
                 case TextAlignment.Start:
@@ -154,6 +216,15 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 default:
                     return 0.5f;
             }
+        }
+
+        private SizeRequest GetPerfectSize(int widthConstraint = -1)
+        {
+            int w, h;
+            Control.Layout.Width = Pango.Units.FromPixels(widthConstraint);
+            Control.Layout.GetPixelSize(out w, out h);
+
+            return new SizeRequest(new Size(w, h));
         }
     }
 }
