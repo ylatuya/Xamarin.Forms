@@ -36,7 +36,7 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
 
             if (!widthFits)
             {
-                self.SetSizeRequest((int)widthConstraint, -1);
+                self.SetSize((int)widthConstraint, -1);
 
                 var req = self.SizeRequest();
                 desiredSize = new Gdk.Size(
@@ -86,6 +86,16 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             int calcWidth = (int)Math.Round(width);
             int calcHeight = (int)Math.Round(height);
 
+            if (calcWidth < -1)
+            {
+                calcWidth = -1;
+            }
+
+            if (calcHeight < -1)
+            {
+                calcHeight = -1;
+            }
+
             if (calcWidth != self.WidthRequest || calcHeight != self.HeightRequest)
             {
                 self.SetSizeRequest(calcWidth, calcHeight);
@@ -96,9 +106,12 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
         {
             var container = self as Container;
 
-            if (container != null && container.HasChild(child))
+            if (child != null && child.Parent != null)
             {
-                container.Remove(child);
+                if (container != null && container.HasChild(child))
+                {
+                    container.Remove(child);
+                }
             }
         }
 
@@ -125,7 +138,7 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
                 }
             }
 
-            self.SetSizeRequest((int)widthConstraint - 1, -1);
+            self.SetSize((int)widthConstraint - 1, -1);
             var desiredSize = self.GetDesiredSize(widthConstraint, heightConstraint);
 
             return childReq.Height > desiredSize.Request.Height

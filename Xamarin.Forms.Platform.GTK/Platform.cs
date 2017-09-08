@@ -102,8 +102,7 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
 
             _disposed = true;
-
-            Page.DescendantRemoved -= HandleChildRemoved;
+    
             MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName);
             MessagingCenter.Unsubscribe<Page, AlertArguments>(this, Page.AlertSignalName);
             MessagingCenter.Unsubscribe<Page, bool>(this, Page.BusySetSignalName);
@@ -127,8 +126,6 @@ namespace Xamarin.Forms.Platform.GTK
             Page.Platform = this;
 
             AddChild(Page);
-
-            Page.DescendantRemoved += HandleChildRemoved;
 
             Application.Current.NavigationProxy.Inner = this;
         }

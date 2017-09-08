@@ -61,15 +61,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
-        public virtual void SetElementSize(Size size)
+        public virtual void SetElementSize(Size newSize)
         {
             if (Element == null)
                 return;
 
-            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+            var elementSize = new Size(Element.Bounds.Width, Element.Bounds.Height);
+
+            if (elementSize == newSize)
+                return;
+
+            var bounds = new Rectangle(Element.X, Element.Y, newSize.Width, newSize.Height);
 
             Element.Layout(bounds);
-            Control.Content.QueueResize();
         }
 
         public SizeRequest GetDesiredSize(double widthConstraint, double heightConstraint)
@@ -131,6 +135,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             {
                 _lastAllocation = allocation;
                 SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+                PageQueueResize();
+            }
+            else
+            {
+                Gtk.Application.Invoke(delegate
+                {
+                    SetPageSize(allocation.Width, allocation.Height);
+                });
             }
         }
 
@@ -144,8 +156,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
 
                 Platform.SetRenderer(Element, null);
-
-                this.RemoveFromContainer(Control);
 
                 Control.Destroy();
                 Control = null;
@@ -207,11 +217,36 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             var finalHeight = height;
 
             if (Page != null &&
-                NavigationPage.GetHasNavigationBar(Page))
+                HasAncestorNavigationPage(Page))
                 finalHeight -= GtkToolbarConstants.ToolbarHeight;
 
             var pageContentSize = new Gdk.Rectangle(0, 0, width, finalHeight);
-            SetElementSize(pageContentSize.ToSize());
+            var newSize = pageContentSize.ToSize();
+
+            SetElementSize(newSize);
+        }
+
+        private void PageQueueResize()
+        {
+            Control?.Content?.QueueResize();
+        }
+
+        private bool HasAncestorNavigationPage(TPage page)
+        {
+            bool hasParentNavigation = false;
+            TPage parent;
+            TPage current = page;
+
+            while ((parent = current.Parent as TPage) != null)
+            {
+                hasParentNavigation = parent is NavigationPage;
+
+                if (hasParentNavigation) break;
+
+                current = parent;
+            }
+
+            return hasParentNavigation && NavigationPage.GetHasNavigationBar(parent);
         }
     }
 }
