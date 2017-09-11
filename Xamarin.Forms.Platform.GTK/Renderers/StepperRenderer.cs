@@ -80,12 +80,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             var increment = Element.Increment;
 
-            var hasFractionalPart = (increment - Math.Round(increment) != 0);
+            var decimalPart = increment - Math.Truncate(increment);
 
-            if (hasFractionalPart)
+            if (decimalPart != 0)
             {
-                var fractionalPart = increment - Math.Truncate(increment);
-                var digits = fractionalPart.ToString().Length - 2;
+                var digits = decimalPart.ToString().Length - 2;
                 Control.Digits = (uint)digits;
             }
 
