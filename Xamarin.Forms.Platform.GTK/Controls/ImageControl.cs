@@ -52,7 +52,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                 _image.Pixbuf = Pixbuf.AddAlpha(
                     true,
                     ((byte)(255 * opacity)),
-                    ((byte)(255 * opacity)), 
+                    ((byte)(255 * opacity)),
                     ((byte)(255 * opacity)));
             }
         }
@@ -71,32 +71,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (_image.Pixbuf != null && _lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
-
-                var srcWidth = _original.Width;
-                var srcHeight = _original.Height;
-
-                Pixbuf newPixBuf = null;
-
-                // Differents modes in which the image will be scaled to fit the display area.
-                switch (Aspect)
-                {
-                    case ImageAspect.AspectFit:
-                        newPixBuf = GetAspectFitPixBuf(_original, allocation);
-                        break;
-                    case ImageAspect.AspectFill:
-                        newPixBuf = GetAspectFillPixBuf(_original, allocation);
-                        break;
-                    case ImageAspect.Fill:
-                        newPixBuf = GetFillPixBuf(_original, allocation);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(Aspect));
-                }
-
-                if (newPixBuf != null)
-                {
-                    _image.Pixbuf = newPixBuf;
-                }
+                UpdatePixBufWithAllocation(allocation);
             }
         }
 
@@ -136,6 +111,37 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         private static Pixbuf GetFillPixBuf(Pixbuf original, Gdk.Rectangle allocation)
         {
             return original.ScaleSimple(allocation.Width, allocation.Height, InterpType.Bilinear);
+        }
+
+        private void UpdatePixBufWithAllocation(Gdk.Rectangle allocation)
+        {
+            var srcWidth = _original.Width;
+            var srcHeight = _original.Height;
+
+            Pixbuf newPixBuf = null;
+
+            // Differents modes in which the image will be scaled to fit the display area.
+            switch (Aspect)
+            {
+                case ImageAspect.AspectFit:
+                    newPixBuf = GetAspectFitPixBuf(_original, allocation);
+                    break;
+                case ImageAspect.AspectFill:
+                    newPixBuf = GetAspectFillPixBuf(_original, allocation);
+                    break;
+                case ImageAspect.Fill:
+                    newPixBuf = GetFillPixBuf(_original, allocation);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Aspect));
+            }
+
+            if (newPixBuf != null)
+            {
+                _image.Pixbuf = newPixBuf;
+                newPixBuf.Dispose();
+                System.GC.Collect();
+            }
         }
     }
 

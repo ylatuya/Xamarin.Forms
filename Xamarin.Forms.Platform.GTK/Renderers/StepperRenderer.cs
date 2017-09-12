@@ -59,6 +59,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 UpdateValue();
             else if (e.PropertyName == Stepper.IncrementProperty.PropertyName)
                 UpdateIncrement();
+            else if (e.PropertyName == Stepper.BackgroundColorProperty.PropertyName)
+                UpdateBackgroundColor();
         }
 
         protected override void UpdateBackgroundColor()
@@ -77,6 +79,14 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         private void UpdateIncrement()
         {
             var increment = Element.Increment;
+
+            var decimalPart = increment - Math.Truncate(increment);
+
+            if (decimalPart != 0)
+            {
+                var digits = decimalPart.ToString().Length - 2;
+                Control.Digits = (uint)digits;
+            }
 
             Control.SetIncrements(increment, 0);
         }
