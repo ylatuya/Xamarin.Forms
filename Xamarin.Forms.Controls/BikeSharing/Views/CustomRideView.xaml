@@ -24,6 +24,7 @@
         <!-- ROUTE SELECTOR -->
         <Grid
             x:Name="RouteSelector"
+            IsVisible="false"
             Margin="12"
             BackgroundColor="White"
             AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional"
