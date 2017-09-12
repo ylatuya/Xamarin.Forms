@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         where TPage : Page
     {
         private Gdk.Rectangle _lastAllocation;
+        private DateTime _lastAllocationTime;
         protected bool _disposed;
         protected bool _appeared;
         protected readonly PropertyChangedEventHandler _propertyChangedHandler;
@@ -131,18 +132,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
+            var now = DateTime.Now;
+            var diff = now.Subtract(_lastAllocationTime);
+
             if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
+                _lastAllocationTime = now;
                 SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
                 PageQueueResize();
             }
-            else
+            else if (diff > TimeSpan.FromMilliseconds(50)) // Prevent infinite resizing loops for very fast layout changes
             {
-                Gtk.Application.Invoke(delegate
-                {
-                    SetPageSize(allocation.Width, allocation.Height);
-                });
+                SetPageSize(allocation.Width, allocation.Height);
             }
         }
 
