@@ -12,10 +12,12 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         {
             Spacing = 0;
 
+            // Icon
             _image = new Gtk.Image();
             _image.Pixbuf = icon;
             Add(_image);
 
+            // Title
             _label = new Gtk.Label();
             _label.Text = title ?? string.Empty;
             Add(_label);

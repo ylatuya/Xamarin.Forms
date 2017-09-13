@@ -171,7 +171,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                                 if (gtkCell != null && gtkCell.Cell != null)
                                 {
                                     var selectedCell = gtkCell.Cell;
-      
+
                                     OnItemTapped?.Invoke(this, new ItemTappedEventArgs(selectedCell));
                                 }
                             };

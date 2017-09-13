@@ -4,6 +4,7 @@ using System;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
+    // Created a custom control to allow combining Gtk.Entry and Gtk.Label to have placeholder text.
     public class EntryWrapper : EventBox
     {
         private Table _table;

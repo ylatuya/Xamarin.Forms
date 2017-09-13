@@ -139,7 +139,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             if (newPixBuf != null)
             {
                 _image.Pixbuf = newPixBuf;
-                newPixBuf.Dispose();
+                newPixBuf.Dispose();    // Important: Image should adapt to window size. To maintain memory consuption, we make Pixbuf dispose (Unref is deprecated).
                 System.GC.Collect();
             }
         }
