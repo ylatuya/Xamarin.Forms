@@ -7,6 +7,7 @@ using Xamarin.Forms.Platform.GTK.Helpers;
 
 namespace Xamarin.Forms.Platform.GTK.Controls
 {
+    // WebView definition for all platforms (Linux, macOS and Windows).
     public interface IWebView
     {
         string Uri { get; set; }
