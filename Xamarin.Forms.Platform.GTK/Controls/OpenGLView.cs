@@ -1,5 +1,4 @@
 ﻿using Gtk;
-using OpenTK;
 using OpenTK.GLWidget;
 using OpenTK.Graphics;
 using System;
@@ -16,7 +15,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
         public OpenGLView()
         {
-            Init();
+            if (!GtkOpenGL.IsInitialized)
+                throw new InvalidOperationException("call GtkOpenGL.Init() before use OpenGLView");
 
             GraphicsMode graphicsMode = GraphicsMode.Default;
 
@@ -29,8 +29,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _glWidget.Samples = graphicsMode.Samples;
             _glWidget.StencilBPP = graphicsMode.Stencil;
             _glWidget.Stereo = graphicsMode.Stereo;
-            _glWidget.GlVersionMajor = 0;
-            _glWidget.GlVersionMinor = 0;
+            _glWidget.GlVersionMajor = 2;
+            _glWidget.GlVersionMinor = 1;
             _glWidget.CanFocus = true;
             _glWidget.GraphicsContextFlags = GraphicsContextFlags.Default;
 
@@ -41,6 +41,8 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _glWidget.AddEvents((int)Gdk.EventMask.AllEventsMask);
 
             Add(_glWidget);
+
+            _glWidget.ShowAll();
         }
 
         public Action<Rectangle> OnDisplay
@@ -78,14 +80,6 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 _glWidget.Dispose();
             }
-        }
-
-        private Toolkit Init()
-        {
-            return Toolkit.Init(new ToolkitOptions
-            {
-                Backend = PlatformBackend.PreferNative
-            });
         }
 
         private bool Render()

@@ -22,6 +22,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
 
             ExceptionManager.UnhandledException += OnUnhandledException;
 
+            GtkOpenGL.Init();
             GtkThemes.Init();
 
             if(PlatformHelper.GetGTKPlatform() == GTKPlatform.Windows)

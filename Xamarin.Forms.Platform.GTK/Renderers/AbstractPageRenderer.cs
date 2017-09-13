@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         where TPage : Page
     {
         private Gdk.Rectangle _lastAllocation;
+        private DateTime _lastAllocationTime;
         protected bool _disposed;
         protected bool _appeared;
         protected readonly PropertyChangedEventHandler _propertyChangedHandler;
@@ -131,18 +132,19 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         {
             base.OnSizeAllocated(allocation);
 
+            var now = DateTime.Now;
+            var diff = now.Subtract(_lastAllocationTime);
+
             if (_lastAllocation != allocation)
             {
                 _lastAllocation = allocation;
-                SetPageSize(_lastAllocation.Width, _lastAllocation.Height);
+                _lastAllocationTime = now;
+                SetPageSize(_lastAllocation.Width, _lastAllocation.Height); // Check ToolBar for size calculations.
                 PageQueueResize();
             }
-            else
+            else if (diff > TimeSpan.FromMilliseconds(50)) // Prevent infinite resizing loops for very fast layout changes
             {
-                Gtk.Application.Invoke(delegate
-                {
-                    SetPageSize(allocation.Width, allocation.Height);
-                });
+                SetPageSize(allocation.Width, allocation.Height);
             }
         }
 
@@ -218,7 +220,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (Page != null &&
                 HasAncestorNavigationPage(Page))
-                finalHeight -= GtkToolbarConstants.ToolbarHeight;
+                finalHeight -= GtkToolbarConstants.ToolbarHeight; // Subtract the size of the Toolbar.
 
             var pageContentSize = new Gdk.Rectangle(0, 0, width, finalHeight);
             var newSize = pageContentSize.ToSize();
