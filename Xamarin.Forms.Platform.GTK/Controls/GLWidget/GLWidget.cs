@@ -174,10 +174,7 @@ namespace OpenTK.GLWidget
         /// </summary>
         private static void OnGraphicsContextInitialized()
         {
-            if (GraphicsContextInitialized != null)
-            {
-                GraphicsContextInitialized(null, EventArgs.Empty);
-            }
+            GraphicsContextInitialized?.Invoke(null, EventArgs.Empty);
         }
 
         /// <summary>
@@ -191,10 +188,7 @@ namespace OpenTK.GLWidget
         /// </summary>
         private static void OnGraphicsContextShuttingDown()
         {
-            if (GraphicsContextShuttingDown != null)
-            {
-                GraphicsContextShuttingDown(null, EventArgs.Empty);
-            }
+            GraphicsContextShuttingDown?.Invoke(null, EventArgs.Empty);
         }
 
         /// <summary>
@@ -208,10 +202,7 @@ namespace OpenTK.GLWidget
         /// </summary>
         protected virtual void OnInitialized()
         {
-            if (Initialized != null)
-            {
-                Initialized(this, EventArgs.Empty);
-            }
+            Initialized?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -224,10 +215,7 @@ namespace OpenTK.GLWidget
         /// </summary>
         protected virtual void OnRenderFrame()
         {
-            if (RenderFrame != null)
-            {
-                RenderFrame(this, EventArgs.Empty);
-            }
+            RenderFrame?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -240,10 +228,7 @@ namespace OpenTK.GLWidget
         /// </summary>
         protected virtual void OnShuttingDown()
         {
-            if (ShuttingDown != null)
-            {
-                ShuttingDown(this, EventArgs.Empty);
-            }
+            ShuttingDown?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

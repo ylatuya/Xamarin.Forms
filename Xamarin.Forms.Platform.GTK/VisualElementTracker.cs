@@ -188,14 +188,7 @@ namespace Xamarin.Forms.Platform.GTK
                 return;
             }
 
-            if (e.PropertyName == VisualElement.XProperty.PropertyName || 
-                e.PropertyName == VisualElement.YProperty.PropertyName || 
-                e.PropertyName == VisualElement.WidthProperty.PropertyName ||
-                e.PropertyName == VisualElement.HeightProperty.PropertyName)
-            {
-                MaybeInvalidate();
-            }
-            else if (e.PropertyName == VisualElement.AnchorXProperty.PropertyName || 
+            if (e.PropertyName == VisualElement.AnchorXProperty.PropertyName || 
                 e.PropertyName == VisualElement.AnchorYProperty.PropertyName)
             {
                 UpdateScaleAndRotation(Element, Container);

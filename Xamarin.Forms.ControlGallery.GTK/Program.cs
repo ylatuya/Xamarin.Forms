@@ -20,6 +20,7 @@ namespace Xamarin.Forms.ControlGallery.GTK
         {
             ExceptionManager.UnhandledException += OnUnhandledException;
 
+            GtkOpenGL.Init();
             GtkThemes.Init();
             Gtk.Application.Init();
             Forms.Init(new List<Assembly>

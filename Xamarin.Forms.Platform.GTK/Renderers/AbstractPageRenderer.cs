@@ -12,6 +12,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         where TPage : Page
     {
         private Gdk.Rectangle _lastAllocation;
+        private DateTime _lastAllocationTime;
         protected bool _disposed;
         protected bool _appeared;
         protected readonly PropertyChangedEventHandler _propertyChangedHandler;
@@ -61,12 +62,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
             EffectUtilities.RegisterEffectControlProvider(this, oldElement, element);
         }
 
-        public virtual void SetElementSize(Size size)
+        public virtual void SetElementSize(Size newSize)
         {
             if (Element == null)
                 return;
 
-            var bounds = new Rectangle(Element.X, Element.Y, size.Width, size.Height);
+            var elementSize = new Size(Element.Bounds.Width, Element.Bounds.Height);
+
+            if (elementSize == newSize)
+                return;
+
+            var bounds = new Rectangle(Element.X, Element.Y, newSize.Width, newSize.Height);
 
             Element.Layout(bounds);
         }
@@ -125,12 +131,20 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
         protected override void OnSizeAllocated(Gdk.Rectangle allocation)
         {
             base.OnSizeAllocated(allocation);
-            SetPageSize(allocation.Width, allocation.Height);
+
+            var now = DateTime.Now;
+            var diff = now.Subtract(_lastAllocationTime);
 
             if (_lastAllocation != allocation)
             {
-                _lastAllocation = allocation; 
+                _lastAllocation = allocation;
+                _lastAllocationTime = now;
+                SetPageSize(_lastAllocation.Width, _lastAllocation.Height); // Check ToolBar for size calculations.
                 PageQueueResize();
+            }
+            else if (diff > TimeSpan.FromMilliseconds(50)) // Prevent infinite resizing loops for very fast layout changes
+            {
+                SetPageSize(allocation.Width, allocation.Height);
             }
         }
 
@@ -144,8 +158,6 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
                 }
 
                 Platform.SetRenderer(Element, null);
-
-                this.RemoveFromContainer(Control);
 
                 Control.Destroy();
                 Control = null;
@@ -208,10 +220,12 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
             if (Page != null &&
                 HasAncestorNavigationPage(Page))
-                finalHeight -= GtkToolbarConstants.ToolbarHeight;
+                finalHeight -= GtkToolbarConstants.ToolbarHeight; // Subtract the size of the Toolbar.
 
             var pageContentSize = new Gdk.Rectangle(0, 0, width, finalHeight);
-            SetElementSize(pageContentSize.ToSize());
+            var newSize = pageContentSize.ToSize();
+
+            SetElementSize(newSize);
         }
 
         private void PageQueueResize()

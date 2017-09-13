@@ -106,6 +106,7 @@ namespace Xamarin.Forms.Platform.GTK.Helpers
         private static void AddExtraButtons(ActionSheetArguments arguments, MessageDialog messageDialog)
         {
             var vbox = messageDialog.VBox;
+
             // As we are not showing any message in this dialog, we just 
             // hide default container and avoid it from using space
             vbox.Children[0].Hide();

@@ -135,6 +135,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             {
                 cr.Rectangle(Allocation.Left, Allocation.Top, Allocation.Width, Allocation.Height);
 
+                // Draw BackgroundColor
                 if (_backgroundColor.HasValue)
                 {
                     var color = _backgroundColor.Value;
@@ -142,6 +143,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     cr.FillPreserve();
                 }
 
+                // Draw BorderColor
                 if (_borderColor.HasValue)
                 {
                     cr.LineWidth = _borderWidth;
