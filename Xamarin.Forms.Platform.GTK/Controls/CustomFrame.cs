@@ -81,6 +81,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
 
             using (var cr = CairoHelper.Create(GdkWindow))
             {
+                //Draw Shadow
                 if (_hasShadow)
                 {
                     var color = Color.Black.ToGtkColor();
@@ -89,6 +90,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     cr.Fill();
                 }
 
+                // Draw BackgroundColor
                 if (_backgroundColor.HasValue)
                 {
                     var color = _backgroundColor.Value;
@@ -97,6 +99,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
                     cr.FillPreserve();
                 }
 
+                // Draw BorderColor
                 if (_borderColor.HasValue)
                 {
                     cr.LineWidth = _borderWidth;

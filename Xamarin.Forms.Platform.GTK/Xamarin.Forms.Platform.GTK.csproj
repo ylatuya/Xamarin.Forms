@@ -150,6 +150,7 @@
     <Compile Include="GtkDeviceInfo.cs" />
     <Compile Include="GtkExpressionSearch.cs" />
     <Compile Include="GtkIsolatedStorageFile.cs" />
+    <Compile Include="GtkOpenGL.cs" />
     <Compile Include="GtkPlatformServices.cs" />
     <Compile Include="GtkSerializer.cs" />
     <Compile Include="GtkSynchronizationContext.cs" />

@@ -19,11 +19,11 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _entryWrapper.Entry.HasFrame = false;
             _searchButton = new ImageButton();
             _searchButton.SetImagePosition(PositionType.Left);
-            _searchButton.ImageWidget.Pixbuf = RenderIcon("gtk-find", IconSize.SmallToolbar, null);
+            _searchButton.ImageWidget.Pixbuf = RenderIcon("gtk-find", IconSize.SmallToolbar, null); // Search icon
 
             _clearButton = new ImageButton();
             _clearButton.SetImagePosition(PositionType.Left);
-            _clearButton.ImageWidget.Pixbuf = RenderIcon("gtk-close", IconSize.SmallToolbar, null);
+            _clearButton.ImageWidget.Pixbuf = RenderIcon("gtk-close", IconSize.SmallToolbar, null); // Cancel icon
 
             _container.PackStart(_searchButton, false, false, 0);
             _container.PackStart(_entryWrapper);

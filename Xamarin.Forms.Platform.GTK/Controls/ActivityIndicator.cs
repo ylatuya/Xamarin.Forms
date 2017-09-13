@@ -87,7 +87,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
             _height = 48;
             _width = 48;
             _current = 0;
-            _lines = 8;
+            _lines = 8; // Number of lines in circular form.
             _running = false;
 
             QueueResize();
@@ -160,7 +160,7 @@ namespace Xamarin.Forms.Platform.GTK.Controls
         public void Start()
         {
             _running = true;
-            GLib.Timeout.Add(100, ExposeTimeoutHandler);
+            GLib.Timeout.Add(100, ExposeTimeoutHandler);    // Every 100 ms.
             QueueDraw();
         }
 
