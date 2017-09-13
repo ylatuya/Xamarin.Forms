@@ -86,6 +86,7 @@ namespace Xamarin.Forms.Platform.GTK.Extensions
             int calcWidth = (int)Math.Round(width);
             int calcHeight = (int)Math.Round(height);
 
+            // Avoid negative values
             if (calcWidth < -1)
             {
                 calcWidth = -1;
