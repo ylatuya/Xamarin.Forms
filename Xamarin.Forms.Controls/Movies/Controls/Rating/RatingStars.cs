@@ -53,7 +53,7 @@ namespace Movies.Controls
           BindableProperty.Create(propertyName: nameof(ImageEmptyStar),
               returnType: typeof(ImageSource),
               declaringType: typeof(RatingStars),
-              defaultValue: ImageSource.FromResource("Xamarin.Forms.ControlGallery.Rating.rating_empty.png"),
+              defaultValue: ImageSource.FromResource("Xamarin.Forms.Controls.rating_empty.png"),
               propertyChanged: UpdateStarsDisplay);
 
         public ImageSource ImageEmptyStar
@@ -66,7 +66,7 @@ namespace Movies.Controls
           BindableProperty.Create(propertyName: nameof(ImageHalfStar),
               returnType: typeof(ImageSource),
               declaringType: typeof(RatingStars),
-              defaultValue: ImageSource.FromResource("Xamarin.Forms.ControlGallery.Rating.rating_half.png"),
+              defaultValue: ImageSource.FromResource("Xamarin.Forms.Controls.rating_half.png"),
               propertyChanged: UpdateStarsDisplay);
 
         public ImageSource ImageHalfStar
