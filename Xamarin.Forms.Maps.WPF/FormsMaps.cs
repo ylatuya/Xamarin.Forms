@@ -11,7 +11,7 @@
 			if (_isInitialized)
 				return;
 
-			//GeocoderBackend.Register();
+			GeocoderBackend.Register();
 			_isInitialized = true;
 		}
 

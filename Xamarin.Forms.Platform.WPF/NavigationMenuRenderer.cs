@@ -63,7 +63,7 @@ namespace Xamarin.Forms.Platform.WPF
 					hubTile.Background = target.BackgroundColor.ToBrush();
 
 				Page tmp = target;
-				hubTile.Tap += (sender, args) => Element.SendTargetSelected(tmp);
+				hubTile.MouseUp += (sender, args) => Element.SendTargetSelected(tmp);
 
 				hubTile.SetValue(System.Windows.Controls.Grid.RowProperty, y);
 				hubTile.SetValue(System.Windows.Controls.Grid.ColumnProperty, x);
