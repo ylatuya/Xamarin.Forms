@@ -11,7 +11,7 @@ namespace Xamarin.Forms.ControlGallery.WPF
 		public MainWindow()
 		{
 			Forms.Init();
-			FormsMaps.Init();
+			FormsMaps.Init(AppSettings.WPFMapsAuthKey);
 			var app = new Controls.App();
 			InitializeComponent();
 			LoadApplication(app);
