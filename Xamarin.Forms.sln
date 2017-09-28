@@ -162,6 +162,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.Maps.WPF", "X
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin.Forms.ControlGallery.WPF", "Xamarin.Forms.ControlGallery.WPF\Xamarin.Forms.ControlGallery.WPF.csproj", "{411B960D-6D30-4079-83B2-ABB9987D2EDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PagesGallery.WPF", "PagesGallery\PagesGallery.WPF\PagesGallery.WPF.csproj", "{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Xamarin.Forms.Controls.Issues\Xamarin.Forms.Controls.Issues.Shared\Xamarin.Forms.Controls.Issues.Shared.projitems*{0a39a74b-6f7a-4d41-84f2-b0ccdce899df}*SharedItemsImports = 4
@@ -1680,6 +1682,34 @@ Global
 		{411B960D-6D30-4079-83B2-ABB9987D2EDF}.Release|x64.Build.0 = Release|Any CPU
 		{411B960D-6D30-4079-83B2-ABB9987D2EDF}.Release|x86.ActiveCfg = Release|Any CPU
 		{411B960D-6D30-4079-83B2-ABB9987D2EDF}.Release|x86.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|ARM.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|Templates.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|Templates.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|x64.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|ARM.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|iPhone.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|Templates.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|Templates.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|x64.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|x64.Build.0 = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1745,6 +1775,7 @@ Global
 		{140BC260-8B15-4D3A-B1B0-DDD8072918CC} = {29AC50BF-B4FB-450B-9386-0C5AD4B84226}
 		{89B0DB73-A32E-447C-9390-A2A59D89B2E4} = {132FB9A4-613F-44CE-95D5-758D32D231DD}
 		{411B960D-6D30-4079-83B2-ABB9987D2EDF} = {4F5E2D21-17F6-4A42-B8FB-D03D82E24EC8}
+		{C19CCEE4-9125-4EB3-9394-9C5D1CEA62CE} = {80BAC3FB-357A-4D05-A050-9F234DF49C97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A7CF9333-640B-400A-856F-69B2B99CA2CB}
