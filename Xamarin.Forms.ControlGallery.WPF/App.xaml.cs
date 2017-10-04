@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-
-namespace Xamarin.Forms.ControlGallery.WPF
+﻿namespace Xamarin.Forms.ControlGallery.WPF
 {
-	/// <summary>
-	/// Logique d'interaction pour App.xaml
-	/// </summary>
-	public partial class App : System.Windows.Application
+    /// <summary>
+    /// Logique d'interaction pour App.xaml
+    /// </summary>
+    public partial class App : System.Windows.Application
 	{
 	}
 }

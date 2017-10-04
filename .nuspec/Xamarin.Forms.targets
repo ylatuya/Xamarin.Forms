@@ -100,13 +100,13 @@
 	</PropertyGroup>
 
 	<Target Name="XamlC">
-		<XamlCTask
+		<!--<XamlCTask
 			Assembly = "$(IntermediateOutputPath)$(TargetFileName)"
 			ReferencePath = "@(ReferencePath)"
 			Verbosity = "$(XFVerbosity)"
 			OptimizeIL = "true"
 			DebugSymbols = "$(DebugSymbols)"
 			DebugType = "$(DebugType)"
-			KeepXamlResources = "$(XFKeepXamlResources)" />
+			KeepXamlResources = "$(XFKeepXamlResources)" />-->
 	</Target>
 </Project>
