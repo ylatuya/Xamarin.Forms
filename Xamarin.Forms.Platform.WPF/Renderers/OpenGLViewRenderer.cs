@@ -91,7 +91,7 @@ namespace Xamarin.Forms.Platform.WPF
 
         public void Render(object sender, EventArgs eventArgs)
         {
-            if (Element.HasRenderLoop)
+            if (HasRenderLoop)
                 return;
 
             SetupRenderAction();
@@ -124,6 +124,9 @@ namespace Xamarin.Forms.Platform.WPF
 
         private void OnTick(object sender, EventArgs e)
         {
+            if (!HasRenderLoop)
+                return;
+
             _glControl.Invalidate();
         }
     }

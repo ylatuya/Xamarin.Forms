@@ -7,11 +7,11 @@ namespace Xamarin.Forms.ControlGallery.WPF
     {
         public OpenGLViewApp()
         {
-            MainPage = new BasicOpenGLView();
+            MainPage = new OpenGLViewSample();
         }
     }
 
-    public class BasicOpenGLView : ContentPage
+    public class OpenGLViewSample : ContentPage
     {
         private bool _initGl = false;
         private int _viewportWidth;
@@ -19,9 +19,9 @@ namespace Xamarin.Forms.ControlGallery.WPF
         private uint _mProgramHandle;
         private OpenGLView _openGLView = null;
 
-        public BasicOpenGLView()
+        public OpenGLViewSample()
         {
-            Title = "Basic OpenGLView Sample";
+            Title = "OpenGLView Sample";
 
             var titleLabel = new Label
             {
