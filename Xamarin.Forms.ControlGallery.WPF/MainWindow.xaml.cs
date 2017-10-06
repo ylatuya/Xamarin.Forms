@@ -1,25 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Xamarin.Forms.Platform.WPF;
+﻿using Xamarin.Forms.Platform.WPF;
 
 namespace Xamarin.Forms.ControlGallery.WPF
 {
-	/// <summary>
-	/// Logique d'interaction pour MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : FormsApplicationPage
+    /// <summary>
+    /// Logique d'interaction pour MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : FormsApplicationPage
 	{
 		public MainWindow()
 		{
@@ -27,6 +13,7 @@ namespace Xamarin.Forms.ControlGallery.WPF
 			Xamarin.Forms.Forms.Init();
 			FormsMaps.Init("");
 			LoadApplication(new Controls.App());
-		}
+            //LoadApplication(new OpenGLViewApp());
+        }
 	}
 }

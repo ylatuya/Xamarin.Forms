@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using Xamarin.Forms;
@@ -34,12 +32,12 @@ using Xamarin.Forms.Platform.WPF;
 
 
 [assembly: ThemeInfo(
-	ResourceDictionaryLocation.None, //où se trouvent les dictionnaires de ressources spécifiques à un thème
-									 //(utilisé si une ressource est introuvable dans la page,
-									 // ou dictionnaires de ressources de l'application)
-	ResourceDictionaryLocation.SourceAssembly //où se trouve le dictionnaire de ressources générique
-											  //(utilisé si une ressource est introuvable dans la page,
-											  // dans l'application ou dans l'un des dictionnaires de ressources spécifiques à un thème)
+    ResourceDictionaryLocation.None, //où se trouvent les dictionnaires de ressources spécifiques à un thème
+                                     //(utilisé si une ressource est introuvable dans la page,
+                                     // ou dictionnaires de ressources de l'application)
+    ResourceDictionaryLocation.SourceAssembly //où se trouve le dictionnaire de ressources générique
+                                              //(utilisé si une ressource est introuvable dans la page,
+                                              // dans l'application ou dans l'un des dictionnaires de ressources spécifiques à un thème)
 )]
 
 
@@ -81,6 +79,7 @@ using Xamarin.Forms.Platform.WPF;
 [assembly: ExportRenderer(typeof(ActivityIndicator), typeof(ActivityIndicatorRenderer))]
 [assembly: ExportRenderer(typeof(Frame), typeof(FrameRenderer))]
 [assembly: ExportRenderer(typeof(ListView), typeof(ListViewRenderer))]
+[assembly: ExportRenderer(typeof(OpenGLView), typeof(OpenGLViewRenderer))]
 
 // Control don't exist natively in WPF Platform
 [assembly: ExportRenderer(typeof(TableView), typeof(TableViewRenderer))]
