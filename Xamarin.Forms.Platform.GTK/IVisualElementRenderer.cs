@@ -1,5 +1,5 @@
 ﻿using System;
-using Container = Gtk.EventBox;
+using Container = Xamarin.Forms.Platform.GTK.TransparentEventBox;
 
 namespace Xamarin.Forms.Platform.GTK
 {

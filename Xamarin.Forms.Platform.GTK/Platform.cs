@@ -101,7 +101,7 @@ namespace Xamarin.Forms.Platform.GTK
 				return;
 
 			_disposed = true;
-	
+
 			MessagingCenter.Unsubscribe<Page, ActionSheetArguments>(this, Page.ActionSheetSignalName);
 			MessagingCenter.Unsubscribe<Page, AlertArguments>(this, Page.AlertSignalName);
 			MessagingCenter.Unsubscribe<Page, bool>(this, Page.BusySetSignalName);
@@ -259,7 +259,6 @@ namespace Xamarin.Forms.Platform.GTK
 					if (page != null)
 					{
 						page.Attach(modalRenderer.Container, 0, 1, 0, 1);
-
 						if (page.Children != null)
 						{
 							foreach (var child in page.Children)

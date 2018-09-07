@@ -6,6 +6,11 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 	{
 		private PageElementPackager _packager;
 
+		public PageRenderer()
+		{
+			VisibleWindow = true;
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);

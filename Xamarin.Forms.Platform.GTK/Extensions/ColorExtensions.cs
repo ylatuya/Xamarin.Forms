@@ -24,5 +24,15 @@
 		{
 			return color == Color.Transparent || color == Color.Default;
 		}
+
+		/// <summary>
+		/// Converts a Xamarin.Forms <see cref="Color"/> to a Cairo <see cref="Cairo.Color"/>.
+		/// </summary>
+		/// <returns>The Cairo color.</returns>
+		/// <param name="color">The Xamarin.Forms color.</param>
+		internal static Cairo.Color ToCairoColor(this Color color)
+		{
+			return new Cairo.Color(color.R, color.G, color.B, color.A);
+		}
 	}
 }

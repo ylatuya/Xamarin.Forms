@@ -16,6 +16,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 				}
 
 				SetColor(Element.Color);
+				//SetCornerRadius(Element.CornerRadius);
 				SetSize();
 			}
 
@@ -28,6 +29,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
 			if (e.PropertyName == BoxView.ColorProperty.PropertyName)
 				SetColor(Element.Color);
+			//else if (e.PropertyName == BoxView.CornerRadiusProperty.PropertyName)
+			//SetCornerRadius(Element.CornerRadius);
 			else if (e.PropertyName ==
 			  PlatformConfiguration.GTKSpecific.BoxView.HasCornerRadiusProperty.PropertyName)
 				SetHasCornerRadius();
@@ -44,11 +47,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 		{
 			base.UpdateBackgroundColor();
 
-			var backgroundColor = Element.BackgroundColor == Color.Default ? Color.Transparent.ToGtkColor() : Element.BackgroundColor.ToGtkColor();
-
-			Control.UpdateBackgroundColor(backgroundColor);
-
-			Container.VisibleWindow = true;
+			Control.SetBackgroundColor(Element.BackgroundColor);
 		}
 
 		private void SetColor(Color color)
@@ -62,10 +61,17 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 			}
 			else
 			{
-				var backgroundColor = color.ToGtkColor();
-				Control.UpdateColor(backgroundColor);
+				Control.UpdateColor(color);
 			}
 		}
+
+		//private void SetCornerRadius(CornerRadius cornerRadius)
+		//{
+		//	if (Element == null || Control == null)
+		//		return;
+
+		//	Control.UpdateBorderRadius((int)cornerRadius.TopLeft, (int)cornerRadius.TopRight, (int)cornerRadius.BottomLeft, (int)cornerRadius.BottomRight);
+		//}
 
 		private void SetSize()
 		{
@@ -79,7 +85,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 		{
 			var hasCornerRadius = Element.OnThisPlatform().GetHasCornerRadius();
 
-			Control.UpdateHasBorderRadius(hasCornerRadius);
+			Control.UpdateBorderRadius();
 		}
 	}
 }

@@ -20,10 +20,9 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 		{
 			if (!Element.BackgroundColor.IsDefaultOrTransparent())
 			{
-				var color = Element.BackgroundColor.ToGtkColor();
+				var backgroundColor = Element.BackgroundColor.ToGtkColor();
 
-				Control.TextView.ModifyBg(StateType.Normal, color);
-				Control.TextView.ModifyBase(StateType.Normal, color);
+				Control.SetBackgroundColor(backgroundColor);
 			}
 		}
 
@@ -34,6 +33,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 				var scrolled = new ScrolledTextView();
 
 				scrolled.TextView.Buffer.TagTable.Add(new TextTag(TextColorTagName));
+
 				scrolled.TextView.Buffer.Changed += TextViewBufferChanged;
 				scrolled.TextView.Focused += TextViewFocused;
 				scrolled.TextView.FocusOutEvent += TextViewFocusedOut;
@@ -47,6 +47,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 				UpdateText();
 				UpdateFont();
 				UpdateTextColor();
+				//UpdatePlaceholder();
+				//UpdatePlaceholderColor();
 				UpdateMaxLength();
 			}
 
@@ -61,6 +63,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 				UpdateText();
 			else if (e.PropertyName == Editor.TextColorProperty.PropertyName)
 				UpdateTextColor();
+			//else if (e.PropertyName == Editor.PlaceholderProperty.PropertyName)
+			//	UpdatePlaceholder();
+			//else if (e.PropertyName == Editor.PlaceholderColorProperty.PropertyName)
+			//UpdatePlaceholderColor();
 			else if (e.PropertyName == Editor.FontAttributesProperty.PropertyName)
 				UpdateFont();
 			else if (e.PropertyName == Editor.FontFamilyProperty.PropertyName)
@@ -161,5 +167,23 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 		{
 			Control.SetMaxLength(Element.MaxLength);
 		}
+
+		//private void UpdatePlaceholder()
+		//{
+		//	if (Element.Placeholder != Control.PlaceholderText)
+		//	{
+		//		Control.PlaceholderText = Element.Placeholder;
+		//	}
+		//}
+
+		//private void UpdatePlaceholderColor()
+		//{
+		//	if (!Element.PlaceholderColor.IsDefaultOrTransparent())
+		//	{
+		//		var placeholderColor = Element.PlaceholderColor.ToGtkColor();
+
+		//		Control.SetPlaceholderTextColor(placeholderColor);
+		//	}
+		//}
 	}
 }

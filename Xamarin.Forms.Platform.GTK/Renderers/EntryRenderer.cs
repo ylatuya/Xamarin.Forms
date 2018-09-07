@@ -4,7 +4,6 @@ using System.ComponentModel;
 using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
-using System;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -90,6 +89,10 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 			if (!Element.BackgroundColor.IsDefaultOrTransparent())
 			{
 				Control.SetBackgroundColor(Element.BackgroundColor.ToGtkColor());
+			}
+			else
+			{
+				Control.SetBackgroundColor(Color.Transparent.ToGtkColor());
 			}
 		}
 

@@ -10,7 +10,7 @@ using Xamarin.Forms.Platform.GTK.Controls;
 using Xamarin.Forms.Platform.GTK.Extensions;
 using Xamarin.Forms.Platform.GTK.Helpers;
 using Xamarin.Forms.PlatformConfiguration.GTKSpecific;
-using Container = Gtk.EventBox;
+using Container = Xamarin.Forms.Platform.GTK.TransparentEventBox;
 
 namespace Xamarin.Forms.Platform.GTK.Renderers
 {
@@ -135,7 +135,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 				if (Widget == null)
 				{
 					Widget = new Fixed();
-					var eventBox = new EventBox();
+					var eventBox = new TransparentEventBox();
 					eventBox.Add(Widget);
 
 					Control.Content = eventBox;
@@ -199,6 +199,8 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 				UpdateBackButtonIcon();
 			else if (e.PropertyName == NavigationPage.CurrentPageProperty.PropertyName)
 				UpdateCurrentPage();
+			else if (e.PropertyName == NavigationPage.HasNavigationBarProperty.PropertyName)
+				UpdateToolBar();
 		}
 
 		private void Init()
@@ -391,7 +393,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
 			int counter = 0;
 
-			foreach(var item in items.Reverse())
+			foreach (var item in items.Reverse())
 			{
 				if (counter == index)
 				{
@@ -405,7 +407,7 @@ namespace Xamarin.Forms.Platform.GTK.Renderers
 
 				counter++;
 			}
-	 
+
 			foreach (var child in Widget.Children)
 			{
 				child.Unparent();

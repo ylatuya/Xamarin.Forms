@@ -211,12 +211,7 @@
     <Compile Include="ViewRenderer.cs" />
     <Compile Include="VisualElementRenderer.cs" />
     <Compile Include="VisualElementTracker.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
-      <Project>{57b8b73d-c3b5-4c42-869e-7b2f17d354ac}</Project>
-      <Name>Xamarin.Forms.Core</Name>
-    </ProjectReference>
+    <Compile Include="TransparentEventBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -252,6 +247,16 @@
     <Content Include="Resources\hamburger.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Xamarin.Forms.Xaml\Xamarin.Forms.Xaml.csproj">
+      <Project>{95ACE752-21C8-42B9-B97F-9DB876B89197}</Project>
+      <Name>Xamarin.Forms.Xaml</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Xamarin.Forms.Core\Xamarin.Forms.Core.csproj">
+      <Project>{0EC4514F-0A79-4B72-B783-3FD0084C3D37}</Project>
+      <Name>Xamarin.Forms.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
