@@ -9,6 +9,9 @@ namespace Xamarin.Forms.Platform.GTK
 	{
 		private Application _application;
 		private Gdk.Size _lastSize;
+		private VBox _content;
+		private MenuBar _menu;
+		private AccelGroup _accelGroup;
 
 		public FormsWindow ()
 			: base (WindowType.Toplevel)
@@ -23,12 +26,47 @@ namespace Xamarin.Forms.Platform.GTK
 				SynchronizationContext.SetSynchronizationContext (new GtkSynchronizationContext ());
 
 			WindowStateEvent += OnWindowStateEvent;
+			_content = new VBox();
+			_menu = new MenuBar();
+			_content.PackStart(_menu, false, true, 0);
+			_content.ShowAll();
+			Add(_content);
+			_accelGroup = new AccelGroup();
+			AddAccelGroup(_accelGroup);
 		}
 
+		/// <summary>
+		/// Gets or sets the ID of the main thread where the GTK+
+		/// mainloop is running.
+		/// </summary>
+		/// <value>The main thread identifier.</value>
 		public static int MainThreadID { get; set; }
-		public static Window MainWindow { get; set; }
 
-		public void LoadApplication(Application application)
+		/// <summary>
+		/// Gets or sets the main window.
+		/// </summary>
+		/// <value>The main window.</value>
+		public static FormsWindow MainWindow { get; set; }
+
+		/// <summary>
+		/// Gets the application menu bar.
+		/// </summary>
+		/// <value>The menu.</value>
+		public MenuBar Menu => _menu;
+
+		/// <summary>
+		/// Gets the menu accel group.
+		/// </summary>
+		/// <value>The menu accel group.</value>
+		public AccelGroup MenuAccelGroup => _accelGroup;
+
+		/// <summary>
+		/// Gets the content of the window.
+		/// </summary>
+		/// <value>The content.</value>
+		public VBox Content => _content;
+
+		public virtual void LoadApplication(Application application)
 		{
 			if (application == null)
 				throw new ArgumentNullException(nameof(application));
@@ -106,29 +144,17 @@ namespace Xamarin.Forms.Platform.GTK
 
 			if (platformRenderer != null)
 			{
-				RemoveChildIfExists();
+				platformRenderer.Destroy();
 				((IDisposable)platformRenderer.Platform).Dispose();
 			}
 
 			var platform = new Platform();
 			platform.PlatformRenderer.SetSizeRequest(WidthRequest, HeightRequest);
-			Add(platform.PlatformRenderer);
+			_content.PackStart(platform.PlatformRenderer, true, true, 0);
+			_content.ReorderChild(platform.PlatformRenderer, 1);
 			platform.SetPage(_application.MainPage);
 
 			Child.ShowAll();
-		}
-
-		private void RemoveChildIfExists()
-		{
-			foreach (var child in Children)
-			{
-				var widget = child as Widget;
-
-				if (widget != null)
-				{
-					Remove(widget);
-				}
-			}
 		}
 
 		private void OnWindowStateEvent(object o, WindowStateEventArgs args)
