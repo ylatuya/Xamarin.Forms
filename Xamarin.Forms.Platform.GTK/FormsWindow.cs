@@ -13,11 +13,19 @@ namespace Xamarin.Forms.Platform.GTK
 		private MenuBar _menu;
 		private AccelGroup _accelGroup;
 
-		public FormsWindow ()
-			: base (WindowType.Toplevel)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:Xamarin.Forms.Platform.GTK.FormsWindow"/> class
+		/// providing the desired starting size and minimum size for the application's main window
+		/// </summary>
+		/// <param name="startWidth">The start width of the window.</param>
+		/// <param name="startHeight">The start height of the window.</param>
+		/// <param name="minWidth">The minimum width of the window.</param>
+		/// <param name="minHeight">The minimum height of the window.</param>
+		public FormsWindow(int startWidth = 800, int startHeight = 600, int minWidth = 400, int minHeight = 400)
+			: base(WindowType.Toplevel)
 		{
-			SetDefaultSize (800, 600);
-			SetSizeRequest (400, 400);
+			SetDefaultSize(startWidth, startHeight);
+			SetSizeRequest(minWidth, minHeight);
 
 			MainThreadID = Thread.CurrentThread.ManagedThreadId;
 			MainWindow = this;
